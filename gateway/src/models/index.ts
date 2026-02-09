@@ -1,5 +1,6 @@
 import { sequelize } from "../config/database";
 import { Logger } from "../common/logger";
+import '../models/associate';
 
 export const initDb = async () => {
   try {

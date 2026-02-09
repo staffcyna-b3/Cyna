@@ -1,0 +1,73 @@
+import { DataTypes, Model, Optional } from 'sequelize';
+import { sequelize } from '../config/database';
+
+interface UserAttributes {
+  id: string;
+  full_name: string;
+  email: string;
+  password: string;
+  refresh_token?: string | null;
+  email_verified: boolean;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token'> {}
+
+class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
+  declare id: string;
+  declare full_name: string;
+  declare email: string;
+  declare password: string;
+  declare refresh_token?: string | null;
+  declare email_verified: boolean;
+  declare readonly created_at: Date;
+  declare readonly updated_at: Date;
+}
+
+User.init(
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
+    full_name: {
+      type: DataTypes.STRING(100),
+      allowNull: false,
+    },
+    email: {
+      type: DataTypes.STRING(150),
+      allowNull: false,
+      unique: true,
+    },
+    password: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
+    refresh_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    email_verified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'users',
+    timestamps: true,
+    underscored: true,
+  }
+);
+
+export default User;
