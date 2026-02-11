@@ -1,4 +1,4 @@
-import { sequelize } from "../config/database";
+import { sequelize } from "../config/database.config";
 import { Logger } from "../common/logger";
 import '../models/associate';
 

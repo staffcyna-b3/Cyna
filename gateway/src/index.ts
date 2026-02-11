@@ -1,20 +1,18 @@
-import dotenv from 'dotenv'
 import express from 'express'
 import cors from 'cors'
+import dotenv from 'dotenv';
 import { initDb } from './models/index'
 import { Logger } from './common/logger'
+import { createApp } from './app';
 
-dotenv.config()
-
-const app = express()
-
-app.use(cors())
-app.use(express.json())
+dotenv.config();
 
 initDb()
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000
+const app = createApp();
 
 app.listen(PORT, () => {
-  Logger.info(`Service connecté sur le port ${PORT}`)
-})
+  Logger.info(`API Gateway running on port ${PORT}`);
+  Logger.info(`Environment: ${process.env.NODE_ENV}`);
+});

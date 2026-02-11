@@ -1,6 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
-import { sequelize } from '../config/database';
-import { UserRoleType } from '../enum/UserRoleType';
+import { sequelize } from '../config/database.config';
+import { UserRoleType } from '../enum/UserRoleType.enum';
 
 interface UserRoleAttributes {
   id: string;
