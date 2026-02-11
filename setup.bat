@@ -34,18 +34,13 @@ cd gateway
 call npx sequelize-cli db:migrate
 cd ..
 
-echo → Back-office Service migrations...
-cd micro-services\back-office-service
+echo → Product Service migrations...
+cd micro-services\product-service
 call npx sequelize-cli db:migrate
 cd ..\..
 
 echo → Front-office Service migrations...
 cd micro-services\front-office-service
-call npx sequelize-cli db:migrate
-cd ..\..
-
-echo → Product Service migrations...
-cd micro-services\product-service
 call npx sequelize-cli db:migrate
 cd ..\..
 

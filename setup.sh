@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e  # Arrête le script si une commande échoue
-
 echo "Démarrage de l'installation complète..."
 
 # ==================== INSTALLATION DES DÉPENDANCES ====================
@@ -35,18 +33,14 @@ cd gateway
 npx sequelize-cli db:migrate
 cd ..
 
-echo "→ Back-office Service migrations..."
-cd micro-services/back-office-service
+echo "→ Product Service migrations..."
+cd micro-services/product-service
 npx sequelize-cli db:migrate
 cd ../..
+
 
 echo "→ Front-office Service migrations..."
 cd micro-services/front-office-service
-npx sequelize-cli db:migrate
-cd ../..
-
-echo "→ Product Service migrations..."
-cd micro-services/product-service
 npx sequelize-cli db:migrate
 cd ../..
 
