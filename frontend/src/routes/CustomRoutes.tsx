@@ -1,12 +1,16 @@
 import { Routes, Route, useLocation } from "react-router-dom"
 import MainLayout from "../layouts/MainLayout"
 import HomePage from "../pages/Home"
+import { Register } from "../pages/auth/Register"
 
 export default function CustomRoutes() {
   const location = useLocation()
 
   return (
     <Routes location={location} key={location.pathname}>
+      <Route path="/register" element={<Register />} />
+      {/* <Route path="/login" element={<Login />} /> */}
+
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
       </Route>
