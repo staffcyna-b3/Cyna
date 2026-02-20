@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ValidationErrors, validateRegistration } from '../../utils/validation';
 import { RegisterFormData } from '../../types/interfaces/auth.types';
+import { Button } from '@/components/ui/button';
 
 export const Register: React.FC = () => {
     const navigate = useNavigate();
@@ -178,7 +179,7 @@ export const Register: React.FC = () => {
                     <p className="text-sm text-red-500 mt-1">{errors.confirmPassword}</p>
                     )}
                 </div>
-
+                    <Button>Bouton</Button>
                 <button
                     type="submit"
                     disabled={isLoading}
