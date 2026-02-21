@@ -1,11 +1,10 @@
 {
-    "test": "Francais test",
-    "register": "S'inscrire",
-    "login": "Se connecter",
-    "email": "Email",
-    "password": "Mot de passe",
-    "confirmPassword": "Confirmer le mot de passe",
-    "alreadyHaveAccount": "Vous avez déjà un compte ?",
-    "welcome": "Bienvenue sur Cyna.",
-    "fullName": "Nom complet"
+  "alreadyHaveAccount": "Vous avez déjà un compte ?",
+  "confirmPassword": "Confirmer le mot de passe",
+  "email": "Email",
+  "fullName": "Nom complet",
+  "password": "Mot de passe",
+  "register": "S'inscrire",
+  "test": "Francais test",
+  "welcome": "Bienvenue sur Cyna."
 }

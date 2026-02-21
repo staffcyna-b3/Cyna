@@ -188,3 +188,9 @@ button:focus-visible {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .bg-gradient-to-b {
+    background-image: linear-gradient(to bottom, var(--color-primary), var(--color-primary-foreground));
+  }
+}

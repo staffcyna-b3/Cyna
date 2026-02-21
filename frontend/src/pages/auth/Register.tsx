@@ -5,6 +5,8 @@ import { ValidationErrors, validateRegistration } from '../../utils/validation';
 import { RegisterFormData } from '../../types/interfaces/auth.types';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from "react-i18next"
+import { TypographyH1 } from '@/components/ui/typography';
+import { Link } from '@/components/ui/link';
 
 export const Register: React.FC = () => {
     const navigate = useNavigate();
@@ -199,11 +201,11 @@ export const Register: React.FC = () => {
                                 <p className="text-sm text-red-600 mt-1">{errors.confirmPassword}</p>
                             )}
                         </div>
-
+                        <Link to="/login">Test</Link>
                         <Button 
                             type="submit" 
                             disabled={isLoading}
-                            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+                            variant="outline"
                         >
                             {isLoading ? 'Inscription en cours...' : t('register')}
                         </Button>
