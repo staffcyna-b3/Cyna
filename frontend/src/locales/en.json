@@ -1,3 +1,11 @@
 {
-    "test": "English test"
+    "test": "English test",
+    "register": "Register",
+    "login": "Login",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "alreadyHaveAccount": "Already have an account ?",
+    "welcome": "Welcome to Cyna.",
+    "fullName": "Full Name"
 }

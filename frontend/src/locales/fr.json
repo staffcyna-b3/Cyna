@@ -1,3 +1,11 @@
 {
-    "test": "Francais test"
+    "test": "Francais test",
+    "register": "S'inscrire",
+    "login": "Se connecter",
+    "email": "Email",
+    "password": "Mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "welcome": "Bienvenue sur Cyna.",
+    "fullName": "Nom complet"
 }
