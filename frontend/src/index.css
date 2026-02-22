@@ -1,11 +1,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif, Space Grotesk;
   line-height: 1.5;
   font-weight: 400;
 
@@ -35,6 +37,8 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
+  --outline-input: oklch(0.4865 0.2721 270.95);
+  --color-input: oklch(0.9822 0.0041 271.37);
   --ring: oklch(0.708 0 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
@@ -62,16 +66,16 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  /* display: flex; */
+  /* place-items: center; */
+  /* min-width: 320px; */
   min-height: 100vh;
 }
 
-h1 {
+/* h1 {
   font-size: 3.2em;
   line-height: 1.1;
-}
+} */
 
 /* button {
   border-radius: 8px;
@@ -190,7 +194,16 @@ button:focus-visible {
 }
 
 @layer utilities {
+  .font-space-grotesk {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .font-inter {
+    font-family: 'Inter', sans-serif;
+  }
   .bg-gradient-to-b {
-    background-image: linear-gradient(to bottom, var(--color-primary), var(--color-primary-foreground));
+    background: radial-gradient(85.56% 63.99% at 14.44% 20.27%, #0A0839 0%, #261D6A 50%, #0B093C 100%);
+  }
+  .bc-input {
+    background-color: var(--color-input);
   }
 }

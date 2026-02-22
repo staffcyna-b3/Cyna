@@ -1,79 +1,66 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { ValidationErrors, validateRegistration } from '../../utils/validation';
-import { RegisterFormData } from '../../types/interfaces/auth.types';
+import { ValidationErrors, validateLogin } from '../../utils/validation';
+import { LoginFormData } from '../../types/interfaces/auth.types';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from "react-i18next"
 import { TypographyH2 } from '@/components/ui/typography';
 import { Link } from '@/components/ui/link';
 import { Input } from '@/components/ui/input';
 
-export const Register: React.FC = () => {
+export const Login: React.FC = () => {
     const navigate = useNavigate();
-    const { register } = useAuth();
+    const { login } = useAuth();
     const { t } =  useTranslation();
 
-    const [formData, setFormData] = useState<RegisterFormData>({
+    const [formData, setFormData] = useState<LoginFormData>({
         email: '',
         password: '',
-        confirmPassword: '',
-        fullName: '',
     });
 
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [isLoading, setIsLoading] = useState(false);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
-            ...prev,
-            [name]: value,
+        ...prev,
+        [name]: value,
         }));
-
-        // Nettoyer l'erreur pour le champ quand l'utilisateur commence à saisir
-        if(errors[name]) {
-            setErrors((prev) => {
-                const newErrors = { ...prev };
-                delete newErrors[name];
-                return newErrors;
-            })
+        if (errors[name]) {
+        setErrors((prev) => {
+            const newErrors = { ...prev };
+            delete newErrors[name];
+            return newErrors;
+        });
         }
-    }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setErrors({});
-        setSuccessMessage(null);
 
-        const validationErrors = validateRegistration(
-            formData.email,
-            formData.password,
-            formData.confirmPassword,
-            formData.fullName
-        );
+        const validationErrors = validateLogin(formData.email, formData.password);
 
         if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
+        setErrors(validationErrors);
+        return;
         }
 
         setIsLoading(true);
 
         try {
-            await register(formData.email, formData.password, formData.fullName);
-            setSuccessMessage('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
-            setTimeout(() => {
-                navigate('/confirm-email');
-            }, 2000);
-        } catch (error: any) {
-            const message = error instanceof Error ? error.message : 'Erreur lors de l\'inscription';
-            setErrors({ submit: message });
+        await login(formData.email, formData.password);
+        // Rediriger vers le dashboard ou la page d'accueil
+        navigate('/dashboard');
+        } catch (error) {
+        const message = error instanceof Error ? error.message : 'Erreur lors de la connexion';
+        setErrors({ submit: message });
         } finally {
-            setIsLoading(false);
+        setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div className="min-h-screen flex flex-col lg:flex-row lg:w-full">
@@ -89,12 +76,6 @@ export const Register: React.FC = () => {
                 <div className="w-full max-w-sm">
                     <TypographyH2>{t("welcome")}</TypographyH2>
 
-                    {successMessage && (
-                        <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
-                            {successMessage}
-                        </div>
-                    )}
-
                     {errors.submit && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
                             {errors.submit}
@@ -102,18 +83,6 @@ export const Register: React.FC = () => {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        <div>
-                            <Input
-                                label={t("fullName")}
-                                name="fullName"
-                                type="text"
-                                value={formData.fullName}
-                                onChange={handleChange}
-                                placeholder="John Doe"
-                                error={errors.fullName}
-                            />
-                        </div>
-
                         <div>
                             <Input
                                 label={t("email")}
@@ -136,36 +105,18 @@ export const Register: React.FC = () => {
                                 placeholder="••••••••"
                                 error={errors.password}
                             />
-                            <p className="text-xs text-gray-500 mt-2">
-                                Min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
-                            </p>
-                        </div>
-
-                        <div>
-                            <Input
-                                label={t("confirmPassword")}
-                                name="confirmPassword"
-                                type="password"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                placeholder="••••••••"
-                                error={errors.confirmPassword}
-                            />
                         </div>
                         <Button 
                             type="submit" 
                             disabled={isLoading}
                             variant="cyna"
                         >
-                            {isLoading ? 'Inscription en cours...' : t('register')}
+                            {isLoading ? 'Connexion en cours...' : t('login')}
                         </Button>
                     </form>
 
                     <p className="text-center text-gray-600 text-sm mt-6">
-                        {t("alreadyHaveAccount")}{' '}
-                        <Link to="/login">
-                            {t("login")}
-                        </Link>
+                        {t("forgottenPassword")}{' '}
                     </p>
                 </div>
             </div>
