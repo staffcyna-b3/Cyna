@@ -12,30 +12,32 @@ import { Input } from '@/components/ui/input';
 export const Login: React.FC = () => {
     const navigate = useNavigate();
     const { login } = useAuth();
-    const { t } =  useTranslation();
+    const { t } = useTranslation();
 
     const [formData, setFormData] = useState<LoginFormData>({
         email: '',
         password: '',
     });
 
+    const [rememberMe, setRememberMe] = useState(false); // ✅ Nouveau
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [isLoading, setIsLoading] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
-        ...prev,
-        [name]: value,
+            ...prev,
+            [name]: value,
         }));
+
         if (errors[name]) {
-        setErrors((prev) => {
-            const newErrors = { ...prev };
-            delete newErrors[name];
-            return newErrors;
-        });
+            setErrors((prev) => {
+                const newErrors = { ...prev };
+                delete newErrors[name];
+                return newErrors;
+            });
         }
-    };
+    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,23 +46,23 @@ export const Login: React.FC = () => {
         const validationErrors = validateLogin(formData.email, formData.password);
 
         if (Object.keys(validationErrors).length > 0) {
-        setErrors(validationErrors);
-        return;
+            setErrors(validationErrors);
+            return;
         }
 
         setIsLoading(true);
 
         try {
-        await login(formData.email, formData.password);
-        // Rediriger vers le dashboard ou la page d'accueil
-        navigate('/dashboard');
+            // ✅ Passer rememberMe au login
+            await login(formData.email, formData.password, rememberMe);
+            navigate('/dashboard');
         } catch (error) {
-        const message = error instanceof Error ? error.message : 'Erreur lors de la connexion';
-        setErrors({ submit: message });
+            const message = error instanceof Error ? error.message : 'Erreur lors de la connexion';
+            setErrors({ submit: message });
         } finally {
-        setIsLoading(false);
+            setIsLoading(false);
         }
-    };
+    }
 
     return (
         <div className="min-h-screen flex flex-col lg:flex-row lg:w-full">
@@ -106,6 +108,15 @@ export const Login: React.FC = () => {
                                 error={errors.password}
                             />
                         </div>
+                        <Input
+                            type="checkbox"
+                            id="rememberMe"
+                            checked={rememberMe}
+                            onChange={() => setRememberMe((prev) => !prev)}
+                        />
+                        <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-600">
+                            {t("rememberMe")}
+                        </label>
                         <Button 
                             type="submit" 
                             disabled={isLoading}

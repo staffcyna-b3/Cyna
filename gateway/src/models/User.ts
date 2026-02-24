@@ -10,9 +10,10 @@ interface UserAttributes {
   email_verified: boolean;
   created_at: Date;
   updated_at: Date;
+  remember_me_token?: string | null;
 }
 
-export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token'> {}
+export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token' | 'remember_me_token'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   declare id: string;
@@ -23,6 +24,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   declare email_verified: boolean;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
+  declare remember_me_token?: string | null;
 }
 
 User.init(
@@ -60,6 +62,10 @@ User.init(
     updated_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+    },
+    remember_me_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
   },
   {
