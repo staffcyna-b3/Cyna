@@ -1,4 +1,11 @@
 {
-  "Dashboard": "Tableau de bord",
-  "test": "test de traduction française"
+  "active": "Actif",
+  "dashboard": "Tableau de bord",
+  "discounts": "Réductions",
+  "inactive": "Inactif",
+  "orders": "Commandes",
+  "products": "Produits",
+  "test": "test de traduction française",
+  "transactions": "Transactions",
+  "users": "Utilisateurs"
 }

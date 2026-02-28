@@ -1,4 +1,11 @@
 {
-  "Dashboard": "Dashboard",
-  "test": "test"
+  "active": "Active",
+  "dashboard": "Dashboard",
+  "discounts": "Discounts",
+  "inactive": "Inactive",
+  "orders": "Orders",
+  "products": "Products",
+  "test": "test",
+  "transactions": "Transactions",
+  "users": "Users"
 }
