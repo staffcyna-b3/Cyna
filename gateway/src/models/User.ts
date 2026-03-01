@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database.config';
+import { UserRole } from './associate';
 
 interface UserAttributes {
   id: string;
@@ -25,6 +26,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
   declare remember_me_token?: string | null;
+  declare userRole?: InstanceType<typeof UserRole>;
 }
 
 User.init(

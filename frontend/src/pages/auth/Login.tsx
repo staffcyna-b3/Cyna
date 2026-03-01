@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next"
 import { TypographyH2 } from '@/components/ui/typography';
 import { Link } from '@/components/ui/link';
 import { Input } from '@/components/ui/input';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -108,15 +109,15 @@ export const Login: React.FC = () => {
                                 error={errors.password}
                             />
                         </div>
-                        <Input
-                            type="checkbox"
+
+                        <Checkbox
+                            label={t("rememberMe")}
+                            name="rememberMe"
                             id="rememberMe"
                             checked={rememberMe}
                             onChange={() => setRememberMe((prev) => !prev)}
                         />
-                        <label htmlFor="rememberMe" className="ml-2 text-sm text-gray-600">
-                            {t("rememberMe")}
-                        </label>
+
                         <Button 
                             type="submit" 
                             disabled={isLoading}

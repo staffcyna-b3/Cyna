@@ -9,7 +9,11 @@ router.post('/login', async (req, res) => {
     const { email, password, remember_me } = req.body;
 
     // Vérifier utilisateur
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ 
+      where: { email },
+      include: [{ association: 'userRole', attributes: ['role'] }],
+    });
+
     if (!user) {
       return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
     }
@@ -42,6 +46,7 @@ router.post('/login', async (req, res) => {
       email: user.email,
       full_name: user.full_name,
       email_verified: user.email_verified,
+      role: user.userRole?.role,
     });
 
   } catch (error) {
@@ -60,6 +65,7 @@ router.get('/auth/verify-remember-me', async (req, res) => {
     // Chercher l'utilisateur avec ce token
     const user = await User.findOne({
       where: { remember_me_token: rememberToken },
+      include: [{ association: 'userRole', attributes: ['role'] }],
     });
 
     if (!user) {
@@ -72,6 +78,7 @@ router.get('/auth/verify-remember-me', async (req, res) => {
       email: user.email,
       full_name: user.full_name,
       email_verified: user.email_verified,
+      role: user.userRole?.role || null,
     });
 
   } catch (error) {

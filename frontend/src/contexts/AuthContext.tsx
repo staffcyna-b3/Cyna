@@ -125,17 +125,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const logout = useCallback(async () => {
-    setError(null);
-    try {
-      await fetch('/api/front-office/auth/logout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-    } catch (err) {
-      console.error('Erreur lors de la déconnexion:', err);
-    } finally {
-      setUser(null);
-    }
+      setError(null);
+      try {
+        await fetch('/api/front-office/auth/logout', {
+          method: 'POST',
+          credentials: 'include',
+        });
+      } catch (err) {
+        console.error('Erreur lors de la déconnexion:', err);
+      } finally {
+        setUser(null);
+      }
   }, []);
 
   const value: AuthContextType = {
