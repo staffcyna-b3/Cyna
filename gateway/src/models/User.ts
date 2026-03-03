@@ -12,9 +12,11 @@ interface UserAttributes {
   created_at: Date;
   updated_at: Date;
   remember_me_token?: string | null;
+  email_confirmation_token?: string | null;
+  email_confirmed_at?: Date | null;
 }
 
-export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token' | 'remember_me_token'> {}
+export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token' | 'remember_me_token' | 'email_confirmation_token' | 'email_confirmed_at'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   declare id: string;
@@ -26,6 +28,8 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
   declare remember_me_token?: string | null;
+  declare email_confirmation_token?: string | null;
+  declare email_confirmed_at?: Date | null;
   declare userRole?: InstanceType<typeof UserRole>;
 }
 
@@ -67,6 +71,14 @@ User.init(
     },
     remember_me_token: {
       type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    email_confirmation_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    email_confirmed_at: {
+      type: DataTypes.DATE,
       allowNull: true,
     },
   },

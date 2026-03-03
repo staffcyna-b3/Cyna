@@ -3,6 +3,7 @@ import MainLayout from "../layouts/MainLayout"
 import HomePage from "../pages/Home"
 import { Register } from "../pages/auth/Register"
 import { Login } from "@/pages/auth/Login"
+import { ConfirmEmail } from "@/pages/auth/ConfirmEmail"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -11,6 +12,7 @@ export default function CustomRoutes() {
     <Routes location={location} key={location.pathname}>
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/confirm-email" element={<ConfirmEmail />} />
 
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />

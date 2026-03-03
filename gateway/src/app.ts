@@ -4,6 +4,7 @@ import routes from './routes';
 import { corsMiddleware } from './middlewares/cors.middleware';
 import { loggingMiddleware } from './middlewares/logging.middleware';
 import { errorMiddleware } from './middlewares/error.middleware';
+import authRoutes from './routes/auth.routes';
 
 export const createApp = (): Express => {
   const app = express();
@@ -22,6 +23,7 @@ export const createApp = (): Express => {
   });
 
   app.use('/api', routes);
+  app.use('/auth', authRoutes);
 
   app.use((req, res) => {
     res.status(404).json({

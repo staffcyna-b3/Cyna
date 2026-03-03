@@ -17,6 +17,7 @@ export interface AuthContextType {
   verifyRememberMe: () => Promise<void>;
   error: string | null;
   clearError: () => void;
+  confirmEmail: (token: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -41,7 +42,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     async (email: string, password: string, full_name: string) => {
       setError(null);
       try {
-        const response = await fetch('/api/front-office/auth/register', {
+        const response = await fetch('/api/auth/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -64,11 +65,40 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     []
   );
 
+  const confirmEmail = useCallback(
+    async (token: string) => {
+      setError(null);
+      try {
+        const response = await fetch('/api/auth/confirm-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ token }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Erreur lors de la confirmation');
+        }
+
+        // Mettre à jour l'utilisateur si besoin
+        if (user) {
+          setUser({ ...user, email_verified: true });
+        }
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Erreur lors de la confirmation';
+        setError(message);
+        throw err;
+      }
+    },
+    [user]
+  );
+
   const login = useCallback(
     async (email: string, password: string, rememberMe = false) => {
       setError(null);
       try {
-        const response = await fetch('/api/front-office/auth/login', {
+        const response = await fetch('/api/auth/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
@@ -102,7 +132,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const verifyRememberMe = useCallback(async () => {
     try {
-      const response = await fetch('/api/front-office/auth/verify-remember-me', {
+      const response = await fetch('/api/auth/verify-remember-me', {
         credentials: 'include',
       });
 
@@ -127,7 +157,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const logout = useCallback(async () => {
       setError(null);
       try {
-        await fetch('/api/front-office/auth/logout', {
+        await fetch('/api/auth/logout', {
           method: 'POST',
           credentials: 'include',
         });
@@ -148,6 +178,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     verifyRememberMe,
     error,
     clearError,
+    confirmEmail,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
