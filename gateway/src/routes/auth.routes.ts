@@ -59,24 +59,29 @@ router.post('/login', async (req, res) => {
     //sauvegarder le user en bdd
     await user.update({ refresh_token: refreshToken})
 
+    res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000
+    })
+
     res.status(200).json({
         success: true,
         data: {
             accessToken,
-            refreshToken,
             user: { id: user.id, email: user.email}
         },
-        timeStamp: new Date().toISOString()
+        timestamp: new Date().toISOString()
     })
 })
 
 
 
 
-
     //Refresh
     router.post('/refresh', async (req, res) => {
-    const { refreshToken } = req.body
+    const refreshToken = req.cookies.refreshToken
 
     if (!refreshToken) {
         return res.status(401).json({
