@@ -6,10 +6,16 @@ export const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const passwordStrengthRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
-export const validateEmail = (email: string): string | null => {
-    if (!email) return 'L\'email est requis';
-    if (!emailRegex.test(email)) return 'L\'email n\'est pas valide';
-    return null;
+export const validateEmail = (email: string): ValidationErrors => {
+    const errors: ValidationErrors = {};
+
+    if (!email) {
+        errors.email = 'Email requis';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errors.email = 'Email invalide';
+    }
+
+    return errors;
 }
 
 export const validatePassword = (password: string): string | null => {
@@ -40,10 +46,12 @@ export const validateRegistration = (
     confirmPassword: string,
     fullName: string
 ): ValidationErrors => {
-    const errors: ValidationErrors = {};
+    let errors: ValidationErrors = {};
 
     const emailError = validateEmail(email);
-    if (emailError) errors.email = emailError;
+    if (Object.keys(emailError).length > 0) {
+        errors = { ...errors, ...emailError };
+    }
 
     const passwordError = validatePassword(password);
     if (passwordError) errors.password = passwordError;
@@ -58,10 +66,12 @@ export const validateRegistration = (
 }
 
 export const validateLogin = (email: string, password: string): ValidationErrors => {
-    const errors: ValidationErrors = {};
+    let errors: ValidationErrors = {};
 
     const emailError = validateEmail(email);
-    if (emailError) errors.email = emailError;
+    if (Object.keys(emailError).length > 0) {
+        errors = { ...errors, ...emailError }; 
+    }
 
     if (!password) errors.password = 'Le mot de passe est requis';
 

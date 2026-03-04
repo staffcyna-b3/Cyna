@@ -75,7 +75,7 @@ export class AuthService {
         // Vérifier que l'email n'existe pas
         const existingUser = await this.userRepository.findByEmail(email);
         if (existingUser) {
-        throw new Error('Email déjà utilisé');
+          throw new Error('Email déjà utilisé');
         }
 
         // Créer l'utilisateur (password sera hashé dans le repository)
@@ -88,10 +88,10 @@ export class AuthService {
         await this.mailService.sendConfirmationEmail(email, confirmationToken);
 
         return {
-            id: user.id,
-            email: user.email,
-            full_name: user.full_name,
-            email_verified: user.email_verified,
+          id: user.id,
+          email: user.email,
+          full_name: user.full_name,
+          email_verified: user.email_verified,
         };
     } catch (error) {
         Logger.error('Auth register error:', error);
@@ -101,7 +101,7 @@ export class AuthService {
 
   async confirmEmail(token: string) {
         try {
-        // ✅ Utiliser la méthode du repository qui cherche par token
+        // Utiliser la méthode du repository qui cherche par token
         await this.userRepository.confirmEmail(token);
 
         return {
@@ -110,6 +110,55 @@ export class AuthService {
     } catch (error) {
         Logger.error('Auth confirm email error:', error);
         throw error;
+    }
+  }
+
+  async requestPasswordReset(email: string) {
+    try {
+      const user = await this.userRepository.findByEmail(email);
+
+      // ✅ Important: Ne pas dire si l'email existe (sécurité)
+      if (!user) {
+        return {
+          message: 'Si cet email existe, un lien de réinitialisation a été envoyé',
+        };
+      }
+
+      // Générer token reset
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      await this.userRepository.updatePasswordResetToken(user.id, resetToken);
+
+      // Envoyer email
+      await this.mailService.sendPasswordResetEmail(email, resetToken);
+
+      return {
+        message: 'Si cet email existe, un lien de réinitialisation a été envoyé',
+      };
+    } catch (error) {
+      Logger.error('Auth request password reset error:', error);
+      throw error;
+    }
+  }
+
+  async validateResetToken(token: string) {
+    try {
+      const isValid = await this.userRepository.validateResetToken(token);
+      return { valid: isValid };
+    } catch (error) {
+      Logger.error('Auth validate reset token error:', error);
+      throw error;
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    try {
+      await this.userRepository.resetPassword(token, newPassword);
+      return {
+        message: 'Mot de passe réinitialisé avec succès',
+      };
+    } catch (error) {
+      Logger.error('Auth reset password error:', error);
+      throw error;
     }
   }
 

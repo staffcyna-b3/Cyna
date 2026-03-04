@@ -148,7 +148,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }
     } catch (err) {
-      console.error('Erreur verify remember me:', err);
+      // console.error('Erreur verify remember me:', err);
     } finally {
       setIsLoading(false);
     }

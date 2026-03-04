@@ -87,6 +87,73 @@ export class AuthController {
     }
   }
 
+  async confirmEmail(req: Request, res: Response) {
+    try {
+      const { token } = req.body;
+
+      if (!token) {
+        return res.status(400).json({ error: 'Token manquant' });
+      }
+
+      const result = await this.authService.confirmEmail(token);
+
+      res.status(200).json(result);
+    } catch (error) {
+      Logger.error('Confirm email error:', error);
+      const message = error instanceof Error ? error.message : 'Erreur confirmation';
+      res.status(400).json({ error: message });
+    }
+  }
+
+  async requestPasswordReset(req: Request, res: Response) {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        return res.status(400).json({ error: 'Email manquant' });
+      }
+
+      const result = await this.authService.requestPasswordReset(email);
+      res.status(200).json(result);
+    } catch (error) {
+      Logger.error('Request password reset error:', error);
+      res.status(500).json({ error: 'Erreur lors de la demande' });
+    }
+  }
+
+  async validateResetToken(req: Request, res: Response) {
+    try {
+      const { token } = req.query;
+
+      if (!token) {
+        return res.status(400).json({ valid: false });
+      }
+
+      const result = await this.authService.validateResetToken(token as string);
+      res.status(200).json(result);
+    } catch (error) {
+      Logger.error('Validate reset token error:', error);
+      res.status(500).json({ valid: false });
+    }
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    try {
+      const { token, new_password } = req.body;
+
+      if (!token || !new_password) {
+        return res.status(400).json({ error: 'Données manquantes' });
+      }
+
+      const result = await this.authService.resetPassword(token, new_password);
+      res.status(200).json(result);
+    } catch (error) {
+      Logger.error('Reset password error:', error);
+      const message = error instanceof Error ? error.message : 'Erreur reset';
+      res.status(400).json({ error: message });
+    }
+  }
+
   async logout(req: Request, res: Response) {
     try {
       const token = req.cookies.remember_me_token;

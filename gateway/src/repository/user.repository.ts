@@ -11,6 +11,38 @@ export class UserRepository {
     });
   }
 
+  async updatePasswordResetToken(userId: string, token: string) {
+    return await User.update(
+      { password_reset_token: token },
+      { where: { id: userId } }
+    );
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await User.findOne({
+      where: { password_reset_token: token },
+    });
+
+    if (!user) {
+      throw new Error('Token invalide');
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    user.password_reset_token = null;
+    await user.save();
+
+    return user;
+  }
+
+  async validateResetToken(token: string) {
+    const user = await User.findOne({
+      where: { password_reset_token: token },
+    });
+
+    return !!user;
+  }
+
   async confirmEmail(token: string) {
     const user = await User.findOne({
       where: { email_confirmation_token: token },

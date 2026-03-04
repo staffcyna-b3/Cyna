@@ -20,7 +20,7 @@ export const Login: React.FC = () => {
         password: '',
     });
 
-    const [rememberMe, setRememberMe] = useState(false); // ✅ Nouveau
+    const [rememberMe, setRememberMe] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [isLoading, setIsLoading] = useState(false);
 
@@ -127,9 +127,9 @@ export const Login: React.FC = () => {
                         </Button>
                     </form>
 
-                    <p className="text-center text-gray-600 text-sm mt-6">
+                    <a href="/request-reset" className="text-center text-gray-600 text-sm mt-6">
                         {t("forgottenPassword")}{' '}
-                    </p>
+                    </a>
                 </div>
             </div>
         </div>
