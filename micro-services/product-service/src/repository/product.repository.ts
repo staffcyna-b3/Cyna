@@ -1,4 +1,4 @@
-import { Op, Includeable, WhereOptions } from 'sequelize';
+import { WhereOptions } from 'sequelize';
 import Product from '../models/Product';
 import ProductImage from '../models/ProductImage';
 import { AbstractRepository } from './abstract.repository';
@@ -6,7 +6,6 @@ import { AppError } from '../common/errors';
 import { ProductResponseDto } from '../dto/response/ProductResponse.dto';
 import { ProductListOptionsDto } from '../dto/requests/ProductListOptions.dto';
 import { ProductListResponseDto } from '../dto/response/ProductListResponse.dto';
-import { ProductListFilterDto } from '../dto/requests/ProductListFilter.dto';
 
 import { SortOrder } from '../enum/Sortrder.enum';
 
