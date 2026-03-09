@@ -30,8 +30,8 @@ export default class ProductRepository extends AbstractRepository<Product> {
         const { rows, count, page, totalPages } = await this.list({
             page: options.page,
             limit: options.limit,
-            where: options.filters as unknown as WhereOptions<Product>,
-            order: options.filters?.sortBy ? [[options.filters.sortBy, SortOrder.ASC]] : undefined,
+            where: (options.where ?? (options.filters as unknown as WhereOptions<Product>)) as WhereOptions<Product> | undefined,
+            order: options.order,
             include: this.defaultIncludes,
         });
 

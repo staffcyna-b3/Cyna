@@ -45,7 +45,8 @@ export abstract class AbstractRepository<T extends Model> {
                 page,
                 totalPages: Math.ceil(count / limit),
             };
-        } catch (error) {
+        }
+        catch (error) {
             if (error instanceof AppError)
                 throw error;
 
@@ -114,8 +115,10 @@ export abstract class AbstractRepository<T extends Model> {
 
     async count(where?: WhereOptions<T>): Promise<number> {
         try {
-            return await this.model.count({ where });
-        } catch (error) {
+            const effectiveWhere = where && Object.keys(where as any).length > 0 ? where : undefined;
+            return await this.model.count({ where: effectiveWhere });
+        }
+        catch (error) {
             Logger.error(`Erreur lors du comptage de ${this.model.name}`, {
                 modelName: this.model.name,
                 originalError: error instanceof Error ? error.message : String(error),

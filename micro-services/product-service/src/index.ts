@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import { Logger } from './common/logger'
 import { initDb } from './models';
+import productRoutes from './routes/product.routes';
 
 dotenv.config();
 const app = express()
@@ -11,6 +12,8 @@ app.use(cors())
 app.use(express.json())
 
 initDb()
+
+app.use('/products', productRoutes);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000
 
