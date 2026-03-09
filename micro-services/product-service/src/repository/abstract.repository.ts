@@ -1,5 +1,5 @@
 import { Model, ModelStatic, FindOptions, WhereOptions, Includeable, ValidationError } from 'sequelize';
-import { ListOptionsDto } from '../dto/ListOptions.dto';
+import { ListOptionsDto } from '../dto/requests/ListOptions.dto';
 import { AppError, NotFoundError } from '../common/errors';
 import { Logger } from '../common/logger';
 import { ListPromise } from '../types/ListPromise';
@@ -11,47 +11,6 @@ export abstract class AbstractRepository<T extends Model> {
     constructor(model: ModelStatic<T>) {
         this.model = model;
     }
-
-    async getById(id: string, includes?: Includeable[]): Promise<T | null> {
-        try {
-            const associationsToInclude = includes || this.defaultIncludes;
-
-            const entity = await this.model.findByPk(id, {
-                include: associationsToInclude.length > 0 ? associationsToInclude : undefined,
-            });
-
-            if (!entity) {
-                throw new NotFoundError(
-                    `${this.model.name} avec l'ID ${id} non trouvé`,
-                    {
-                        context: { id, modelName: this.model.name },
-                    }
-                );
-            }
-
-            return entity;
-        } catch (error) {
-            if (error instanceof AppError)
-                throw error;
-
-            Logger.error(`Erreur lors de la récupération de ${this.model.name}`, {
-                id,
-                modelName: this.model.name,
-                originalError: error instanceof Error ? error.message : String(error),
-            });
-
-            throw new AppError(
-                `Erreur lors de la récupération de ${this.model.name}`,
-                {
-                    statusCode: 500,
-                    code: 'DATABASE_ERROR',
-                    context: { id, modelName: this.model.name },
-                    originalError: error instanceof Error ? error : undefined,
-                }
-            );
-        }
-    }
-
 
     async list(options?: ListOptionsDto<T>): Promise<ListPromise<T>> {
         try {
@@ -107,6 +66,46 @@ export abstract class AbstractRepository<T extends Model> {
                         page: options?.page,
                         limit: options?.limit,
                     },
+                    originalError: error instanceof Error ? error : undefined,
+                }
+            );
+        }
+    }
+
+    async getById(id: string, includes?: Includeable[]): Promise<T | null> {
+        try {
+            const associationsToInclude = includes || this.defaultIncludes;
+
+            const entity = await this.model.findByPk(id, {
+                include: associationsToInclude.length > 0 ? associationsToInclude : undefined,
+            });
+
+            if (!entity) {
+                throw new NotFoundError(
+                    `${this.model.name} avec l'ID ${id} non trouvé`,
+                    {
+                        context: { id, modelName: this.model.name },
+                    }
+                );
+            }
+
+            return entity;
+        } catch (error) {
+            if (error instanceof AppError)
+                throw error;
+
+            Logger.error(`Erreur lors de la récupération de ${this.model.name}`, {
+                id,
+                modelName: this.model.name,
+                originalError: error instanceof Error ? error.message : String(error),
+            });
+
+            throw new AppError(
+                `Erreur lors de la récupération de ${this.model.name}`,
+                {
+                    statusCode: 500,
+                    code: 'DATABASE_ERROR',
+                    context: { id, modelName: this.model.name },
                     originalError: error instanceof Error ? error : undefined,
                 }
             );
