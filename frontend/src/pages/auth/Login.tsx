@@ -54,16 +54,22 @@ export const Login: React.FC = () => {
         setIsLoading(true);
 
         try {
-            // ✅ Passer rememberMe au login
             await login(formData.email, formData.password, rememberMe);
-            navigate('/dashboard');
+            
+            // Vérifier si 2FA est requis
+            const userId = sessionStorage.getItem('pending_2fa_user_id');
+            if (userId) {
+            navigate('/verify-2fa');  // Aller à la page 2FA
+            } else {
+            navigate('/');   // Connexion directe
+            }
         } catch (error) {
             const message = error instanceof Error ? error.message : 'Erreur lors de la connexion';
             setErrors({ submit: message });
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
     return (
         <div className="min-h-screen flex flex-col lg:flex-row lg:w-full">

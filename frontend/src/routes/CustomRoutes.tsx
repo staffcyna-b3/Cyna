@@ -8,6 +8,7 @@ import { Dashboard } from "@/pages/Dashboard"
 import { ProtectedRoute } from "@/components/protectedRoute"
 import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
+import { Verify2FA } from "@/pages/auth/Verify2FA"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -19,6 +20,7 @@ export default function CustomRoutes() {
       <Route path="/confirm-email" element={<ConfirmEmail />} />
       <Route path="/request-reset" element={<RequestReset />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/verify-2fa" element={<Verify2FA />} />
       <Route 
         path="/dashboard" 
         element={

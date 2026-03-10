@@ -12,5 +12,6 @@ router.post('/confirm-email', (req, res) => authController.confirmEmail(req, res
 router.post('/request-reset', (req, res) => authController.requestPasswordReset(req, res));
 router.get('/validate-reset-token', (req, res) => authController.validateResetToken(req, res));
 router.post('/reset-password', (req, res) => authController.resetPassword(req, res));
+router.post('/verify-2fa', (req, res) => authController.verify2FA(req, res));
 
 export default router;

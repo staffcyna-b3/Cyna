@@ -15,22 +15,13 @@ export class AuthController {
 
       const result = await this.authService.login(email, password, remember_me);
 
-      // Envoyer le token en cookie
-      if (result.rememberToken) {
-        res.cookie('remember_me_token', result.rememberToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'strict',
-          maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
-      }
-
+      // Retourner l'ID de l'utilisateur pour la 2FA
       res.status(200).json({
         id: result.id,
         email: result.email,
         full_name: result.full_name,
-        email_verified: result.email_verified,
-        role: result.role,
+        requires2FA: result.requires2FA,
+        message: 'Code 2FA envoyé par email',
       });
     } catch (error) {
       Logger.error('Login error:', error);
@@ -167,6 +158,40 @@ export class AuthController {
     } catch (error) {
       Logger.error('Logout error:', error);
       res.status(500).json({ error: 'Erreur logout' });
+    }
+  }
+
+  async verify2FA(req: Request, res: Response) {
+    try {
+      const { user_id, code, remember_me } = req.body;
+
+      if (!user_id || !code) {
+        return res.status(400).json({ error: 'Données manquantes' });
+      }
+
+      const result = await this.authService.verify2FA(user_id, code, remember_me);
+
+      // Envoyer token en cookie si present
+      if (result.rememberToken) {
+        res.cookie('remember_me_token', result.rememberToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'strict',
+          maxAge: 7 * 24 * 60 * 60 * 1000,
+        });
+      }
+
+      res.status(200).json({
+        id: result.id,
+        email: result.email,
+        full_name: result.full_name,
+        email_verified: result.email_verified,
+        role: result.role,
+      });
+    } catch (error) {
+      Logger.error('Verify 2FA error:', error);
+      const message = error instanceof Error ? error.message : 'Erreur vérification';
+      res.status(400).json({ error: message });
     }
   }
 }

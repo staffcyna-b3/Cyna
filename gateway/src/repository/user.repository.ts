@@ -112,4 +112,66 @@ export class UserRepository {
       { where: { remember_me_token: token } }
     );
   }
+
+  async generateAndSend2FACode(userId: string, email: string) {
+    // Générer code 6 chiffres
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
+
+    await User.update(
+      {
+        twofa_code: code,
+        twofa_expires_at: expiresAt,
+        twofa_attempts: 0,
+      },
+      { where: { id: userId } }
+    );
+
+    return code; // Pour envoyer par mail
+  }
+
+  async verify2FACode(userId: string, code: string) {
+    const user = await User.findByPk(userId);
+
+    if (!user) {
+      throw new Error('Utilisateur non trouvé');
+    }
+
+    // Vérifier expiration
+    if (!user.twofa_expires_at || user.twofa_expires_at < new Date()) {
+      throw new Error('Code expiré');
+    }
+
+    // Vérifier tentatives
+    if ((user.twofa_attempts ?? 0) >= 3) {
+      throw new Error('Trop de tentatives. Demandez un nouveau code.');
+    }
+
+    // Vérifier le code
+    if (user.twofa_code !== code) {
+      await User.update(
+        { twofa_attempts: (user.twofa_attempts ?? 0) + 1 },
+        { where: { id: userId } }
+      );
+      throw new Error('Code incorrect');
+    }
+
+    // Succès - nettoyer le code
+    await User.update(
+      {
+        twofa_code: null,
+        twofa_expires_at: null,
+        twofa_attempts: 0,
+      },
+      { where: { id: userId } }
+    );
+
+    return true;
+  }
+
+  async findByIdWithRole(userId: string) {
+    return await User.findByPk(userId, {
+      include: [{ association: 'userRole', attributes: ['role'] }],
+    });
+  }
 }

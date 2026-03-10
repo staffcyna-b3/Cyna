@@ -18,6 +18,7 @@ export interface AuthContextType {
   error: string | null;
   clearError: () => void;
   confirmEmail: (token: string) => Promise<void>;
+  verify2FA: (userId: string, code: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -115,6 +116,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         const data = await response.json();
+        
+        // Si 2FA requis, stocker l'ID temporairement
+        if (data.requires2FA) {
+          sessionStorage.setItem('pending_2fa_user_id', data.id);
+          sessionStorage.setItem('pending_2fa_email', data.email);
+          sessionStorage.setItem('pending_2fa_remember_me', rememberMe.toString());
+          return; // Ne pas rediriger, laisse le composant faire
+        }
+
+        // Sinon, connecter directement
         setUser({
           id: data.id,
           email: data.email,
@@ -123,6 +134,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erreur lors de la connexion';
+        setError(message);
+        throw err;
+      }
+    },
+    []
+  );
+
+  const verify2FA = useCallback(
+    async (userId: string, code: string) => {
+      setError(null);
+      try {
+        const rememberMe = sessionStorage.getItem('pending_2fa_remember_me') === 'true';
+
+        const response = await fetch('/api/auth/verify-2fa', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            user_id: userId,
+            code,
+            remember_me: rememberMe,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Erreur lors de la vérification');
+        }
+
+        const data = await response.json();
+
+        setUser({
+          id: data.id,
+          email: data.email,
+          full_name: data.full_name,
+          email_verified: data.email_verified,
+        });
+
+        // Nettoyer sessionStorage
+        sessionStorage.removeItem('pending_2fa_user_id');
+        sessionStorage.removeItem('pending_2fa_email');
+        sessionStorage.removeItem('pending_2fa_remember_me');
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Erreur vérification';
         setError(message);
         throw err;
       }
@@ -179,6 +234,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     error,
     clearError,
     confirmEmail,
+    verify2FA,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
