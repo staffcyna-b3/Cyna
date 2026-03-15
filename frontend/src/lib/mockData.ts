@@ -215,4 +215,159 @@ export const usersMockData = [
         twofa_expires_at: "2024-01-01T00:00:00.000Z",
         twofa_attempts: 0,
     }
+];
+
+export const ordersMockData = [
+    {
+        id: 1,
+        user_id: 1,
+        total_amount: 100,
+        status: "pending",
+        stripe_payment_intent_id: "pi_1234567890",
+        created_at: "2024-01-01T00:00:00.000Z",
+        updated_at: "2024-01-01T00:00:00.000Z",
+    },
+    {
+        id: 2,
+        user_id: 2,
+        total_amount: 200,
+        status: "completed",
+        stripe_payment_intent_id: "pi_1234567890",
+        created_at: "2024-01-01T00:00:00.000Z",
+        updated_at: "2024-01-01T00:00:00.000Z",
+    },
+    {
+        id: 3,
+        user_id: 3,
+        total_amount: 300,
+        status: "cancelled",
+        stripe_payment_intent_id: "pi_1234567890",
+        created_at: "2024-01-01T00:00:00.000Z",
+        updated_at: "2024-01-01T00:00:00.000Z",
+    },
+    {
+        id: 4,
+        user_id: 4,
+        total_amount: 400,
+        status: "pending",
+        stripe_payment_intent_id: "pi_1234567890",
+        created_at: "2024-01-01T00:00:00.000Z",
+        updated_at: "2024-01-01T00:00:00.000Z",
+    },
+    {
+        id: 5,
+        user_id: 5,
+        total_amount: 500,
+        status: "completed",
+        stripe_payment_intent_id: "pi_1234567890",
+        created_at: "2024-01-01T00:00:00.000Z",
+        updated_at: "2024-01-01T00:00:00.000Z",
+    }
+];
+
+export const transactionsMockData = [
+    {
+        id: "txn_1MiN3gLkdIwHu7ixxapQrznl",
+        object: "balance_transaction",
+        amount: -400,
+        available_on: 1678043844,
+        created: 1678043844,
+        currency: "usd",
+        description: null,
+        exchange_rate: null,
+        fee: 0,
+        fee_details: [],
+        net: -400,
+        reporting_category: "transfer",
+        source: "tr_1MiN3gLkdIwHu7ixNCZvFdgA",
+        status: "available",
+        type: "transfer"
+    },
+    {
+        id: "txn_1MiN3gLkdIwHu7ixxapQrznl",
+        object: "balance_transaction",
+        amount: -400,
+        available_on: 1678043844,
+        created: 1678043844,
+        currency: "usd",
+        description: null,
+        exchange_rate: null,
+        fee: 0,
+        fee_details: [],
+        net: -400,
+        reporting_category: "transfer",
+        source: "tr_1MiN3gLkdIwHu7ixNCZvFdgA",
+        status: "available",
+        type: "transfer"    
+    },
+    {
+        id: "txn_1MiN3gLkdIwHu7ixxapQrznl",
+        object: "balance_transaction",
+        amount: -400,
+        available_on: 1678043844,
+        created: 1678043844,
+        currency: "usd",
+        description: null,
+        exchange_rate: null,
+        fee: 0,
+        fee_details: [],
+        net: -400,
+        reporting_category: "transfer",
+        source: "tr_1MiN3gLkdIwHu7ixNCZvFdgA",
+        status: "available",
+        type: "transfer"
+    }
+];
+
+export const refundsMockData = [
+    {
+        id: "re_1Nispe2eZvKYlo2Cd31jOCgZ",
+        object: "refund",
+        amount: 1000,
+        balance_transaction: "txn_1Nispe2eZvKYlo2CYezqFhEx",
+        charge: "ch_1NirD82eZvKYlo2CIvbtLWuY",
+        created: 1692942318,
+        currency: "usd",
+        destination_details: {
+            card: {
+                reference: "123456789012",
+                reference_status: "available",
+                reference_type: "acquirer_reference_number",
+                type: "refund"
+            },
+            type: "card"
+        },
+        metadata: {},
+        payment_intent: "pi_1GszsK2eZvKYlo2CfhZyoZLp",
+        reason: null,
+        receipt_number: null,
+        source_transfer_reversal: null,
+        status: "succeeded",
+        transfer_reversal: null
+    },
+    {
+        id: "re_1Nispe2eZvKYlo2Cd31jOCgZ",
+        object: "refund",
+        amount: 1000,
+        balance_transaction: "txn_1Nispe2eZvKYlo2CYezqFhEx",
+        charge: "ch_1NirD82eZvKYlo2CIvbtLWuY",
+        created: 1692942318,
+        currency: "usd",
+        destination_details: {
+            card: {
+                reference: "123456789012",
+                reference_status: "available",
+                reference_type: "acquirer_reference_number",
+                type: "refund"
+            },
+            type: "card"
+        },
+        metadata: {},
+        payment_intent: "pi_1GszsK2eZvKYlo2CfhZyoZLp",
+        reason: null,
+        receipt_number: null,
+        source_transfer_reversal: null,
+        status: "succeeded",
+        transfer_reversal: null
+    }
 ]

@@ -3,15 +3,17 @@
 import * as React from "react"
 import {
   ArrowLeftRight,
+  BanknoteArrowDown,
   Boxes,
+  HandCoins,
   LayoutDashboard,
   Percent,
   ShoppingCart,
   Users,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/Backoffice/layout/nav-main"
+import { NavUser } from "@/components/Backoffice/layout/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -21,7 +23,8 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { TypographyH1 } from "./ui/typography"
+import { TypographyH1 } from "../../ui/typography"
+import { Button } from "@/components/ui/button"
 
 const data = {
   user: {
@@ -55,6 +58,11 @@ const data = {
       title: 'transactions',
       url: "/transactions",
       icon: ArrowLeftRight,
+    },
+    {
+      title: 'refunds',
+      url: "/refunds",
+      icon: HandCoins,
     },
     {
       title: 'discounts',
