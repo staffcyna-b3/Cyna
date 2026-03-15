@@ -10,8 +10,8 @@ import {
   Users,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
-import { NavUser } from "@/components/nav-user"
+import { NavMain } from "@/components/Backoffice/layout/nav-main"
+import { NavUser } from "@/components/Backoffice/layout/nav-user"
 import {
   Sidebar,
   SidebarContent,
@@ -21,7 +21,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { TypographyH1 } from "./ui/typography"
+import { TypographyH1 } from "../../ui/typography"
 
 const data = {
   user: {

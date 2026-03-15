@@ -4,6 +4,7 @@ import HomePage from "../pages/Home"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Dashboard from "../pages/BackOffice/Dashboard"
 import Users from "@/pages/BackOffice/Users"
+import { Checkout } from "@/pages/Checkout"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -17,6 +18,7 @@ export default function CustomRoutes() {
       </Route>
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
+        <Route path="/checkout" element={<Checkout />} />
       </Route>
     </Routes>
   )
