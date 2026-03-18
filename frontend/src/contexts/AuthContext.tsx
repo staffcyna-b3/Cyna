@@ -5,6 +5,7 @@ export interface User {
   email: string;
   full_name: string;
   email_verified: boolean;
+  role: 'ADMIN' | 'COMMERCIAL' | 'USER';
 }
 
 export interface AuthContextType {
@@ -131,6 +132,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: data.email,
           full_name: data.full_name,
           email_verified: data.email_verified,
+          role: data.role,
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erreur lors de la connexion';
@@ -170,6 +172,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email: data.email,
           full_name: data.full_name,
           email_verified: data.email_verified,
+          role: data.role,
         });
 
         // Nettoyer sessionStorage
@@ -199,6 +202,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             email: data.email,
             full_name: data.full_name,
             email_verified: data.email_verified,
+            role: data.role,
           });
         }
       }

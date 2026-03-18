@@ -1,5 +1,3 @@
-// src/pages/Auth/Verify2FA.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
@@ -31,19 +29,17 @@ export const Verify2FA: React.FC = () => {
     setError(null);
 
     if (!code || code.length !== 6) {
-      setError('Le code doit contenir 6 chiffres');
+      setError(t('wrongCodeFormat'));
       return;
     }
 
     setIsLoading(true);
 
     try {
-      console.log('Vérification 2FA avec userId:', userId);
       await verify2FA(userId!, code);
-      console.log('2FA vérifié, redirection...');
       navigate('/');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erreur vérification';
+      const message = err instanceof Error ? err.message : t('ErrorVerifying2FA');
       console.error('Erreur 2FA:', message);
       setError(message);
       setAttempts((prev) => prev + 1);
@@ -72,10 +68,10 @@ export const Verify2FA: React.FC = () => {
 
         <div className="w-full max-w-sm">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 text-center lg:text-left">
-            Vérification 2FA
+            {t('verify2FA')}
           </h2>
           <p className="text-gray-600 text-sm mb-8 text-center lg:text-left">
-            Un code a été envoyé à <strong>{email}</strong>
+            {t('verificationCodeSent')} {email ? `(${email})` : ''}.
           </p>
 
           {error && (
@@ -84,7 +80,7 @@ export const Verify2FA: React.FC = () => {
               {attempts >= 3 && (
                 <div className="mt-2">
                   <a href="/login" className="text-red-600 hover:text-red-700 font-semibold">
-                    Retour à la connexion
+                    {t('backToLogin')}
                   </a>
                 </div>
               )}
@@ -95,7 +91,7 @@ export const Verify2FA: React.FC = () => {
             {/* Code Input */}
             <div>
               <label htmlFor="code" className="block text-sm font-medium text-gray-700 mb-2">
-                Code de vérification (6 chiffres)
+                {t('verificationCode')}
               </label>
               <input
                 id="code"
@@ -110,7 +106,7 @@ export const Verify2FA: React.FC = () => {
                 className="w-full h-11 rounded-[10px] border-2 border-gray-300 p-2.5 text-center text-2xl tracking-widest placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:border-[#3632F5] focus-visible:ring-[#3632F5] disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
               />
               <p className="text-xs text-gray-500 mt-2">
-                Tentatives restantes: {3 - attempts}/3
+                {t('attemptsRemaining')}: {3 - attempts}/3
               </p>
             </div>
 
@@ -120,7 +116,7 @@ export const Verify2FA: React.FC = () => {
               disabled={isLoading || code.length !== 6 || attempts >= 3}
               className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6"
             >
-              {isLoading ? 'Vérification...' : 'Vérifier'}
+              {isLoading ? t('verifying2FA') : t('verify2FA')}
             </Button>
           </form>
 
@@ -128,7 +124,7 @@ export const Verify2FA: React.FC = () => {
           <div className="mt-6 text-center text-sm">
             <p className="text-gray-600">
               <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
-                Retour à la connexion
+                {t('backToLogin')}
               </a>
             </p>
           </div>

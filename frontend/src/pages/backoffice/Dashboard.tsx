@@ -1,5 +1,5 @@
-import { LogoutButton } from '../components/ui/logoutButton';
-import { useAuth } from '../hooks/useAuth';
+import { LogoutButton } from '../../components/ui/logoutButton';
+import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 
 export const Dashboard: React.FC = () => {

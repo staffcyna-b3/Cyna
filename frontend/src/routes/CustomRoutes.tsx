@@ -1,10 +1,10 @@
 import { Routes, Route, useLocation } from "react-router-dom"
 import MainLayout from "../layouts/MainLayout"
-import HomePage from "../pages/Home"
+import HomePage from "../pages/frontoffice/Home"
 import { Register } from "../pages/auth/Register"
 import { Login } from "@/pages/auth/Login"
 import { ConfirmEmail } from "@/pages/auth/ConfirmEmail"
-import { Dashboard } from "@/pages/Dashboard"
+import { Dashboard } from "@/pages/backoffice/Dashboard"
 import { ProtectedRoute } from "@/components/protectedRoute"
 import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
@@ -24,7 +24,7 @@ export default function CustomRoutes() {
       <Route 
         path="/dashboard" 
         element={
-          <ProtectedRoute>
+          <ProtectedRoute requiredRoles={['ADMIN', 'COMMERCIAL']}>
             <Dashboard />
           </ProtectedRoute>
         } 

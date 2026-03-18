@@ -1,13 +1,22 @@
 {
   "alreadyHaveAccount": "Already have an account ?",
+  "attemptsRemaining": "Attempts remaining :",
+  "backToLogin": "Go back to login page",
   "confirmPassword": "Confirm Password",
   "email": "Email",
+  "ErrorVerifying2FA": "Error verifying 2FA",
   "forgottenPassword": "Password forgotten ?",
   "fullName": "Full Name",
+  "loading": "Loading...",
   "login": "Log in",
   "password": "Password",
   "register": "Register",
   "rememberMe": "Remember me",
   "test": "English test",
-  "welcome": "Welcome to Cyna."
+  "verificationCode": "Verification Code",
+  "verificationCodeSent": "Verification code sent to",
+  "verify2FA": "Verify 2FA",
+  "verifying2FA": "Verifying 2FA",
+  "welcome": "Welcome to Cyna.",
+  "wrongCodeFormat": "Invalid code format, it should be 6 digits"
 }

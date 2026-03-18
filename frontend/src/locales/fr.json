@@ -1,13 +1,22 @@
 {
   "alreadyHaveAccount": "Vous avez déjà un compte ?",
+  "attemptsRemaining": "Tentatives restantes :",
+  "backToLogin": "Retour à la page de connexion",
   "confirmPassword": "Confirmer le mot de passe",
   "email": "Email",
+  "ErrorVerifying2FA": "Erreur de vérification 2FA",
   "forgottenPassword": "Mot de passe oublié ?",
   "fullName": "Nom complet",
+  "loading": "Chargement...",
   "login": "Se connecter",
   "password": "Mot de passe",
   "register": "S'inscrire",
   "rememberMe": "Se souvenir de moi",
   "test": "Francais test",
-  "welcome": "Bienvenue sur Cyna."
+  "verificationCode": "Code de vérification",
+  "verificationCodeSent": "Code de vérification envoyé à",
+  "verify2FA": "Vérification 2FA",
+  "verifying2FA": "Vérification 2FA en cours",
+  "welcome": "Bienvenue sur Cyna.",
+  "wrongCodeFormat": "Format de code invalide, il doit contenir 6 chiffres"
 }
