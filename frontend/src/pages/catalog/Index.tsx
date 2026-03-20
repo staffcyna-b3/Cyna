@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import CatalogProvider from "../../providers/CatalogProvider";
 import useCatalogFetch from "../../hooks/useCatalogFetch";
+import CatalogProductCard from "../../components/CatalogProductCard";
 
 export default function CatalogList() {
     return (
@@ -18,37 +19,29 @@ function CatalogListInner() {
     }, [fetchCatalog]);
 
     return (
-        <div style={{ padding: 16 }}>
-            <h2>Catalog List</h2>
+        <div className="p-6 text-white">
+            <h2 className="text-2xl font-semibold mb-4">Tops produits du moment</h2>
 
-            <div style={{ marginBottom: 12 }}>
-                <button onClick={() => void fetchCatalog()} disabled={loading}>
-                    Refresh
+            <div className="mb-4">
+                <button className="btn" onClick={() => void fetchCatalog()} disabled={loading}>
+                    Rafraîchir
                 </button>
             </div>
 
-            {loading && <div>Loading…</div>}
-            {error && <div style={{ color: "red" }}>Error: {error}</div>}
+            {loading && <div>Chargement…</div>}
+            {error && <div className="text-red-400">Erreur: {error}</div>}
 
             {!loading && data && (
                 <div>
-                    <div style={{ marginBottom: 8 }}>
-                        Showing {data.rows?.length ?? 0} / {data.count ?? 0} products
+                    <div className="mb-2 text-sm text-[#bfc8ff]">
+                        Affichage {data.rows?.length ?? 0} / {data.count ?? 0} produits
                     </div>
-                    <ul style={{ listStyle: "none", padding: 0 }}>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {(data.rows ?? []).map((p) => (
-                            <li key={p.id} style={{ padding: 8, borderBottom: "1px solid #eee" }}>
-                                <div style={{ fontWeight: 600 }}>{p.name}</div>
-                                <div style={{ color: "#555" }}>{p.description}</div>
-                                <div style={{ marginTop: 6 }}>
-                                    <span style={{ fontWeight: 700 }}>{p.price} €</span>
-                                    <span style={{ marginLeft: 12, color: p.stock > 0 ? "green" : "#999" }}>
-                                        {p.stock > 0 ? `In stock (${p.stock})` : "Out of stock"}
-                                    </span>
-                                </div>
-                            </li>
+                            <CatalogProductCard key={p.id} product={p} />
                         ))}
-                    </ul>
+                    </div>
                 </div>
             )}
         </div>

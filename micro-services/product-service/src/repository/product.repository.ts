@@ -4,6 +4,7 @@ import ProductImage from '../models/ProductImage';
 import { AbstractRepository } from './abstract.repository';
 import { AppError } from '../common/errors';
 import { ProductResponseDto } from '../dto/response/ProductResponse.dto';
+import { mapProductToDto } from '../utils/mapProductToDto';
 import { ProductListOptionsDto } from '../dto/requests/ProductListOptions.dto';
 import { ProductListResponseDto } from '../dto/response/ProductListResponse.dto';
 
@@ -15,7 +16,7 @@ export default class ProductRepository extends AbstractRepository<Product> {
         this.defaultIncludes = [
             {
                 association: 'images',
-                attributes: ['id', 'product_id', 'alt_text', 'is_main'],
+                attributes: ['id', 'image', 'product_id', 'alt_text', 'is_main'],
                 required: false,
             },
             {
@@ -36,7 +37,7 @@ export default class ProductRepository extends AbstractRepository<Product> {
         });
 
         return {
-            rows: rows.map((product) => this.mapProductToDto(product)),
+            rows: rows.map((product) => mapProductToDto(product)),
             count,
             page,
             limit: options.limit || 10,
@@ -50,7 +51,7 @@ export default class ProductRepository extends AbstractRepository<Product> {
                 if (!product) 
                     return null;
 
-                return this.mapProductToDto(product);
+                return mapProductToDto(product);
             } catch (error) {
                 if (error instanceof AppError && (error as any).statusCode === 404) 
                     return null;
@@ -60,29 +61,5 @@ export default class ProductRepository extends AbstractRepository<Product> {
 
     async countProducts(where?: WhereOptions<Product>): Promise<number> {
         return await this.count(where);
-    }
-
-
-    private mapProductToDto(product: Product): ProductResponseDto {
-        return {
-            id: product.id,
-            categoryId: product.category_id,
-            name: product.name,
-            description: product.description,
-            price: Number(product.price),
-            stock: product.stock,
-            status: product.status,
-            isService: product.is_service,
-            duration: product.duration,
-            priority: product.priority,
-            images: (product as any).images?.map((img: ProductImage) => ({
-                id: img.id,
-                productId: img.product_id,
-                altText: img.alt_text,
-                isMain: img.is_main,
-            })),
-            createdAt: product.created_at,
-            updatedAt: product.updated_at,
-        };
     }
 }

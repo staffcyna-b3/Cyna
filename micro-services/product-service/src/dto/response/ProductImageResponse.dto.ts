@@ -3,4 +3,6 @@ export interface ProductImageResponseDto {
   productId: string;
   altText?: string | null;
   isMain: boolean;
+  base64?: string;
+  mime?: string;
 }

@@ -23,6 +23,13 @@ export class CatalogApi extends AbstractApi {
                 params.append(key, String(value));
             }
         });
-        return await this.get<CatalogListResponse>(`/products/?${params.toString()}`);
+
+        const res = await this.get<{
+            success: boolean;
+            message?: string;
+            data: CatalogListResponse;
+        }>(`/products/?${params.toString()}`);
+
+        return res.data;
     }
 }
