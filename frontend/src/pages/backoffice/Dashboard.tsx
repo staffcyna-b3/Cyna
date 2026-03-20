@@ -1,4 +1,4 @@
-import { LogoutButton } from '../../components/ui/logoutButton';
+import { LogoutButton } from '../../components/logoutButton';
 import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 

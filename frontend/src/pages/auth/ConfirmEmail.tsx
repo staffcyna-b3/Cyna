@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
+import { Typography } from '@/components/ui/typography';
 
 export const ConfirmEmail: React.FC = () => {
   const navigate = useNavigate();
@@ -18,14 +19,14 @@ export const ConfirmEmail: React.FC = () => {
 
       if (!token) {
         setStatus('error');
-        setMessage('Token manquant');
+        setMessage(t('ErrorTokenMissing'));
         return;
       }
 
       try {
         await confirmEmail(token);
         setStatus('success');
-        setMessage('Email confirmé avec succès !');
+        setMessage(t('EmailConfirmed'));
 
         // Rediriger vers login après 2 secondes
         setTimeout(() => {
@@ -33,7 +34,7 @@ export const ConfirmEmail: React.FC = () => {
         }, 2000);
       } catch (error) {
         setStatus('error');
-        const errorMessage = error instanceof Error ? error.message : 'Erreur lors de la confirmation';
+        const errorMessage = error instanceof Error ? error.message : t('ErrorConfirmationFailed');
         setMessage(errorMessage);
       }
     };
@@ -45,23 +46,23 @@ export const ConfirmEmail: React.FC = () => {
     <div className="min-h-screen w-full flex flex-col lg:flex-row">
       {/* Section gauche: Logo */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-blue-950 to-blue-900 items-center justify-center p-4">
-        <h1 className="text-6xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-          CYNA.
-        </h1>
+          <Typography variant="h1" className="text-white">
+            {t('CYNA')}
+          </Typography>
       </div>
 
       {/* Section droite: Message */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="lg:hidden mb-8">
-          <h1 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            CYNA.
-          </h1>
+          <Typography variant="h1" className="text-4xl font-bold text-gray-900">
+            {t('CYNA')}
+          </Typography>
         </div>
 
         <div className="w-full max-w-sm">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center lg:text-left">
-            Confirmation d'email
-          </h2>
+          <Typography variant="h2" className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center lg:text-left">
+            {t('ConfirmEmail')}
+          </Typography>
 
           {/* Loading */}
           {status === 'loading' && (
@@ -69,7 +70,9 @@ export const ConfirmEmail: React.FC = () => {
               <div className="flex justify-center mb-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
               </div>
-              <p className="text-gray-600">Vérification en cours...</p>
+              <Typography variant="body" className="text-gray-600">
+                {t('VerificationInProgress')}
+              </Typography>
             </div>
           )}
 
@@ -83,8 +86,12 @@ export const ConfirmEmail: React.FC = () => {
                   </svg>
                 </div>
               </div>
-              <p className="text-green-600 font-semibold mb-4">{message}</p>
-              <p className="text-gray-600 text-sm">Redirection vers la connexion...</p>
+              <Typography variant="body" className="text-green-600 font-semibold mb-4">
+                {message}
+              </Typography>
+              <Typography variant="body" className="text-gray-600 text-sm">
+                {t('RedirectingToLogin')}
+              </Typography>
             </div>
           )}
 
@@ -98,14 +105,18 @@ export const ConfirmEmail: React.FC = () => {
                   </svg>
                 </div>
               </div>
-              <p className="text-red-600 font-semibold mb-4">{message}</p>
+              <Typography variant="body" className="text-red-600 font-semibold mb-4">
+                {message}
+              </Typography>
               <div className="space-y-3">
-                <p className="text-gray-600 text-sm">Le lien a expiré ou est invalide.</p>
+                <Typography variant="body" className="text-gray-600 text-sm">
+                  {t('InvalidOrExpiredLink')}
+                </Typography>
                 <a
                   href="/register"
                   className="inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
                 >
-                  Réessayer l'inscription
+                  {t('ResendConfirmation')}
                 </a>
               </div>
             </div>

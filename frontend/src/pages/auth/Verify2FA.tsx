@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import { Typography } from '@/components/ui/typography';
 
 export const Verify2FA: React.FC = () => {
   const navigate = useNavigate();
@@ -53,26 +54,26 @@ export const Verify2FA: React.FC = () => {
     <div className="min-h-screen w-full flex flex-col lg:flex-row">
       {/* Section gauche: Logo */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-blue-950 to-blue-900 items-center justify-center p-4">
-        <h1 className="text-6xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-          CYNA.
-        </h1>
+        <Typography variant="h1" className="text-6xl font-bold text-white">
+          {t('CYNA')}
+        </Typography>
       </div>
 
       {/* Section droite: Formulaire */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="lg:hidden mb-8">
-          <h1 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            CYNA.
-          </h1>
+          <Typography variant="h1" className="text-4xl font-bold text-gray-900">
+            {t('CYNA')}
+          </Typography>
         </div>
 
         <div className="w-full max-w-sm">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 text-center lg:text-left">
+          <Typography variant="h2" className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 text-center lg:text-left">
             {t('verify2FA')}
-          </h2>
-          <p className="text-gray-600 text-sm mb-8 text-center lg:text-left">
+          </Typography>
+          <Typography variant="body" className="text-gray-600 text-sm mb-8 text-center lg:text-left">
             {t('verificationCodeSent')} {email ? `(${email})` : ''}.
-          </p>
+          </Typography>
 
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
@@ -105,9 +106,9 @@ export const Verify2FA: React.FC = () => {
                 disabled={isLoading || attempts >= 3}
                 className="w-full h-11 rounded-[10px] border-2 border-gray-300 p-2.5 text-center text-2xl tracking-widest placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:border-[#3632F5] focus-visible:ring-[#3632F5] disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
               />
-              <p className="text-xs text-gray-500 mt-2">
+              <Typography variant="body" className="text-xs text-gray-500 mt-2">
                 {t('attemptsRemaining')}: {3 - attempts}/3
-              </p>
+              </Typography>
             </div>
 
             {/* Submit Button */}
@@ -122,11 +123,11 @@ export const Verify2FA: React.FC = () => {
 
           {/* Lien retour */}
           <div className="mt-6 text-center text-sm">
-            <p className="text-gray-600">
+            <Typography variant="body" className="text-gray-600">
               <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
                 {t('backToLogin')}
               </a>
-            </p>
+            </Typography>
           </div>
         </div>
       </div>

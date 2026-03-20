@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ValidationErrors, validateRegistration } from '../../utils/validation';
-import { RegisterFormData } from '../../types/interfaces/auth.types';
+import { RegisterFormData } from '../../types/interfaces/RegisterFormData.interface';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from "react-i18next"
-import { TypographyH2 } from '@/components/ui/typography';
+import { Typography } from '@/components/ui/typography';
 import { Link } from '@/components/ui/link';
 import { Input } from '@/components/ui/input';
 
@@ -63,12 +63,12 @@ export const Register: React.FC = () => {
 
         try {
             await register(formData.email, formData.password, formData.fullName);
-            setSuccessMessage('Inscription réussie ! Vérifiez votre email pour confirmer votre compte.');
+            setSuccessMessage(t('RegistrationSuccessful'));
             setTimeout(() => {
                 navigate('/confirm-email');
             }, 2000);
         } catch (error: any) {
-            const message = error instanceof Error ? error.message : 'Erreur lors de l\'inscription';
+            const message = error instanceof Error ? error.message : t('RegistrationError');
             setErrors({ submit: message });
         } finally {
             setIsLoading(false);
@@ -78,16 +78,16 @@ export const Register: React.FC = () => {
     return (
         <div className="min-h-screen flex flex-col lg:flex-row lg:w-full">
             <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b items-center justify-center p-4">
-                <h1 className="text-9xl font-bold text-white font-space-grotesk">CYNA.</h1>
+                <Typography variant="h1" className="text-9xl font-bold text-white font-space-grotesk">{t('CYNA')}</Typography>
             </div>
 
             <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
                 <div className="lg:hidden mb-8">
-                    <h1 className="text-9xl font-bold text-gray-900 font-space-grotesk">CYNA.</h1>
+                    <Typography variant="h1" className="text-9xl font-bold text-gray-900 font-space-grotesk">{t('CYNA')}</Typography>
                 </div>
 
                 <div className="w-full max-w-sm">
-                    <TypographyH2>{t("welcome")}</TypographyH2>
+                    <Typography variant="h2">{t("welcome")}</Typography>
 
                     {successMessage && (
                         <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
@@ -136,9 +136,9 @@ export const Register: React.FC = () => {
                                 placeholder="••••••••"
                                 error={errors.password}
                             />
-                            <p className="text-xs text-gray-500 mt-2">
-                                Min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
-                            </p>
+                            <Typography variant="body" className="text-xs text-gray-500 mt-2">
+                                {t('PasswordRequirements')}
+                            </Typography>
                         </div>
 
                         <div>
@@ -157,7 +157,7 @@ export const Register: React.FC = () => {
                             disabled={isLoading}
                             variant="cyna"
                         >
-                            {isLoading ? 'Inscription en cours...' : t('register')}
+                            {isLoading ? t('RegistrationInProgress') : t('register')}
                         </Button>
                     </form>
 

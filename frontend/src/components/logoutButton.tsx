@@ -1,11 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 export const LogoutButton: React.FC = () => {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     try {
@@ -21,7 +23,7 @@ export const LogoutButton: React.FC = () => {
       onClick={handleLogout}
       variant="destructive"
     >
-      Déconnexion
+      {t('logout')}
     </Button>
   );
 };

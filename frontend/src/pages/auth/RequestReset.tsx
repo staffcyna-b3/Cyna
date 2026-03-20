@@ -5,7 +5,7 @@ import { validateEmail, ValidationErrors } from '../../utils/validation';
 import { Button } from '@/components/ui/button';
 import { Input } from '../../components/ui/input';
 import { useTranslation } from 'react-i18next';
-import { RequestResetFormData } from '../../types/interfaces/auth.types';
+import { Typography } from '@/components/ui/typography';
 
 export const RequestReset: React.FC = () => {
   const navigate = useNavigate();
@@ -53,18 +53,13 @@ export const RequestReset: React.FC = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la demande');
+        throw new Error(errorData.error || t('requestNewLinkError'));
       }
 
       const data = await response.json();
-      setSuccessMessage(data.message || 'Vérifiez votre email pour réinitialiser votre mot de passe');
-
-      // Rediriger après 3 secondes
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
+      setSuccessMessage(data.message || t('requestNewLinkSuccess'));
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erreur lors de la demande';
+      const message = error instanceof Error ? error.message : t('requestNewLinkError');
       setErrors({ submit: message });
     } finally {
       setIsLoading(false);
@@ -75,25 +70,25 @@ export const RequestReset: React.FC = () => {
     <div className="min-h-screen w-full flex flex-col lg:flex-row">
       {/* Section gauche: Logo */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-blue-950 to-blue-900 items-center justify-center p-4">
-        <h1 className="text-6xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-          CYNA.
-        </h1>
+        <Typography variant="h1" className="text-6xl font-bold text-white">
+          {t('CYNA')}
+        </Typography>
       </div>
 
       {/* Section droite: Formulaire */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="lg:hidden mb-8">
-          <h1 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            CYNA.
-          </h1>
+          <Typography variant="h1" className="text-4xl font-bold text-gray-900">
+            {t('CYNA')}
+          </Typography>
         </div>
 
         <div className="w-full max-w-sm">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 text-center lg:text-left">
-            Mot de passe oublié ?
+            {t('forgottenPassword')}
           </h2>
           <p className="text-gray-600 text-sm mb-8 text-center lg:text-left">
-            Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.
+            {t('requestNewLinkDescription')}
           </p>
 
           {successMessage && (
@@ -117,7 +112,7 @@ export const RequestReset: React.FC = () => {
               value={email}
               onChange={handleChange}
               placeholder="user@example.com"
-              label="Email"
+              label={t('email')}
               error={errors.email}
               disabled={isLoading}
             />
@@ -128,16 +123,16 @@ export const RequestReset: React.FC = () => {
               disabled={isLoading}
               className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6"
             >
-              {isLoading ? 'Envoi en cours...' : 'Envoyer le lien de réinitialisation'}
+              {isLoading ? t('sendingLink') : t('sendResetLink')}
             </Button>
           </form>
 
           {/* Lien retour login */}
           <div className="mt-6 text-center text-sm">
             <p className="text-gray-600">
-              Vous vous souvenez de votre mot de passe ?{' '}
+              {t('alreadyHaveAccount')}{' '}
               <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
-                Se connecter
+                {t('backToLogin')}
               </a>
             </p>
           </div>

@@ -1,5 +1,3 @@
-// src/pages/Auth/ResetPassword.tsx
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ValidationErrors, validatePassword, validatePasswordMatch } from '../../utils/validation';
@@ -7,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '../../components/ui/input';
 import { useTranslation } from 'react-i18next';
 import { validateEmail } from '../../utils/validation';
+import { Typography } from '@/components/ui/typography';
 
 interface ResetFormData {
   password: string;
@@ -115,14 +114,14 @@ export const ResetPassword: React.FC = () => {
         throw new Error(errorData.error || 'Erreur lors de la réinitialisation');
       }
 
-      setSuccessMessage('Mot de passe réinitialisé avec succès ! Redirection...');
+      setSuccessMessage(t('passwordResetSuccess'));
 
       // Rediriger après 2 secondes
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Erreur lors de la réinitialisation';
+      const message = error instanceof Error ? error.message : t('passwordResetError');
       setErrors({ submit: message });
     } finally {
       setIsLoading(false);
@@ -134,9 +133,9 @@ export const ResetPassword: React.FC = () => {
     return (
       <div className="min-h-screen w-full flex flex-col lg:flex-row">
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-blue-950 to-blue-900 items-center justify-center p-4">
-          <h1 className="text-6xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            CYNA.
-          </h1>
+          <Typography variant="h1" className="text-6xl font-bold text-white">
+            {t('CYNA')}
+          </Typography>
         </div>
 
         <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
@@ -148,13 +147,17 @@ export const ResetPassword: React.FC = () => {
                 </svg>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Lien invalide</h2>
-            <p className="text-gray-600 mb-6">Ce lien de réinitialisation est expiré ou invalide.</p>
+            <Typography variant="h2" className="text-2xl font-bold text-gray-900 mb-2">
+              {t('invalidLink')}
+            </Typography>
+            <Typography variant="body" className="text-gray-600 mb-6">
+              {t('InvalidOrExpiredLink')}
+            </Typography>
             <a
               href="/request-reset"
               className="inline-block px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
             >
-              Demander un nouveau lien
+              {t('requestNewLink')}
             </a>
           </div>
         </div>
@@ -176,23 +179,23 @@ export const ResetPassword: React.FC = () => {
     <div className="min-h-screen w-full flex flex-col lg:flex-row">
       {/* Section gauche: Logo */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-blue-950 to-blue-900 items-center justify-center p-4">
-        <h1 className="text-6xl font-bold text-white" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-          CYNA.
-        </h1>
+        <Typography variant="h1" className="text-6xl font-bold text-white">
+          {t('CYNA')}
+        </Typography>
       </div>
 
       {/* Section droite: Formulaire */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="lg:hidden mb-8">
-          <h1 className="text-4xl font-bold text-gray-900" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>
-            CYNA.
-          </h1>
+          <Typography variant="h1" className="text-4xl font-bold text-gray-900">
+            {t('CYNA')}
+          </Typography>
         </div>
 
         <div className="w-full max-w-sm">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center lg:text-left">
-            Nouveau mot de passe
-          </h2>
+          <Typography variant="h2" className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center lg:text-left">
+            {t('newPassword')}
+          </Typography>
 
           {successMessage && (
             <div className="mb-4 p-3 bg-green-50 border border-green-200 text-green-700 rounded-lg text-sm">
@@ -215,13 +218,13 @@ export const ResetPassword: React.FC = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
-              label="Nouveau mot de passe"
+              label={t('newPassword')}
               error={errors.password}
               disabled={isLoading}
             />
-            <p className="text-xs text-gray-500">
-              Min 8 caractères, 1 majuscule, 1 minuscule, 1 chiffre, 1 caractère spécial
-            </p>
+            <Typography variant="body" className="text-xs text-gray-500">
+              {t('PasswordRequirements')}
+            </Typography>
 
             {/* Confirm Password */}
             <Input
@@ -231,7 +234,7 @@ export const ResetPassword: React.FC = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               placeholder="••••••••"
-              label="Confirmer le mot de passe"
+              label={t('confirmPassword')}
               error={errors.confirmPassword}
               disabled={isLoading}
             />
@@ -242,7 +245,7 @@ export const ResetPassword: React.FC = () => {
               disabled={isLoading}
               className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-6"
             >
-              {isLoading ? 'Réinitialisation en cours...' : 'Réinitialiser mon mot de passe'}
+              {isLoading ? t('resettingPassword') : t('resetPassword')}
             </Button>
           </form>
 
@@ -250,7 +253,7 @@ export const ResetPassword: React.FC = () => {
           <div className="mt-6 text-center text-sm">
             <p className="text-gray-600">
               <a href="/login" className="text-blue-600 hover:text-blue-700 font-semibold transition-colors">
-                Retour à la connexion
+                {t('backToLogin')}
               </a>
             </p>
           </div>

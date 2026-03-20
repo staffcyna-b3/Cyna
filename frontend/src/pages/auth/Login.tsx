@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ValidationErrors, validateLogin } from '../../utils/validation';
-import { LoginFormData } from '../../types/interfaces/auth.types';
+import { LoginFormData } from '../../types/interfaces/LoginFormData.interface';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from "react-i18next"
-import { TypographyH2 } from '@/components/ui/typography';
+import { Typography } from '@/components/ui/typography';
 import { Link } from '@/components/ui/link';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -64,7 +64,7 @@ export const Login: React.FC = () => {
             navigate('/');   // Connexion directe
             }
         } catch (error) {
-            const message = error instanceof Error ? error.message : 'Erreur lors de la connexion';
+            const message = error instanceof Error ? error.message : t('ErrorLoggingIn');
             setErrors({ submit: message });
         } finally {
             setIsLoading(false);
@@ -74,16 +74,20 @@ export const Login: React.FC = () => {
     return (
         <div className="min-h-screen flex flex-col lg:flex-row lg:w-full">
             <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b items-center justify-center p-4">
-                <h1 className="text-9xl font-bold text-white font-space-grotesk">CYNA.</h1>
+                <Typography variant="h1" className="text-9xl font-bold text-white font-space-grotesk">
+                    {t('CYNA')}
+                </Typography>
             </div>
 
             <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
                 <div className="lg:hidden mb-8">
-                    <h1 className="text-9xl font-bold text-gray-900 font-space-grotesk">CYNA.</h1>
+                    <Typography variant="h1" className="text-9xl font-bold text-gray-900 font-space-grotesk">
+                        {t('CYNA')}
+                    </Typography>
                 </div>
 
                 <div className="w-full max-w-sm">
-                    <TypographyH2>{t("welcome")}</TypographyH2>
+                    <Typography variant="h2">{t("welcome")}</Typography>
 
                     {errors.submit && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
@@ -129,7 +133,7 @@ export const Login: React.FC = () => {
                             disabled={isLoading}
                             variant="cyna"
                         >
-                            {isLoading ? 'Connexion en cours...' : t('login')}
+                            {isLoading ? t('loggingIn') : t('login')}
                         </Button>
                     </form>
 
