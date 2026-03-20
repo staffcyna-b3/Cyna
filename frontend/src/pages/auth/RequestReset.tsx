@@ -9,7 +9,7 @@ import { Typography } from '@/components/ui/typography';
 
 export const RequestReset: React.FC = () => {
   const navigate = useNavigate();
-  const { error: authError, clearError } = useAuth();
+  const { requestPasswordReset } = useAuth();
   const { t } = useTranslation();
 
   const [email, setEmail] = useState('');
@@ -32,7 +32,6 @@ export const RequestReset: React.FC = () => {
     e.preventDefault();
     setErrors({});
     setSuccessMessage(null);
-    clearError();
 
     const validationErrors = validateEmail(email);
 
@@ -44,19 +43,7 @@ export const RequestReset: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/request-reset', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || t('requestNewLinkError'));
-      }
-
-      const data = await response.json();
+      const data = await requestPasswordReset(email);
       setSuccessMessage(data.message || t('requestNewLinkSuccess'));
     } catch (error) {
       const message = error instanceof Error ? error.message : t('requestNewLinkError');

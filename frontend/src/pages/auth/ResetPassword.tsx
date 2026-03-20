@@ -6,6 +6,7 @@ import { Input } from '../../components/ui/input';
 import { useTranslation } from 'react-i18next';
 import { validateEmail } from '../../utils/validation';
 import { Typography } from '@/components/ui/typography';
+import { useAuth } from '@/hooks/useAuth';
 
 interface ResetFormData {
   password: string;
@@ -16,6 +17,7 @@ export const ResetPassword: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { t } = useTranslation();
+  const { validateResetToken, resetPassword } = useAuth();
 
   const [tokenValid, setTokenValid] = useState<boolean | null>(null);
   const [formData, setFormData] = useState<ResetFormData>({
@@ -36,25 +38,12 @@ export const ResetPassword: React.FC = () => {
         return;
       }
 
-      try {
-        const response = await fetch(`/api/auth/validate-reset-token?token=${token}`, {
-          credentials: 'include',
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setTokenValid(data.valid);
-        } else {
-          setTokenValid(false);
-        }
-      } catch (error) {
-        console.error('Erreur validation token:', error);
-        setTokenValid(false);
-      }
+      const isValid = await validateResetToken(token);
+      setTokenValid(isValid);
     };
 
     validateToken();
-  }, [token]);
+  }, [token, validateResetToken]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -84,42 +73,23 @@ export const ResetPassword: React.FC = () => {
     const newErrors: ValidationErrors = {};
 
     if (passwordError) {
-        newErrors.password = passwordError;
+      newErrors.password = passwordError;
     }
 
-        if (confirmPasswordError) {
-        newErrors.confirmPassword = confirmPasswordError;
+    if (confirmPasswordError) {
+      newErrors.confirmPassword = confirmPasswordError;
     }
 
-        if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
-        return;
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          token,
-          new_password: formData.password,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Erreur lors de la réinitialisation');
-      }
-
+      await resetPassword(token!, formData.password);
       setSuccessMessage(t('passwordResetSuccess'));
-
-      // Rediriger après 2 secondes
-      setTimeout(() => {
-        navigate('/login');
-      }, 2000);
     } catch (error) {
       const message = error instanceof Error ? error.message : t('passwordResetError');
       setErrors({ submit: message });

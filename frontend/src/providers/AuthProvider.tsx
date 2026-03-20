@@ -182,7 +182,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
       }
     } catch (err) {
-      // console.error('Erreur verify remember me:', err);
+      console.error('Erreur vérification remember me:', err);
     } finally {
       setIsLoading(false);
     }
@@ -202,6 +202,73 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
   }, []);
 
+  const validateResetToken = useCallback(async (token: string) => {
+    try {
+      const response = await fetch('/api/auth/validate-reset-token?token=' + token, {
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        return data.valid;
+      }
+      return false;
+    } catch (error) {
+      console.error('Erreur validation token:', error);
+      return false;
+    }
+  }, []);
+
+  const resetPassword = useCallback(async (token: string, newPassword: string) => {
+    setError(null);
+    try {
+      const response = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          token,
+          new_password: newPassword,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Erreur réinitialisation');
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Erreur réinitialisation';
+      setError(message);
+      throw err;
+    }
+  }, []);
+
+  const requestPasswordReset = useCallback(
+    async (email: string) => {
+      setError(null);
+      try {
+        const response = await fetch('/api/auth/request-reset', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ email }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Erreur lors de la demande');
+        }
+
+        return await response.json();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Erreur lors de la demande';
+        setError(message);
+        throw err;
+      }
+    },
+    []
+  );
+
   const value: AuthContextType = {
     user,
     isLoading,
@@ -214,6 +281,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     clearError,
     confirmEmail,
     verify2FA,
+    validateResetToken,
+    resetPassword,
+    requestPasswordReset,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

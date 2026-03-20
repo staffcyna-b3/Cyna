@@ -13,6 +13,9 @@ export interface AuthContextType {
   clearError: () => void;
   confirmEmail: (token: string) => Promise<void>;
   verify2FA: (userId: string, code: string) => Promise<void>;
+  validateResetToken: (token: string) => Promise<boolean>;
+  resetPassword: (token: string, newPassword: string) => Promise<void>;
+  requestPasswordReset: (email: string) => Promise<{ message: string }>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
