@@ -1,5 +1,5 @@
 import { createContext } from "react"
-import { Language } from "../i18n/language"
+import type { Language } from "../i18n/language"
 
 export interface LanguageContextProps {
   currentLanguage: Language

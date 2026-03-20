@@ -1,55 +1,107 @@
 import { Request, Response } from 'express';
-import { OrdersService } from "../services/orders.service";
+import { HttpError } from '../common/httpError';
+import { Logger } from '../common/logger';
+import { CreateOrderRequest } from '../dto/request/CreateOrderRequest';
+import { GetOrderRequest } from '../dto/request/GetOrderRequest';
+import { IOrderService } from '../interfaces/IOrderService';
+import { OrderStatus } from '../enum/OrderStatus';
 
-export class OrdersController {
-    private ordersService = new OrdersService();
+export class OrderController {
+  private readonly orderService: IOrderService;
 
-    async getAllOrders(req: Request, res: Response) {
-        try {
-            const { userId } = req.body;
-            const orders = await this.ordersService.getAllOrders(userId);
-            if (!orders) {
-                return res.status(404).json({ message: 'No orders found' });
-            }
-            res.json(orders);
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ message: 'Error fetching orders' });
-        }
+  constructor(orderService: IOrderService) {
+    this.orderService = orderService;
+  }
+
+  async create(req: Request, res: Response) {
+    try {
+      const userIdHeader = req.headers['x-user-id'];
+      const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
+
+      if (!userId || typeof userId !== 'string') {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
+      const { cartId, billingAddressId, shippingAddressId } = req.body as Partial<CreateOrderRequest>;
+      if (!cartId || !billingAddressId || !shippingAddressId) {
+        return res.status(422).json({ message: 'Missing required fields' });
+      }
+
+      const userEmailHeader = req.headers['x-user-email'];
+      const createOrderRequest: CreateOrderRequest = {
+        userId,
+        userEmail: Array.isArray(userEmailHeader) ? userEmailHeader[0] : userEmailHeader,
+        cartId,
+        billingAddressId,
+        shippingAddressId,
+      };
+
+      const order = await this.orderService.createOrder(createOrderRequest);
+
+      return res.status(201).json(order);
+    } catch (error: unknown) {
+      return this.handleError(res, error, 'Error creating order');
+    }
+  }
+
+  async getById(req: Request, res: Response) {
+    try {
+      const userIdHeader = req.headers['x-user-id'];
+      const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
+
+      if (!userId || typeof userId !== 'string') {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
+      const orderIdParam = req.params.id;
+      const orderId = Array.isArray(orderIdParam) ? orderIdParam[0] : orderIdParam;
+      if (!orderId) {
+        return res.status(422).json({ message: 'Order id is required' });
+      }
+
+      const userEmailHeader = req.headers['x-user-email'];
+      const getOrderRequest: GetOrderRequest = {
+        orderId,
+        userId,
+        userEmail: Array.isArray(userEmailHeader) ? userEmailHeader[0] : userEmailHeader,
+      };
+
+      const order = await this.orderService.getOrderById(getOrderRequest);
+      return res.status(200).json(order);
+    } catch (error: unknown) {
+      return this.handleError(res, error, 'Error fetching order');
+    }
+  }
+
+  async updateStatus(req: Request, res: Response): Promise<void> {
+    try {
+      const idParam = req.params.id;
+      const id = Array.isArray(idParam) ? idParam[0] : idParam;
+      const { status } = req.body;
+
+      if (!status || !Object.values(OrderStatus).includes(status as OrderStatus)) {
+        res.status(422).json({ message: 'Invalid or missing status value' });
+        return;
+      }
+
+      await this.orderService.updateOrderStatus(id, status as OrderStatus);
+      res.status(200).json({ message: 'Order status updated' });
+    } catch (err: any) {
+      if (err.statusCode === 404) {
+        res.status(404).json({ message: err.message });
+        return;
+      }
+      Logger.error('Failed to update order status', { err: err.message });
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  private handleError(res: Response, error: unknown, fallbackMessage: string) {
+    if (error instanceof HttpError) {
+      return res.status(error.statusCode).json({ message: error.message });
     }
 
-    async getOrderById(req: Request, res: Response) {
-        try {
-            const { userId } = req.body;
-            if (!req.params.id) {
-                return res.status(400).json({ message: 'Order ID is required' });
-            }
-            const order = await this.ordersService.getOrderById(req.params.id as string, userId);
-            if (!order) {
-                return res.status(404).json({ message: 'Order not found' });
-            }
-            res.json(order);
-        } catch (error) {
-            console.log(error);
-            res.status(500).json({ message: 'Error fetching order' });
-        }
-    }
-
-    // Endpoint POST /orders — créer une commande à partir du panier (snapshot produits + prix)
-    async createOrder(req: Request, res: Response) {
-        try {
-            const { userId } = req.body;
-            if (!userId) {
-                return res.status(400).json({ message: 'User ID is required' });
-            }
-            const newOrder = await this.ordersService.createOrder(userId, req.body);
-            if (!newOrder) {
-                return res.status(400).json({ message: 'Error creating order' });
-            }
-            res.status(201).json(newOrder);
-        } catch (error) {   
-            console.log(error);
-            res.status(500).json({ message: 'Error creating order' });
-        }
-    }
+    Logger.error(fallbackMessage, { message: error instanceof Error ? error.message : String(error) });
+    return res.status(500).json({ message: 'Internal server error' });
+  }
 }

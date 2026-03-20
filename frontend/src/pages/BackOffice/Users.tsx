@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { TypographyH1 } from "@/components/ui/typography";
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
 export default function Users() {
+    const { t } = useTranslation();
     const [selected, setSelected] = useState("active");
     
     const topRightActions = (
@@ -20,7 +21,7 @@ export default function Users() {
                 {topRightActions}
             </header>
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                <p>Contenu de la page Users</p>
+                <p>{t("usersPageContent")}</p>
             </div>
         </>
     )

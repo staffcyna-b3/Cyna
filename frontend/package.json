@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "i18n:status": "npx i18next-cli status",
     "i18n:extract": "npx i18next-cli extract",
-    "i18:lint": "npx i18next-cli lint"
+    "i18n:lint": "npx i18next-cli lint"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.1",

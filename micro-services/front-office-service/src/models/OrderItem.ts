@@ -4,9 +4,9 @@ import { sequelize } from '../config/database';
 interface OrderItemAttributes {
   id: string;
   order_id: string;
-  product_id: string;
+  product_name: string;
   quantity: number;
-  price: number;
+  unit_price: number;
 }
 
 export interface OrderItemCreationAttributes extends Optional<OrderItemAttributes, 'id'> {}
@@ -14,9 +14,9 @@ export interface OrderItemCreationAttributes extends Optional<OrderItemAttribute
 class OrderItem extends Model<OrderItemAttributes, OrderItemCreationAttributes> implements OrderItemAttributes {
   declare id: string;
   declare order_id: string;
-  declare product_id: string;
+  declare product_name: string;
   declare quantity: number;
-  declare price: number;
+  declare unit_price: number;
 }
 
 OrderItem.init(
@@ -30,8 +30,8 @@ OrderItem.init(
       type: DataTypes.UUID,
       allowNull: false,
     },
-    product_id: {
-      type: DataTypes.UUID,
+    product_name: {
+      type: DataTypes.STRING(255),
       allowNull: false,
     },
     quantity: {
@@ -41,7 +41,7 @@ OrderItem.init(
         min: 1,
       },
     },
-    price: {
+    unit_price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },

@@ -52,4 +52,10 @@ cd micro-services/product-service
 npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
 cd ../..
 
+echo "→ Front-office Service seeders..."
+cd micro-services/front-office-service
+npx sequelize-cli db:seed:undo --seed 001-seed-checkout.js --seeders-path seeders --models-path src/models --config config/config.js || true
+npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
+cd ../..
+
 echo "Installation complète terminée !"

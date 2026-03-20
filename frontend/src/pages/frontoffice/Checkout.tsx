@@ -1,275 +1,350 @@
 import { useEffect, useMemo, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { getFrontUserProfile, isFrontAuthenticated, setFrontUserProfile } from "@/lib/frontAuth"
-import { LucideTrash } from "lucide-react"
+import { getFrontSession, isFrontAuthenticated, setFrontUserProfile } from "@/lib/frontAuth"
+import { createOrder, getCheckoutContext } from "@/services/orderService"
+import type { CheckoutContext } from "@/services/orderService"
 
-const CART_STORAGE_KEY = "checkout:cart"
 const LIVRAISON_COST = 4.99
-const FALLBACK_PROFILE = {
-    fullName: "Jean Dupont",
-    address: "12 Rue de la Paix",
-    city: "Paris",
-    postalCode: "75002"
-}
 
-type CartItem = {
-    id: number
-    name: string
-    price: number
-    quantity: number
-    image: string
+type CheckoutItem = {
+  id: string
+  productId: string
+  name: string
+  quantity: number
+  unitPrice: number
 }
-
-const defaultCartItems: CartItem[] = [
-    {
-        id: 1,
-        name: "Product 1",
-        price: 19.99,
-        quantity: 1,
-        image: "https://i0.wp.com/citygem.app/wp-content/uploads/2024/08/placeholder-8.png?resize=600%2C400&ssl=1"
-    },
-    {
-        id: 2,
-        name: "Product 2",
-        price: 19.99,
-        quantity: 1,
-        image: "https://i0.wp.com/citygem.app/wp-content/uploads/2024/08/placeholder-8.png?resize=600%2C400&ssl=1"
-    }
-]
 
 export const Checkout = () => {
-    const navigate = useNavigate()
-    const [searchParams, setSearchParams] = useSearchParams()
-    const profile = getFrontUserProfile() || (isFrontAuthenticated() ? FALLBACK_PROFILE : null)
-    const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-        const savedCart = localStorage.getItem(CART_STORAGE_KEY)
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-        if (!savedCart) {
-            return defaultCartItems
-        }
+  const [isLoading, setIsLoading] = useState(true)
+  const [loadingError, setLoadingError] = useState<string | null>(null)
+  const [cartItems, setCartItems] = useState<CheckoutItem[]>([])
+  const [checkoutIds, setCheckoutIds] = useState<{ cartId: string; billingAddressId: string; shippingAddressId: string } | null>(null)
 
-        try {
-            return JSON.parse(savedCart) as CartItem[]
-        } catch {
-            return defaultCartItems
-        }
-    })
-    const [fullName, setFullName] = useState(profile?.fullName ?? FALLBACK_PROFILE.fullName)
-    const [address, setAddress] = useState(profile?.address ?? "")
-    const [city, setCity] = useState(profile?.city ?? "")
-    const [postalCode, setPostalCode] = useState(profile?.postalCode ?? "")
-    const [billingAddress, setBillingAddress] = useState(profile?.address ?? "")
-    const [billingCity, setBillingCity] = useState(profile?.city ?? "")
-    const [billingPostalCode, setBillingPostalCode] = useState(profile?.postalCode ?? "")
-    const [useFacturationAddress, setUseFacturationAddress] = useState(false)
-    const [isEditingShippingAddress, setIsEditingShippingAddress] = useState(false)
-    const [isEditingBillingAddress, setIsEditingBillingAddress] = useState(false)
+  const [billingFirstName, setBillingFirstName] = useState("")
+  const [billingLastName, setBillingLastName] = useState("")
+  const [address, setAddress] = useState("")
+  const [city, setCity] = useState("")
+  const [postalCode, setPostalCode] = useState("")
+  const [country, setCountry] = useState("")
+  const [billingAddress, setBillingAddress] = useState("")
+  const [billingCity, setBillingCity] = useState("")
+  const [billingPostalCode, setBillingPostalCode] = useState("")
+  const [billingCountry, setBillingCountry] = useState("")
+  const [shippingFirstName, setShippingFirstName] = useState("")
+  const [shippingLastName, setShippingLastName] = useState("")
 
-    const currentStep = searchParams.get("step") === "address" ? "address" : "cart"
+  const [useFacturationAddress, setUseFacturationAddress] = useState(false)
+  const [isEditingShippingAddress, setIsEditingShippingAddress] = useState(false)
+  const [isEditingBillingAddress, setIsEditingBillingAddress] = useState(false)
+  const [isSubmittingOrder, setIsSubmittingOrder] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
 
-    useEffect(() => {
-        localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems))
-    }, [cartItems])
+  const currentStep = searchParams.get("step") === "address" ? "address" : "cart"
 
-    const totalItems = useMemo(
-        () => cartItems.reduce((sum, item) => sum + item.quantity, 0),
-        [cartItems]
-    )
+  useEffect(() => {
+    const load = async () => {
+      setLoadingError(null)
+      const session = getFrontSession()
 
-    const cartTotal = useMemo(
-        () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-        [cartItems]
-    )
+      if (!session) {
+        setIsLoading(false)
+        return
+      }
 
-    const finalTotal = useMemo(
-        () => cartTotal + LIVRAISON_COST,
-        [cartTotal]
-    )
+      setIsLoading(true)
+      try {
+        const context: CheckoutContext = await getCheckoutContext()
 
-    const shippingAddress = useFacturationAddress ? billingAddress : address
-    const shippingCity = useFacturationAddress ? billingCity : city
-    const shippingPostalCode = useFacturationAddress ? billingPostalCode : postalCode
-
-    const updateQuantity = (id: number, change: number) => {
-        setCartItems(prevItems =>
-            prevItems.map(item =>
-                item.id === id
-                    ? { ...item, quantity: Math.max(1, item.quantity + change) }
-                    : item
-            )
+        setCartItems(
+          context.cart.items.map((item) => ({
+            id: item.id,
+            productId: item.productId,
+            name: item.productName,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+          }))
         )
-    }
 
-    const removeItem = (id: number) => {
-        setCartItems(prevItems => prevItems.filter(item => item.id !== id))
-    }
+        setCheckoutIds(context.checkout)
 
-    const goToAddressStep = () => {
-        if (!isFrontAuthenticated()) {
-            const redirectTo = encodeURIComponent("/checkout?step=address")
-            navigate(`/login?redirect=${redirectTo}`)
-            return
+        const normalizedFullName = (context.user.fullName ?? "").trim()
+        const nameParts = normalizedFullName.split(/\s+/)
+        const firstName = nameParts[0] ?? ""
+        const lastName = nameParts.slice(1).join(" ")
+
+        setBillingFirstName(firstName)
+        setBillingLastName(lastName)
+        setShippingFirstName(firstName)
+        setShippingLastName(lastName)
+
+        setBillingAddress(context.addresses.billing.addressLine1)
+        setBillingCity(context.addresses.billing.city)
+        setBillingPostalCode(context.addresses.billing.postcode)
+        setBillingCountry(context.addresses.billing.country)
+
+        setAddress(context.addresses.shipping.addressLine1)
+        setCity(context.addresses.shipping.city)
+        setPostalCode(context.addresses.shipping.postcode)
+        setCountry(context.addresses.shipping.country)
+
+        setFrontUserProfile({
+          fullName: context.user.fullName,
+          address: context.addresses.shipping.addressLine1,
+          city: context.addresses.shipping.city,
+          postalCode: context.addresses.shipping.postcode,
+        })
+      } catch (error: unknown) {
+        if (typeof error === "object" && error !== null && "message" in error) {
+          const message = (error as { message?: unknown }).message
+          setLoadingError(typeof message === "string" ? message : "Unable to load checkout context")
+        } else {
+          setLoadingError("Unable to load checkout context")
         }
-
-        if (!getFrontUserProfile()) {
-            setFrontUserProfile(FALLBACK_PROFILE)
-            setAddress(FALLBACK_PROFILE.address)
-            setCity(FALLBACK_PROFILE.city)
-            setPostalCode(FALLBACK_PROFILE.postalCode)
-        }
-
-        setSearchParams({ step: "address" })
+      } finally {
+        setIsLoading(false)
+      }
     }
 
-    const goToCartStep = () => {
-        setSearchParams({ step: "cart" })
+    load()
+  }, [])
+
+  const totalItems = useMemo(() => cartItems.reduce((sum, item) => sum + item.quantity, 0), [cartItems])
+  const cartTotal = useMemo(() => cartItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0), [cartItems])
+  const finalTotal = useMemo(() => cartTotal + LIVRAISON_COST, [cartTotal])
+
+  const shippingAddress = useFacturationAddress ? billingAddress : address
+  const shippingCity = useFacturationAddress ? billingCity : city
+  const shippingPostalCode = useFacturationAddress ? billingPostalCode : postalCode
+  const shippingCountry = useFacturationAddress ? billingCountry : country
+  const effectiveShippingFirstName = useFacturationAddress ? billingFirstName : shippingFirstName
+  const effectiveShippingLastName = useFacturationAddress ? billingLastName : shippingLastName
+
+  const validateAddressStep = () => {
+    const errors: Record<string, string> = {}
+
+    if (!billingFirstName.trim()) errors.billingFirstName = "First name is required"
+    if (!billingLastName.trim()) errors.billingLastName = "Last name is required"
+    if (!billingAddress.trim()) errors.billingAddress = "Address line 1 is required"
+    if (!billingCity.trim()) errors.billingCity = "City is required"
+    if (!billingPostalCode.trim()) errors.billingPostalCode = "Postcode is required"
+    if (!billingCountry.trim()) errors.billingCountry = "Country is required"
+
+    if (!useFacturationAddress) {
+      if (!shippingFirstName.trim()) errors.shippingFirstName = "First name is required"
+      if (!shippingLastName.trim()) errors.shippingLastName = "Last name is required"
+      if (!address.trim()) errors.shippingAddress = "Address line 1 is required"
+      if (!city.trim()) errors.shippingCity = "City is required"
+      if (!postalCode.trim()) errors.shippingPostalCode = "Postcode is required"
+      if (!country.trim()) errors.shippingCountry = "Country is required"
     }
 
-    return (
-        <div className="py-20 px-40">
-            <div className="flex justify-between mb-10">
-                <p className="text-5xl">{currentStep === "cart" ? "Panier" : "Adresse de livraison"}</p>
-                <div>
-                    <p className="text-lg">Total de {totalItems} items</p>
-                    <Link to="/" className="text-primary">Continuer vos achats</Link>
-                </div>
-            </div>
+    setFieldErrors(errors)
+    return Object.keys(errors).length === 0
+  }
 
-            <div className="flex justify-between gap-8">
-                {currentStep === "cart" ? (
-                    <div className="flex flex-col gap-2 flex-1">
-                        {cartItems.map(item => (
-                            <div className="flex bg-muted/30 p-2 rounded-lg gap-4" key={item.id}>
-                                <div className="rounded-lg border max-w-72 max-h-60 w-auto overflow-hidden">
-                                    <img src={item.image} alt={item.name} />
-                                </div>
-                                <div className="flex flex-col gap-2">
-                                    <p>{item.name}</p>
-                                    <p>${item.price.toFixed(2)}</p>
-                                    <div className="flex gap-1">
-                                        <div className="bg-muted rounded-lg">
-                                            <button className="px-4 py-2 " onClick={() => updateQuantity(item.id, -1)}>-</button>
-                                            <span className="mx-2">{item.quantity}</span>
-                                            <button className="px-4 py-2 " onClick={() => updateQuantity(item.id, 1)}>+</button>
-                                        </div>
-                                        <Button variant="ghost" onClick={() => removeItem(item.id)}><LucideTrash /></Button>
-                                    </div>
-                                    <p>Total: ${(item.price * item.quantity).toFixed(2)}</p>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="flex flex-col gap-4 flex-1">
-                        <div className="bg-muted/30 rounded-lg p-4 flex flex-col gap-4">
-                            <div className="flex items-center justify-between">
-                                <p className="text-lg font-medium">Adresse de facturation</p>
-                                <Button variant="ghost" onClick={() => setIsEditingBillingAddress(true)}>Update</Button>
-                            </div>
-                            <label className="flex items-center gap-2">
-                                <input
-                                    type="checkbox"
-                                    checked={useFacturationAddress}
-                                    onChange={event => setUseFacturationAddress(event.target.checked)}
-                                />
-                                <span>Use facturation address for livraison</span>
-                            </label>
-                            {isEditingBillingAddress ? (
-                                <>
-                                    <Input
-                                        value={fullName}
-                                        onChange={event => setFullName(event.target.value)}
-                                        placeholder="Nom complet"
-                                    />
-                                    <Input
-                                        value={billingAddress}
-                                        onChange={event => setBillingAddress(event.target.value)}
-                                        placeholder="Adresse"
-                                    />
-                                    <Input
-                                        value={billingCity}
-                                        onChange={event => setBillingCity(event.target.value)}
-                                        placeholder="Ville"
-                                    />
-                                    <Input
-                                        value={billingPostalCode}
-                                        onChange={event => setBillingPostalCode(event.target.value)}
-                                        placeholder="Code postal"
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    <p>{fullName || "-"}</p>
-                                    <p>{billingAddress || "-"}</p>
-                                    <p>{billingCity || "-"}</p>
-                                    <p>{billingPostalCode || "-"}</p>
-                                </>
-                            )}
-                        </div>
+  const goToAddressStep = () => {
+    if (!isFrontAuthenticated() || !getFrontSession()) {
+      const redirectTo = encodeURIComponent("/checkout?step=address")
+      navigate(`/login?redirect=${redirectTo}`)
+      return
+    }
 
-                        <div className="bg-muted/30 rounded-lg p-4 flex flex-col gap-4">
-                            <div className="flex items-center justify-between">
-                                <p className="text-lg font-medium">Adresse de livraison</p>
-                                {!useFacturationAddress && (
-                                    <Button variant="ghost" onClick={() => setIsEditingShippingAddress(true)}>Update</Button>
-                                )}
-                            </div>
-                            {useFacturationAddress ? (
-                                <p>Same as facturation</p>
-                            ) : isEditingShippingAddress ? (
-                                <>
-                                    <Input
-                                        value={fullName}
-                                        onChange={event => setFullName(event.target.value)}
-                                        placeholder="Nom complet"
-                                    />
-                                    <Input
-                                        value={shippingAddress}
-                                        onChange={event => setAddress(event.target.value)}
-                                        placeholder="Adresse"
-                                    />
-                                    <Input
-                                        value={shippingCity}
-                                        onChange={event => setCity(event.target.value)}
-                                        placeholder="Ville"
-                                    />
-                                    <Input
-                                        value={shippingPostalCode}
-                                        onChange={event => setPostalCode(event.target.value)}
-                                        placeholder="Code postal"
-                                    />
-                                </>
-                            ) : (
-                                <>
-                                    <p>{fullName || "-"}</p>
-                                    <p>{shippingAddress || "-"}</p>
-                                    <p>{shippingCity || "-"}</p>
-                                    <p>{shippingPostalCode || "-"}</p>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                )}
+    setSearchParams({ step: "address" })
+  }
 
-                <div className="bg-black rounded-lg py-4 px-6 h-fit gap-4 flex flex-col items-end">
-                    <p className="text-white">Total</p>
-                    {currentStep === "address" ? (
-                        <>
-                            <p className="text-white">Livraison: ${LIVRAISON_COST.toFixed(2)}</p>
-                            <p className="text-white">${finalTotal.toFixed(2)}</p>
-                        </>
-                    ) : (
-                        <p className="text-white">${cartTotal.toFixed(2)}</p>
-                    )}
-                    {currentStep === "cart" ? (
-                        <button className="px-4 py-2 rounded-lg bg-primary text-white" onClick={goToAddressStep}>Continuer</button>
-                    ) : (
-                        <button className="px-4 py-2 rounded-lg bg-primary text-white" onClick={goToCartStep}>Retour au panier</button>
-                    )}
-                </div>
-            </div>
+  const getErrorMessage = (error: unknown) => {
+    if (typeof error === "object" && error !== null && "message" in error) {
+      const message = (error as { message?: unknown }).message
+      if (typeof message === "string") {
+        return message
+      }
+    }
+
+    return "Unable to validate order"
+  }
+
+  const goToConfirmationStep = async () => {
+    setSubmitError(null)
+
+    if (!validateAddressStep()) {
+      return
+    }
+
+    const session = getFrontSession()
+    if (!session) {
+      const redirectTo = encodeURIComponent("/checkout?step=address")
+      navigate(`/login?redirect=${redirectTo}`)
+      return
+    }
+
+    if (!checkoutIds) {
+      setSubmitError("Missing cart or address identifiers")
+      return
+    }
+
+    setIsSubmittingOrder(true)
+
+    try {
+      const order = await createOrder(checkoutIds)
+
+      navigate("/checkout/confirmation", {
+        state: {
+          order,
+          items:
+            order?.items?.map((item: { id: string; product_name: string; quantity: number; unit_price: number }) => ({
+              id: item.id,
+              name: item.product_name,
+              quantity: item.quantity,
+              unitPrice: Number(item.unit_price),
+            })) ??
+            cartItems.map((item) => ({
+              id: item.id,
+              name: item.name,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+            })),
+          totalAmount: Number(finalTotal.toFixed(2)),
+        },
+      })
+    } catch (error: unknown) {
+      setSubmitError(getErrorMessage(error))
+    } finally {
+      setIsSubmittingOrder(false)
+    }
+  }
+
+  if (isLoading) {
+    return <div className="py-20 px-40">{t("loadingCheckoutData")}</div>
+  }
+
+  if (loadingError) {
+    return <div className="py-20 px-40 text-destructive">{loadingError}</div>
+  }
+
+  return (
+    <div className="py-20 px-40">
+      <div className="flex justify-between mb-10">
+        <p className="text-5xl">{currentStep === "cart" ? "Panier" : "Adresse de livraison"}</p>
+        <div>
+          <p className="text-lg">{t("totalOf")} {totalItems} {t("items")}</p>
+          <Link to="/" className="text-primary">Continuer vos achats</Link>
         </div>
-    )
+      </div>
+
+      <div className="flex justify-between gap-8">
+        {currentStep === "cart" ? (
+          <div className="flex flex-col gap-2 flex-1">
+            {cartItems.map((item) => (
+              <div className="flex bg-muted/30 p-4 rounded-lg gap-4" key={item.id}>
+                <div className="flex flex-col gap-2">
+                  <p>{item.name}</p>
+                  <p>{t("currency")}{item.unitPrice.toFixed(2)}</p>
+                  <p>{t("quantity")} {item.quantity}</p>
+                  <p>{t("total")} {t("currency")}{(item.unitPrice * item.quantity).toFixed(2)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4 flex-1">
+            <div className="bg-muted/30 rounded-lg p-4 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <p className="text-lg font-medium">{t("billingAddress")}</p>
+                <Button variant="ghost" onClick={() => setIsEditingBillingAddress(true)}>{t("update")}</Button>
+              </div>
+              <label className="flex items-center gap-2">
+                <input type="checkbox" checked={useFacturationAddress} onChange={(event) => setUseFacturationAddress(event.target.checked)} />
+                <span>{t("useBillingForShipping")}</span>
+              </label>
+              {isEditingBillingAddress ? (
+                <>
+                  <Input value={billingFirstName} onChange={(event) => setBillingFirstName(event.target.value)} placeholder="Prénom" />
+                  {fieldErrors.billingFirstName ? <p className="text-destructive text-sm">{fieldErrors.billingFirstName}</p> : null}
+                  <Input value={billingLastName} onChange={(event) => setBillingLastName(event.target.value)} placeholder="Nom" />
+                  {fieldErrors.billingLastName ? <p className="text-destructive text-sm">{fieldErrors.billingLastName}</p> : null}
+                  <Input value={billingAddress} onChange={(event) => setBillingAddress(event.target.value)} placeholder="Adresse" />
+                  {fieldErrors.billingAddress ? <p className="text-destructive text-sm">{fieldErrors.billingAddress}</p> : null}
+                  <Input value={billingCity} onChange={(event) => setBillingCity(event.target.value)} placeholder="Ville" />
+                  {fieldErrors.billingCity ? <p className="text-destructive text-sm">{fieldErrors.billingCity}</p> : null}
+                  <Input value={billingPostalCode} onChange={(event) => setBillingPostalCode(event.target.value)} placeholder="Code postal" />
+                  {fieldErrors.billingPostalCode ? <p className="text-destructive text-sm">{fieldErrors.billingPostalCode}</p> : null}
+                  <Input value={billingCountry} onChange={(event) => setBillingCountry(event.target.value)} placeholder="Pays" />
+                  {fieldErrors.billingCountry ? <p className="text-destructive text-sm">{fieldErrors.billingCountry}</p> : null}
+                </>
+              ) : (
+                <>
+                  <p>{[billingFirstName, billingLastName].filter(Boolean).join(" ") || "-"}</p>
+                  <p>{billingAddress || "-"}</p>
+                  <p>{billingCity || "-"}</p>
+                  <p>{billingPostalCode || "-"}</p>
+                  <p>{billingCountry || "-"}</p>
+                </>
+              )}
+            </div>
+
+            <div className="bg-muted/30 rounded-lg p-4 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <p className="text-lg font-medium">{t("shippingAddress")}</p>
+                {!useFacturationAddress && <Button variant="ghost" onClick={() => setIsEditingShippingAddress(true)}>{t("update")}</Button>}
+              </div>
+              {useFacturationAddress ? (
+                <p>{t("sameAsBilling")}</p>
+              ) : isEditingShippingAddress ? (
+                <>
+                  <Input value={shippingFirstName} onChange={(event) => setShippingFirstName(event.target.value)} placeholder="Prénom" />
+                  {fieldErrors.shippingFirstName ? <p className="text-destructive text-sm">{fieldErrors.shippingFirstName}</p> : null}
+                  <Input value={shippingLastName} onChange={(event) => setShippingLastName(event.target.value)} placeholder="Nom" />
+                  {fieldErrors.shippingLastName ? <p className="text-destructive text-sm">{fieldErrors.shippingLastName}</p> : null}
+                  <Input value={shippingAddress} onChange={(event) => setAddress(event.target.value)} placeholder="Adresse" />
+                  {fieldErrors.shippingAddress ? <p className="text-destructive text-sm">{fieldErrors.shippingAddress}</p> : null}
+                  <Input value={shippingCity} onChange={(event) => setCity(event.target.value)} placeholder="Ville" />
+                  {fieldErrors.shippingCity ? <p className="text-destructive text-sm">{fieldErrors.shippingCity}</p> : null}
+                  <Input value={shippingPostalCode} onChange={(event) => setPostalCode(event.target.value)} placeholder="Code postal" />
+                  {fieldErrors.shippingPostalCode ? <p className="text-destructive text-sm">{fieldErrors.shippingPostalCode}</p> : null}
+                  <Input value={shippingCountry} onChange={(event) => setCountry(event.target.value)} placeholder="Pays" />
+                  {fieldErrors.shippingCountry ? <p className="text-destructive text-sm">{fieldErrors.shippingCountry}</p> : null}
+                </>
+              ) : (
+                <>
+                  <p>{[effectiveShippingFirstName, effectiveShippingLastName].filter(Boolean).join(" ") || "-"}</p>
+                  <p>{shippingAddress || "-"}</p>
+                  <p>{shippingCity || "-"}</p>
+                  <p>{shippingPostalCode || "-"}</p>
+                  <p>{shippingCountry || "-"}</p>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="bg-black rounded-lg py-4 px-6 h-fit gap-4 flex flex-col items-end">
+          <p className="text-white">{t("total")}</p>
+          {currentStep === "address" ? (
+            <>
+              <p className="text-white">{t("shipping")} {t("currency")}{LIVRAISON_COST.toFixed(2)}</p>
+              <p className="text-white">{t("currency")}{finalTotal.toFixed(2)}</p>
+            </>
+          ) : (
+            <p className="text-white">{t("currency")}{cartTotal.toFixed(2)}</p>
+          )}
+          {currentStep === "cart" ? (
+            <button className="px-4 py-2 rounded-lg bg-primary text-white" onClick={goToAddressStep}>{t("proceed")}</button>
+          ) : (
+            <button className="px-4 py-2 rounded-lg bg-primary text-white" onClick={goToConfirmationStep} disabled={isSubmittingOrder}>
+              {isSubmittingOrder ? "Validation..." : "Valider"}
+            </button>
+          )}
+          {submitError ? <p className="text-destructive text-sm">{submitError}</p> : null}
+        </div>
+      </div>
+    </div>
+  )
 }

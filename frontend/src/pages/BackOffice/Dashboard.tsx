@@ -21,7 +21,7 @@ export default function Dashboard() {
                 {topRightActions}
             </header>
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                <p>Contenu de la page Dashboard</p>
+                <p>{t("dashboardPageContent")}</p>
             </div>
         </>
     )
