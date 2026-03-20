@@ -6,7 +6,6 @@ import Dashboard from "../pages/backoffice/Dashboard"
 import Users from "@/pages/backoffice/Users"
 import { Checkout } from "@/pages/frontoffice/Checkout"
 import { CheckoutConfirmation } from "@/pages/frontoffice/CheckoutConfirmation"
-import { Login } from "@/pages/frontoffice/Login"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -19,7 +18,7 @@ export default function CustomRoutes() {
       </Route>
       <Route element={<MainLayout />}>
         <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<Login />} />
+        {/* TODO: DESIR — re-add auth route wiring once gateway JWT PR is merged */}
         <Route path="/cart" element={<Checkout />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout/confirmation" element={<CheckoutConfirmation />} />

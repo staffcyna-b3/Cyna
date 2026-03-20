@@ -1,4 +1,5 @@
-export interface CheckoutContext {
+// Matches: micro-services/front-office-service/src/services/checkout.service.ts
+export interface CheckoutContextResponse {
   user: {
     id: string;
     email: string;
@@ -35,8 +36,4 @@ export interface CheckoutContext {
     billingAddressId: string;
     shippingAddressId: string;
   };
-}
-
-export interface ICheckoutService {
-  getCheckoutContext(userId: string): Promise<CheckoutContext>;
 }

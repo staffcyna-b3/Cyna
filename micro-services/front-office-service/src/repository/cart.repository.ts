@@ -1,7 +1,7 @@
 import Cart from '../models/Cart';
 import CartItem from '../models/CartItem';
 import Product from '../models/Product';
-import { ICartRepository } from '../interfaces/ICartRepository';
+import { ICartRepository } from '../interfaces/CartRepository';
 
 export class CartRepository implements ICartRepository {
   async findByUserIdWithItems(userId: string): Promise<Cart | null> {

@@ -1,41 +1,42 @@
 import { Link, Navigate, useLocation } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-
-type OrderState = {
-  order?: {
-    id?: string
-    total_amount?: number
-    totalAmount?: number
-  }
-  items?: Array<{
-    id: string | number
-    name: string
-    quantity: number
-    unitPrice: number
-  }>
-  totalAmount?: number
-}
+import type { CheckoutConfirmationState } from "@/types/interfaces/CheckoutConfirmation/CheckoutConfirmationState"
+import type { ConfirmationItem } from "@/types/interfaces/CheckoutConfirmation/ConfirmationItem"
+import { useCheckout } from "@/hooks/useCheckout"
 
 export const CheckoutConfirmation = () => {
   const { t } = useTranslation()
   const { state } = useLocation()
-  const checkoutState = (state ?? {}) as OrderState
+  const { confirmedOrder } = useCheckout()
+  const checkoutState = (state ?? {}) as CheckoutConfirmationState
+  const order = checkoutState.order ?? (confirmedOrder as CheckoutConfirmationState["order"] | null)
 
-  if (!checkoutState?.order) {
+  if (!order) {
     return <Navigate to="/cart" replace />
   }
 
-  const total = checkoutState.order.totalAmount ?? checkoutState.order.total_amount ?? checkoutState.totalAmount ?? 0
+  const total = order.total_amount ?? checkoutState.total_amount ?? 0
+  const fallbackItems: ConfirmationItem[] =
+    order.items?.map((item) => ({
+      id: item.id,
+      name: item.product_name,
+      quantity: item.quantity,
+      unitPrice: item.unit_price,
+    })) ?? []
+  const items = checkoutState.items ?? fallbackItems
+
+  const billingAddress = checkoutState.billingAddress
+  const shippingAddress = checkoutState.shippingAddress
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10 space-y-5">
       <h1 className="text-3xl font-semibold">{t("orderConfirmed")}</h1>
-      <p className="text-muted-foreground">{t("orderNumber")} {checkoutState.order.id}</p>
+      <p className="text-muted-foreground">{t("orderNumber")} {order.id}</p>
 
       <div className="rounded-md border p-4 space-y-3">
         <h2 className="text-lg font-medium">{t("orderedItems")}</h2>
-        {checkoutState.items?.map((item) => (
+        {items.map((item) => (
           <div key={item.id} className="flex justify-between text-sm">
             <span>{item.name}</span>
             <span>
@@ -45,17 +46,39 @@ export const CheckoutConfirmation = () => {
         ))}
       </div>
 
+      {billingAddress ? (
+        <div className="rounded-md border p-4 space-y-1">
+          <h2 className="text-lg font-medium">{t("billingAddress")}</h2>
+          <p>{billingAddress.firstName} {billingAddress.lastName}</p>
+          <p>{billingAddress.addressLine1}</p>
+          <p>{billingAddress.postcode} {billingAddress.city}</p>
+          <p>{billingAddress.country}</p>
+        </div>
+      ) : null}
+
+      {shippingAddress ? (
+        <div className="rounded-md border p-4 space-y-1">
+          <h2 className="text-lg font-medium">{t("shippingAddress")}</h2>
+          <p>{shippingAddress.firstName} {shippingAddress.lastName}</p>
+          <p>{shippingAddress.addressLine1}</p>
+          <p>{shippingAddress.postcode} {shippingAddress.city}</p>
+          <p>{shippingAddress.country}</p>
+        </div>
+      ) : null}
+
       <div className="rounded-md border p-4 flex justify-between">
         <span className="font-medium">{t("totalAmount")}</span>
         <span className="font-medium">{t("currency")}{Number(total).toFixed(2)}</span>
       </div>
 
+      <p className="text-muted-foreground">{t("confirmationEmailSent")}</p>
+
       <div className="flex gap-3">
         <Button asChild>
-          <Link to="/account/orders">View my orders</Link>
+          <Link to="/account/orders">Voir mes commandes</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/products">Back to catalogue</Link>
+          <Link to="/products">Retour aux produits</Link>
         </Button>
       </div>
     </div>

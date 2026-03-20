@@ -1,10 +1,4 @@
 import { createContext } from "react"
-import type { Language } from "../i18n/language"
+import type { LanguageContextValue } from "@/types/interfaces/Language/LanguageContextValue"
 
-export interface LanguageContextProps {
-  currentLanguage: Language
-  setLanguage: (code: string) => void
-  availableLanguages: Language[]
-}
-
-export const LanguageContext = createContext<LanguageContextProps | undefined>(undefined)
+export const LanguageContext = createContext<LanguageContextValue | undefined>(undefined)

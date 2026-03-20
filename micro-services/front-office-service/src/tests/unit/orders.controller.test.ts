@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { OrderController } from '../../controllers/orders.controller';
-import { IOrderService } from '../../interfaces/IOrderService';
+import { IOrderService } from '../../interfaces/OrderService';
 import { HttpError } from '../../common/httpError';
 import { OrderStatus } from '../../enum/OrderStatus';
 

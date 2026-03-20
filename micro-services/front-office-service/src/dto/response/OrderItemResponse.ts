@@ -1,7 +1,7 @@
+// Matches: micro-services/front-office-service/src/models/OrderItem.ts
 export interface OrderItemResponse {
   id: string;
-  productName: string; // snapshotted at order creation
+  product_name: string;
   quantity: number;
-  unitPrice: number;
-  lineTotal: number; // quantity * unitPrice
+  unit_price: number;
 }

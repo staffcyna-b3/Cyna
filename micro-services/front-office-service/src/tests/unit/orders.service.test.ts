@@ -3,7 +3,7 @@ import { OrderService } from '../../services/orders.service';
 import { OrderStatus } from '../../enum/OrderStatus';
 import { HttpError } from '../../common/httpError';
 import { Logger } from '../../common/logger';
-import { IOrderRepository } from '../../interfaces/IOrderRepository';
+import { IOrderRepository } from '../../interfaces/OrderRepository';
 
 const makeRepositoryMock = () => {
   const repository = {
@@ -120,10 +120,7 @@ describe('OrderService', () => {
       });
     });
 
-    it('does not block order creation when email dispatch fails', async () => {
-      const fetchMock = vi.mocked(globalThis.fetch);
-      fetchMock.mockRejectedValue(new Error('mail route down'));
-
+    it('does not block order creation when email dispatch is deferred', async () => {
       repository.findAddressByIdAndUserId
         .mockResolvedValueOnce(billingAddress as any)
         .mockResolvedValueOnce(shippingAddress as any);
@@ -145,11 +142,12 @@ describe('OrderService', () => {
         })
       ).resolves.toBeDefined();
 
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
-      expect(Logger.error).toHaveBeenCalledWith(
-        'Failed to send order confirmation email',
-        expect.objectContaining({ err: 'mail route down' })
+      expect(Logger.info).toHaveBeenCalledWith(
+        'Order confirmation email dispatch deferred',
+        expect.objectContaining({
+          userId: '9999',
+          orderId: 'order-2',
+        })
       );
     });
 

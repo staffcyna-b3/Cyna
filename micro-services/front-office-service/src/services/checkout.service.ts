@@ -1,8 +1,9 @@
 import { HttpError } from '../common/httpError';
 import { AddressType } from '../enum/AddressType';
-import { ICartRepository } from '../interfaces/ICartRepository';
-import { IAddressRepository } from '../interfaces/IAddressRepository';
-import { ICheckoutService, CheckoutContext } from '../interfaces/ICheckoutService';
+import { ICartRepository } from '../interfaces/CartRepository';
+import { IAddressRepository } from '../interfaces/AddressRepository';
+import { ICheckoutService } from '../interfaces/CheckoutService';
+import { CheckoutContextResponse } from '../dto/response/CheckoutContextResponse';
 import CartItem from '../models/CartItem';
 import Product from '../models/Product';
 
@@ -12,7 +13,7 @@ export class CheckoutService implements ICheckoutService {
     private readonly addressRepository: IAddressRepository,
   ) {}
 
-  async getCheckoutContext(userId: string): Promise<CheckoutContext> {
+  async getCheckoutContext(userId: string): Promise<CheckoutContextResponse> {
     const addresses = await this.addressRepository.findAllByUserId(userId);
     const billingAddress = addresses.find((address) => address.type === AddressType.BILLING);
     const shippingAddress = addresses.find((address) => address.type === AddressType.SHIPPING);

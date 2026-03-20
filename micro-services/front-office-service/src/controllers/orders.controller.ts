@@ -3,7 +3,7 @@ import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { CreateOrderRequest } from '../dto/request/CreateOrderRequest';
 import { GetOrderRequest } from '../dto/request/GetOrderRequest';
-import { IOrderService } from '../interfaces/IOrderService';
+import { IOrderService } from '../interfaces/OrderService';
 import { OrderStatus } from '../enum/OrderStatus';
 
 export class OrderController {

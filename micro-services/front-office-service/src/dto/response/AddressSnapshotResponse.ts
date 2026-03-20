@@ -1,7 +1,7 @@
+// Matches: micro-services/front-office-service/src/models/Address.ts
 export interface AddressSnapshotResponse {
-  firstName: string;
-  lastName: string;
-  addressLine1: string;
+  id: string;
+  address_line1: string;
   city: string;
   postcode: string;
   country: string;

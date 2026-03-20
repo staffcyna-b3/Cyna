@@ -1,11 +1,3 @@
-import { useTranslation } from "react-i18next"
-
 export default function HomePage() {
-    const { t } =  useTranslation();
-
-    return (
-        <div>
-         {t("test")}
-        </div>
-    )
+    return <div>{/* TODO: MARIE — replace placeholder homepage with real front-office content from API */}</div>
 }

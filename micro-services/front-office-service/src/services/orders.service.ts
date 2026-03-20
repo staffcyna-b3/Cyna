@@ -5,8 +5,8 @@ import { CreateOrderRequest } from "../dto/request/CreateOrderRequest";
 import { GetOrderRequest } from "../dto/request/GetOrderRequest";
 import { CreateOrderResponse } from "../dto/response/CreateOrderResponse";
 import { GetOrderResponse } from "../dto/response/GetOrderResponse";
-import { IOrderRepository } from "../interfaces/IOrderRepository";
-import { IOrderService } from "../interfaces/IOrderService";
+import { IOrderRepository } from "../interfaces/OrderRepository";
+import { IOrderService } from "../interfaces/OrderService";
 
 export class OrderService implements IOrderService {
     private readonly orderRepository: IOrderRepository;
@@ -100,21 +100,13 @@ export class OrderService implements IOrderService {
             });
         });
 
-        if (userEmail && process.env.GATEWAY_INTERNAL_URL) {
-            fetch(`${process.env.GATEWAY_INTERNAL_URL}/internal/mail/order-confirmation`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    to: userEmail,
-                    orderId: order.id,
-                    items: snapshotItems,
-                    totalAmount: Number((order as unknown as { total_amount?: number }).total_amount ?? totalAmount),
-                }),
-            }).catch((err: unknown) => {
-                Logger.error("Failed to send order confirmation email", {
-                    err: err instanceof Error ? err.message : String(err),
-                });
+        if (userEmail) {
+            Logger.info("Order confirmation email dispatch deferred", {
+                userId,
+                orderId: order.id,
             });
+            // TODO: auth token provided by DESIR's auth flow
+            // pending merge of gateway JWT middleware
         }
 
         return await this.orderRepository.findByIdWithItems(order.id) as unknown as CreateOrderResponse;

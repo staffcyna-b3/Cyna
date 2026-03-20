@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
-import { ICheckoutService } from '../interfaces/ICheckoutService';
+import { ICheckoutService } from '../interfaces/CheckoutService';
 
 export class CheckoutController {
   constructor(private readonly checkoutService: ICheckoutService) {}

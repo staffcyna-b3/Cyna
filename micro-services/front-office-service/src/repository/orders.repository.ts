@@ -6,7 +6,7 @@ import CartItem from "../models/CartItem";
 import Product from "../models/Product";
 import { OrderCreationAttributes } from "../models/Order";
 import { OrderItemCreationAttributes } from "../models/OrderItem";
-import { IOrderRepository } from "../interfaces/IOrderRepository";
+import { IOrderRepository } from "../interfaces/OrderRepository";
 import { OrderStatus } from "../enum/OrderStatus";
 
 export class OrderRepository implements IOrderRepository {
