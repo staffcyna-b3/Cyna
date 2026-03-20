@@ -1,8 +1,9 @@
 import User from '../models/User';
 import UserRole from '../models/UserRole';
 import { UserRoleType } from '../enum/UserRoleType.enum';
+import { IUserRepository } from '../interfaces';
 
-export class UserRepository {
+export class UserRepository implements IUserRepository {
   async findByEmail(email: string) {
     return await User.findOne({
       where: { email },
@@ -41,21 +42,21 @@ export class UserRepository {
   }
 
   async updateRememberToken(userId: string, token: string) {
-    return await User.update(
+    await User.update(
       { remember_me_token: token },
       { where: { id: userId } }
     );
   }
 
   async clearRememberToken(token: string) {
-    return await User.update(
+    await User.update(
       { remember_me_token: null },
       { where: { remember_me_token: token } }
     );
   }
 
   async updateEmailConfirmationToken(userId: string, token: string) {
-    return await User.update(
+    await User.update(
       { email_confirmation_token: token },
       { where: { id: userId } }
     );
@@ -81,7 +82,7 @@ export class UserRepository {
   }
 
   async updatePasswordResetToken(userId: string, token: string) {
-    return await User.update(
+    await User.update(
       { password_reset_token: token },
       { where: { id: userId } }
     );
@@ -94,7 +95,7 @@ export class UserRepository {
   }
 
   async updatePassword(userId: string, hashedPassword: string) {
-    return await User.update(
+    await User.update(
       {
         password: hashedPassword,
         password_reset_token: null,
@@ -104,7 +105,7 @@ export class UserRepository {
   }
 
   async update2FACode(userId: string, code: string, expiresAt: Date) {
-    return await User.update(
+    await User.update(
       {
         twofa_code: code,
         twofa_expires_at: expiresAt,
@@ -114,14 +115,8 @@ export class UserRepository {
     );
   }
 
-  async increment2FAAttempts(userId: string) {
-    return await User.increment('twofa_attempts', {
-      where: { id: userId },
-    });
-  }
-
   async clear2FACode(userId: string) {
-    return await User.update(
+    await User.update(
       {
         twofa_code: null,
         twofa_expires_at: null,

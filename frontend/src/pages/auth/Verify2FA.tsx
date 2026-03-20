@@ -15,15 +15,15 @@ export const Verify2FA: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [attempts, setAttempts] = useState(0);
 
-  const userId = sessionStorage.getItem('pending_2fa_user_id');
-  const email = sessionStorage.getItem('pending_2fa_email');
+  // Récupérer SEULEMENT le sessionId (qui n'a pas de valeur réelle)
+  const sessionId = sessionStorage.getItem('pending_2fa_session_id');
 
   useEffect(() => {
-    // Rediriger quand l'utilisateur est connecté
-    if (user) {
+    // Rediriger si pas de sessionId ou si déjà connecté
+    if (!sessionId || user) {
       navigate('/');
     }
-  }, [userId, navigate]);
+  }, [sessionId, user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,10 +34,16 @@ export const Verify2FA: React.FC = () => {
       return;
     }
 
+    if (!sessionId) {
+      setError('Session invalide');
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      await verify2FA(userId!, code);
+      // Envoyer le sessionId (pas l'userId)
+      await verify2FA(sessionId, code);
       navigate('/');
     } catch (err) {
       const message = err instanceof Error ? err.message : t('ErrorVerifying2FA');
@@ -72,7 +78,7 @@ export const Verify2FA: React.FC = () => {
             {t('verify2FA')}
           </Typography>
           <Typography variant="body" className="text-gray-600 text-sm mb-8 text-center lg:text-left">
-            {t('verificationCodeSent')} {email ? `(${email})` : ''}.
+            {t('verificationCodeSent')}.
           </Typography>
 
           {error && (

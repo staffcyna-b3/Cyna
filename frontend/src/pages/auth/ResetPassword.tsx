@@ -4,7 +4,6 @@ import { ValidationErrors, validatePassword, validatePasswordMatch } from '../..
 import { Button } from '@/components/ui/button';
 import { Input } from '../../components/ui/input';
 import { useTranslation } from 'react-i18next';
-import { validateEmail } from '../../utils/validation';
 import { Typography } from '@/components/ui/typography';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -32,7 +31,7 @@ export const ResetPassword: React.FC = () => {
 
   // Valider le token au chargement
   useEffect(() => {
-    const validateToken = async () => {
+    const validate = async () => {
       if (!token) {
         setTokenValid(false);
         return;
@@ -42,7 +41,7 @@ export const ResetPassword: React.FC = () => {
       setTokenValid(isValid);
     };
 
-    validateToken();
+    validate();
   }, [token, validateResetToken]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

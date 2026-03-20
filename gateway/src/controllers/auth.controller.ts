@@ -1,11 +1,9 @@
-// src/controllers/auth.controller.ts
-
 import { Request, Response } from 'express';
-import { AuthService } from '../services/auth.service';
 import { Logger } from '../common/logger';
+import { IAuthService } from '../interfaces';
 
 export class AuthController {
-  private authService = new AuthService();
+  constructor(private readonly authService: IAuthService) {}
 
   async login(req: Request, res: Response) {
     try {
@@ -21,10 +19,9 @@ export class AuthController {
         return res.status(500).json({ error: 'Erreur lors de la connexion' });
       }
 
+      // Retourner SEULEMENT le sessionId (pas d'infos utilisateur)
       res.status(200).json({
-        id: result.id,
-        email: result.email,
-        full_name: result.full_name,
+        sessionId: result.sessionId,
         requires2FA: result.requires2FA,
         message: 'Code 2FA envoyé par email',
       });
@@ -38,13 +35,14 @@ export class AuthController {
 
   async verify2FA(req: Request, res: Response) {
     try {
-      const { user_id, code, remember_me } = req.body;
+      const { session_id, code } = req.body;
 
-      if (!user_id || !code) {
+      if (!session_id || !code) {
         return res.status(400).json({ error: 'Données manquantes' });
       }
 
-      const result = await this.authService.verify2FA(user_id, code, remember_me);
+      // Passer le sessionId au service (pas l'userId)
+      const result = await this.authService.verify2FA(session_id, code);
 
       if (!result) {
         return res.status(500).json({ error: 'Erreur vérification 2FA' });
@@ -147,7 +145,7 @@ export class AuthController {
 
   async validateResetToken(req: Request, res: Response) {
     try {
-      const { token } = req.query;
+      const { token } = req.body;
 
       if (!token) {
         return res.status(400).json({ valid: false });

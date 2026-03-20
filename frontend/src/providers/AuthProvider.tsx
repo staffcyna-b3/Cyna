@@ -93,22 +93,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         const data = await response.json();
         
-        // Si 2FA requis, stocker l'ID temporairement
+        // Stocker SEULEMENT le sessionId (pas d'infos utilisateur)
         if (data.requires2FA) {
-          sessionStorage.setItem('pending_2fa_user_id', data.id);
-          sessionStorage.setItem('pending_2fa_email', data.email);
-          sessionStorage.setItem('pending_2fa_remember_me', rememberMe.toString());
-          return; // Ne pas rediriger, laisse le composant faire
+          sessionStorage.setItem('pending_2fa_session_id', data.sessionId);
+        } else {
+          // Si pas de 2FA, connecter directement (rare mais possible)
+          setUser({
+            id: data.id,
+            email: data.email,
+            full_name: data.full_name,
+            email_verified: data.email_verified,
+            role: data.role,
+          });
         }
-
-        // Sinon, connecter directement
-        setUser({
-          id: data.id,
-          email: data.email,
-          full_name: data.full_name,
-          email_verified: data.email_verified,
-          role: data.role,
-        });
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erreur lors de la connexion';
         setError(message);
@@ -119,19 +116,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   );
 
   const verify2FA = useCallback(
-    async (userId: string, code: string) => {
+    async (sessionId: string, code: string) => {
       setError(null);
       try {
-        const rememberMe = sessionStorage.getItem('pending_2fa_remember_me') === 'true';
-
         const response = await fetch('/api/auth/verify-2fa', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({
-            user_id: userId,
+            session_id: sessionId,
             code,
-            remember_me: rememberMe,
           }),
         });
 
@@ -150,10 +144,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           role: data.role,
         });
 
-        // Nettoyer sessionStorage
-        sessionStorage.removeItem('pending_2fa_user_id');
-        sessionStorage.removeItem('pending_2fa_email');
-        sessionStorage.removeItem('pending_2fa_remember_me');
+        // Nettoyer sessionStorage après connexion réussie
+        sessionStorage.removeItem('pending_2fa_session_id');
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erreur vérification';
         setError(message);
@@ -204,8 +196,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const validateResetToken = useCallback(async (token: string) => {
     try {
-      const response = await fetch('/api/auth/validate-reset-token?token=' + token, {
+      const response = await fetch('/api/auth/validate-reset-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
+        body: JSON.stringify({ token }),
       });
 
       if (response.ok) {

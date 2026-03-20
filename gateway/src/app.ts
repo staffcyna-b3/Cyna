@@ -4,10 +4,30 @@ import routes from './routes';
 import { corsMiddleware } from './middlewares/cors.middleware';
 import { loggingMiddleware } from './middlewares/logging.middleware';
 import { errorMiddleware } from './middlewares/error.middleware';
-import authRoutes from './routes/auth.routes';
+import { createAuthRoutes } from './routes/auth.routes';
+import { UserRepository } from './repository/user.repository';
+import { MailService } from './services/mail.service';
+import { pendingAuth2FAStore } from './stores/pending-auth-2fa.store';
+import { AuthService } from './services/auth.service';
+import { AuthController } from './controllers/auth.controller';
 
 export const createApp = (): Express => {
   const app = express();
+
+  // Injection manuelle des dépendances (DIP)
+  const container = {
+    userRepository: new UserRepository(),
+    mailService: new MailService(),
+    pendingAuthStore: pendingAuth2FAStore,
+  };
+
+  const authService = new AuthService(
+    container.userRepository,
+    container.mailService,
+    container.pendingAuthStore,
+  );
+  const authController = new AuthController(authService);
+  const authRoutes = createAuthRoutes(authController);
 
   app.use(helmet());
 
@@ -23,7 +43,7 @@ export const createApp = (): Express => {
   });
 
   app.use('/api', routes);
-  app.use('/auth', authRoutes);
+  app.use('/api/auth', authRoutes);
 
   app.use((req, res) => {
     res.status(404).json({

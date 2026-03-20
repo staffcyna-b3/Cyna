@@ -1,8 +1,9 @@
 import nodemailer from 'nodemailer';
 import { Logger } from '../common/logger';
 import emailTemplates from '../templates/emailTemplates';
+import { IMailService } from '../interfaces';
 
-export class MailService {
+export class MailService implements IMailService {
   private transporter = nodemailer.createTransport({
     service: 'gmail', // ou autre service
     auth: {

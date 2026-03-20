@@ -1,12 +1,15 @@
 import crypto from 'crypto';
 import bcrypt from 'bcrypt';
-import { UserRepository } from '../repository/user.repository';
-import { MailService } from './mail.service';
 import { Logger } from '../common/logger';
+import { hashToken, verifyToken } from '../utils/token.utils';
+import { IAuthService, IMailService, IPendingAuthStore, IUserRepository } from '../interfaces';
 
-export class AuthService {
-  private userRepository = new UserRepository();
-  private mailService = new MailService();
+export class AuthService implements IAuthService {
+  constructor(
+    private readonly userRepository: IUserRepository,
+    private readonly mailService: IMailService,
+    private readonly pendingAuthStore: IPendingAuthStore,
+  ) {}
 
   private generate2FACode(): string {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Code à 6 chiffres
@@ -42,13 +45,12 @@ export class AuthService {
       await this.userRepository.update2FACode(user.id, code, expiresAt);
       await this.mailService.send2FACode(user.email, code);
 
-      // Retourner l'ID pour la vérification 2FA
+      // Créer une session 2FA et retourner SEULEMENT le sessionId
+      const sessionId = this.pendingAuthStore.create(user.id, user.email, rememberMe);
+
       return {
-        id: user.id,
-        email: user.email,
-        full_name: user.full_name,
+        sessionId,
         requires2FA: true,
-        rememberMe,
       };
     } catch (error) {
       Logger.error('Auth login error:', error);
@@ -56,9 +58,17 @@ export class AuthService {
     }
   }
 
-  async verify2FA(userId: string, code: string, rememberMe: boolean) {
+  async verify2FA(sessionId: string, code: string) {
     try {
-      const user = await this.userRepository.findByIdWithRole(userId);
+      // Récupérer les données à partir du sessionId
+      const session = this.pendingAuthStore.get(sessionId);
+      
+      if (!session) {
+        throw new Error('Session 2FA invalide ou expirée');
+      }
+
+      // Récupérer l'utilisateur avec ses données 2FA
+      const user = await this.userRepository.findByIdWithRole(session.userId);
 
       if (!user) {
         throw new Error('Utilisateur non trouvé');
@@ -69,24 +79,26 @@ export class AuthService {
         throw new Error('Code expiré');
       }
 
-      // Vérifier le nombre de tentatives (max 3)
-      if (user.twofa_attempts && user.twofa_attempts >= 3) {
-        throw new Error('Trop de tentatives. Demandez un nouveau code.');
-      }
-
       // Vérifier le code
       if (user.twofa_code !== code) {
-        await this.userRepository.increment2FAAttempts(userId);
+        // Incrémenter les tentatives et vérifier si la session doit être supprimée
+        const hasAttemptsRemaining = this.pendingAuthStore.incrementAttempts(sessionId);
+        if (!hasAttemptsRemaining) {
+          throw new Error('Trop de tentatives. Demandez un nouveau code.');
+        }
         throw new Error('Code incorrect');
       }
 
-      await this.userRepository.clear2FACode(userId);
+      // Nettoyage: Supprimer la session 2FA
+      this.pendingAuthStore.clear(sessionId);
+      await this.userRepository.clear2FACode(session.userId);
 
       // Si remember me, générer le token
       let rememberToken = null;
-      if (rememberMe) {
+      if (session.rememberMe) {
         rememberToken = this.generateSecureToken();
-        await this.userRepository.updateRememberToken(user.id, rememberToken);
+        const rememberTokenHash = hashToken(rememberToken);
+        await this.userRepository.updateRememberToken(user.id, rememberTokenHash);
       }
 
       return {
@@ -117,7 +129,8 @@ export class AuthService {
 
       // Générer et envoyer le token de confirmation
       const confirmationToken = this.generateSecureToken();
-      await this.userRepository.updateEmailConfirmationToken(user.id, confirmationToken);
+      const confirmationTokenHash = hashToken(confirmationToken);
+      await this.userRepository.updateEmailConfirmationToken(user.id, confirmationTokenHash);
       await this.mailService.sendConfirmationEmail(email, confirmationToken);
 
       return {
@@ -134,7 +147,8 @@ export class AuthService {
 
   async confirmEmail(token: string) {
     try {
-      const user = await this.userRepository.confirmEmailByToken(token);
+      const tokenHash = hashToken(token);
+      const user = await this.userRepository.confirmEmailByToken(tokenHash);
 
       if (!user) {
         throw new Error('Token invalide');
@@ -161,7 +175,8 @@ export class AuthService {
 
       // Générer le token de reset (valide 1 heure)
       const resetToken = this.generateSecureToken();
-      await this.userRepository.updatePasswordResetToken(user.id, resetToken);
+      const resetTokenHash = hashToken(resetToken);
+      await this.userRepository.updatePasswordResetToken(user.id, resetTokenHash);
 
       // Envoyer l'email
       await this.mailService.sendPasswordResetEmail(email, resetToken);
@@ -177,7 +192,8 @@ export class AuthService {
 
   async validateResetToken(token: string) {
     try {
-      const user = await this.userRepository.findByPasswordResetToken(token);
+      const tokenHash = hashToken(token);
+      const user = await this.userRepository.findByPasswordResetToken(tokenHash);
       
       if (!user) {
         return { valid: false };
@@ -192,7 +208,8 @@ export class AuthService {
 
   async resetPassword(token: string, newPassword: string) {
     try {
-      const user = await this.userRepository.findByPasswordResetToken(token);
+      const tokenHash = hashToken(token);
+      const user = await this.userRepository.findByPasswordResetToken(tokenHash);
 
       if (!user) {
         throw new Error('Token invalide');
@@ -215,7 +232,8 @@ export class AuthService {
 
   async logout(token: string) {
     try {
-      await this.userRepository.clearRememberToken(token);
+      const tokenHash = hashToken(token);
+      await this.userRepository.clearRememberToken(tokenHash);
     } catch (error) {
       Logger.error('Auth logout error:', error);
       throw error;
@@ -224,9 +242,14 @@ export class AuthService {
 
   async verifyRememberToken(token: string) {
     try {
-      const user = await this.userRepository.findByRememberToken(token);
+      const tokenHash = hashToken(token);
+      const user = await this.userRepository.findByRememberToken(tokenHash);
 
       if (!user) {
+        throw new Error('Token invalide');
+      }
+
+      if (!user.remember_me_token || !verifyToken(token, user.remember_me_token)) {
         throw new Error('Token invalide');
       }
 

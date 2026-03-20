@@ -6,7 +6,6 @@ import { LoginFormData } from '../../types/interfaces/LoginFormData.interface';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from "react-i18next"
 import { Typography } from '@/components/ui/typography';
-import { Link } from '@/components/ui/link';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 
@@ -56,12 +55,12 @@ export const Login: React.FC = () => {
         try {
             await login(formData.email, formData.password, rememberMe);
             
-            // Vérifier si 2FA est requis
-            const userId = sessionStorage.getItem('pending_2fa_user_id');
-            if (userId) {
-            navigate('/verify-2fa');  // Aller à la page 2FA
+            // Vérifier si 2FA est requis (en cherchant le sessionId)
+            const sessionId = sessionStorage.getItem('pending_2fa_session_id');
+            if (sessionId) {
+              navigate('/verify-2fa');  // Aller à la page 2FA
             } else {
-            navigate('/');   // Connexion directe
+              navigate('/');   // Connexion directe
             }
         } catch (error) {
             const message = error instanceof Error ? error.message : t('ErrorLoggingIn');
