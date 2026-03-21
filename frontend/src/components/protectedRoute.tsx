@@ -2,15 +2,12 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
-
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-  requiredRoles?: ('ADMIN' | 'COMMERCIAL' | 'USER')[]; 
-}
+import { UserRole } from '../types/enums/UserRole.enum';
+import { ProtectedRouteProps } from '../types/interfaces/ProtectedRouteProps.interface';
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  requiredRoles = ['ADMIN', 'COMMERCIAL'] 
+  requiredRoles = [UserRole.ADMIN, UserRole.COMMERCIAL] 
 }) => {
   const { user, isLoading } = useAuth();
   const { t } = useTranslation();
@@ -23,7 +20,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/login" replace />;
   }
 
-  if (!user.role || !requiredRoles.includes(user.role)) {
+  if (!user.role || !requiredRoles.includes(user.role as UserRole)) {
     return <Navigate to="/dashboard" replace />;
   }
 

@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/components/protectedRoute"
 import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
 import { Verify2FA } from "@/pages/auth/Verify2FA"
+import { UserRole } from "@/types/enums/UserRole.enum"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -24,7 +25,7 @@ export default function CustomRoutes() {
       <Route 
         path="/dashboard" 
         element={
-          <ProtectedRoute requiredRoles={['ADMIN', 'COMMERCIAL']}>
+          <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
             <Dashboard />
           </ProtectedRoute>
         } 
