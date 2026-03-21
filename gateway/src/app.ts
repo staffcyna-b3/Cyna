@@ -4,9 +4,12 @@ import routes from './routes';
 import { corsMiddleware } from './middlewares/cors.middleware';
 import { loggingMiddleware } from './middlewares/logging.middleware';
 import { errorMiddleware } from './middlewares/error.middleware';
+import cookieParser from 'cookie-parser';
 
 export const createApp = (): Express => {
   const app = express();
+
+  app.use(cookieParser())
 
   app.use(helmet());
 
