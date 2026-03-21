@@ -1,13 +1,15 @@
 import { Request, Response } from "express";
-import { login, refresh } from "../services/auth.service";
+import { AuthService } from "../services/auth.service";
 
 export class AuthController {
+    private service = new AuthService()
+    
     async login(req: Request, res: Response) {
         
         const { email, password } = req.body
 
         try {
-            const result = await login(email, password)
+            const result = await this.service.login(email, password)
 
             res.cookie('refreshToken', result.refreshToken, {
                 httpOnly: true, //le cookie ne peutpas être lu par le JS du navigateur -- protège des attaques XSS
@@ -40,7 +42,7 @@ export class AuthController {
     const refreshToken = req.cookies.refreshToken
 
     try {
-        const result = await refresh(refreshToken)
+        const result = await this.service.refresh(refreshToken)
 
         res.status(200).json({
             success: true,
