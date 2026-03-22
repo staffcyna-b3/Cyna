@@ -7,6 +7,7 @@ import { ProductListFilterDto } from '../dto/requests/ProductListFilter.dto';
 import { ProductListOptionsDto } from '../dto/requests/ProductListOptions.dto';
 import { SortOrder } from '../enum/Sortrder.enum';
 import Product from '../models/Product';
+import { sequelize } from '../config/database';
 import ProductRepository from '../repository/product.repository';
 
 export default class ProductService {
@@ -131,9 +132,10 @@ export default class ProductService {
 
         if (filters?.search) {
             this.validateSearch(filters.search);
+            const ilikeOp = (sequelize && sequelize.getDialect && sequelize.getDialect() === 'postgres') ? Op.iLike : Op.like;
             where[Op.or] = [
-                { name: { [Op.iLike]: `%${filters.search}%` } },
-                { description: { [Op.iLike]: `%${filters.search}%` } },
+                { name: { [ilikeOp]: `%${filters.search}%` } },
+                { description: { [ilikeOp]: `%${filters.search}%` } },
             ];
         }
 
