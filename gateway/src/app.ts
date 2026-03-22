@@ -10,6 +10,7 @@ import { MailService } from './services/mail.service';
 import { pendingAuth2FAStore } from './stores/pending-auth-2fa.store';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
+import cookieParser from 'cookie-parser';
 
 export const createApp = (): Express => {
   const app = express();
@@ -28,6 +29,8 @@ export const createApp = (): Express => {
   );
   const authController = new AuthController(authService);
   const authRoutes = createAuthRoutes(authController);
+  
+  app.use(cookieParser())
 
   app.use(helmet());
 

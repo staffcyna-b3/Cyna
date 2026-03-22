@@ -19,7 +19,6 @@ export class AuthController {
         return res.status(500).json({ error: 'Erreur lors de la connexion' });
       }
 
-      // Retourner SEULEMENT le sessionId (pas d'infos utilisateur)
       res.status(200).json({
         sessionId: result.sessionId,
         requires2FA: result.requires2FA,
@@ -41,20 +40,19 @@ export class AuthController {
         return res.status(400).json({ error: 'Données manquantes' });
       }
 
-      // Passer le sessionId au service (pas l'userId)
       const result = await this.authService.verify2FA(session_id, code);
 
       if (!result) {
         return res.status(500).json({ error: 'Erreur vérification 2FA' });
       }
 
-      // Envoyer le remember token en cookie SI présent
+      // TODO: Ajouter JWT ici après
       if (result.rememberToken) {
         res.cookie('remember_me_token', result.rememberToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'strict',
-          maxAge: 7 * 24 * 60 * 60 * 1000, // 7 jours
+          maxAge: 7 * 24 * 60 * 60 * 1000,
         });
       }
 
@@ -224,5 +222,36 @@ export class AuthController {
       Logger.error('Verify remember me error:', error);
       res.status(401).json({ authenticated: false });
     }
+  }
+
+  // ===== JWT =====
+  async refresh(req: Request, res: Response) {
+    const refreshToken = req.cookies.refreshToken
+
+    try {
+      const service = new AuthService();
+      const result = await service.refresh(refreshToken)
+
+      res.status(200).json({
+        success: true,
+        data: { accessToken: result.accessToken },
+        timestamp: new Date().toISOString()
+      })
+    } catch (error: any) {
+      res.status(401).json({
+        success: false,
+        error: "UNAUTHORIZED",
+        message: error.message,
+        timestamp: new Date().toISOString()
+      })
+    }
+  }
+
+  async me(req: Request, res: Response) {
+    res.status(200).json({
+      success: true,
+      data: { user: req.user },
+      timestamp: new Date().toISOString()
+    })
   }
 }

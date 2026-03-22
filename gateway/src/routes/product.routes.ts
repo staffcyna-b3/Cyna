@@ -5,6 +5,6 @@ import { MicroServiceEnum } from '../enum/microService.enum';
 const router = Router();
 const controller = new GatewayController();
 
-router.get('/', (req, res) => controller.proxy(req, res, MicroServiceEnum.PRODUCT));
+router.all('/{*path}', (req, res) => controller.proxy(req, res, MicroServiceEnum.PRODUCT));
 
 export default router;
