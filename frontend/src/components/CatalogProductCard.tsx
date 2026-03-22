@@ -6,9 +6,7 @@ import AddToCartButton from './ui/AddToCartButton';
 import { ProductPictureResponse } from '../types/interfaces/catalog/ProductPictureResponse';
 import { ExtPicture } from '../types/ExtPicture';
 import { formatCurrency } from '@/utils/currencyFormatter';
-
-const placeholder =
-    "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='180'><rect width='100%' height='100%' fill='%2322293a'/></svg>";
+import placeholder from '@/assets/pictures/placeholder.svg';
 
 export const CatalogProductCard = ({
     product,

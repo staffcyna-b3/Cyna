@@ -13,7 +13,6 @@ export default function AddToCartButton({ disabled }: { disabled?: boolean }) {
             variant="default"
             onClick={handleClick}
             disabled={!!disabled}
-            aria-label="Ajouter au panier"
             className={
                 'p-2 rounded-md ' +
                 (disabled
