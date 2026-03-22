@@ -7,7 +7,7 @@ import { Typography } from '@/components/ui/typography';
 
 export const Verify2FA: React.FC = () => {
   const navigate = useNavigate();
-  const { user, verify2FA } = useAuth();
+  const { user, verify2FA, isLoading: isAuthLoading } = useAuth();
   const { t } = useTranslation();
 
   const [code, setCode] = useState('');
@@ -15,15 +15,26 @@ export const Verify2FA: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [attempts, setAttempts] = useState(0);
 
-  // Récupérer SEULEMENT le sessionId (qui n'a pas de valeur réelle)
-  const sessionId = sessionStorage.getItem('pending_2fa_session_id');
-
   useEffect(() => {
-    // Rediriger si pas de sessionId ou si déjà connecté
-    if (!sessionId || user) {
-      navigate('/');
+    if (isAuthLoading || isLoading) return;
+
+    const sessionId = sessionStorage.getItem('pending_2fa_session_id');
+
+    // Si la 2FA est validée et qu'il n'y a plus de session pending, rediriger selon le rôle.
+    if (user && !sessionId) {
+      if(user.role === 'ADMIN' || user.role === 'COMMERCIAL') {
+        navigate('/dashboard');
+      } else {
+        navigate('/');
+      }
+      return;
     }
-  }, [sessionId, user, navigate]);
+
+    // Pas connecté + pas de session 2FA pending => retour login.
+    if (!sessionId) {
+      navigate('/login');
+    }
+  }, [user, navigate, isAuthLoading, isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +45,7 @@ export const Verify2FA: React.FC = () => {
       return;
     }
 
+    const sessionId = sessionStorage.getItem('pending_2fa_session_id');
     if (!sessionId) {
       setError('Session invalide');
       return;
@@ -44,7 +56,6 @@ export const Verify2FA: React.FC = () => {
     try {
       // Envoyer le sessionId (pas l'userId)
       await verify2FA(sessionId, code);
-      navigate('/');
     } catch (err) {
       const message = err instanceof Error ? err.message : t('ErrorVerifying2FA');
       console.error('Erreur 2FA:', message);

@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { AuthProviderProps } from '../types/interfaces/AuthProviderProps.interface';
 import { AuthContext, AuthContextType } from '../contexts/AuthContext'; 
 import { User } from '@/types/interfaces/User.interface';
@@ -7,13 +7,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasCheckedRememberMe = useRef(false);
 
   const clearError = useCallback(() => setError(null), []);
-
-  // Au chargement initial, vérifier le remember me token
-  useEffect(() => {
-    verifyRememberMe();
-  }, []);
 
   const register = useCallback(
     async (email: string, password: string, full_name: string) => {
@@ -96,6 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         // Stocker SEULEMENT le sessionId (pas d'infos utilisateur)
         if (data.requires2FA) {
           sessionStorage.setItem('pending_2fa_session_id', data.sessionId);
+          sessionStorage.setItem('pending_2fa_remember_me', rememberMe.toString());
         } else {
           // Si pas de 2FA, connecter directement (rare mais possible)
           setUser({
@@ -119,6 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     async (sessionId: string, code: string) => {
       setError(null);
       try {
+        const rememberMe = sessionStorage.getItem('pending_2fa_remember_me') === 'true';
         const response = await fetch('/api/auth/verify-2fa', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -126,6 +124,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           body: JSON.stringify({
             session_id: sessionId,
             code,
+            remember_me: rememberMe,
           }),
         });
 
@@ -135,17 +134,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         const data = await response.json();
+        const userData = data?.data?.user;
+
+        if (!userData) {
+          throw new Error('Données utilisateur manquantes après vérification 2FA');
+        }
 
         setUser({
-          id: data.id,
-          email: data.email,
-          full_name: data.full_name,
-          email_verified: data.email_verified,
-          role: data.role,
+          id: userData.id,
+          email: userData.email,
+          full_name: userData.full_name,
+          email_verified: userData.email_verified,
+          role: userData.role,
         });
 
         // Nettoyer sessionStorage après connexion réussie
         sessionStorage.removeItem('pending_2fa_session_id');
+        sessionStorage.removeItem('pending_2fa_remember_me');
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erreur vérification';
         setError(message);
@@ -179,6 +184,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setIsLoading(false);
     }
   }, []);
+
+  // Au chargement initial, vérifier le remember me token
+  useEffect(() => {
+    // Evite le double appel en dev avec React.StrictMode
+    if (hasCheckedRememberMe.current) return;
+    hasCheckedRememberMe.current = true;
+    verifyRememberMe();
+  }, [verifyRememberMe]);
 
   const logout = useCallback(async () => {
       setError(null);

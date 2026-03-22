@@ -42,6 +42,32 @@ export class AuthService implements IAuthService {
         throw new Error('Email non confirmé');
       }
 
+      const twoFAFlag = (user as any).twofa_enabled;
+      const twoFAEnabled = twoFAFlag === undefined || twoFAFlag === null
+        ? true
+        : Boolean(twoFAFlag);
+
+      if (!twoFAEnabled) {
+        let rememberToken: string | null = null;
+        if (rememberMe) {
+          rememberToken = this.generateSecureToken();
+          const rememberTokenHash = hashToken(rememberToken);
+          await this.userRepository.updateRememberToken(user.id, rememberTokenHash);
+        }
+
+        return {
+          requires2FA: false,
+          user: {
+            id: user.id,
+            email: user.email,
+            full_name: user.full_name,
+            email_verified: user.email_verified,
+            role: user.userRole?.role,
+          },
+          rememberToken,
+        };
+      }
+
       const code = this.generate2FACode();
       const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
       
@@ -255,7 +281,7 @@ export class AuthService implements IAuthService {
   // ===== JWT - généré après 2FA =====
   async generateTokensForUser(userId: string) {
     try {
-      const user = await this.jwtRepository.findUserByIdAndToken(userId, ''); // ❌ À adapter
+      const user = await this.jwtRepository.findUserById(userId);
 
       if (!user) {
         throw new Error('Utilisateur non trouvé');
@@ -275,12 +301,13 @@ export class AuthService implements IAuthService {
         { expiresIn: '15m' }
       );
 
-      const refreshToken = jwt.sign(
-        payload,
-        process.env.JWT_REFRESH_SECRET!,
-        { expiresIn: '7d' }
-      );
+      // const refreshToken = jwt.sign(
+      //   payload,
+      //   process.env.JWT_REFRESH_SECRET!,
+      //   { expiresIn: '7d' }
+      // );
 
+      const refreshToken = this.generateSecureToken();
       await this.jwtRepository.updateRefreshToken(userId, refreshToken);
 
       return { accessToken, refreshToken, user: { id: user.id, email: user.email } };

@@ -1,6 +1,8 @@
 export interface LoginResult {
-  sessionId: string;
   requires2FA: boolean;
+  sessionId?: string;
+  user?: AuthenticatedUserResult;
+  rememberToken?: string | null;
 }
 
 export interface Verify2FAResult {
@@ -30,4 +32,6 @@ export interface IAuthService {
   resetPassword(token: string, newPassword: string): Promise<{ message: string }>;
   logout(token: string): Promise<void>;
   verifyRememberToken(token: string): Promise<AuthenticatedUserResult>;
+  generateTokensForUser(userId: string): Promise<{ accessToken: string; refreshToken: string; user: { id: string; email: string } }>;
+  refresh(refreshToken: string): Promise<{ accessToken: string }>;
 }
