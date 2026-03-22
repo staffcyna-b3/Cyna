@@ -19,4 +19,8 @@ export class AuthRepository {
     async findUserByIdAndToken(userId: string, refreshToken: string) {
         return await User.findOne({ where: { id: userId, refresh_token: refreshToken } })
     }
+
+    async findUserById (userId: string) {
+        return await User.findOne({ where: { id: userId } })
+    }
 }
