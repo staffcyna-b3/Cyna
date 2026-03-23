@@ -1,14 +1,11 @@
-import { WhereOptions } from 'sequelize';
+import { WhereOptions, Op } from 'sequelize';
 import Product from '../models/Product';
-import ProductImage from '../models/ProductImage';
 import { AbstractRepository } from './abstract.repository';
 import { AppError } from '../common/errors';
 import { ProductResponseDto } from '../dto/response/ProductResponse.dto';
 import { mapProductToDto } from '../utils/mapProductToDto';
 import { ProductListOptionsDto } from '../dto/requests/ProductListOptions.dto';
 import { ProductListResponseDto } from '../dto/response/ProductListResponse.dto';
-
-import { SortOrder } from '../enum/Sortrder.enum';
 
 export default class ProductRepository extends AbstractRepository<Product> {
     constructor() {
@@ -61,5 +58,27 @@ export default class ProductRepository extends AbstractRepository<Product> {
 
     async countProducts(where?: WhereOptions<Product>): Promise<number> {
         return await this.count(where);
+    }
+
+    async getSimilarProducts(productId: string): Promise<ProductResponseDto[] | null> {
+        try {
+            const product = await this.model.findByPk(productId as any);
+            if (!product) return null;
+
+            const similarProducts = await this.model.findAll({
+                where: {
+                    category_id: (product as any).category_id,
+                    id: { [Op.ne]: productId },
+                },
+                include: this.defaultIncludes,
+                limit: 10,
+            });
+
+            return similarProducts.map((p: any) => mapProductToDto(p));
+        } catch (error) {
+            if (error instanceof AppError && (error as any).statusCode === 404)
+                return null;
+            throw error;
+        }
     }
 }

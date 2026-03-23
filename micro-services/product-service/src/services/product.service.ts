@@ -83,6 +83,29 @@ export default class ProductService {
         }
     }
 
+    async getSimilarProducts(productId: string): Promise<ProductResponseDto[]> {
+        if (!productId || typeof productId !== 'string') {
+            throw new ValidationError('ID produit invalide', {
+                context: { providedId: productId },
+            });
+        }
+
+        try {
+            const products = await this.productRepository.getSimilarProducts(productId);
+            if (!products)
+                throw new NotFoundError(`Produit avec l'ID ${productId} non trouvé`, { context: { id: productId } });
+            return products;
+        }
+        catch (error) {
+            if (error instanceof ValidationError || error instanceof NotFoundError) throw error;
+            Logger.error('Erreur lors de la récupération des produits similaires', {
+                id: productId,
+                originalError: error instanceof Error ? error.message : String(error),
+            });
+            throw error;
+        }
+    }
+
     private validatePagination(page: number, limit: number): void {
         if (!Number.isInteger(page) || page < 1) {
             throw new ValidationError('Page doit être un entier supérieur à 0', {

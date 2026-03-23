@@ -82,4 +82,17 @@ export class ProductController {
             return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
         }
     }
+
+    async getSimilarProducts(req: Request, res: Response): Promise<Response> {
+        try {
+            Logger.info('Récupération des produits similaires au produit :', { id: req.params.productId });
+            const productId = req.params.id as string;
+            const products = await this.productService.getSimilarProducts(productId);
+            return res.status(200).json(new SuccessResponse('Produits similaires récupérés avec succès', products));
+        }
+        catch (error: any) {
+            Logger.error('Erreur getSimilarProducts', error);
+            return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
+        }
+    }
 }
