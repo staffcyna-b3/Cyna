@@ -1,0 +1,40 @@
+import { Button } from './button';
+import { addToCart } from '@/lib/cart';
+import { Period } from '@/types/Period';
+import { PeriodEnum } from '@/types/enums/Period';
+import { useTranslation } from 'react-i18next';
+
+export default function PeriodModal({
+  open,
+  onClose,
+  productId,
+}: {
+  open: boolean;
+  onClose: () => void;
+  productId: string;
+}) {
+    const { t } = useTranslation();
+    if (!open) return null;
+
+    const handleSelect = (p: Period) => {
+        addToCart(productId, { period: p });
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="fixed inset-0 bg-black/60" onClick={onClose} />
+            <div className="relative z-10 w-[92%] max-w-md bg-[#0b0920] rounded-2xl shadow-2xl p-4">
+                <h3 className="text-lg font-semibold mb-3 text-white">{t('selectPeriod')}</h3>
+                <div className="flex flex-col gap-3">
+                    <Button variant="default" onClick={() => handleSelect(PeriodEnum.ThreeMonths)}>{t('threeMonths')}</Button>
+                    <Button variant="default" onClick={() => handleSelect(PeriodEnum.SixMonths)}>{t('sixMonths')}</Button>
+                    <Button variant="default" onClick={() => handleSelect(PeriodEnum.OneYear)}>{t('oneYear')}</Button>
+                    <div className="pt-2">
+                        <Button variant="ghost" onClick={onClose} className="w-full">{t('cancel')}</Button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

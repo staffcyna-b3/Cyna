@@ -3,4 +3,5 @@ export interface ProductPictureResponse {
   productId: string;
   altText?: string | null;
   isMain: boolean;
+  base64: string;
 }

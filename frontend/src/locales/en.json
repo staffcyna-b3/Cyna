@@ -92,5 +92,12 @@
   "errorOccurred": "An error occurred",
   "retry": "Retry",
   "noProducts": "No products found",
-  "tryAdjustFilters": "Try adjusting your filters or reset them to see more results"
+  "tryAdjustFilters": "Try adjusting your filters or reset them to see more results",
+  "back": "Back",
+  "addToCart": "Add to cart",
+  "total": "Total",
+  "selectPeriod": "Select rental period",
+  "threeMonths": "3 months",
+  "sixMonths": "6 months",
+  "oneYear": "1 year"
 }

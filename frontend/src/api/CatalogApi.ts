@@ -1,6 +1,7 @@
-import { CatalogListResponse } from "../types/interfaces/catalog/CatalogListResponse";
-import { CatalogFilters } from "../types/interfaces/catalog/CatelogFilters";
-import { AbstractApi } from "./AbstractApi";
+import { CatalogResponse } from '@/types/interfaces/catalog/CatalogResponse';
+import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResponse';
+import { CatalogFilters } from '../types/interfaces/catalog/CatelogFilters';
+import { AbstractApi } from './AbstractApi';
 
 export class CatalogApi extends AbstractApi {
     private static instance: CatalogApi;
@@ -16,7 +17,9 @@ export class CatalogApi extends AbstractApi {
         return CatalogApi.instance;
     }
 
-    async getCatalogList(payload: CatalogFilters): Promise<CatalogListResponse> {
+    async getCatalogList(
+        payload: CatalogFilters
+    ): Promise<CatalogListResponse> {
         const params = new URLSearchParams();
         Object.entries(payload).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
@@ -30,6 +33,15 @@ export class CatalogApi extends AbstractApi {
             data: CatalogListResponse;
         }>(`/products/?${params.toString()}`);
 
+        return res.data;
+    }
+
+    async getOne(id: string): Promise<CatalogResponse> {
+        const res = await this.get<{
+            success: boolean;
+            message?: string;
+            data: CatalogResponse;
+        }>('/products/' + id);
         return res.data;
     }
 }

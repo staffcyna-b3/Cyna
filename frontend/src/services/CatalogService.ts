@@ -1,6 +1,6 @@
-import { CatalogApi } from "../api/CatalogApi";
-import { CatalogFilters } from "../types/interfaces/catalog/CatelogFilters";
-import { CatalogListResponse } from "../types/interfaces/catalog/CatalogListResponse";
+import { CatalogApi } from '../api/CatalogApi';
+import { CatalogFilters } from '../types/interfaces/catalog/CatelogFilters';
+import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResponse';
 
 export class CatalogService {
     private static instance: CatalogService;
@@ -14,7 +14,9 @@ export class CatalogService {
         return CatalogService.instance;
     }
 
-    public async getCatalogList(filters: Partial<CatalogFilters> = {}): Promise<CatalogListResponse> {
+    public async getCatalogList(
+        filters: Partial<CatalogFilters> = {}
+    ): Promise<CatalogListResponse> {
         const payload: CatalogFilters = {
             page: filters.page ?? 1,
             limit: filters.limit ?? 10,
@@ -29,5 +31,9 @@ export class CatalogService {
         };
 
         return await this.api.getCatalogList(payload);
+    }
+
+    public async getProductById(id: string) {
+        return await this.api.getOne(id);
     }
 }

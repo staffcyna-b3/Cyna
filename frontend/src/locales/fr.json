@@ -92,5 +92,12 @@
   "errorOccurred": "Une erreur est survenue",
   "retry": "Réessayer",
   "noProducts": "Aucun produit trouvé",
-  "tryAdjustFilters": "Essayez d'ajuster vos filtres ou réinitialisez-les pour voir plus de résultats"
+  "tryAdjustFilters": "Essayez d'ajuster vos filtres ou réinitialisez-les pour voir plus de résultats",
+  "back": "Retour",
+  "addToCart": "Ajouter au panier",
+  "total": "Total",
+  "selectPeriod": "Sélectionner la période de location",
+  "threeMonths": "3 mois",
+  "sixMonths": "6 mois",
+  "oneYear": "1 an"
 }

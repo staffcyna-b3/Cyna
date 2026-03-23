@@ -44,7 +44,7 @@ export default function CatalogListInner() {
         ctx.isService ?? undefined
     );
     const [localSort, setLocalSort] = useState<string | ''>(
-        ctx.sortBy ? `${ctx.sortBy}:${ctx.sortOrder ?? 'asc'}` : ''
+        ctx.sortBy ? `${ctx.sortBy}:${ctx.sortOrder ?? SortOrder.ASC}` : ''
     );
     const [localSearch, setLocalSearch] = useState<string | undefined>(
         ctx.search ?? undefined
@@ -70,7 +70,7 @@ export default function CatalogListInner() {
         setLocalInStock(ctx.inStock ?? undefined);
         setLocalIsService(ctx.isService ?? undefined);
         setLocalSort(
-            ctx.sortBy ? `${ctx.sortBy}:${ctx.sortOrder ?? 'asc'}` : ''
+            ctx.sortBy ? `${ctx.sortBy}:${ctx.sortOrder ?? SortOrder.ASC}` : ''
         );
         setLocalSearch(ctx.search ?? undefined);
         setFiltersOpen(true);

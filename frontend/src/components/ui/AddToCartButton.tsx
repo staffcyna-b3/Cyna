@@ -1,26 +1,40 @@
 import { ShoppingCart } from 'lucide-react';
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { Button } from './button';
+import { addToCart } from '@/lib/cart';
+import { Period } from '@/types/Period';
 
-export default function AddToCartButton({ disabled }: { disabled?: boolean }) {
+export default function AddToCartButton({
+    disabled,
+    productId,
+    text,
+    quantity,
+    period,
+    onClick,
+}: {
+    disabled?: boolean;
+    productId: string;
+    text?: string;
+    quantity?: number;
+    period?: Period;
+    onClick?: () => void;
+}) {
     const handleClick = useCallback(() => {
-        // TODO: ajouter au panier
-        alert('TODO: ajouter au panier');
-    }, []);
+        addToCart(productId, { quantity, period });
+    }, [productId, quantity, period]);
 
     return (
         <Button
             variant="default"
-            onClick={handleClick}
+            onClick={onClick ?? handleClick}
             disabled={!!disabled}
             className={
-                'p-2 rounded-md ' +
-                (disabled
-                    ? 'text-[#777] bg-transparent'
-                    : 'text-white bg-transparent')
+                'p-2 rounded-md bg-[#372CCA]' +
+                (disabled ? 'text-[#777] bg-transparent' : 'text-white bg-transparent')
             }
         >
             <ShoppingCart className="w-4 h-4" />
+            {text && <span className="ml-2">{text}</span>}
         </Button>
     );
 }

@@ -7,6 +7,9 @@ import { ProductPictureResponse } from '../types/interfaces/catalog/ProductPictu
 import { ExtPicture } from '../types/ExtPicture';
 import { formatCurrency } from '@/utils/currencyFormatter';
 import placeholder from '@/assets/pictures/placeholder.svg';
+import { useState } from 'react';
+import PeriodModal from './ui/PeriodModal';
+import CanBeAddToCart from '@/hooks/canBeAddToCart';
 
 export const CatalogProductCard = ({
     product,
@@ -16,6 +19,8 @@ export const CatalogProductCard = ({
     const { t } = useTranslation();
     const mainImage =
         product.images?.find((i) => i.isMain) ?? product.images?.[0];
+
+    const [showPeriodModal, setShowPeriodModal] = useState(false);
 
     const imgSrc = (() => {
         if (!mainImage) return placeholder;
@@ -101,8 +106,25 @@ export const CatalogProductCard = ({
                     <div className="text-xl font-extrabold">
                         {formatCurrency(product.price)}
                     </div>
-                    <div>
-                        <AddToCartButton disabled={unavailable} />
+                    <div className="flex items-center gap-3">
+                        {product.isService ? (
+                            <>
+                                <AddToCartButton
+                                    disabled={!CanBeAddToCart(product)}
+                                    productId={product.id}
+                                    onClick={() => setShowPeriodModal(true)}
+                                />
+                                <PeriodModal open={showPeriodModal} onClose={() => setShowPeriodModal(false)} productId={product.id} />
+                            </>
+                        ) : ( 
+                            <>
+                                <AddToCartButton
+                                        disabled={!CanBeAddToCart(product)}
+                                        productId={product.id}
+                                        quantity={1}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
