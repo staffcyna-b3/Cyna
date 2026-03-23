@@ -2,7 +2,6 @@ import { ProductStatus } from "@/types/enums/product/ProductStatus";
 import { CatalogResponse } from "@/types/interfaces/catalog/CatalogResponse";
 
 export const CanBeAddToCart = (product: CatalogResponse) => {
-    console.log(product.isService)
     if (product.isService) {
         return product.status == ProductStatus.AVAILABLE;
     }

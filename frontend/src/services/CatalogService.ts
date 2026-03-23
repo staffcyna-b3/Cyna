@@ -36,4 +36,8 @@ export class CatalogService {
     public async getProductById(id: string) {
         return await this.api.getOne(id);
     }
+
+    public async getSimilarProducts(productId: string) {
+        return await this.api.getSimilarProducts(productId);
+    }
 }

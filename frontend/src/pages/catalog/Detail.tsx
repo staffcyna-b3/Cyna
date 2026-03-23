@@ -9,6 +9,7 @@ import { ProductPictureResponse } from '@/types/interfaces/catalog/ProductPictur
 import placeholder from '@/assets/pictures/placeholder.svg';
 import { formatCurrency } from '@/utils/currencyFormatter';
 import CanBeAddToCart from '@/hooks/canBeAddToCart';
+import SimilarProductsCarousel from '@/components/SimilarProductsCarousel';
 
 export default function CatalogDetail(): JSX.Element {
     const { id } = useParams();
@@ -222,6 +223,9 @@ export default function CatalogDetail(): JSX.Element {
                         />
                     </div>
                 </div>
+            </div>
+            <div>
+                <SimilarProductsCarousel productId={product.id} />
             </div>
         </div>
     );

@@ -44,4 +44,13 @@ export class CatalogApi extends AbstractApi {
         }>('/products/' + id);
         return res.data;
     }
+
+    async getSimilarProducts(productId: string): Promise<CatalogResponse[]> {
+        const res = await this.get<{
+            success: boolean;
+            message?: string;
+            data: CatalogResponse[];
+        }>(`/products/similar/${productId}`);
+        return res.data;
+    }
 }

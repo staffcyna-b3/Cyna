@@ -25,13 +25,14 @@ export default function AddToCartButton({
 
     return (
         <Button
-            variant="default"
+            variant="cyna"
             onClick={onClick ?? handleClick}
             disabled={!!disabled}
-            className={
-                'p-2 rounded-md bg-[#372CCA]' +
-                (disabled ? 'text-[#777] bg-transparent' : 'text-white bg-transparent')
-            }
+            className={'p-2 rounded-md'}
+            style={{
+                backgroundColor: '#372CCA',
+                color: disabled ? '#777' : '#ffffff',
+            }}
         >
             <ShoppingCart className="w-4 h-4" />
             {text && <span className="ml-2">{text}</span>}
