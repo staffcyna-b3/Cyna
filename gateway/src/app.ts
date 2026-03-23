@@ -11,6 +11,7 @@ import { pendingAuth2FAStore } from './stores/pending-auth-2fa.store';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import cookieParser from 'cookie-parser';
+import stripeWebhookRouter from './webhooks/stripe.webhook';
 
 export const createApp = (): Express => {
   const app = express();
@@ -35,6 +36,9 @@ export const createApp = (): Express => {
   app.use(helmet());
 
   app.use(corsMiddleware);
+
+  // Stripe signature verification requires the raw request body.
+  app.use('/webhooks', stripeWebhookRouter);
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ limit: '10mb', extended: true }));

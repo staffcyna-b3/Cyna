@@ -3,15 +3,18 @@ import './App.css'
 import { LanguageProvider } from './providers/LanguageProvider'
 import CustomRoutes from './routes/CustomRoutes'
 import { AuthProvider } from './providers/AuthProvider'
+import { StripeProvider } from './context/StripeContext'
 
 function App() {
 
   return (
     <LanguageProvider>
       <BrowserRouter>
-        <AuthProvider>
-          <CustomRoutes />
-        </AuthProvider>
+        <StripeProvider>
+          <AuthProvider>
+            <CustomRoutes />
+          </AuthProvider>
+        </StripeProvider>
       </BrowserRouter>
     </LanguageProvider>
   )

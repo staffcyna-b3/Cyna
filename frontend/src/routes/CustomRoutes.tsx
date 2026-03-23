@@ -10,6 +10,9 @@ import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
 import { Verify2FA } from "@/pages/auth/Verify2FA"
 import { UserRole } from "@/types/enums/UserRole.enum"
+import { Checkout } from "@/pages/Checkout"
+import { CheckoutSuccess } from "@/pages/CheckoutSuccess"
+import { CheckoutCancel } from "@/pages/CheckoutCancel"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -22,6 +25,9 @@ export default function CustomRoutes() {
       <Route path="/request-reset" element={<RequestReset />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-2fa" element={<Verify2FA />} />
+      <Route path="/checkout" element={<Checkout />} />
+      <Route path="/checkout/success" element={<CheckoutSuccess />} />
+      <Route path="/checkout/cancel" element={<CheckoutCancel />} />
       <Route 
         path="/dashboard" 
         element={
