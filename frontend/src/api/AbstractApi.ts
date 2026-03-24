@@ -1,14 +1,11 @@
-
 import { RequestTypes } from "../types/enums/RequestTypes";
 import { RequestOptions } from "../types/interfaces/RequestOptions";
 
 export class AbstractApi {
     private baseUrl: string;
-    private isRefreshing = false;
-    private refreshPromise: Promise<boolean> | null = null;
 
     constructor() {
-        this.baseUrl = "http://localhost:3000/api";
+        this.baseUrl = import.meta.env.GATEWAY_API_URL || "http://localhost:3000/api";
     }
 
 
