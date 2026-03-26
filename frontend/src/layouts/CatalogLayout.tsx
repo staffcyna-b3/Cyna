@@ -28,7 +28,13 @@ const CatalogLayout = ({
 
     return (
         <CatalogProvider>
-            <div className='min-h-screen bg-fixed bg-[radial-gradient(circle_at_center,#1a0066_0%,#0f003d_30%,#060018_60%,#020008_80%,#000000_100%)]'>
+            <style>{`
+                /* Accessibilité : forcer la couleur du texte en blanc pour garantir lisibilité */
+                .catalog-layout, .catalog-layout * {
+                    color: #ffffff !important;
+                }
+            `}</style>
+            <div className='catalog-layout min-h-screen bg-fixed bg-[radial-gradient(circle_at_center,#1a0066_0%,#0f003d_30%,#060018_60%,#020008_80%,#000000_100%)]'>
                 <CatalogNavigation
                     categories={typedCategories}
                     activeCategory={activeCategory}

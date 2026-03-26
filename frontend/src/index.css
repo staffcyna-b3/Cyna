@@ -207,8 +207,3 @@ button:focus-visible {
     background-color: var(--color-input);
   }
 }
-
-/* Accessibilité : forcer la couleur du texte en blanc pour garantir lisibilité */
-html, body, #root, .app, body * {
-  color: #ffffff !important;
-}
