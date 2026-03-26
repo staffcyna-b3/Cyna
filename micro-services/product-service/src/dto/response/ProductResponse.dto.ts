@@ -1,9 +1,10 @@
 import { ProductStatus } from "../../enum/ProductStatus";
 import { ProductImageResponseDto } from "./ProductImageResponse.dto";
+import { CategoryResponseDto } from "./CategoryResponse.dto";
 
 export interface ProductResponseDto {
   id: string;
-  categoryId: string;
+  category: CategoryResponseDto;
   name: string;
   description?: string | null;
   price: number;

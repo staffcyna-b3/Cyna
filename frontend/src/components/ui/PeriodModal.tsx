@@ -22,7 +22,7 @@ export default function PeriodModal({
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
             <div className="fixed inset-0 bg-black/60" onClick={onClose} />
             <div className="relative z-10 w-[92%] max-w-md bg-[#0b0920] rounded-2xl shadow-2xl p-4">
                 <h3 className="text-lg font-semibold mb-3 text-white">{t('selectPeriod')}</h3>

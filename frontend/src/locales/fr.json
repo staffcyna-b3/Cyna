@@ -102,5 +102,10 @@
   "selectPeriod": "Sélectionner la période de location",
   "threeMonths": "3 mois",
   "sixMonths": "6 mois",
-  "oneYear": "1 an"
+  "oneYear": "1 an",
+  "home": "Accueil",
+  "allProducts": "Tous les produits",
+  "noCategory": "Aucune catégorie",
+  "pricing": "Tarification",
+  "days": "jours"
 }

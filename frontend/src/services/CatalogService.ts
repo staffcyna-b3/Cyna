@@ -40,4 +40,8 @@ export class CatalogService {
     public async getSimilarProducts(productId: string) {
         return await this.api.getSimilarProducts(productId);
     }
+
+    public async listCategories() {
+        return await this.api.listCategories();
+    }
 }

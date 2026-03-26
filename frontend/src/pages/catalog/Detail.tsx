@@ -10,9 +10,11 @@ import placeholder from '@/assets/pictures/placeholder.svg';
 import { formatCurrency } from '@/utils/currencyFormatter';
 import CanBeAddToCart from '@/hooks/canBeAddToCart';
 import SimilarProductsCarousel from '@/components/SimilarProductsCarousel';
+import CatalogLayout from '@/layouts/CatalogLayout';
+import ProductTypeBadge from '@/components/ui/ProductTypeBadge';
 
 export default function CatalogDetail(): JSX.Element {
-    const { id } = useParams();
+    const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { t } = useTranslation();
 
@@ -25,8 +27,8 @@ export default function CatalogDetail(): JSX.Element {
         void getOne(id);
     }, [id, getOne]);
 
-    const images = (product?.images ?? []) as ProductPictureResponse[];
-    const orderedImages = [...images].sort((a, b) => {
+    const images: ProductPictureResponse[] = (product?.images ?? []) as ProductPictureResponse[];
+    const orderedImages: ProductPictureResponse[] = [...images].sort((a, b) => {
         if (a.isMain === b.isMain) return 0;
         return a.isMain ? -1 : 1;
     });
@@ -35,8 +37,8 @@ export default function CatalogDetail(): JSX.Element {
         if (!img) return placeholder;
 
         if (img.base64) {
-            const s = img.base64.trim();
-            let mime = 'image/jpeg';
+            const s: string = img.base64.trim();
+            let mime: string = 'image/jpeg';
             if (s.startsWith('iVBOR')) mime = 'image/png';
             else if (s.startsWith('Qk')) mime = 'image/bmp';
             return byteaToImage(s.replace(/\s+/g, ''), mime);
@@ -48,184 +50,346 @@ export default function CatalogDetail(): JSX.Element {
 
     if (loading)
         return (
-            <div className="p-6 md:min-h-screen">
-                <LoadingSkeleton count={3} />
-            </div>
+            <CatalogLayout>
+                <div className="p-6 md:min-h-screen">
+                    <LoadingSkeleton count={3} />
+                </div>
+            </CatalogLayout>
         );
 
     if (error)
         return (
-            <div className="p-6 md:min-h-screen flex items-center justify-center">
-                <div className="max-w-lg w-full border border-red-700 rounded-xl p-8 text-center">
-                    <div className="text-red-400 text-lg font-semibold mb-2">
-                        {t('errorOccurred')}
-                    </div>
-                    <div className="text-sm text-red-200 mb-6 wrap-break-words">
-                        {error}
-                    </div>
-                    <div className="flex items-center justify-center gap-3">
-                        <button
-                            className="btn"
-                            onClick={() => void getOne(id ?? '')}
-                        >
-                            {t('retry')}
-                        </button>
-                        <button
-                            className="btn"
-                            onClick={() => navigate(-1)}
-                        >
-                            {t('back')}
-                        </button>
+            <CatalogLayout>
+                <div className="p-6 md:min-h-screen flex items-center justify-center">
+                    <div className="max-w-lg w-full border border-red-700 rounded-xl p-8 text-center">
+                        <div className="text-red-400 text-lg font-semibold mb-2">
+                            {t('errorOccurred')}
+                        </div>
+                        <div className="text-sm text-red-200 mb-6 wrap-break-words">
+                            {error}
+                        </div>
+                        <div className="flex items-center justify-center gap-3">
+                            <button
+                                className="btn"
+                                onClick={() => void getOne(id ?? '')}
+                            >
+                                {t('retry')}
+                            </button>
+                            <button
+                                className="btn"
+                                onClick={() => navigate(-1)}
+                            >
+                                {t('back')}
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </CatalogLayout>
         );
 
     if (!product)
         return (
-            <div className="p-6 md:min-h-screen flex items-center justify-center">
-                <div className="text-center text-[#9aa0c7]">
-                    {t('noProducts')}
+            <CatalogLayout>
+                <div className="p-6 md:min-h-screen flex items-center justify-center">
+                    <div className="text-center text-[#9aa0c7]">
+                        {t('noProducts')}
+                    </div>
                 </div>
-            </div>
+            </CatalogLayout>
         );
 
-    const hasMultiple = orderedImages.length > 1;
-    const isAvailable = CanBeAddToCart(product);
+    const hasMultiple: boolean = orderedImages.length > 1;
+    const isAvailable: boolean = CanBeAddToCart(product);
+
+    // Extract abbreviation from service name (e.g., "SOC (Security Operations Center)" -> "SOC")
+    const getAbbreviation = (name: string): string => {
+        const match = name.match(/([A-Z]+)\s*\(/);
+        return match ? match[1] : name.substring(0, 3).toUpperCase();
+    };
+
+    const abbreviation = product.isService ? getAbbreviation(product.category.name) : '';
 
     return (
-        <div className="bg-gradient-to-b p-4 md:p-6 min-h-screen">
-            {/* Back Button */}
-            <button
-                onClick={() => navigate(-1)}
-                className="mb-6 flex items-center gap-2 text-[#9aa0c7] hover:text-white transition-colors group"
-                aria-label="back"
-            >
-                <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-            </button>
+        <div className="w-full">
+            <div className="relative overflow-hidden">
+                <div className="relative p-4 md:p-8 lg:p-12">
+                    {/* Back Button */}
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="mb-8 flex items-center gap-2 text-[#9aa0c7] hover:text-[#7b61ff] transition-all duration-300 group"
+                        aria-label="back"
+                    >
+                        <svg
+                            className="w-5 h-5 group-hover:-translate-x-1 transition-transform"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 19l-7-7 7-7"
+                            />
+                        </svg>
+                        <span className="text-sm">{t('back')}</span>
+                    </button>
 
-            <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6 lg:gap-10 items-start">
-                {/* Left: Images*/}
-                <div className="col-span-12 lg:col-span-5">
-                    {hasMultiple ? (
-                        <div className="w-full">
-                            <div className="relative group overflow-hidden rounded-2xl">
-                                <img
-                                    src={getSrc(orderedImages[currentIndex])}
-                                    alt={product.name}
-                                    className="w-full aspect-square object-cover rounded-2xl shadow-xl group-hover:scale-105 transition-transform duration-300"
-                                />
-                                <button
-                                    aria-label="previous"
-                                    onClick={() =>
-                                        setCurrentIndex(
-                                            (currentIndex - 1 + orderedImages.length) %
-                                                orderedImages.length
-                                        )
-                                    }
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                                    </svg>
-                                </button>
-                                <button
-                                    aria-label="next"
-                                    onClick={() =>
-                                        setCurrentIndex(
-                                            (currentIndex + 1) % orderedImages.length
-                                        )
-                                    }
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2.5 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
-                                >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </button>
-                            </div>
+                    <div className="max-w-7xl mx-auto grid grid-cols-12 gap-6 lg:gap-10 items-center py-8 md:py-12">
+                        {product.isService ? (
+                            <>
+                                {/* Service Layout: Left - Text Content */}
+                                <div className="col-span-12 lg:col-span-6 flex flex-col justify-center gap-6">
+                                    <div className="space-y-4">
+                                        <div className="inline-block">
+                                            <ProductTypeBadge isService={true} />
+                                        </div>
+                                        <h1 className="text-4xl lg:text-5xl xl:text-6xl font-black leading-tight">
+                                            <span className="text-transparent bg-gradient-to-r from-white via-[#e0e7ff] to-[#c7d2fe] bg-clip-text">
+                                                {product.name}
+                                            </span>
+                                        </h1>
+                                        <p className="text-base lg:text-lg text-[#b7bdd9] leading-relaxed max-w-lg">
+                                            {product.description}
+                                        </p>
+                                    </div>
 
-                            <div className="mt-4 flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                                {orderedImages.map((img, idx) => (
-                                    <button
-                                        key={idx}
-                                        onClick={() => setCurrentIndex(idx)}
-                                        className={`flex-shrink-0 rounded-lg transition-all duration-200 ${
-                                            idx === currentIndex
-                                                ? 'ring-2 ring-white scale-100'
-                                                : 'opacity-50 hover:opacity-75'
-                                        }`}
-                                    >
-                                        <img
-                                            src={getSrc(img)}
-                                            alt={`${product.name}-${idx}`}
-                                            className="w-20 h-20 object-cover rounded-lg"
+                                    <div className="space-y-3 pt-4">
+                                        <div className="text-xs text-[#9aa0c7] uppercase tracking-widest font-semibold">
+                                            {t('pricing')}
+                                        </div>
+                                        <div className="flex items-baseline gap-3">
+                                            <span className="text-5xl lg:text-6xl font-black text-transparent bg-gradient-to-r from-white to-[#7b61ff] bg-clip-text">
+                                                {formatCurrency(product.price)}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {product.duration && (
+                                        <div className="inline-flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-[#7b61ff]/10 to-[#2b6ef6]/10 border border-[#7b61ff]/40 rounded-lg hover:border-[#7b61ff]/60 transition-colors">
+                                            <div className="w-2 h-2 bg-gradient-to-r from-[#7b61ff] to-[#2b6ef6] rounded-full animate-pulse" />
+                                            <span className="text-sm text-[#b7bdd9] font-medium">
+                                                {product.duration} {t('days')}
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    <div className="flex flex-col gap-3 pt-4">
+                                        <div className="rounded-xl p-5 border border-white/10 bg-gradient-to-br from-white/5 to-transparent hover:border-white/20 transition-colors">
+                                            <div className="text-xs mb-2 uppercase tracking-wide text-[#9aa0c7]">
+                                                {t('total')}
+                                            </div>
+                                            <div className="text-4xl font-black text-transparent bg-gradient-to-r from-white to-[#7b61ff] bg-clip-text">
+                                                {formatCurrency(product.price)}
+                                            </div>
+                                        </div>
+
+                                        <AddToCartButton
+                                            disabled={!isAvailable}
+                                            productId={product.id}
+                                            text={
+                                                isAvailable
+                                                    ? t('addToCart')
+                                                    : t('unavailable')
+                                            }
                                         />
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-                    ) : (
-                        <img
-                            src={getSrc(orderedImages[0])}
-                            alt={product.name}
-                            className="w-full aspect-square object-cover rounded-2xl shadow-xl"
-                        />
-                    )}
-                </div>
+                                    </div>
+                                </div>
 
-                {/* Middle: Details */}
-                <div className="col-span-12 lg:col-span-4 flex flex-col justify-start gap-6">
-                    <div>
-                        <h1 className="text-3xl lg:text-4xl font-bold mb-3 leading-tight">{product.name}</h1>
-                        <p className="text-sm lg:text-base text-[#9aa0c7] leading-relaxed line-clamp-4">
-                            {product.description}
-                        </p>
-                    </div>
+                                {/* Service Layout: Right - Logo Circle */}
+                                <div className="col-span-12 lg:col-span-6 flex items-center justify-center py-8 lg:py-0">
+                                    <div className="relative w-72 h-72 flex items-center justify-center">
+                                        {/* Animated background circles */}
+                                        <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#7b61ff]/40 to-[#2b6ef6]/40 blur-3xl animate-pulse" />
+                                        <div className="absolute inset-0 rounded-full border-2 border-[#7b61ff]/60 shadow-lg shadow-[#7b61ff]/20" />
+                                        <div className="absolute inset-8 rounded-full border border-[#2b6ef6]/60" />
+                                        <div className="absolute inset-16 rounded-full border border-[#7b61ff]/40" />
+                                        
+                                        {/* Center circle with abbreviation */}
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="rounded-full w-56 h-56 bg-gradient-to-br from-[#7b61ff] via-[#6b47ff] to-[#2b6ef6] flex items-center justify-center shadow-2xl shadow-[#7b61ff]/50">
+                                                <span className="text-7xl font-black text-white drop-shadow-2xl">
+                                                    {abbreviation}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </>
+                        ) : (
+                            <>
+                                {/* Product Layout: Left - Details */}
+                                <div className="col-span-12 lg:col-span-6 flex flex-col justify-center gap-6">
+                                    <div className="space-y-4">
+                                        <div className="inline-block">
+                                            <ProductTypeBadge isService={false} />
+                                        </div>
+                                        <h1 className="text-4xl lg:text-5xl font-black leading-tight">
+                                            <span className="text-transparent bg-gradient-to-r from-white via-[#e0e7ff] to-[#c7d2fe] bg-clip-text">
+                                                {product.name}
+                                            </span>
+                                        </h1>
+                                        <p className="text-base text-[#b7bdd9] leading-relaxed line-clamp-4">
+                                            {product.description}
+                                        </p>
+                                    </div>
 
-                    <div className="space-y-2">
-                        <div className="text-xs text-[#9aa0c7] uppercase tracking-widest font-semibold">
-                            {product.isService ? t('service') : t('product')}
-                        </div>
-                        <div className="flex items-baseline gap-2">
-                            <span className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-white to-[#9aa0c7] bg-clip-text text-transparent">
-                                {formatCurrency(product.price)}
-                            </span>
-                        </div>
-                    </div>
+                                    <div className="space-y-3">
+                                        <div className="text-xs text-[#9aa0c7] uppercase tracking-widest font-semibold">
+                                            {t('pricing')}
+                                        </div>
+                                        <div className="flex items-baseline gap-3">
+                                            <span className="text-5xl font-black text-transparent bg-gradient-to-r from-white to-[#7b61ff] bg-clip-text">
+                                                {formatCurrency(product.price)}
+                                            </span>
+                                        </div>
+                                    </div>
 
-                    {product.stock > 0 && product.stock < 10 && (
-                        <div className="inline-flex items-center gap-2 px-3 py-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-                            <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse" />
-                            <span className="text-sm text-yellow-300 font-medium">
-                                {t('onlyNLeft', { count: product.stock })}
-                            </span>
-                        </div>
-                    )}
-                </div>
+                                    {product.stock > 0 &&
+                                        product.stock < 10 && (
+                                            <div className="inline-flex items-center gap-2 px-4 py-3 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/40 rounded-lg hover:border-yellow-500/60 transition-colors">
+                                                <div className="w-2 h-2 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse" />
+                                                <span className="text-sm text-yellow-300 font-medium">
+                                                    {t('onlyNLeft', {
+                                                        count: product.stock,
+                                                    })}
+                                                </span>
+                                            </div>
+                                        )}
 
-                {/* Right: Add to Cart */}
-                <div className="col-span-12 lg:col-span-3 flex flex-col justify-start gap-4 sticky top-6">
-                    <div className="space-y-3">
-                        <div className="rounded-xl p-4 border border-white/5">
-                            <div className="text-xs mb-2 uppercase tracking-wide">{t('total')}</div>
-                            <div className="text-3xl font-bold">
-                                {formatCurrency(product.price)}
-                            </div>
-                        </div>
+                                    <div className="flex flex-col gap-3 pt-4">
+                                        <div className="rounded-xl p-5 border border-white/10 bg-gradient-to-br from-white/5 to-transparent hover:border-white/20 transition-colors">
+                                            <div className="text-xs mb-2 uppercase tracking-wide text-[#9aa0c7]">
+                                                {t('total')}
+                                            </div>
+                                            <div className="text-4xl font-black text-transparent bg-gradient-to-r from-white to-[#7b61ff] bg-clip-text">
+                                                {formatCurrency(product.price)}
+                                            </div>
+                                        </div>
 
-                        {/* Add to Cart Button */}
-                        <AddToCartButton
-                            disabled={!isAvailable}
-                            productId={product.id}
-                            text={isAvailable ? t('addToCart') : t('unavailable')}
-                        />
+                                        <AddToCartButton
+                                            disabled={!isAvailable}
+                                            productId={product.id}
+                                            text={
+                                                isAvailable
+                                                    ? t('addToCart')
+                                                    : t('unavailable')
+                                            }
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Product Layout: Right - Images */}
+                                <div className="col-span-12 lg:col-span-6 flex items-center justify-center py-8 lg:py-0">
+                                    {hasMultiple ? (
+                                        <div className="w-full">
+                                            <div className="relative group overflow-hidden rounded-2xl">
+                                                <div className="absolute inset-0 bg-gradient-to-br from-[#7b61ff]/20 to-[#2b6ef6]/20 group-hover:from-[#7b61ff]/30 group-hover:to-[#2b6ef6]/30 transition-all duration-300 z-10 pointer-events-none" />
+                                                <img
+                                                    src={getSrc(orderedImages[currentIndex])}
+                                                    alt={product.name}
+                                                    className="w-full aspect-square object-cover rounded-2xl shadow-2xl shadow-[#7b61ff]/20 group-hover:shadow-[#7b61ff]/40 group-hover:scale-105 transition-all duration-300"
+                                                />
+                                                <button
+                                                    aria-label="previous"
+                                                    onClick={() =>
+                                                        setCurrentIndex(
+                                                            (currentIndex - 1 + orderedImages.length) %
+                                                                orderedImages.length
+                                                        )
+                                                    }
+                                                    className="absolute left-3 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#7b61ff] to-[#2b6ef6] hover:shadow-lg hover:shadow-[#7b61ff]/50 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
+                                                >
+                                                    <svg
+                                                        className="w-4 h-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M15 19l-7-7 7-7"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                                <button
+                                                    aria-label="next"
+                                                    onClick={() =>
+                                                        setCurrentIndex(
+                                                            (currentIndex + 1) %
+                                                                orderedImages.length
+                                                        )
+                                                    }
+                                                    className="absolute right-3 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#7b61ff] to-[#2b6ef6] hover:shadow-lg hover:shadow-[#7b61ff]/50 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
+                                                >
+                                                    <svg
+                                                        className="w-4 h-4"
+                                                        fill="none"
+                                                        stroke="currentColor"
+                                                        viewBox="0 0 24 24"
+                                                    >
+                                                        <path
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                            strokeWidth={2}
+                                                            d="M9 5l7 7-7 7"
+                                                        />
+                                                    </svg>
+                                                </button>
+                                            </div>
+
+                                            <div className="mt-4 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                                                {orderedImages.map((img, idx) => (
+                                                    <button
+                                                        key={idx}
+                                                        onClick={() =>
+                                                            setCurrentIndex(idx)
+                                                        }
+                                                        className={`flex-shrink-0 rounded-lg transition-all duration-300 ${
+                                                            idx === currentIndex
+                                                                ? 'ring-2 ring-[#7b61ff] scale-100 shadow-lg shadow-[#7b61ff]/40'
+                                                                : 'opacity-60 hover:opacity-90'
+                                                        }`}
+                                                    >
+                                                        <img
+                                                            src={getSrc(img)}
+                                                            alt={`${product.name}-${idx}`}
+                                                            className="w-20 h-20 object-cover rounded-lg"
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="relative group overflow-hidden rounded-2xl">
+                                            <div className="absolute inset-0 bg-gradient-to-br from-[#7b61ff]/20 to-[#2b6ef6]/20 group-hover:from-[#7b61ff]/30 group-hover:to-[#2b6ef6]/30 transition-all duration-300 z-10 pointer-events-none" />
+                                            <img
+                                                src={getSrc(orderedImages[0])}
+                                                alt={product.name}
+                                                className="w-full aspect-square object-cover rounded-2xl shadow-2xl shadow-[#7b61ff]/20 group-hover:shadow-[#7b61ff]/40 group-hover:scale-105 transition-all duration-300"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
-            <div>
-                <SimilarProductsCarousel productId={product.id} />
+
+            {/* Content Section */}
+            <div className="p-4 md:p-8 lg:p-12">
+                <div className="max-w-7xl mx-auto">
+                    <div className="mb-12">
+                        <h2 className="text-3xl lg:text-4xl font-black mb-3 text-transparent bg-gradient-to-r from-white to-[#9aa0c7] bg-clip-text">
+                            {t('similarProducts')}
+                        </h2>
+                        <div className="w-12 h-1 bg-gradient-to-r from-[#7b61ff] to-[#2b6ef6] rounded-full" />
+                    </div>
+                    <SimilarProductsCarousel productId={product.id} />
+                </div>
             </div>
         </div>
     );

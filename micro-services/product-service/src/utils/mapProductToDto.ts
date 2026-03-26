@@ -1,11 +1,15 @@
 import Product from '../models/Product';
 import ProductImage from '../models/ProductImage';
 import { ProductResponseDto } from '../dto/response/ProductResponse.dto';
+import { CategoryResponseDto } from '../dto/response/CategoryResponse.dto';
 
 export function mapProductToDto(product: Product): ProductResponseDto {
     return {
         id: product.id,
-        categoryId: product.category_id,
+        category: {
+            id: product.category.id,
+            name: product.category.name,
+        },
         name: product.name,
         description: product.description,
         price: Number(product.price),

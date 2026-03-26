@@ -102,5 +102,10 @@
   "selectPeriod": "Select rental period",
   "threeMonths": "3 months",
   "sixMonths": "6 months",
-  "oneYear": "1 year"
+  "oneYear": "1 year",
+  "home": "Home",
+  "allProducts": "All products",
+  "noCategory": "No category",
+  "pricing": "Pricing",
+  "days": "days"
 }

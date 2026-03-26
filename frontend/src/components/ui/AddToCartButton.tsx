@@ -1,5 +1,5 @@
 import { ShoppingCart } from 'lucide-react';
-import { useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { Button } from './button';
 import { addToCart } from '@/lib/cart';
 import { Period } from '@/types/Period';
@@ -11,6 +11,7 @@ export default function AddToCartButton({
     quantity,
     period,
     onClick,
+    skipAddToCart,
 }: {
     disabled?: boolean;
     productId: string;
@@ -18,15 +19,28 @@ export default function AddToCartButton({
     quantity?: number;
     period?: Period;
     onClick?: () => void;
+    skipAddToCart?: boolean;
 }) {
-    const handleClick = useCallback(() => {
-        addToCart(productId, { quantity, period });
-    }, [productId, quantity, period]);
+    const handleClickInternal = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            // prevent parent Link navigation
+            e.stopPropagation();
+            if (!skipAddToCart) {
+                try {
+                    addToCart(productId, { quantity, period });
+                } catch  {
+                    // ignore
+                }
+            }
+            if (onClick) onClick();
+        },
+        [productId, quantity, period, onClick, skipAddToCart]
+    );
 
     return (
         <Button
             variant="cyna"
-            onClick={onClick ?? handleClick}
+            onClick={handleClickInternal}
             disabled={!!disabled}
             className={'p-2 rounded-md'}
             style={{

@@ -2,6 +2,7 @@ import { CatalogResponse } from '@/types/interfaces/catalog/CatalogResponse';
 import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResponse';
 import { CatalogFilters } from '../types/interfaces/catalog/CatelogFilters';
 import { AbstractApi } from './AbstractApi';
+import { Category } from '@/types/interfaces/category/Category';
 
 export class CatalogApi extends AbstractApi {
     private static instance: CatalogApi;
@@ -51,6 +52,15 @@ export class CatalogApi extends AbstractApi {
             message?: string;
             data: CatalogResponse[];
         }>(`/products/similar/${productId}`);
+        return res.data;
+    }
+
+    async listCategories(): Promise<Category[]> {
+        const res = await this.get<{
+            success: boolean;
+            message?: string;
+            data: Category[];
+        }>('/products/categories/');
         return res.data;
     }
 }

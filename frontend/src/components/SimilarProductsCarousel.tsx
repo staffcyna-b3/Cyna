@@ -39,7 +39,7 @@ export default function SimilarProductsCarousel({
             <div className="overflow-x-auto pb-2 -mx-2 scrollbar-hide">
                 <div className="flex gap-4 px-2 snap-x snap-mandatory">
                     {safeData.map((product) => (
-                        <div key={product.id} className="flex-shrink-0 snap-start w-64 sm:w-72 md:w-80 lg:w-80">
+                        <div key={product.id} className="snap-start">
                             <CatalogProductCard product={product} />
                         </div>
                     ))}
