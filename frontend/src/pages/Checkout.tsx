@@ -1,178 +1,220 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { useTranslation } from 'react-i18next';
-import { Typography } from '@/components/ui/typography';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
+import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/StripePaymentForm';
 import { useStripeConfig } from '@/context/StripeContext';
+import { Typography } from '@/components/ui/typography';
 
-const DEFAULT_AMOUNT = '19.99';
+export interface CartItem {
+  id: string;
+  name: string;
+  quantity: number;
+  unitPriceCents: number;
+  isRecurring?: boolean;
+  billingPeriod?: 'monthly' | 'yearly';
+  imageUrl?: string;
+}
 
-const parseAmountToCents = (amountValue: string): number | null => {
-  const normalized = amountValue.replace(',', '.').trim();
-  const amount = Number(normalized);
+interface LocationState {
+  cartItems?: CartItem[];
+}
 
-  if (!Number.isFinite(amount) || amount <= 0) {
-    return null;
-  }
-
-  return Math.round(amount * 100);
-};
+const MOCK_CART_ITEMS: CartItem[] = [
+  {
+    id: 'mock-1',
+    name: 'Cyna Defend Basique',
+    quantity: 2,
+    unitPriceCents: 120000,
+    isRecurring: true,
+    billingPeriod: 'monthly',
+  },
+  {
+    id: 'mock-2',
+    name: 'Station blanche grand format',
+    quantity: 2,
+    unitPriceCents: 120000,
+    isRecurring: false,
+  },
+];
 
 const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
 
 export const Checkout: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, accessToken } = useAuth();
   const { stripePromise, isConfigured } = useStripeConfig();
+  const location = useLocation();
 
-  const [amount, setAmount] = useState(DEFAULT_AMOUNT);
-  const [description, setDescription] = useState(t('checkoutDefaultDescription'));
+  const cartItems = (location.state as LocationState)?.cartItems ?? MOCK_CART_ITEMS;
+
+  const totalCents = useMemo(
+    () => cartItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
+    [cartItems],
+  );
+
+  const recurringCents = useMemo(
+    () =>
+      cartItems
+        .filter((item) => item.isRecurring)
+        .reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
+    [cartItems],
+  );
+
   const [isLoadingIntent, setIsLoadingIntent] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
-  const [finalAmountCents, setFinalAmountCents] = useState<number | null>(null);
 
-  const amountCents = useMemo(() => parseAmountToCents(amount), [amount]);
+  useEffect(() => {
+    if (!isConfigured || !user?.id || !accessToken || totalCents <= 0) return;
 
-  const handleCreateIntent = async () => {
-    setApiError(null);
+    const createIntent = async () => {
+      setIsLoadingIntent(true);
+      setApiError(null);
+      try {
+        const response = await fetch('/api/payments/create-intent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            amount: totalCents,
+            currency: 'eur',
+            description: cartItems.map((i) => i.name).join(', '),
+            userId: user.id,
+          }),
+        });
 
-    if (!isConfigured) {
-      setApiError(t('checkoutStripeNotConfigured'));
-      return;
-    }
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => null);
+          throw new Error(errorData?.message || t('checkoutCreateIntentError'));
+        }
 
-    if (!user?.id) {
-      setApiError(t('checkoutUserRequired'));
-      return;
-    }
-
-    if (!amountCents) {
-      setApiError(t('checkoutInvalidAmount'));
-      return;
-    }
-
-    setIsLoadingIntent(true);
-
-    try {
-      const response = await fetch('/api/payments/create-intent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          amount: amountCents,
-          currency: 'eur',
-          description,
-          userId: user.id,
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        const message = errorData?.message || t('checkoutCreateIntentError');
-        throw new Error(message);
+        const data = (await response.json()) as { clientSecret: string; paymentIntentId: string };
+        setClientSecret(data.clientSecret);
+        setPaymentIntentId(data.paymentIntentId);
+      } catch (error) {
+        setApiError(error instanceof Error ? error.message : t('checkoutCreateIntentError'));
+      } finally {
+        setIsLoadingIntent(false);
       }
+    };
 
-      const data = (await response.json()) as {
-        clientSecret: string;
-        paymentIntentId: string;
-      };
-
-      setClientSecret(data.clientSecret);
-      setPaymentIntentId(data.paymentIntentId);
-      setFinalAmountCents(amountCents);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : t('checkoutCreateIntentError');
-      setApiError(message);
-    } finally {
-      setIsLoadingIntent(false);
-    }
-  };
+    createIntent();
+  }, [isConfigured, user?.id, accessToken, totalCents]);
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row lg:w-full">
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b items-center justify-center p-4">
-        <Typography variant="h1" className="text-9xl font-bold text-white font-space-grotesk">
-          {t('CYNA')}
+    <div className="min-h-screen flex flex-col">
+      {/* Full-width header */}
+      <div className="w-full bg-white border-b border-gray-200 px-8 lg:px-12 py-5">
+        <Typography variant="h2" className="!text-left !pb-0 text-[#372CCA]">
+          {t('Cyna')}
         </Typography>
       </div>
 
-      <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
-        <div className="lg:hidden mb-8">
-          <Typography variant="h1" className="text-9xl font-bold text-gray-900 font-space-grotesk">
-            {t('CYNA')}
-          </Typography>
-        </div>
-
-        <div className="w-full max-w-lg space-y-6">
-          <Typography variant="h2">{t('checkoutTitle')}</Typography>
-
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <Typography variant="h3" className="text-gray-900 mb-2">
-              {t('checkoutOrderSummary')}
-            </Typography>
-
-            <div className="space-y-4">
-              <Input
-                label={t('checkoutAmountLabel')}
-                type="text"
-                inputMode="decimal"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                placeholder="19.99"
-              />
-
-              <Input
-                label={t('checkoutDescriptionLabel')}
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder={t('checkoutDescriptionPlaceholder')}
-              />
-
-              <div className="rounded-lg bg-[#F5F6FB] p-3 text-sm text-gray-700">
-                <p className="font-semibold text-gray-900">{t('checkoutTotal')}</p>
-                <p className="text-xl font-bold text-[#372CCA]">
-                  {amountCents ? formatEuro(amountCents) : t('checkoutInvalidAmount')}
-                </p>
-              </div>
-
-              {!clientSecret && (
-                <Button type="button" variant="cyna" onClick={handleCreateIntent} disabled={isLoadingIntent}>
-                  {isLoadingIntent ? t('checkoutCreatingIntent') : t('checkoutStartPayment')}
-                </Button>
-              )}
-            </div>
+      {/* Two-column layout */}
+      <div className="flex flex-col lg:flex-row flex-1">
+        {/* Left panel — form */}
+        <div className="w-full lg:w-3/5 bg-white flex flex-col p-8 lg:p-12">
+          {/* Contact */}
+          <div className="mb-8">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('Contact')}</h2>
+            <input
+              type="email"
+              value={user?.email ?? ''}
+              readOnly
+              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:outline-none"
+            />
           </div>
 
-          {apiError && (
-            <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-              {apiError}
-            </div>
-          )}
+          {/* Payment */}
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('Payment')}</h2>
 
-          {clientSecret && paymentIntentId && finalAmountCents && stripePromise && (
-            <Elements
-              stripe={stripePromise}
-              options={{
-                clientSecret,
-                appearance: {
-                  theme: 'stripe',
-                },
-              }}
-            >
-              <StripePaymentForm
-                amountCents={finalAmountCents}
-                description={description}
-                paymentIntentId={paymentIntentId}
-              />
-            </Elements>
+            {apiError && (
+              <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                {apiError}
+              </div>
+            )}
+
+            {isLoadingIntent && (
+              <div className="rounded-lg border border-gray-200 bg-white p-4 text-center text-sm text-gray-500">
+                {t('checkoutCreatingIntent')}
+              </div>
+            )}
+
+            {clientSecret && paymentIntentId && stripePromise && (
+              <Elements
+                stripe={stripePromise}
+                options={{ clientSecret, appearance: { theme: 'stripe' } }}
+              >
+                <StripePaymentForm
+                  amountCents={totalCents}
+                  description={cartItems.map((i) => i.name).join(', ')}
+                  paymentIntentId={paymentIntentId}
+                />
+              </Elements>
+            )}
+          </div>
+        </div>
+
+        {/* Right panel — order summary */}
+        <div className="w-full lg:w-2/5 bg-gray-50 border-l border-gray-200 p-8 lg:p-12">
+          <div className="space-y-5">
+            {cartItems.map((item) => (
+              <div key={item.id} className="flex items-start gap-4">
+                <div className="relative shrink-0">
+                  <div className="w-14 h-14 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden">
+                    {item.imageUrl ? (
+                      <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-lg font-bold text-gray-400">{item.name[0]}</span>
+                    )}
+                  </div>
+                  <span className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#372CCA] text-[10px] font-bold text-white">
+                    {item.quantity}
+                  </span>
+                </div>
+
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                  {item.isRecurring && (
+                    <p className="mt-0.5 text-xs text-gray-500">
+                      {t('Billed')} {item.billingPeriod === 'yearly' ? t('yearly') : t('monthly')}
+                    </p>
+                  )}
+                </div>
+
+                <p className="text-sm font-medium text-gray-900 whitespace-nowrap">
+                  {formatEuro(item.unitPriceCents * item.quantity)}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {cartItems.length > 0 && (
+            <>
+              <div className="my-6 border-t border-gray-200" />
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-sm font-bold text-gray-900">{t('Total')}</span>
+                  <span className="text-sm font-bold text-gray-900">{formatEuro(totalCents)}</span>
+                </div>
+                {recurringCents > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">{t('Recurring')}</span>
+                    <span className="text-xs text-gray-500">
+                      {formatEuro(recurringCents)} {t('perMonth')}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

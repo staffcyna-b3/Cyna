@@ -3,6 +3,7 @@ import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js'
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
 
 interface StripePaymentFormProps {
   amountCents: number;
@@ -25,6 +26,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [cgvAccepted, setCgvAccepted] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -37,30 +39,26 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
     setIsSubmitting(true);
     setErrorMessage(null);
 
-    const query = new URLSearchParams({
-      amount: String(amountCents),
-      description,
-      paymentIntentId,
-    });
-
-    const returnUrl = `${window.location.origin}/checkout/success?${query.toString()}`;
+    const successData = { amount: amountCents, description, paymentIntentId };
+    sessionStorage.setItem('checkout_success_data', JSON.stringify(successData));
 
     const result = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: returnUrl,
+        return_url: `${window.location.origin}/checkout/success`,
       },
       redirect: 'if_required',
     });
 
     if (result.error) {
+      sessionStorage.removeItem('checkout_success_data');
       setErrorMessage(result.error.message || t('checkoutPaymentError'));
       setIsSubmitting(false);
       return;
     }
 
     if (result.paymentIntent?.status === 'succeeded') {
-      navigate(`/checkout/success?${query.toString()}`);
+      navigate('/checkout/success', { state: successData });
       return;
     }
 
@@ -85,21 +83,29 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
         </div>
       )}
 
-      <div className="flex flex-col gap-3 sm:flex-row">
-        <Button type="submit" variant="cyna" disabled={isSubmitting || !stripe || !elements}>
-          {isSubmitting
-            ? t('checkoutProcessing')
-            : t('checkoutPayButton', { amount: formatEuro(amountCents) })}
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full sm:w-auto"
-          onClick={() => navigate('/checkout/cancel')}
-        >
-          {t('checkoutCancel')}
-        </Button>
-      </div>
+      <label className="flex items-start gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={cgvAccepted}
+          onChange={(e) => setCgvAccepted(e.target.checked)}
+          className="mt-0.5 h-4 w-4 accent-[#372CCA] shrink-0"
+        />
+        <span className="text-sm text-gray-600">
+          {t('acceptCGV')}{' '}
+          <Link to="/cgv" className="underline text-gray-800 hover:text-[#372CCA]">
+            {t('termsAndConditions')}
+          </Link>{' '}
+          {t('SalesContract')}
+        </span>
+      </label>
+
+      <Button
+        type="submit"
+        variant="cyna"
+        disabled={isSubmitting || !stripe || !elements || !cgvAccepted}
+      >
+        {isSubmitting ? t('checkoutProcessing') : t('checkoutPay')}
+      </Button>
     </form>
   );
 };

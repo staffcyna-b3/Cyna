@@ -5,6 +5,7 @@ import { User } from '@/types/interfaces/User.interface';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasCheckedRememberMe = useRef(false);
@@ -147,6 +148,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email_verified: userData.email_verified,
           role: userData.role,
         });
+        setAccessToken(data?.data?.accessToken ?? null);
 
         // Nettoyer sessionStorage après connexion réussie
         sessionStorage.removeItem('pending_2fa_session_id');
@@ -176,6 +178,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             email_verified: data.email_verified,
             role: data.role,
           });
+          setAccessToken(data.accessToken ?? null);
         }
       }
     } catch (err) {
@@ -204,6 +207,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('Erreur lors de la déconnexion:', err);
       } finally {
         setUser(null);
+        setAccessToken(null);
       }
   }, []);
 
@@ -279,6 +283,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     user,
+    accessToken,
     isLoading,
     isAuthenticated: !!user,
     register,

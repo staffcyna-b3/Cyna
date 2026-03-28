@@ -47,6 +47,15 @@ export class PaymentController {
   async getIntent(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
+      const authenticatedUserId = req.user?.userId;
+
+      if (!authenticatedUserId) {
+        return res.status(401).json({
+          success: false,
+          error: 'UNAUTHORIZED',
+          message: 'Utilisateur non authentifie',
+        });
+      }
 
       if (!id || Array.isArray(id)) {
         return res.status(400).json({
@@ -56,7 +65,7 @@ export class PaymentController {
         });
       }
 
-      const payload = await this.paymentService.retrievePaymentIntent(id);
+      const payload = await this.paymentService.retrievePaymentIntent(id, authenticatedUserId);
       return res.status(200).json(payload);
     } catch (error) {
       return next(error);

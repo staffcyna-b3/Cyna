@@ -1,9 +1,15 @@
 import axios from 'axios';
 import Stripe from 'stripe';
-import Payment from '../models/Payment';
+import Order, { OrderStatus } from '../models/Payment';
 import { stripe } from '../config/stripe.config';
 import { Logger } from '../common/logger';
 import { MICROSERVICES } from '../config/microService.config';
+
+const toOrderStatus = (stripeStatus: string): OrderStatus => {
+  if (stripeStatus === 'succeeded') return 'success';
+  if (stripeStatus === 'canceled' || stripeStatus === 'payment_failed') return 'error';
+  return 'pending';
+};
 
 export class PaymentService {
   async createPaymentIntent(
@@ -35,12 +41,11 @@ export class PaymentService {
       };
     }
 
-    await Payment.create({
+    await Order.create({
       user_id: userId,
-      amount: intent.amount,
-      currency: intent.currency,
+      total_amount: intent.amount / 100,
       stripe_payment_intent_id: intent.id,
-      status: intent.status,
+      status: toOrderStatus(intent.status),
     });
 
     return {
@@ -49,11 +54,19 @@ export class PaymentService {
     };
   }
 
-  async retrievePaymentIntent(paymentIntentId: string) {
+  async retrievePaymentIntent(paymentIntentId: string, requestingUserId: string) {
     const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
-    await Payment.update(
-      { status: intent.status },
+    if (intent.metadata?.userId !== requestingUserId) {
+      throw {
+        status: 403,
+        code: 'FORBIDDEN',
+        message: 'Vous n\'etes pas autorise a consulter ce paiement',
+      };
+    }
+
+    await Order.update(
+      { status: toOrderStatus(intent.status) },
       { where: { stripe_payment_intent_id: intent.id } }
     );
 
@@ -68,13 +81,13 @@ export class PaymentService {
     switch (event.type) {
       case 'payment_intent.succeeded': {
         const intent = event.data.object as Stripe.PaymentIntent;
-        await this.updatePaymentStatus(intent.id, 'succeeded');
+        await this.updateOrderStatus(intent.id, 'success');
         await this.sendTransactionToProductService(intent, 'succeeded', event.id);
         break;
       }
       case 'payment_intent.payment_failed': {
         const intent = event.data.object as Stripe.PaymentIntent;
-        await this.updatePaymentStatus(intent.id, 'failed');
+        await this.updateOrderStatus(intent.id, 'error');
         await this.sendTransactionToProductService(intent, 'failed', event.id);
         break;
       }
@@ -112,8 +125,8 @@ export class PaymentService {
     return currency.toLowerCase();
   }
 
-  private async updatePaymentStatus(paymentIntentId: string, status: string) {
-    await Payment.update({ status }, { where: { stripe_payment_intent_id: paymentIntentId } });
+  private async updateOrderStatus(paymentIntentId: string, status: OrderStatus) {
+    await Order.update({ status }, { where: { stripe_payment_intent_id: paymentIntentId } });
   }
 
   private async sendTransactionToProductService(

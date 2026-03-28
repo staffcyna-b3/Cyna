@@ -1,68 +1,64 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database.config';
 
-interface PaymentAttributes {
+export type OrderStatus = 'pending' | 'success' | 'error';
+
+interface OrderAttributes {
   id: string;
   user_id: string;
-  amount: number;
-  currency: string;
+  total_amount: number;
+  status: OrderStatus;
   stripe_payment_intent_id: string;
-  status: string;
-  created_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
 }
 
-type PaymentCreationAttributes = Optional<PaymentAttributes, 'id' | 'created_at'>;
+type OrderCreationAttributes = Optional<OrderAttributes, 'id' | 'created_at' | 'updated_at'>;
 
-class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> implements PaymentAttributes {
+class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
   declare id: string;
   declare user_id: string;
-  declare amount: number;
-  declare currency: string;
+  declare total_amount: number;
+  declare status: OrderStatus;
   declare stripe_payment_intent_id: string;
-  declare status: string;
   declare readonly created_at: Date;
+  declare readonly updated_at: Date;
 }
 
-Payment.init(
+Order.init(
   {
     id: {
-      type: DataTypes.UUID,
+      type: DataTypes.CHAR(36),
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     user_id: {
-      type: DataTypes.UUID,
+      type: DataTypes.CHAR(36),
       allowNull: false,
     },
-    amount: {
-      type: DataTypes.INTEGER.UNSIGNED,
+    total_amount: {
+      type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },
-    currency: {
-      type: DataTypes.STRING(8),
+    status: {
+      type: DataTypes.ENUM('pending', 'success', 'error'),
       allowNull: false,
+      defaultValue: 'pending',
     },
     stripe_payment_intent_id: {
       type: DataTypes.STRING(255),
       allowNull: false,
       unique: true,
     },
-    status: {
-      type: DataTypes.STRING(64),
-      allowNull: false,
-    },
-    created_at: {
-      type: DataTypes.DATE,
-      allowNull: false,
-      defaultValue: DataTypes.NOW,
-    },
   },
   {
     sequelize,
-    tableName: 'payments',
-    timestamps: false,
+    tableName: 'orders',
+    timestamps: true,
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
     underscored: true,
   }
 );
 
-export default Payment;
+export default Order;

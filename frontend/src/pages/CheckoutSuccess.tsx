@@ -1,21 +1,36 @@
-import React from 'react';
-import { useMemo } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useMemo } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '@/components/ui/typography';
 import { Button } from '@/components/ui/button';
+
+interface SuccessData {
+  amount: number;
+  description: string;
+  paymentIntentId: string;
+}
 
 const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
 
 export const CheckoutSuccess: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const [searchParams] = useSearchParams();
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const amount = Number(searchParams.get('amount') || '0');
-  const description = searchParams.get('description') || t('checkoutDefaultDescription');
-  const paymentIntentId = searchParams.get('paymentIntentId') || 'N/A';
+  const resolveData = (): SuccessData => {
+    if (location.state?.amount) {
+      return location.state as SuccessData;
+    }
+    const stored = sessionStorage.getItem('checkout_success_data');
+    if (stored) {
+      sessionStorage.removeItem('checkout_success_data');
+      return JSON.parse(stored) as SuccessData;
+    }
+    return { amount: 0, description: t('checkoutDefaultDescription'), paymentIntentId: 'N/A' };
+  };
+
+  const { amount, description, paymentIntentId } = resolveData();
 
   const formattedDate = useMemo(
     () =>
