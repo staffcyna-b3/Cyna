@@ -58,5 +58,13 @@
   "verify2FA": "Vérification 2FA",
   "verifying2FA": "Vérification 2FA en cours",
   "welcome": "Bienvenue sur Cyna.",
-  "wrongCodeFormat": "Format de code invalide, il doit contenir 6 chiffres"
+  "wrongCodeFormat": "Format de code invalide, il doit contenir 6 chiffres",
+  "active": "Actif",
+  "dashboard": "Tableau de bord",
+  "discounts": "Réductions",
+  "inactive": "Inactif",
+  "orders": "Commandes",
+  "products": "Produits",
+  "transactions": "Transactions",
+  "users": "Utilisateurs"
 }

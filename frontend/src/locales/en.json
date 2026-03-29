@@ -58,5 +58,13 @@
   "verify2FA": "Verify 2FA",
   "verifying2FA": "Verifying 2FA",
   "welcome": "Welcome to Cyna.",
-  "wrongCodeFormat": "Invalid code format, it should be 6 digits"
+  "wrongCodeFormat": "Invalid code format, it should be 6 digits",
+  "active": "Active",
+  "dashboard": "Dashboard",
+  "discounts": "Discounts",
+  "inactive": "Inactive",
+  "orders": "Orders",
+  "products": "Products",
+  "transactions": "Transactions",
+  "users": "Users"
 }
