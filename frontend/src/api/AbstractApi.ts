@@ -5,7 +5,7 @@ export class AbstractApi {
     private baseUrl: string;
 
     constructor() {
-        this.baseUrl = import.meta.env.GATEWAY_API_URL || "http://localhost:3000/api";
+        this.baseUrl = import.meta.env.VITE_GATEWAY_API_URL || "/api";
     }
 
 
@@ -16,13 +16,18 @@ export class AbstractApi {
     ): Promise<T> {
         const { body, headers } = options;
 
+        const requestHeaders: HeadersInit = {
+            ...headers,
+        };
+
+        if (body) {
+            requestHeaders['Content-Type'] = 'application/json';
+        }
+
         const fetchOptions: RequestInit = {
             method,
             credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-                ...headers,
-            },
+            headers: requestHeaders,
             ...(body ? { body: JSON.stringify(body) } : {}),
         };
 

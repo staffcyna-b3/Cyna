@@ -41,10 +41,6 @@ const CatalogNavigation = ({
         <nav
             aria-label="Product categories"
             className="fixed left-1/2 transform -translate-x-1/2 bottom-5 z-40 w-auto"
-            style={{
-                WebkitBackdropFilter: 'blur(8px)',
-                backdropFilter: 'blur(8px)'
-            }}
         >
             <div className="flex items-center justify-between gap-6 px-4 py-3 rounded-full bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.06)] shadow-lg relative max-w-4xl w-full mx-auto">
                 {[

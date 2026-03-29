@@ -32,7 +32,7 @@ export class CatalogApi extends AbstractApi {
             success: boolean;
             message?: string;
             data: CatalogListResponse;
-        }>(`/products/?${params.toString()}`);
+        }>(`/products?${params.toString()}`);
 
         return res.data;
     }

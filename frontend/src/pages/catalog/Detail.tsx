@@ -100,6 +100,7 @@ export default function CatalogDetail(): JSX.Element {
 
     const hasMultiple: boolean = orderedImages.length > 1;
     const isAvailable: boolean = CanBeAddToCart(product);
+    const unavailableLabel = product.isService ? t('maintenance') : t('unavailable');
 
     // Extract abbreviation from service name (e.g., "SOC (Security Operations Center)" -> "SOC")
     const getAbbreviation = (name: string): string => {
@@ -190,7 +191,7 @@ export default function CatalogDetail(): JSX.Element {
                                             text={
                                                 isAvailable
                                                     ? t('addToCart')
-                                                    : t('unavailable')
+                                                    : unavailableLabel
                                             }
                                         />
                                     </div>
@@ -273,7 +274,7 @@ export default function CatalogDetail(): JSX.Element {
                                             text={
                                                 isAvailable
                                                     ? t('addToCart')
-                                                    : t('unavailable')
+                                                    : unavailableLabel
                                             }
                                         />
                                     </div>

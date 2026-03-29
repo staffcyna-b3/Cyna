@@ -41,6 +41,7 @@ export const CatalogProductCard = ({
     })();
 
     const unavailable = product.status === ProductStatus.UNAVAILABLE;
+    const unavailableLabel = product.isService ? t('maintenance') : t('unavailable');
 
     return (
         <article
@@ -55,7 +56,7 @@ export const CatalogProductCard = ({
 
                     {unavailable && (
                         <span className="absolute right-3 top-3 px-2 py-1 bg-[#1b1f2b] text-xs rounded-md text-[#9aa0c7]">
-                            {t('unavailable')}
+                            {unavailableLabel}
                         </span>
                     )}
 
@@ -80,7 +81,7 @@ export const CatalogProductCard = ({
                     <div className="text-sm text-[#9aa0c7] min-h-[20px]">
                         {unavailable ? (
                             <span className="text-[#9aa0c7]">
-                                {t('unavailable')}
+                                {unavailableLabel}
                             </span>
                         ) : product.isService ? (
                             <span className="text-sm text-[#9aa0c7]">&nbsp;</span>

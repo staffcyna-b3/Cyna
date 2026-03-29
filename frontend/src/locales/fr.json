@@ -89,6 +89,7 @@
   "error": "Erreur",
   "service": "Service",
   "product": "Produit",
+  "maintenance": "Maintenance",
   "unavailable": "Indisponible",
   "onlyNLeft": "Plus que {{count}}",
   "type": "Type",
