@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { TypographyH1 } from "@/components/ui/typography";
+import { Typography } from "@/components/ui/typography";
 import { t } from "i18next";
 import { useState } from "react";
 
@@ -16,7 +16,7 @@ export default function Users() {
     return (
         <>
             <header className="px-4 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                <TypographyH1>{t("users")}</TypographyH1>
+                <Typography variant="h1">{t("users")}</Typography>
                 {topRightActions}
             </header>
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
