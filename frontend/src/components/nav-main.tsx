@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/sidebar"
 import { useTranslation } from "react-i18next"
 import { NavLink, useLocation } from "react-router-dom"
+import { cn } from "@/lib/utils"
 
 export function NavMain({
   items,
@@ -25,16 +26,27 @@ export function NavMain({
   return (
     <SidebarGroup>
       <SidebarMenu>
-        {items.map((item) => (
-          <NavLink to={item.url}>
-            <SidebarMenuItem>
-                <SidebarMenuButton tooltip={item.title} isActive={item.url === location.pathname}>
-                    {item.icon && <item.icon fill={item.url === location.pathname ? "currentColor" : 'transparent'}/>}
-                    <span>{t(item.title)}</span>
+        {items.map((item) => {
+          const isActive = item.url === location.pathname;
+          return (
+            <NavLink to={item.url} key={item.url}>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  tooltip={t(item.title)}
+                  isActive={isActive}
+                  className={cn(
+                    isActive && "bg-primary! text-primary-foreground! hover:bg-primary/90! hover:text-primary-foreground!"
+                  )}
+                >
+                  {item.icon && (
+                    <item.icon fill={isActive ? "currentColor" : "transparent"} />
+                  )}
+                  <span>{t(item.title)}</span>
                 </SidebarMenuButton>
-            </SidebarMenuItem>
-          </NavLink>
-        ))}
+              </SidebarMenuItem>
+            </NavLink>
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
   )

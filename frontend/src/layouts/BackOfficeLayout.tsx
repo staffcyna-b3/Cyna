@@ -7,7 +7,7 @@ export default function BackOfficeLayout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>
+      <SidebarInset className="bg-gray-50 min-w-0 overflow-x-hidden">
         <Outlet />
       </SidebarInset>
     </SidebarProvider>
