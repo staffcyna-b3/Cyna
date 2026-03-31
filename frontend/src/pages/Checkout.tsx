@@ -50,17 +50,23 @@ export const Checkout: React.FC = () => {
 
   const cartItems = (location.state as LocationState)?.cartItems ?? MOCK_CART_ITEMS;
 
+  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isRecurring), [cartItems]);
+  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isRecurring), [cartItems]);
+  const hasSubscription = subscriptionItems.length > 0;
+
   const totalCents = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
     [cartItems],
   );
 
   const recurringCents = useMemo(
-    () =>
-      cartItems
-        .filter((item) => item.isRecurring)
-        .reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
-    [cartItems],
+    () => subscriptionItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
+    [subscriptionItems],
+  );
+
+  const oneTimeCents = useMemo(
+    () => oneTimeItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
+    [oneTimeItems],
   );
 
   const [isLoadingIntent, setIsLoadingIntent] = useState(false);
@@ -75,20 +81,46 @@ export const Checkout: React.FC = () => {
       setIsLoadingIntent(true);
       setApiError(null);
       try {
-        const response = await fetch('/api/payments/create-intent', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            amount: totalCents,
-            currency: 'eur',
-            description: cartItems.map((i) => i.name).join(', '),
-            userId: user.id,
-          }),
-        });
+        let response: Response;
+
+        if (hasSubscription) {
+          response = await fetch('/api/payments/create-subscription', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              subscriptionItems: subscriptionItems.map((i) => ({
+                productId: i.id,
+                priceAmountCents: i.unitPriceCents,
+                currency: 'eur',
+                description: i.name,
+                billingPeriod: i.billingPeriod ?? 'monthly',
+                quantity: i.quantity,
+              })),
+              oneTimeAmountCents: oneTimeCents,
+              oneTimeDescription: oneTimeItems.map((i) => i.name).join(', '),
+              userEmail: user.email,
+            }),
+          });
+        } else {
+          response = await fetch('/api/payments/create-intent', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${accessToken}`,
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              amount: totalCents,
+              currency: 'eur',
+              description: cartItems.map((i) => i.name).join(', '),
+              userId: user.id,
+            }),
+          });
+        }
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => null);

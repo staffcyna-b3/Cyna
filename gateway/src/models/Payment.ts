@@ -2,6 +2,7 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database.config';
 
 export type OrderStatus = 'pending' | 'success' | 'error';
+export type PaymentType = 'one_time' | 'subscription';
 
 interface OrderAttributes {
   id: string;
@@ -9,11 +10,12 @@ interface OrderAttributes {
   total_amount: number;
   status: OrderStatus;
   stripe_payment_intent_id: string;
+  payment_type: PaymentType;
   created_at?: Date;
   updated_at?: Date;
 }
 
-type OrderCreationAttributes = Optional<OrderAttributes, 'id' | 'created_at' | 'updated_at'>;
+type OrderCreationAttributes = Optional<OrderAttributes, 'id' | 'created_at' | 'updated_at' | 'payment_type'>;
 
 class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
   declare id: string;
@@ -21,6 +23,7 @@ class Order extends Model<OrderAttributes, OrderCreationAttributes> implements O
   declare total_amount: number;
   declare status: OrderStatus;
   declare stripe_payment_intent_id: string;
+  declare payment_type: PaymentType;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
 }
@@ -49,6 +52,11 @@ Order.init(
       type: DataTypes.STRING(255),
       allowNull: false,
       unique: true,
+    },
+    payment_type: {
+      type: DataTypes.ENUM('one_time', 'subscription'),
+      allowNull: false,
+      defaultValue: 'one_time',
     },
   },
   {

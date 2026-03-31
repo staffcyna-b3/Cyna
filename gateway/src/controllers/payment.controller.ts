@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { PaymentService } from '../services/payment.service';
+import { PaymentService, SubscriptionItem } from '../services/payment.service';
 
 export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
@@ -36,6 +36,55 @@ export class PaymentController {
         currency,
         authenticatedUserId,
         description
+      );
+
+      return res.status(201).json(payload);
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  async createSubscription(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { subscriptionItems, oneTimeAmountCents, oneTimeDescription, userEmail } = req.body as {
+        subscriptionItems: SubscriptionItem[];
+        oneTimeAmountCents?: number;
+        oneTimeDescription?: string;
+        userEmail: string;
+      };
+
+      const authenticatedUserId = req.user?.userId;
+
+      if (!authenticatedUserId) {
+        return res.status(401).json({
+          success: false,
+          error: 'UNAUTHORIZED',
+          message: 'Utilisateur non authentifié',
+        });
+      }
+
+      if (!Array.isArray(subscriptionItems) || subscriptionItems.length === 0) {
+        return res.status(400).json({
+          success: false,
+          error: 'MISSING_SUBSCRIPTION_ITEMS',
+          message: 'Au moins un item d\'abonnement est requis',
+        });
+      }
+
+      if (!userEmail) {
+        return res.status(400).json({
+          success: false,
+          error: 'MISSING_EMAIL',
+          message: 'L\'email utilisateur est requis pour créer un abonnement Stripe',
+        });
+      }
+
+      const payload = await this.paymentService.createSubscription(
+        subscriptionItems,
+        oneTimeAmountCents ?? 0,
+        oneTimeDescription,
+        authenticatedUserId,
+        userEmail
       );
 
       return res.status(201).json(payload);

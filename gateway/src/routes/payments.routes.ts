@@ -12,6 +12,10 @@ router.post('/create-intent', authMiddleware, createPaymentIntentLimiter, (req, 
   paymentController.createIntent(req, res, next)
 );
 
+router.post('/create-subscription', authMiddleware, createPaymentIntentLimiter, (req, res, next) =>
+  paymentController.createSubscription(req, res, next)
+);
+
 router.get('/intent/:id', authMiddleware, (req, res, next) =>
   paymentController.getIntent(req, res, next)
 );
