@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
-import Subscription from '../models/Subscription';
-import { SubscriptionStatus } from '../enum/SubscriptionStatus';
-import { Logger } from '../common/logger';
+import { SubscriptionService } from '../services/subscription.service';
 import { CreateSubscriptionBody } from '../interfaces/CreateSubscriptionBody';
 import { UpdateStatusBody } from '../interfaces/UpdateStatusBody';
 
 export class SubscriptionController {
+  constructor(private readonly subscriptionService: SubscriptionService) {}
+
   // POST /subscriptions
-  // Called by the gateway when a Stripe subscription is created
   async create(req: Request, res: Response): Promise<Response> {
     const { stripeSubscriptionId, userId, items, startDate, endDate } =
       req.body as CreateSubscriptionBody;
@@ -20,31 +19,25 @@ export class SubscriptionController {
       });
     }
 
-    const created = await Promise.all(
-      items.map((item) =>
-        Subscription.create({
-          user_id: userId,
-          product_id: item.productId,
-          stripe_subscription_id: stripeSubscriptionId,
-          start_date: new Date(startDate),
-          end_date: new Date(endDate),
-          status: SubscriptionStatus.ACTIVE,
-          price: item.price,
-        })
-      )
-    );
-
-    Logger.info('[SUBSCRIPTION] Subscriptions created from Stripe', {
-      stripeSubscriptionId,
-      userId,
-      count: created.length,
-    });
-
-    return res.status(201).json({ created: created.length });
+    try {
+      const count = await this.subscriptionService.create({
+        stripeSubscriptionId,
+        userId,
+        items,
+        startDate,
+        endDate,
+      });
+      return res.status(201).json({ created: count });
+    } catch (error: any) {
+      return res.status(error.status ?? 500).json({
+        success: false,
+        error: error.code ?? 'INTERNAL_ERROR',
+        message: error.message,
+      });
+    }
   }
 
   // PATCH /subscriptions/status
-  // Called by the gateway on invoice.payment_succeeded / payment_failed / subscription.deleted
   async updateStatus(req: Request, res: Response): Promise<Response> {
     const { stripeSubscriptionId, status } = req.body as UpdateStatusBody;
 
@@ -56,26 +49,15 @@ export class SubscriptionController {
       });
     }
 
-    const validStatuses = Object.values(SubscriptionStatus) as string[];
-    if (!validStatuses.includes(status)) {
-      return res.status(400).json({
+    try {
+      const updatedCount = await this.subscriptionService.updateStatus(stripeSubscriptionId, status);
+      return res.status(200).json({ updated: updatedCount });
+    } catch (error: any) {
+      return res.status(error.status ?? 500).json({
         success: false,
-        error: 'INVALID_STATUS',
-        message: `Status invalide. Valeurs acceptées : ${validStatuses.join(', ')}`,
+        error: error.code ?? 'INTERNAL_ERROR',
+        message: error.message,
       });
     }
-
-    const [updatedCount] = await Subscription.update(
-      { status: status as SubscriptionStatus },
-      { where: { stripe_subscription_id: stripeSubscriptionId } }
-    );
-
-    Logger.info('[SUBSCRIPTION] Status updated from Stripe event', {
-      stripeSubscriptionId,
-      status,
-      updatedCount,
-    });
-
-    return res.status(200).json({ updated: updatedCount });
   }
 }

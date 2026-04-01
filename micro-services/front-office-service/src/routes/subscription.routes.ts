@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { SubscriptionController } from '../controllers/subscription.controller';
+import { createSubscriptionController } from '../factories/subscription.factory';
 
 const router = Router();
-const controller = new SubscriptionController();
+const controller = createSubscriptionController();
 
 router.post('/', (req, res) => controller.create(req, res));
 router.patch('/status', (req, res) => controller.updateStatus(req, res));

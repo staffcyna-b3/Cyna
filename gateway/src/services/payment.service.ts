@@ -1,10 +1,12 @@
 import axios from 'axios';
 import Stripe from 'stripe';
-import Order, { OrderStatus } from '../models/Payment';
-import User from '../models/User';
+import { OrderStatus } from '../models/Payment';
 import { stripe } from '../config/stripe.config';
 import { Logger } from '../common/logger';
 import { MICROSERVICES } from '../config/microService.config';
+import { IOrderRepository } from '../interfaces/IOrderRepository';
+import { IPaymentUserRepository } from '../interfaces/IPaymentUserRepository';
+import { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
 
 const toOrderStatus = (stripeStatus: string): OrderStatus => {
   if (stripeStatus === 'succeeded') return 'success';
@@ -12,16 +14,12 @@ const toOrderStatus = (stripeStatus: string): OrderStatus => {
   return 'pending';
 };
 
-export interface SubscriptionItem {
-  productId: string;
-  priceAmountCents: number;
-  currency: string;
-  description: string;
-  billingPeriod: 'monthly' | 'yearly';
-  quantity: number;
-}
-
 export class PaymentService {
+  constructor(
+    private readonly orderRepository: IOrderRepository,
+    private readonly paymentUserRepository: IPaymentUserRepository
+  ) {}
+
   // ─── One-time payment ───────────────────────────────────────────────────────
 
   async createPaymentIntent(
@@ -60,7 +58,7 @@ export class PaymentService {
       };
     }
 
-    await Order.create({
+    await this.orderRepository.create({
       user_id: userId,
       total_amount: intent.amount / 100,
       stripe_payment_intent_id: intent.id,
@@ -92,9 +90,9 @@ export class PaymentService {
       };
     }
 
-    await Order.update(
-      { status: toOrderStatus(intent.status) },
-      { where: { stripe_payment_intent_id: intent.id } }
+    await this.orderRepository.updateStatusByPaymentIntentId(
+      intent.id,
+      toOrderStatus(intent.status)
     );
 
     return {
@@ -127,9 +125,7 @@ export class PaymentService {
 
     // Each item needs an existing Stripe Product — create them inline
     const stripeProducts = await Promise.all(
-      subscriptionItems.map((item) =>
-        stripe.products.create({ name: item.description })
-      )
+      subscriptionItems.map((item) => stripe.products.create({ name: item.description }))
     );
 
     let subscription: Stripe.Subscription;
@@ -149,7 +145,9 @@ export class PaymentService {
         })),
         payment_behavior: 'default_incomplete',
         payment_settings: { save_default_payment_method: 'on_subscription' },
-        expand: ['latest_invoice.payment_intent'],
+        // 2026-02-25.clover: payment_intent no longer exists on invoices — expand the invoice
+        // itself so confirmation_secret is populated
+        expand: ['latest_invoice'],
       });
     } catch (stripeError) {
       if (stripeError instanceof Stripe.errors.StripeCardError) {
@@ -162,31 +160,39 @@ export class PaymentService {
     }
 
     const invoice = subscription.latest_invoice as Stripe.Invoice;
-    // payment_intent is expanded — TypeScript types lag behind, use cast
-    const paymentIntent = (invoice as any).payment_intent as Stripe.PaymentIntent | null;
-    const clientSecret =
-      paymentIntent?.client_secret ?? invoice.confirmation_secret?.client_secret;
 
-    if (!clientSecret) {
-      Logger.error('[PAYMENT] No clientSecret on subscription invoice', {
-        subscriptionId: subscription.id,
-        invoiceId: invoice.id,
-        invoiceStatus: invoice.status,
-      });
-      throw {
-        status: 500,
-        code: 'STRIPE_CLIENT_SECRET_MISSING',
-        message: 'Stripe n\'a pas retourné de clientSecret pour l\'abonnement',
-      };
-    }
-
-    const paymentIntentId = paymentIntent?.id ?? clientSecret.split('_secret_')[0];
-
+    // 2026-02-25.clover: invoice.payment_intent was removed from the API.
+    // Workaround: create a dedicated PaymentIntent for the invoice amount.
+    // On payment_intent.succeeded webhook, we mark the invoice paid_out_of_band,
+    // which activates the subscription and triggers invoice.payment_succeeded.
     const totalAmountCents =
       subscriptionItems.reduce((sum, item) => sum + item.priceAmountCents * item.quantity, 0) +
       oneTimeAmountCents;
 
-    await Order.create({
+    let pi: Stripe.PaymentIntent;
+    try {
+      pi = await stripe.paymentIntents.create({
+        amount: totalAmountCents,
+        currency: subscriptionItems[0].currency,
+        customer: customer.id,
+        metadata: {
+          userId,
+          subscriptionId: subscription.id,
+          invoiceId: invoice.id,
+        },
+        automatic_payment_methods: { enabled: true },
+      });
+    } catch (stripeError) {
+      if (stripeError instanceof Stripe.errors.StripeInvalidRequestError) {
+        throw { status: 400, code: 'STRIPE_INVALID_REQUEST', message: (stripeError as Stripe.errors.StripeInvalidRequestError).message };
+      }
+      throw stripeError;
+    }
+
+    const clientSecret = pi.client_secret!;
+    const paymentIntentId = pi.id;
+
+    await this.orderRepository.create({
       user_id: userId,
       total_amount: totalAmountCents / 100,
       stripe_payment_intent_id: paymentIntentId,
@@ -197,7 +203,8 @@ export class PaymentService {
     // API 2026-02-25.clover: period is on subscription items, not on subscription directly
     const firstItem = subscription.items.data[0];
     const periodStart = firstItem?.current_period_start ?? Math.floor(Date.now() / 1000);
-    const periodEnd = firstItem?.current_period_end ?? Math.floor(Date.now() / 1000) + 30 * 24 * 3600;
+    const periodEnd =
+      firstItem?.current_period_end ?? Math.floor(Date.now() / 1000) + 30 * 24 * 3600;
 
     await this.sendSubscriptionCreatedToFrontOffice(
       subscription.id,
@@ -228,7 +235,7 @@ export class PaymentService {
       case 'payment_intent.succeeded': {
         const intent = event.data.object as Stripe.PaymentIntent;
 
-        const existing = await Order.findOne({ where: { stripe_payment_intent_id: intent.id } });
+        const existing = await this.orderRepository.findByPaymentIntentId(intent.id);
         if (existing?.status === 'success') {
           Logger.info('[STRIPE WEBHOOK] payment_intent.succeeded already processed, skipping', {
             eventId: event.id,
@@ -239,9 +246,36 @@ export class PaymentService {
 
         await this.updateOrderStatus(intent.id, 'success');
         await this.sendTransactionToProductService(intent, 'succeeded', event.id);
+
+        // 2026-02-25.clover workaround: if this PI was created for a subscription invoice,
+        // mark the invoice as paid so Stripe activates the subscription and fires
+        // invoice.payment_succeeded (which notifies the front-office).
+        const invoiceId = intent.metadata?.invoiceId;
+        const paymentMethod = typeof intent.payment_method === 'string'
+          ? intent.payment_method
+          : intent.payment_method?.id;
+
+        if (invoiceId) {
+          try {
+            if (paymentMethod && intent.metadata?.subscriptionId) {
+              await stripe.subscriptions.update(intent.metadata.subscriptionId, {
+                default_payment_method: paymentMethod,
+              });
+            }
+            await stripe.invoices.pay(invoiceId, { paid_out_of_band: true });
+          } catch (err) {
+            Logger.error('[STRIPE WEBHOOK] Failed to activate subscription invoice', {
+              invoiceId,
+              subscriptionId: intent.metadata?.subscriptionId,
+              error: (err as any)?.message,
+            });
+          }
+        }
+
         Logger.info('[STRIPE WEBHOOK] payment_intent.succeeded processed', {
           eventId: event.id,
           paymentIntentId: intent.id,
+          invoiceId: invoiceId ?? null,
         });
         break;
       }
@@ -249,7 +283,7 @@ export class PaymentService {
       case 'payment_intent.payment_failed': {
         const intent = event.data.object as Stripe.PaymentIntent;
 
-        const existing = await Order.findOne({ where: { stripe_payment_intent_id: intent.id } });
+        const existing = await this.orderRepository.findByPaymentIntentId(intent.id);
         if (existing?.status === 'error') {
           Logger.info('[STRIPE WEBHOOK] payment_intent.payment_failed already processed, skipping', {
             eventId: event.id,
@@ -343,16 +377,16 @@ export class PaymentService {
     return currency.toLowerCase();
   }
 
-  private async updateOrderStatus(paymentIntentId: string, status: OrderStatus) {
-    await Order.update({ status }, { where: { stripe_payment_intent_id: paymentIntentId } });
+  private async updateOrderStatus(paymentIntentId: string, status: OrderStatus): Promise<void> {
+    await this.orderRepository.updateStatusByPaymentIntentId(paymentIntentId, status);
   }
 
   private async createOrGetStripeCustomer(userId: string, email: string): Promise<Stripe.Customer> {
-    const user = await User.findOne({ where: { id: userId } });
+    const stripeCustomerId = await this.paymentUserRepository.findStripeCustomerId(userId);
 
-    if (user?.stripe_customer_id) {
+    if (stripeCustomerId) {
       try {
-        const existing = await stripe.customers.retrieve(user.stripe_customer_id);
+        const existing = await stripe.customers.retrieve(stripeCustomerId);
         if (!existing.deleted) {
           return existing as Stripe.Customer;
         }
@@ -366,7 +400,7 @@ export class PaymentService {
       metadata: { userId },
     });
 
-    await User.update({ stripe_customer_id: customer.id }, { where: { id: userId } });
+    await this.paymentUserRepository.updateStripeCustomerId(userId, customer.id);
 
     return customer;
   }

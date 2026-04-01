@@ -1,12 +1,10 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/auth.middleware';
 import { createPaymentIntentLimiter } from '../middlewares/rate-limit.middleware';
-import { PaymentController } from '../controllers/payment.controller';
-import { PaymentService } from '../services/payment.service';
+import { createPaymentController } from '../factories/payment.factory';
 
 const router = Router();
-const paymentService = new PaymentService();
-const paymentController = new PaymentController(paymentService);
+const paymentController = createPaymentController();
 
 router.post('/create-intent', authMiddleware, createPaymentIntentLimiter, (req, res, next) =>
   paymentController.createIntent(req, res, next)

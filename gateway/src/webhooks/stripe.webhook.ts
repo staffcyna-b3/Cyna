@@ -1,10 +1,10 @@
 import express, { Request, Response, Router } from 'express';
 import { stripe, stripeWebhookSecret } from '../config/stripe.config';
-import { PaymentService } from '../services/payment.service';
+import { createPaymentService } from '../factories/payment.factory';
 import { Logger } from '../common/logger';
 
 const router: Router = Router();
-const paymentService = new PaymentService();
+const paymentService = createPaymentService();
 
 router.post('/stripe', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
   try {

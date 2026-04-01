@@ -6,16 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/StripePaymentForm';
 import { useStripeConfig } from '@/context/StripeContext';
 import { Typography } from '@/components/ui/typography';
-
-export interface CartItem {
-  id: string;
-  name: string;
-  quantity: number;
-  unitPriceCents: number;
-  isRecurring?: boolean;
-  billingPeriod?: 'monthly' | 'yearly';
-  imageUrl?: string;
-}
+import { CartItem } from '@/types/interfaces/CartItem.interface';
 
 interface LocationState {
   cartItems?: CartItem[];
@@ -23,10 +14,10 @@ interface LocationState {
 
 const MOCK_CART_ITEMS: CartItem[] = [
   {
-    id: 'mock-1',
-    name: 'Cyna Defend Basique',
+    id: '0d9caf37-0956-464b-bc57-a4ddb9728aba',
+    name: 'Cyna XDR Complete',
     quantity: 2,
-    unitPriceCents: 120000,
+    unitPriceCents: 149999,
     isRecurring: true,
     billingPeriod: 'monthly',
   },
@@ -44,7 +35,7 @@ const formatEuro = (amountCents: number) =>
 
 export const Checkout: React.FC = () => {
   const { t } = useTranslation();
-  const { user, accessToken } = useAuth();
+  const { user, accessToken, isLoading: isAuthLoading } = useAuth();
   const { stripePromise, isConfigured } = useStripeConfig();
   const location = useLocation();
 
@@ -156,12 +147,19 @@ export const Checkout: React.FC = () => {
           {/* Contact */}
           <div className="mb-8">
             <h2 className="text-xl font-bold text-gray-900 mb-4">{t('Contact')}</h2>
-            <input
-              type="email"
-              value={user?.email ?? ''}
-              readOnly
-              className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:outline-none"
-            />
+            {isAuthLoading ? (
+              <div className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-400 animate-pulse">
+                {t('loading')}
+              </div>
+            ) : (
+              <input
+                type="email"
+                value={user?.email ?? ''}
+                readOnly
+                placeholder={t('loginToSeeMail')}
+                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:outline-none"
+              />
+            )}
           </div>
 
           {/* Payment */}
