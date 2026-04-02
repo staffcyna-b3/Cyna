@@ -1,19 +1,8 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database.config';
-
-export type OrderStatus = 'pending' | 'success' | 'error';
-export type PaymentType = 'one_time' | 'subscription';
-
-interface OrderAttributes {
-  id: string;
-  user_id: string;
-  total_amount: number;
-  status: OrderStatus;
-  stripe_payment_intent_id: string;
-  payment_type: PaymentType;
-  created_at?: Date;
-  updated_at?: Date;
-}
+import { OrderAttributes } from '../interfaces/OrderAttributes.interface';
+import { OrderStatus } from '../enum/OrderStatus.enum';
+import { PaymentType } from '../enum/PaymentType.enum';
 
 type OrderCreationAttributes = Optional<OrderAttributes, 'id' | 'created_at' | 'updated_at' | 'payment_type'>;
 

@@ -7,10 +7,7 @@ import { StripePaymentForm } from '@/components/StripePaymentForm';
 import { useStripeConfig } from '@/context/StripeContext';
 import { Typography } from '@/components/ui/typography';
 import { CartItem } from '@/types/interfaces/CartItem.interface';
-
-interface LocationState {
-  cartItems?: CartItem[];
-}
+import { LocationState } from '@/types/interfaces/LocationState.interface';
 
 const MOCK_CART_ITEMS: CartItem[] = [
   {

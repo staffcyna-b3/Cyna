@@ -3,12 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Typography } from '@/components/ui/typography';
 import { Button } from '@/components/ui/button';
-
-interface SuccessData {
-  amount: number;
-  description: string;
-  paymentIntentId: string;
-}
+import { SuccessData } from '@/types/interfaces/SuccessData.interface';
 
 const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);

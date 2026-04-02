@@ -4,12 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-
-interface StripePaymentFormProps {
-  amountCents: number;
-  description: string;
-  paymentIntentId: string;
-}
+import { StripePaymentFormProps } from '@/types/interfaces/StripePaymentFormProps.interface';
 
 const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
