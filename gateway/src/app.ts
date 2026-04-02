@@ -11,6 +11,7 @@ import { pendingAuth2FAStore } from './stores/pending-auth-2fa.store';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import cookieParser from 'cookie-parser';
+import roleRoutes from './routes/role.route';
 
 export const createApp = (): Express => {
   const app = express();
@@ -47,6 +48,8 @@ export const createApp = (): Express => {
 
   app.use('/api', routes);
   app.use('/api/auth', authRoutes);
+
+  app.use('/api/roles', roleRoutes);
 
   app.use((req, res) => {
     res.status(404).json({
