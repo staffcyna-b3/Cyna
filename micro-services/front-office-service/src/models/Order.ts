@@ -11,11 +11,12 @@ interface OrderAttributes {
   shipping_address_snapshot: object;
   total_amount: number;
   status: OrderStatus;
+  stripe_payment_intent_id?: string | null;
   created_at: Date;
   updated_at: Date;
 }
 
-export interface OrderCreationAttributes extends Optional<OrderAttributes, 'id' | 'created_at' | 'updated_at' | 'status'> {}
+export interface OrderCreationAttributes extends Optional<OrderAttributes, 'id' | 'created_at' | 'updated_at' | 'status' | 'stripe_payment_intent_id'> {}
 
 class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
   declare id: string;
@@ -26,6 +27,7 @@ class Order extends Model<OrderAttributes, OrderCreationAttributes> implements O
   declare shipping_address_snapshot: object;
   declare total_amount: number;
   declare status: OrderStatus;
+  declare stripe_payment_intent_id?: string | null;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
 }
@@ -64,6 +66,10 @@ Order.init(
     status: {
       type: DataTypes.ENUM(...Object.values(OrderStatus)),
       defaultValue: OrderStatus.PENDING,
+    },
+    stripe_payment_intent_id: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     created_at: {
       type: DataTypes.DATE,

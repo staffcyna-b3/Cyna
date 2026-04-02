@@ -9,6 +9,12 @@ lerna-debug.log*
 
 node_modules
 dist
+
+# Test coverage
+coverage/
+
+# Lock files
+package-lock.json
 dist-ssr
 *.local
 

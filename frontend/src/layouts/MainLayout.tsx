@@ -10,7 +10,7 @@ export default function MainLayout() {
         <h1>{t("cyna")}</h1>
         <p>{t("searchBar")}</p>
         <p>{t("languageSelector")}</p>
-        <Link to="/checkout">cart</Link>
+        <Link to="/checkout">{t("cart")}</Link>
         <p>{t("userProfile")}</p>
       </div>
       <Outlet />

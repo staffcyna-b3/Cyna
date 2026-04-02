@@ -53,6 +53,16 @@ Subscription.belongsTo(User, {
   as: 'user',
 });
 
+User.hasMany(Order, {
+  foreignKey: 'user_id',
+  as: 'orders',
+  onDelete: 'CASCADE',
+});
+Order.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+
 // Category Associations
 Category.hasMany(Product, {
   foreignKey: 'category_id',
@@ -130,6 +140,16 @@ CartItem.belongsTo(Cart, {
 });
 
 // Order Associations
+Product.hasMany(OrderItem, {
+  foreignKey: 'product_id',
+  as: 'orderItems',
+  onDelete: 'RESTRICT',
+});
+OrderItem.belongsTo(Product, {
+  foreignKey: 'product_id',
+  as: 'product',
+});
+
 Order.hasMany(OrderItem, {
   foreignKey: 'order_id',
   as: 'items',
