@@ -1,5 +1,6 @@
 {
   "active": "Active",
+  "backToProducts": "Back to products",
   "address": "Address",
   "billingAddress": "Adresse de facturation",
   "cart": "Cart",
@@ -19,6 +20,8 @@
   "languageSelector": "language selector",
   "lastName": "Last name",
   "loadingCheckoutData": "Loading checkout data...",
+  "missingCartOrAddress": "Missing cart or address identifiers.",
+  "unableToLoadCheckout": "Unable to load checkout context.",
   "multiply": "×",
   "orderConfirmed": "Order confirmed",
   "orderedItems": "Ordered items",
@@ -39,6 +42,9 @@
   "userProfile": "user profile",
   "users": "Users",
   "usersPageContent": "Contenu de la page Users",
+  "requiredField": "Required field",
+  "stripeIntegrationPending": "Stripe payment integration in progress.",
   "validate": "Validate",
+  "viewMyOrders": "View my orders",
   "viewProducts": "View products"
 }

@@ -1,5 +1,6 @@
 {
   "active": "Actif",
+  "backToProducts": "Retour aux produits",
   "address": "Adresse",
   "billingAddress": "Adresse de facturation",
   "cart": "Panier",
@@ -19,6 +20,8 @@
   "languageSelector": "sélecteur de langue",
   "lastName": "Nom",
   "loadingCheckoutData": "Chargement des données de paiement...",
+  "missingCartOrAddress": "Identifiants du panier ou de l'adresse manquants.",
+  "unableToLoadCheckout": "Impossible de charger le contexte de paiement.",
   "multiply": "×",
   "orderConfirmed": "Commande confirmée",
   "orderedItems": "Articles commandés",
@@ -39,6 +42,9 @@
   "userProfile": "profil utilisateur",
   "users": "Utilisateurs",
   "usersPageContent": "Contenu de la page Utilisateurs",
+  "requiredField": "Champ requis",
+  "stripeIntegrationPending": "Paiement Stripe en cours d'intégration.",
   "validate": "Valider",
+  "viewMyOrders": "Voir mes commandes",
   "viewProducts": "Voir les produits"
 }

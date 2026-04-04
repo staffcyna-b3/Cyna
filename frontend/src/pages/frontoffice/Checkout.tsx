@@ -12,14 +12,14 @@ import { AddressForm } from "@/components/forms/AddressForm"
 import { SameAddressToggle } from "@/components/forms/SameAddressToggle"
 import { useCheckout } from "@/hooks/useCheckout"
 
-function validateAddress(data: AddressFormData): Partial<Record<keyof AddressFormData, string>> {
+function validateAddress(data: AddressFormData, t: (key: string) => string): Partial<Record<keyof AddressFormData, string>> {
   const errors: Partial<Record<keyof AddressFormData, string>> = {}
-  if (!data.firstName.trim()) errors.firstName = "Champ requis"
-  if (!data.lastName.trim()) errors.lastName = "Champ requis"
-  if (!data.addressLine1.trim()) errors.addressLine1 = "Champ requis"
-  if (!data.city.trim()) errors.city = "Champ requis"
-  if (!data.postcode.trim()) errors.postcode = "Code postal requis"
-  if (!data.country.trim()) errors.country = "Pays requis"
+  if (!data.firstName.trim()) errors.firstName = t("requiredField")
+  if (!data.lastName.trim()) errors.lastName = t("requiredField")
+  if (!data.addressLine1.trim()) errors.addressLine1 = t("requiredField")
+  if (!data.city.trim()) errors.city = t("requiredField")
+  if (!data.postcode.trim()) errors.postcode = t("requiredField")
+  if (!data.country.trim()) errors.country = t("requiredField")
   return errors
 }
 
@@ -104,9 +104,9 @@ export const Checkout = () => {
       } catch (caughtError: unknown) {
         if (typeof caughtError === "object" && caughtError !== null && "message" in caughtError) {
           const message = (caughtError as { message?: unknown }).message
-          setError(typeof message === "string" ? message : "Unable to load checkout context")
+          setError(typeof message === "string" ? message : t("unableToLoadCheckout"))
         } else {
-          setError("Unable to load checkout context")
+          setError(t("unableToLoadCheckout"))
         }
       } finally {
         setLoading(false)
@@ -114,7 +114,7 @@ export const Checkout = () => {
     }
 
     load()
-  }, [setBillingAddress, setError, setLoading, setShippingAddress])
+  }, [setBillingAddress, setError, setLoading, setShippingAddress, t])
 
   const totalItems = useMemo(() => cartItems.reduce((sum, item) => sum + item.quantity, 0), [cartItems])
   const cartTotal = useMemo(() => cartItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0), [cartItems])
@@ -147,8 +147,8 @@ export const Checkout = () => {
   const handleValider = async () => {
     setSubmitError(null)
 
-    const nextBillingErrors = validateAddress(billingAddress)
-    const nextShippingErrors = sameAddress ? {} : validateAddress(shippingAddress)
+    const nextBillingErrors = validateAddress(billingAddress, t)
+    const nextShippingErrors = sameAddress ? {} : validateAddress(shippingAddress, t)
     setBillingErrors(nextBillingErrors)
     setShippingErrors(nextShippingErrors)
 
@@ -163,7 +163,7 @@ export const Checkout = () => {
     }
 
     if (!checkoutIds) {
-      setSubmitError("Missing cart or address identifiers")
+      setSubmitError(t("missingCartOrAddress"))
       return
     }
 
@@ -172,7 +172,7 @@ export const Checkout = () => {
     // On Stripe success → POST /orders is called by Marie's webhook
     // On success → navigate to /checkout/confirmation with order data
     setConfirmedOrder(null)
-    setSubmitError("Paiement Stripe en cours d’intégration.")
+    setSubmitError(t("stripeIntegrationPending"))
   }
 
   if (loading) {

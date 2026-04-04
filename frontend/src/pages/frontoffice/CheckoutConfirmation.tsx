@@ -75,10 +75,10 @@ export const CheckoutConfirmation = () => {
 
       <div className="flex gap-3">
         <Button asChild>
-          <Link to="/account/orders">Voir mes commandes</Link>
+          <Link to="/account/orders">{t("viewMyOrders")}</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/products">Retour aux produits</Link>
+          <Link to="/products">{t("backToProducts")}</Link>
         </Button>
       </div>
     </div>
