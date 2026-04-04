@@ -3,9 +3,11 @@ import Product from '../models/Product';
 import { AbstractRepository } from './abstract.repository';
 import { AppError } from '../common/errors';
 import { ProductResponseDto } from '../dto/response/ProductResponse.dto';
+import { ProductSuggestionDto } from '../dto/response/ProductSuggestion.dto';
 import { mapProductToDto } from '../utils/mapProductToDto';
 import { ProductListOptionsDto } from '../dto/requests/ProductListOptions.dto';
 import { ProductListResponseDto } from '../dto/response/ProductListResponse.dto';
+import { sequelize } from '../config/database';
 
 export default class ProductRepository extends AbstractRepository<Product> {
     constructor() {
@@ -43,17 +45,19 @@ export default class ProductRepository extends AbstractRepository<Product> {
     }
 
     async getProductById(id: string): Promise<ProductResponseDto | null> {
-            try {
-                const product = await this.getById(id, this.defaultIncludes);
-                if (!product) 
-                    return null;
-
-                return mapProductToDto(product);
-            } catch (error) {
-                if (error instanceof AppError && (error as any).statusCode === 404) 
-                    return null;
-                throw error;
+        try {
+            const product = await this.getById(id, this.defaultIncludes);
+            if (!product) {
+                return null;
             }
+
+            return mapProductToDto(product);
+        } catch (error) {
+            if (error instanceof AppError && (error as any).statusCode === 404) {
+                return null;
+            }
+            throw error;
+        }
     }
 
     async countProducts(where?: WhereOptions<Product>): Promise<number> {
@@ -63,7 +67,9 @@ export default class ProductRepository extends AbstractRepository<Product> {
     async getSimilarProducts(productId: string): Promise<ProductResponseDto[] | null> {
         try {
             const product = await this.model.findByPk(productId as any);
-            if (!product) return null;
+            if (!product) {
+                return null;
+            }
 
             const similarProducts = await this.model.findAll({
                 where: {
@@ -76,9 +82,29 @@ export default class ProductRepository extends AbstractRepository<Product> {
 
             return similarProducts.map((p: any) => mapProductToDto(p));
         } catch (error) {
-            if (error instanceof AppError && (error as any).statusCode === 404)
+            if (error instanceof AppError && (error as any).statusCode === 404) {
                 return null;
+            }
             throw error;
         }
+    }
+
+    async getProductSuggestions(search: string): Promise<ProductSuggestionDto[]> {
+        const likeOperator = sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like;
+        const products = await this.model.findAll({
+            attributes: ['id', 'name'],
+            where: {
+                name: {
+                    [likeOperator]: `%${search}%`,
+                },
+            },
+            order: [['name', 'ASC']],
+            limit: 8,
+        });
+
+        return products.map((product) => ({
+            id: product.id,
+            name: product.name,
+        }));
     }
 }

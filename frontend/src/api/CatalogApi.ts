@@ -3,6 +3,7 @@ import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResp
 import { CatalogFilters } from '../types/interfaces/catalog/CatelogFilters';
 import { AbstractApi } from './AbstractApi';
 import { Category } from '@/types/interfaces/category/Category';
+import { ProductSuggestion } from '@/types/interfaces/catalog/ProductSuggestion';
 
 export class CatalogApi extends AbstractApi {
     private static instance: CatalogApi;
@@ -18,9 +19,7 @@ export class CatalogApi extends AbstractApi {
         return CatalogApi.instance;
     }
 
-    async getCatalogList(
-        payload: CatalogFilters
-    ): Promise<CatalogListResponse> {
+    async getCatalogList(payload: CatalogFilters): Promise<CatalogListResponse> {
         const params = new URLSearchParams();
         Object.entries(payload).forEach(([key, value]) => {
             if (value !== undefined && value !== null) {
@@ -52,6 +51,16 @@ export class CatalogApi extends AbstractApi {
             message?: string;
             data: CatalogResponse[];
         }>(`/products/similar/${productId}`);
+        return res.data;
+    }
+
+    async getProductSuggestions(search: string): Promise<ProductSuggestion[]> {
+        const params = new URLSearchParams({ search });
+        const res = await this.get<{
+            success: boolean;
+            message?: string;
+            data: ProductSuggestion[];
+        }>(`/products/suggestions?${params.toString()}`);
         return res.data;
     }
 

@@ -1,6 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useContext } from 'react';
 import { CatalogContext } from '../contexts/CatalogContext';
-import { useContext } from 'react';
 import { CatalogService } from '../services/CatalogService';
 import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResponse';
 import { CatalogFilters } from '../types/interfaces/catalog/CatelogFilters';
@@ -34,16 +33,9 @@ export const useCatalogFetch = () => {
                 return res;
             } catch (err: unknown) {
                 let message: string;
-                if (
-                    typeof err === 'object' &&
-                    err !== null &&
-                    'message' in err
-                ) {
+                if (typeof err === 'object' && err !== null && 'message' in err) {
                     const maybeMessage = (err as { message?: unknown }).message;
-                    message =
-                        typeof maybeMessage === 'string'
-                            ? maybeMessage
-                            : String(maybeMessage ?? i18n.t('error'));
+                    message = typeof maybeMessage === 'string' ? maybeMessage : String(maybeMessage ?? i18n.t('error'));
                 } else {
                     message = String(err);
                 }
@@ -53,7 +45,20 @@ export const useCatalogFetch = () => {
                 setLoading(false);
             }
         },
-        [ctx, service]
+        [
+            ctx,
+            ctx.page,
+            ctx.limit,
+            ctx.categoryId,
+            ctx.minPrice,
+            ctx.maxPrice,
+            ctx.search,
+            ctx.isService,
+            ctx.inStock,
+            ctx.sortBy,
+            ctx.sortOrder,
+            service,
+        ]
     );
 
     return { data, loading, error, fetchCatalog } as const;

@@ -5,17 +5,14 @@ import { ProductResponseDto } from '../dto/response/ProductResponse.dto';
 import { ProductListResponseDto } from '../dto/response/ProductListResponse.dto';
 import { ProductListFilterDto } from '../dto/requests/ProductListFilter.dto';
 import { ProductListOptionsDto } from '../dto/requests/ProductListOptions.dto';
+import { ProductSuggestionDto } from '../dto/response/ProductSuggestion.dto';
 import { SortOrder } from '../enum/Sortrder.enum';
 import Product from '../models/Product';
 import { sequelize } from '../config/database';
 import ProductRepository from '../repository/product.repository';
 
 export default class ProductService {
-    private productRepository: ProductRepository;
-
-    constructor() {
-        this.productRepository = new ProductRepository();
-    }
+    constructor(private readonly productRepository: ProductRepository) {}
 
     async listProducts(options?: ProductListOptionsDto): Promise<ProductListResponseDto> {
         const page = options?.page ?? 1;
@@ -34,10 +31,11 @@ export default class ProductService {
                 order,
             });
         } catch (error) {
-            if (error instanceof ValidationError || error instanceof NotFoundError)
+            if (error instanceof ValidationError || error instanceof NotFoundError) {
                 throw error;
+            }
 
-            Logger.error('Erreur lors de la récupération de la liste des produits', {
+            Logger.error('Erreur lors de la recuperation de la liste des produits', {
                 page,
                 limit,
                 originalError: error instanceof Error ? error.message : String(error),
@@ -55,14 +53,16 @@ export default class ProductService {
 
         try {
             const product = await this.productRepository.getProductById(id);
-            if (!product) 
-                throw new NotFoundError(`Produit avec l'ID ${id} non trouvé`, { context: { id } });
-            
+            if (!product) {
+                throw new NotFoundError(`Produit avec l'ID ${id} non trouve`, { context: { id } });
+            }
+
             return product;
-        }
-        catch (error) {
-            if (error instanceof ValidationError || error instanceof NotFoundError) throw error;
-            Logger.error('Erreur lors de la récupération du produit', {
+        } catch (error) {
+            if (error instanceof ValidationError || error instanceof NotFoundError) {
+                throw error;
+            }
+            Logger.error('Erreur lors de la recuperation du produit', {
                 id,
                 originalError: error instanceof Error ? error.message : String(error),
             });
@@ -74,8 +74,7 @@ export default class ProductService {
         const where = this.buildWhereClause(filters);
         try {
             return await this.productRepository.countProducts(where);
-        } 
-        catch (error) {
+        } catch (error) {
             Logger.error('Erreur lors du comptage des produits', {
                 originalError: error instanceof Error ? error.message : String(error),
             });
@@ -92,14 +91,34 @@ export default class ProductService {
 
         try {
             const products = await this.productRepository.getSimilarProducts(productId);
-            if (!products)
-                throw new NotFoundError(`Produit avec l'ID ${productId} non trouvé`, { context: { id: productId } });
+            if (!products) {
+                throw new NotFoundError(`Produit avec l'ID ${productId} non trouve`, { context: { id: productId } });
+            }
             return products;
-        }
-        catch (error) {
-            if (error instanceof ValidationError || error instanceof NotFoundError) throw error;
-            Logger.error('Erreur lors de la récupération des produits similaires', {
+        } catch (error) {
+            if (error instanceof ValidationError || error instanceof NotFoundError) {
+                throw error;
+            }
+            Logger.error('Erreur lors de la recuperation des produits similaires', {
                 id: productId,
+                originalError: error instanceof Error ? error.message : String(error),
+            });
+            throw error;
+        }
+    }
+
+    async getProductSuggestions(search: string): Promise<ProductSuggestionDto[]> {
+        this.validateSearch(search);
+
+        try {
+            return await this.productRepository.getProductSuggestions(search.trim());
+        } catch (error) {
+            if (error instanceof ValidationError || error instanceof NotFoundError) {
+                throw error;
+            }
+
+            Logger.error('Erreur lors de la recuperation des suggestions produits', {
+                search,
                 originalError: error instanceof Error ? error.message : String(error),
             });
             throw error;
@@ -108,27 +127,26 @@ export default class ProductService {
 
     private validatePagination(page: number, limit: number): void {
         if (!Number.isInteger(page) || page < 1) {
-            throw new ValidationError('Page doit être un entier supérieur à 0', {
+            throw new ValidationError('Page doit etre un entier superieur a 0', {
                 context: { page },
             });
         }
 
         if (!Number.isInteger(limit) || limit < 1) {
-            throw new ValidationError('Limit doit être un entier supérieur à 0', {
+            throw new ValidationError('Limit doit etre un entier superieur a 0', {
                 context: { limit },
             });
         }
 
         if (limit > 100) {
-            throw new ValidationError('Limit ne peut pas dépasser 100', {
+            throw new ValidationError('Limit ne peut pas depasser 100', {
                 context: { limit },
             });
         }
     }
 
-
     private buildWhereClause(filters?: ProductListFilterDto): WhereOptions<Product> {
-        const where: WhereOptions<Product> & { [Op.or]?: any[] } = {};
+        const where: WhereOptions<Product> & { [Op.or]?: unknown[] } = {};
 
         if (filters?.categoryId) {
             this.validateCategoryId(filters.categoryId);
@@ -138,24 +156,27 @@ export default class ProductService {
         if (filters?.minPrice !== undefined || filters?.maxPrice !== undefined) {
             this.validatePriceRange(filters?.minPrice, filters?.maxPrice);
             where.price = {};
-            
-            if (filters?.minPrice !== undefined)
-                (where.price as any)[Op.gte] = filters.minPrice;
 
-            if (filters?.maxPrice !== undefined)
-                (where.price as any)[Op.lte] = filters.maxPrice;
+            if (filters?.minPrice !== undefined) {
+                (where.price as Record<symbol, number>)[Op.gte] = filters.minPrice;
+            }
+
+            if (filters?.maxPrice !== undefined) {
+                (where.price as Record<symbol, number>)[Op.lte] = filters.maxPrice;
+            }
         }
 
-        if (filters?.isService !== undefined)
+        if (filters?.isService !== undefined) {
             where.is_service = Boolean(filters.isService);
-        
+        }
 
-        if (filters?.inStock !== undefined)
+        if (filters?.inStock !== undefined) {
             where.stock = filters.inStock ? { [Op.gt]: 0 } : { [Op.eq]: 0 };
+        }
 
         if (filters?.search) {
             this.validateSearch(filters.search);
-            const ilikeOp = (sequelize && sequelize.getDialect && sequelize.getDialect() === 'postgres') ? Op.iLike : Op.like;
+            const ilikeOp = sequelize && sequelize.getDialect && sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like;
             where[Op.or] = [
                 { name: { [ilikeOp]: `%${filters.search}%` } },
                 { description: { [ilikeOp]: `%${filters.search}%` } },
@@ -165,57 +186,49 @@ export default class ProductService {
         return where;
     }
 
-
     private validateCategoryId(categoryId: string): void {
         if (typeof categoryId !== 'string' || categoryId.trim().length === 0) {
-            throw new ValidationError('categoryId doit être une chaîne non vide', {
+            throw new ValidationError('categoryId doit etre une chaine non vide', {
                 context: { categoryId },
             });
         }
     }
 
-
-    private validatePriceRange(
-        minPrice?: number,
-        maxPrice?: number
-    ): void {
+    private validatePriceRange(minPrice?: number, maxPrice?: number): void {
         if (minPrice !== undefined) {
-        if (typeof minPrice !== 'number' || minPrice < 0) {
-            throw new ValidationError('minPrice doit être un nombre positif', { 
-                context: { minPrice },
-            });
-        }
+            if (typeof minPrice !== 'number' || minPrice < 0) {
+                throw new ValidationError('minPrice doit etre un nombre positif', {
+                    context: { minPrice },
+                });
+            }
         }
 
         if (maxPrice !== undefined) {
-        if (typeof maxPrice !== 'number' || maxPrice < 0) {
-            throw new ValidationError('maxPrice doit être un nombre positif', {
-                context: { maxPrice },
-            });
-        }
+            if (typeof maxPrice !== 'number' || maxPrice < 0) {
+                throw new ValidationError('maxPrice doit etre un nombre positif', {
+                    context: { maxPrice },
+                });
+            }
         }
 
         if (minPrice !== undefined && maxPrice !== undefined && minPrice > maxPrice) {
-            throw new ValidationError(
-                'minPrice ne peut pas être supérieur à maxPrice',
-                {context: { minPrice, maxPrice },}
-            );
+            throw new ValidationError('minPrice ne peut pas etre superieur a maxPrice', {
+                context: { minPrice, maxPrice },
+            });
         }
     }
 
     private validateSearch(search: string): void {
         if (typeof search !== 'string' || search.trim().length < 2) {
-            throw new ValidationError(
-                'La recherche doit contenir au moins 2 caractères',
-                {context: { search },}
-            );
+            throw new ValidationError('La recherche doit contenir au moins 2 caracteres', {
+                context: { search },
+            });
         }
 
         if (search.length > 255) {
-            throw new ValidationError(
-                'La recherche ne peut pas dépasser 255 caractères',
-                {context: { search },}
-            );
+            throw new ValidationError('La recherche ne peut pas depasser 255 caracteres', {
+                context: { search },
+            });
         }
     }
 }

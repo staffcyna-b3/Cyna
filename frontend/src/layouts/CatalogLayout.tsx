@@ -17,10 +17,9 @@ const CatalogLayout = ({
         void listCategories();
     }, [listCategories]);
 
-    // Sync active category with URL search params
     useEffect(() => {
         const searchParams = new URLSearchParams(location.search);
-        const categoryParam: string | null = searchParams.get('category');
+        const categoryParam: string | null = searchParams.get('categoryId') ?? searchParams.get('category');
         setActiveCategory(categoryParam);
     }, [location]);
 
@@ -29,7 +28,6 @@ const CatalogLayout = ({
     return (
         <CatalogProvider>
             <style>{`
-                /* Accessibilité : forcer la couleur du texte en blanc pour garantir lisibilité */
                 .catalog-layout, .catalog-layout * {
                     color: #ffffff !important;
                 }

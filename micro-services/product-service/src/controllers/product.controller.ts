@@ -7,18 +7,14 @@ import { SortOrder } from '../enum/Sortrder.enum';
 import { SortBy } from '../enum/SortBy.enum';
 
 export class ProductController {
-    private productService: ProductService;
-
-    constructor() {
-        this.productService = new ProductService();
-    }
+    constructor(private readonly productService: ProductService) {}
 
     async listProducts(req: Request, res: Response): Promise<Response> {
         try {
             const page = Number(req.query.page) || 1;
             const limit = Number(req.query.limit) || 10;
 
-            Logger.info('Récupération de la liste des produits', {
+            Logger.info('Recuperation de la liste des produits', {
                 page,
                 limit,
                 filters: req.query,
@@ -29,8 +25,8 @@ export class ProductController {
                 limit,
                 filters: {
                     categoryId: req.query.categoryId as string,
-                    minPrice: req.query.minPrice? Number(req.query.minPrice): undefined,
-                    maxPrice: req.query.maxPrice? Number(req.query.maxPrice): undefined,
+                    minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
+                    maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
                     search: req.query.search as string,
                     isService: req.query.isService !== undefined ? req.query.isService === 'true' : undefined,
                     inStock: req.query.inStock !== undefined ? req.query.inStock === 'true' : undefined,
@@ -39,7 +35,7 @@ export class ProductController {
                 },
             });
 
-            return res.status(200).json(new SuccessResponse('Liste des produits récupérée avec succès', result));
+            return res.status(200).json(new SuccessResponse('Liste des produits recuperee avec succes', result));
         } catch (error: any) {
             Logger.error('Erreur listProducts', error);
             return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
@@ -50,13 +46,12 @@ export class ProductController {
         try {
             const { id } = req.params as { id: string };
 
-            Logger.info("Récupération d'un produit", { id });
+            Logger.info("Recuperation d'un produit", { id });
 
             const product = await this.productService.getProductById(id);
-            
-            return res.status(200).json(new SuccessResponse('Produit récupéré avec succès', product));
-        }
-        catch (error: any) {
+
+            return res.status(200).json(new SuccessResponse('Produit recupere avec succes', product));
+        } catch (error: any) {
             Logger.error('Erreur getProductById', error);
             return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
         }
@@ -68,16 +63,15 @@ export class ProductController {
 
             const count = await this.productService.countProducts({
                 categoryId: req.query.categoryId as string,
-                minPrice: req.query.minPrice? Number(req.query.minPrice): undefined,
-                maxPrice: req.query.maxPrice? Number(req.query.maxPrice): undefined,
+                minPrice: req.query.minPrice ? Number(req.query.minPrice) : undefined,
+                maxPrice: req.query.maxPrice ? Number(req.query.maxPrice) : undefined,
                 search: req.query.search as string,
                 isService: req.query.isService !== undefined ? req.query.isService === 'true' : undefined,
                 inStock: req.query.inStock !== undefined ? req.query.inStock === 'true' : undefined,
             });
 
-            return res.status(200).json(new SuccessResponse('Comptage des produits réussi', { count }));
-        }
-        catch (error: any) {
+            return res.status(200).json(new SuccessResponse('Comptage des produits reussi', { count }));
+        } catch (error: any) {
             Logger.error('Erreur countProducts', error);
             return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
         }
@@ -85,13 +79,24 @@ export class ProductController {
 
     async getSimilarProducts(req: Request, res: Response): Promise<Response> {
         try {
-            Logger.info('Récupération des produits similaires au produit :', { id: req.params.productId });
             const productId = req.params.id as string;
+            Logger.info('Recuperation des produits similaires au produit', { id: productId });
             const products = await this.productService.getSimilarProducts(productId);
-            return res.status(200).json(new SuccessResponse('Produits similaires récupérés avec succès', products));
-        }
-        catch (error: any) {
+            return res.status(200).json(new SuccessResponse('Produits similaires recuperes avec succes', products));
+        } catch (error: any) {
             Logger.error('Erreur getSimilarProducts', error);
+            return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
+        }
+    }
+
+    async getProductSuggestions(req: Request, res: Response): Promise<Response> {
+        try {
+            const search = String(req.query.search ?? '');
+            Logger.info('Recuperation des suggestions produits', { search });
+            const suggestions = await this.productService.getProductSuggestions(search);
+            return res.status(200).json(new SuccessResponse('Suggestions produits recuperees avec succes', suggestions));
+        } catch (error: any) {
+            Logger.error('Erreur getProductSuggestions', error);
             return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
         }
     }
