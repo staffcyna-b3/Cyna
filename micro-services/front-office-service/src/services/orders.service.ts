@@ -39,19 +39,19 @@ export class OrderService implements IOrderService {
 
         const cartItems = ((cart as unknown as {
             items?: Array<{
+                product_id: string;
                 quantity: number;
                 product?: {
                     price?: number | string;
-                    name?: string;
                 };
             }>;
         }).items ?? []).map((item) => {
             const product = item.product;
 
             return {
+                productId: item.product_id,
                 quantity: item.quantity,
                 unitPrice: Number(product?.price ?? 0),
-                productName: product?.name ?? "Unknown product",
             };
         });
 
@@ -59,19 +59,13 @@ export class OrderService implements IOrderService {
             throw new HttpError(422, "Cart is empty");
         }
 
-        const snapshotItems = cartItems.map((item) => {
-            const quantity = Number(item.quantity ?? 0);
-            const unitPrice = Number(item.unitPrice ?? 0);
-            const productName = String(item.productName ?? "");
+        const orderItems = cartItems.map((item) => ({
+            product_id: String(item.productId ?? ""),
+            quantity: Number(item.quantity ?? 0),
+            unit_price: Number(item.unitPrice ?? 0),
+        }));
 
-            return {
-                product_name: productName,
-                quantity,
-                unit_price: unitPrice,
-            };
-        });
-
-        const totalAmount = snapshotItems.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+        const totalAmount = orderItems.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
 
         const order = await this.orderRepository.create({
             user_id: userId,
@@ -84,9 +78,9 @@ export class OrderService implements IOrderService {
         });
 
         await this.orderRepository.createItems(
-            snapshotItems.map((item) => ({
+            orderItems.map((item) => ({
                 order_id: order.id,
-                product_name: item.product_name,
+                product_id: item.product_id,
                 quantity: item.quantity,
                 unit_price: item.unit_price,
             }))

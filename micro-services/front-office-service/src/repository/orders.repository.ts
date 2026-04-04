@@ -55,7 +55,11 @@ export class OrderRepository implements IOrderRepository {
     async findByIdWithItems(id: string): Promise<Order | null> {
         return Order.findByPk(id, {
             include: [
-                { model: OrderItem, as: "items" },
+                {
+                    model: OrderItem,
+                    as: "items",
+                    include: [{ model: Product, as: "product" }],
+                },
                 { model: Address, as: "billingAddress" },
                 { model: Address, as: "shippingAddress" },
             ],

@@ -71,8 +71,8 @@ describe('OrderService', () => {
         .mockResolvedValueOnce(shippingAddress as any);
       repository.findCartWithItemsByIdAndUserId.mockResolvedValue({
         items: [
-          { quantity: 1, product: { name: 'Keyboard', price: 49.99 } },
-          { quantity: 2, product: { name: 'Mouse', price: 29.99 } },
+          { product_id: 'prod-1', quantity: 1, product: { price: 49.99 } },
+          { product_id: 'prod-2', quantity: 2, product: { price: 29.99 } },
         ],
       } as any);
       repository.create.mockResolvedValue({ id: 'order-1', total_amount: 109.97 } as any);
@@ -99,13 +99,13 @@ describe('OrderService', () => {
       expect(repository.createItems).toHaveBeenCalledWith([
         {
           order_id: 'order-1',
-          product_name: 'Keyboard',
+          product_id: 'prod-1',
           quantity: 1,
           unit_price: 49.99,
         },
         {
           order_id: 'order-1',
-          product_name: 'Mouse',
+          product_id: 'prod-2',
           quantity: 2,
           unit_price: 29.99,
         },
