@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import { initDb } from './models/index'
 import { Logger } from './common/logger'
+import cartRoutes from './routes/cart.routes'
 
 dotenv.config()
 
@@ -10,6 +11,9 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
+
+app.use('/front-office/cart', cartRoutes)
+app.use('/cart', cartRoutes)
 
 initDb()
 

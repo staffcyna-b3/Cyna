@@ -9,9 +9,9 @@ const cartRepository = new CartRepository();
 const cartService = new CartService(cartRepository);
 const cartController = new CartController(cartService);
 
-router.get('/cart', (req, res) => cartController.getCart(req, res));
-router.post('/cart/items', (req, res) => cartController.addToCart(req, res));
-router.put('/cart/items/:itemId', (req, res) => cartController.updateCartItem(req, res));
-router.delete('/cart/items/:itemId', (req, res) => cartController.removeFromCart(req, res));
+router.get('/', (req, res) => cartController.getCart(req, res));
+router.post('/items', (req, res) => cartController.addToCart(req, res));
+router.put('/items/:itemId', (req, res) => cartController.updateCartItem(req, res));
+router.delete('/items/:itemId', (req, res) => cartController.removeFromCart(req, res));
 
 export default router; 
