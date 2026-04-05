@@ -1,7 +1,7 @@
 import { ShoppingCart } from 'lucide-react';
 import React, { useCallback } from 'react';
 import { Button } from './button';
-import { addToCart } from '@/lib/cart';
+import { useCart } from '@/hooks/useCart';
 import { Period } from '@/types/Period';
 
 export default function AddToCartButton({
@@ -21,20 +21,21 @@ export default function AddToCartButton({
     onClick?: () => void;
     skipAddToCart?: boolean;
 }) {
+    const { addToCart } = useCart();
+
     const handleClickInternal = useCallback(
-        (e: React.MouseEvent<HTMLButtonElement>) => {
-            // prevent parent Link navigation
+        async (e: React.MouseEvent<HTMLButtonElement>) => {
             e.stopPropagation();
             if (!skipAddToCart) {
                 try {
-                    addToCart(productId, { quantity, period });
-                } catch  {
+                    await addToCart(productId, { quantity, period });
+                } catch {
                     // ignore
                 }
             }
             if (onClick) onClick();
         },
-        [productId, quantity, period, onClick, skipAddToCart]
+        [productId, quantity, period, onClick, skipAddToCart, addToCart]
     );
 
     return (
