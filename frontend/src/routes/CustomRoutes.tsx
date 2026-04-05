@@ -13,6 +13,7 @@ import { UserRole } from "@/types/enums/UserRole.enum"
 import CatalogDetail from "../pages/catalog/Detail"
 import CatalogList from "../pages/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
+import CartPage from "@/pages/frontoffice/Cart";
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -25,13 +26,13 @@ export default function CustomRoutes() {
       <Route path="/request-reset" element={<RequestReset />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-2fa" element={<Verify2FA />} />
-      <Route 
-        path="/dashboard" 
+      <Route
+        path="/dashboard"
         element={
           <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
             <Dashboard />
           </ProtectedRoute>
-        } 
+        }
       />
 
       <Route element={<MainLayout />}>
@@ -39,6 +40,7 @@ export default function CustomRoutes() {
           <Route path="/" element={<HomePage />} />
           <Route path="/catalog" element={<CatalogList />} />
           <Route path="/catalog/:id" element={<CatalogDetail />} />
+          <Route path="/cart" element={<CartPage />} />
         </Route>
       </Route>
     </Routes>
