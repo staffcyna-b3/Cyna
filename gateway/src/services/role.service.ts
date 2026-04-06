@@ -2,38 +2,31 @@ import { UserRoleType } from "../enum/UserRoleType.enum";
 import { RoleRepository } from "../repository/role.repository";
 
 export class RoleService {
-
-    private roleRepository = new RoleRepository();  
+    // Injection du repository via le constructeur
+    constructor(private roleRepository: RoleRepository) {}  
 
     async assignRole(userId: string, role: UserRoleType) {
-        if (!userId) {
-            throw new Error()
+        if (!userId || !role) {
+            throw new Error("Données manquantes");
         }
-
-        if (!role) {
-            throw new Error()
-        }
-
-        return await this.roleRepository.assignRoleToUser(userId, role)
+        return await this.roleRepository.assignRoleToUser(userId, role);
     }
 
     async getAllUsersWithRoles() {
-        return await this.roleRepository.findAllUsersWithRoles()
+        return await this.roleRepository.findAllUsersWithRoles();
     }
 
     async getUserWithRole(userId: string) {
         if (!userId) {
-            throw new Error()
+            throw new Error("userId manquant");
         }
-
-        return await this.roleRepository.findUserWithRole(userId)
+        return await this.roleRepository.findUserWithRole(userId);
     }
 
     async removeUserRoles(userId: string) {
         if (!userId) {
-            throw new Error()
+            throw new Error("userId manquant");
         }
-
-        return await this.roleRepository.deleteRolesByUserId(userId)
+        return await this.roleRepository.deleteRolesByUserId(userId);
     }
 }
