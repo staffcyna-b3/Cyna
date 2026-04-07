@@ -108,5 +108,18 @@
   "allProducts": "All products",
   "noCategory": "No category",
   "pricing": "Pricing",
-  "days": "days"
+  "days": "days",
+  "cart": {
+    "title": "Cart",
+    "empty": "Your cart is empty",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "checkoutBtn": "Checkout",
+    "continueShopping": "Continue shopping",
+    "totalProducts": "{{count}} product total",
+    "totalProducts_plural": "{{count}} products total",
+    "unavailable": "This product is no longer available",
+    "unavailableWarning": "Some items are unavailable, please remove them to continue."
+  }
 }

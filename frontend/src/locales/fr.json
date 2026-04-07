@@ -108,5 +108,18 @@
   "allProducts": "Tous les produits",
   "noCategory": "Aucune catégorie",
   "pricing": "Tarification",
-  "days": "jours"
+  "days": "jours",
+  "cart": {
+    "title": "Panier",
+    "empty": "Votre panier est vide",
+    "remove": "Supprimer",
+    "subtotal": "Sous-total",
+    "total": "Total",
+    "checkoutBtn": "Paiement",
+    "continueShopping": "Continuer vos achats",
+    "totalProducts": "Total de {{count}} produit",
+    "totalProducts_plural": "Total de {{count}} produits",
+    "unavailable": "Ce produit n'est plus disponible",
+    "unavailableWarning": "Certains articles sont indisponibles, retirez-les pour continuer."
+  }
 }
