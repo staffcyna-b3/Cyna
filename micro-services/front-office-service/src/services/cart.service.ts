@@ -7,6 +7,7 @@ import { ProductStatus } from '../enum/ProductStatus';
 import CartItem from '../models/CartItem';
 import Cart from '../models/Cart';
 import Product from '../models/Product';
+import ProductImage from '../models/ProductImage';
 import { IProductRepository } from '../interfaces/ProductRepository';
 
 export class CartService implements ICartService {
@@ -24,23 +25,15 @@ export class CartService implements ICartService {
     }
 
     //forcer typescript a comprendre que le cart contient les items, et que chaque item contient un product
-    const cartWithItems = cart as Cart & { items: (CartItem & { product: Product })[] };
+    const cartWithItems = cart as Cart & { items: (CartItem & { product: Product & { images: ProductImage[] } })[] };
 
     const items: CartItemResponse[] = cartWithItems.items.map((item) => {
-      if (item.product.status === ProductStatus.UNAVAILABLE) {
-        return {
-          id: item.id,
-          productId: item.product_id,
-          name: item.product.name,
-          quantity: item.quantity,
-          unitPrice: Number(item.product.price),
-          subtotal: item.quantity * Number(item.product.price),
-          isService: item.product.is_service,
-          unavailable: true
-        };
-      }
+      const mainImage = item.product.images?.find(img => img.is_main) ?? item.product.images?.[0];
+      const imageUrl = mainImage?.image
+        ? `data:image/jpeg;base64,${(mainImage.image as Buffer).toString('base64')}`
+        : undefined;
 
-      return {
+      const base = {
         id: item.id,
         productId: item.product_id,
         name: item.product.name,
@@ -48,7 +41,14 @@ export class CartService implements ICartService {
         unitPrice: Number(item.product.price),
         subtotal: item.quantity * Number(item.product.price),
         isService: item.product.is_service,
+        imageUrl,
       };
+
+      if (item.product.status === ProductStatus.UNAVAILABLE) {
+        return { ...base, unavailable: true };
+      }
+
+      return base;
     });
 
     const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);

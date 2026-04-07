@@ -1,6 +1,7 @@
 import Cart from '../models/Cart';
 import CartItem from '../models/CartItem';
 import Product from '../models/Product';
+import ProductImage from '../models/ProductImage';
 import { ICartRepository } from '../interfaces/CartRepository';
 
 export class CartRepository implements ICartRepository {
@@ -11,7 +12,13 @@ export class CartRepository implements ICartRepository {
         {
           model: CartItem,
           as: 'items',
-          include: [{ model: Product, as: 'product' }],
+          include: [
+            {
+              model: Product,
+              as: 'product',
+              include: [{ model: ProductImage, as: 'images' }],
+            },
+          ],
         },
       ],
     });
