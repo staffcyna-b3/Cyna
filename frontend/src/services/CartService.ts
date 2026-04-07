@@ -9,13 +9,13 @@ export class CartService {
     }
 
     private getOptions(method: string, body?: any) {
-        // 1. On va chercher le token que Marie (via ta modif) a sauvegardé
+        //Chercher le token
         const token = localStorage.getItem('accessToken');
         const headers: Record<string, string> = {
             'Content-Type': 'application/json'
         };
 
-        // 2. S'il existe, on l'ajoute en tant que passeport (Bearer)
+        //S'il existe, on l'ajoute en tant que passeport (Bearer)
         if (token) {
             headers['Authorization'] = `Bearer ${token}`;
         }

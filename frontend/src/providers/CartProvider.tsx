@@ -3,7 +3,7 @@ import { CartContext } from '../contexts/CartContext';
 import { CartService } from '../services/CartService';
 import { CartItem } from '../types/interfaces/cart/CartItem';
 import { AddToCartOptions } from '../types/interfaces/cart/AddToCartOptions';
-import { saveSaaSDuration, removeSaaSDuration } from '../lib/cartStorage';
+import { saveSaaSDuration, removeSaaSDuration, getAllSaaSDurations } from '../lib/cartStorage';
 import { toast } from 'react-hot-toast';
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
@@ -12,16 +12,25 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [items, setItems] = useState<CartItem[]>([]);
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    // cartId exposé dans le context pour le tunnel de commande
+    const [cartId, setCartId] = useState<string | null>(null);
 
     const fetchCart = useCallback(async () => {
         setIsLoading(true);
         try {
             const data = await service.getCart();
             const fetchedItems: CartItem[] = data.items || [];
-            setItems(fetchedItems);
-            
-            const total = fetchedItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
-            setTotalAmount(total);
+
+            // Fusionner les périodes choisies (localStorage) dans chaque item service
+            const durations = getAllSaaSDurations();
+            const itemsWithPeriod = fetchedItems.map((item) =>
+                item.isService ? { ...item, billingPeriod: durations[item.productId] } : item
+            );
+
+            setItems(itemsWithPeriod);
+            setTotalAmount(data.totalAmount || 0);
+            setCartId(data.id || null);
+
         } catch (error) {
             console.error(error);
         } finally {
@@ -78,6 +87,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     return (
         <CartContext.Provider
             value={{
+                cartId,
                 items,
                 totalAmount,
                 isLoading,
