@@ -7,28 +7,49 @@ import { ProductStatus } from '../enum/ProductStatus';
 import CartItem from '../models/CartItem';
 import Cart from '../models/Cart';
 import Product from '../models/Product';
+import { IProductRepository } from '../interfaces/ProductRepository';
 
 export class CartService implements ICartService {
-  constructor(private readonly cartRepository: ICartRepository) { }
+  constructor(
+    private readonly cartRepository: ICartRepository,
+    private readonly productRepository: IProductRepository
+  ) { }
 
   async getCart(userId: string): Promise<CartResponse> {
+    //Trouve le panier associé à l'utilisateur et récupère tous les items de ce panier
     const cart = await this.cartRepository.findByUserIdWithItems(userId);
 
     if (!cart) {
       return { id: null, items: [], totalAmount: 0 };
     }
 
+    //forcer typescript a comprendre que le cart contient les items, et que chaque item contient un product
     const cartWithItems = cart as Cart & { items: (CartItem & { product: Product })[] };
 
-    const items: CartItemResponse[] = cartWithItems.items.map((item) => ({
-      id: item.id,
-      productId: item.product_id,
-      name: item.product.name,
-      quantity: item.quantity,
-      unitPrice: Number(item.product.price),
-      subtotal: item.quantity * Number(item.product.price),
-      isService: item.product.is_service,
-    }));
+    const items: CartItemResponse[] = cartWithItems.items.map((item) => {
+      if (item.product.status === ProductStatus.UNAVAILABLE) {
+        return {
+          id: item.id,
+          productId: item.product_id,
+          name: item.product.name,
+          quantity: item.quantity,
+          unitPrice: Number(item.product.price),
+          subtotal: item.quantity * Number(item.product.price),
+          isService: item.product.is_service,
+          unavailable: true
+        };
+      }
+
+      return {
+        id: item.id,
+        productId: item.product_id,
+        name: item.product.name,
+        quantity: item.quantity,
+        unitPrice: Number(item.product.price),
+        subtotal: item.quantity * Number(item.product.price),
+        isService: item.product.is_service,
+      };
+    });
 
     const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
 
@@ -40,7 +61,12 @@ export class CartService implements ICartService {
   }
 
   async addToCart(userId: string, productId: string, quantity: number): Promise<CartItem> {
-    const product = await Product.findByPk(productId);
+
+    if (quantity <= 0) {
+      throw new HttpError(422, 'La quantité doit être supérieure à 0');
+    }
+
+    const product = await this.productRepository.findById(productId);
 
     if (!product) {
       throw new HttpError(404, 'Produit introuvable');
@@ -56,12 +82,21 @@ export class CartService implements ICartService {
 
     const cart = await this.cartRepository.findOrCreateCart(userId);
 
+    //vérifie si le produit est déjà dans le panier
     const existingItem = await this.cartRepository.findItemByCartAndProduct(cart.id, productId);
 
+    //si le produit est déjà dans le panier on incrémente
     if (existingItem) {
+      const newQuantity = existingItem.quantity + quantity;
+
+      if (!product.is_service && product.stock < newQuantity) {
+        throw new HttpError(422, `Stock insuffisant. Disponible: ${product.stock}`);
+      }
+
       return await this.cartRepository.updateItem(
         existingItem.id,
-        existingItem.quantity + quantity
+        cart.id,
+        newQuantity,
       ) as CartItem;
     }
 
@@ -89,6 +124,22 @@ export class CartService implements ICartService {
       throw new HttpError(404, 'Panier introuvable');
     }
 
-    return await this.cartRepository.updateItem(itemId, quantity);
+    const item = await this.cartRepository.findItemByIdAndCart(itemId, cart.id);
+
+    if (!item) {
+      throw new HttpError(404, 'Item introuvable');
+    }
+
+    const product = await this.productRepository.findById(item.product_id);
+
+    if (!product) {
+      throw new HttpError(404, 'Produit introuvable');
+    }
+
+    if (!product.is_service && product.stock < quantity) {
+      throw new HttpError(422, `Stock insuffisant. Disponible: ${product.stock}`);
+    }
+
+    return await this.cartRepository.updateItem(itemId, cart.id, quantity);
   }
 }

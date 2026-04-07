@@ -29,6 +29,15 @@ export class CartRepository implements ICartRepository {
     return cart;
   }
 
+  async findItemByIdAndCart(itemId: string, cartId: string): Promise<CartItem | null> {
+    return await CartItem.findOne({
+      where: {
+        id: itemId,
+        cart_id: cartId
+      }
+    });
+  }
+
   async findItemByCartAndProduct(cartId: string, productId: string): Promise<CartItem | null> {
     return await CartItem.findOne({
       where: { cart_id: cartId, product_id: productId }
@@ -49,9 +58,13 @@ export class CartRepository implements ICartRepository {
     });
   }
 
-  async updateItem(itemId: string, quantity: number): Promise<CartItem | null> {
-    const item = await CartItem.findByPk(itemId);
+  async updateItem(itemId: string, cartId: string, quantity: number): Promise<CartItem | null> {
+    const item = await CartItem.findOne({
+      where: { id: itemId, cart_id: cartId }
+    });
+
     if (!item) return null;
+
     return await item.update({ quantity });
   }
 

@@ -24,10 +24,14 @@ export class CartController {
       if (!userId) return;
 
       const productId = req.body.productId as string;
-      const quantity = Number(req.body.quantity) || 1;
+      const quantity = Number(req.body.quantity);
 
       if (!productId) {
         return res.status(422).json({ message: 'Le champ productId est requis' });
+      }
+
+      if (isNaN(quantity)) {
+        return res.status(422).json({ message: 'La quantité est invalide' });
       }
 
       const item = await this.cartService.addToCart(userId, productId, quantity);
@@ -58,7 +62,7 @@ export class CartController {
       const { itemId } = req.params;
       const quantity = Number(req.body.quantity);
 
-      if (!quantity || isNaN(quantity)) {
+      if (isNaN(quantity)) {
         return res.status(422).json({ message: 'Une quantité valide est requise' });
       }
 

@@ -6,9 +6,9 @@ export interface ICartRepository {
   clearByCartId(cartId: string): Promise<void>;
 
   findOrCreateCart(userId: string): Promise<Cart>;
+  findItemByIdAndCart(itemId: string, cartId: string): Promise<CartItem | null>;
   findItemByCartAndProduct(cartId: string, productId: string): Promise<CartItem | null>;
   addItem(cartId: string, productId: string, quantity: number): Promise<CartItem>;
-  updateItem(itemId: string, quantity: number): Promise<CartItem | null>;
+  updateItem(itemId: string, cartId: string, quantity: number): Promise<CartItem | null>;
   removeItem(itemId: string, cartId: string): Promise<void>;
 }
-
