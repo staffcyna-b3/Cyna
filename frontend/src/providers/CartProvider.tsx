@@ -12,7 +12,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [items, setItems] = useState<CartItem[]>([]);
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    // cartId exposé dans le context pour le tunnel de commande
+    // cartId exposé dans le context 
     const [cartId, setCartId] = useState<string | null>(null);
 
     const fetchCart = useCallback(async () => {
