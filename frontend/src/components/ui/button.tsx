@@ -19,6 +19,7 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
+        cyna: "w-full bg-[#E3E4EF] text-gray-900 hover:bg-[#372CCA] hover:text-white transition-colors cursor-pointer",
         selected: "rounded-full bg-primary-foreground/20 text-primary-foreground border border-primary-foreground",
         notSelected: "rounded-full bg-transparent text-primary-foreground border border-transparent hover:bg-primary/10 hover:border-primary-foreground",
       },

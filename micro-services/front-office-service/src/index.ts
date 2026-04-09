@@ -4,6 +4,7 @@ import cors from 'cors'
 import { initDb } from './models/index'
 import { Logger } from './common/logger'
 import ordersRoutes from './routes/orders.routes'
+import subscriptionRoutes from './routes/subscription.routes'
 
 dotenv.config()
 
@@ -15,6 +16,8 @@ const allowedOrigins = [
 
 app.use(cors())
 app.use(express.json())
+
+app.use('/subscriptions', subscriptionRoutes)
 app.use('/', ordersRoutes)
 
 initDb()

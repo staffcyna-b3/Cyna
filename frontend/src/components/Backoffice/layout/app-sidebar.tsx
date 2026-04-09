@@ -21,7 +21,7 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
-import { TypographyH1 } from "../../ui/typography"
+import { Typography } from "../../ui/typography"
 
 const data = {
   user: {
@@ -70,7 +70,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader >
         <SidebarMenuButton className="group-data-[state=expanded]:flex-row-reverse group-data-[state=expanded]:justify-between ">
           <SidebarTrigger className="-ml-1" />
-          <TypographyH1>Cyna</TypographyH1>
+          <Typography variant="h1">Cyna</Typography>
         </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
