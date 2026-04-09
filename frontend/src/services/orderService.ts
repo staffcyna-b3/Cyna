@@ -3,31 +3,18 @@ import type { CreateOrderResponse } from "@/types/interfaces/Order/CreateOrderRe
 import type { GetOrderResponse } from "@/types/interfaces/Order/GetOrderResponse"
 import type { CheckoutContext } from "@/types/interfaces/Checkout/CheckoutContext"
 
-const API_URL = import.meta.env.VITE_GATEWAY_URL
-
-const withAuthHeaders = () => {
-  // TODO: DESIR — replace with auth context once gateway JWT PR is merged
-  // and inject real Bearer token from authenticated user session.
-  return {
-    "Content-Type": "application/json",
-  }
-}
+const withAuthHeaders = (token: string): Record<string, string> => ({
+  "Content-Type": "application/json",
+  "Authorization": `Bearer ${token}`,
+})
 
 const parseError = async (res: Response) => {
   try {
     const payload = await res.json()
-    return payload
+    return { ...payload, status: res.status }
   } catch {
-    return { message: "Request failed" }
+    return { message: "Request failed", status: res.status }
   }
-}
-
-const getApiUrl = () => {
-  if (!API_URL || typeof API_URL !== "string" || API_URL.trim().length === 0) {
-    throw new Error("Missing VITE_GATEWAY_URL. Configure frontend env before calling API.")
-  }
-
-  return API_URL
 }
 
 const parseJsonResponse = async <T>(res: Response): Promise<T> => {
@@ -41,10 +28,9 @@ const parseJsonResponse = async <T>(res: Response): Promise<T> => {
   throw new Error(`Expected JSON response but received '${contentType || "unknown"}': ${bodyPreview}`)
 }
 
-export async function getCheckoutContext(): Promise<CheckoutContext> {
-  const apiUrl = getApiUrl()
-  const res = await fetch(`${apiUrl}/front-office/checkout/context`, {
-    headers: withAuthHeaders(),
+export async function getCheckoutContext(token: string): Promise<CheckoutContext> {
+  const res = await fetch("/api/front-office/checkout/context", {
+    headers: withAuthHeaders(token),
   })
 
   if (!res.ok) {
@@ -54,11 +40,10 @@ export async function getCheckoutContext(): Promise<CheckoutContext> {
   return parseJsonResponse<CheckoutContext>(res)
 }
 
-export async function createOrder(payload: CreateOrderPayload): Promise<CreateOrderResponse> {
-  const apiUrl = getApiUrl()
-  const res = await fetch(`${apiUrl}/front-office/orders`, {
+export async function createOrder(payload: CreateOrderPayload, token: string): Promise<CreateOrderResponse> {
+  const res = await fetch("/api/front-office/orders", {
     method: "POST",
-    headers: withAuthHeaders(),
+    headers: withAuthHeaders(token),
     body: JSON.stringify(payload),
   })
 
@@ -69,10 +54,9 @@ export async function createOrder(payload: CreateOrderPayload): Promise<CreateOr
   return parseJsonResponse<CreateOrderResponse>(res)
 }
 
-export async function getOrder(orderId: string): Promise<GetOrderResponse> {
-  const apiUrl = getApiUrl()
-  const res = await fetch(`${apiUrl}/front-office/orders/${orderId}`, {
-    headers: withAuthHeaders(),
+export async function getOrder(orderId: string, token: string): Promise<GetOrderResponse> {
+  const res = await fetch(`/api/front-office/orders/${orderId}`, {
+    headers: withAuthHeaders(token),
   })
 
   if (!res.ok) {

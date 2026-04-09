@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ValidationErrors, validateLogin } from '../../utils/validation';
 import { LoginFormData } from '../../types/interfaces/LoginFormData.interface';
@@ -11,6 +11,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/';
     const { login } = useAuth();
     const { t } = useTranslation();
 
@@ -58,9 +60,9 @@ export const Login: React.FC = () => {
             // Vérifier si 2FA est requis (en cherchant le sessionId)
             const sessionId = sessionStorage.getItem('pending_2fa_session_id');
             if (sessionId) {
-              navigate('/verify-2fa');  // Aller à la page 2FA
+              navigate('/verify-2fa', { state: { from: location.state?.from } });
             } else {
-              navigate('/');   // Connexion directe
+              navigate(from, { replace: true });
             }
         } catch (error) {
             const message = error instanceof Error ? error.message : t('ErrorLoggingIn');
@@ -119,13 +121,16 @@ export const Login: React.FC = () => {
                             />
                         </div>
 
-                        <Checkbox
-                            label={t("rememberMe")}
-                            name="rememberMe"
-                            id="rememberMe"
-                            checked={rememberMe}
-                            onChange={() => setRememberMe((prev) => !prev)}
-                        />
+                        <div className="flex items-center gap-2">
+                            <Checkbox
+                                id="rememberMe"
+                                checked={rememberMe}
+                                onCheckedChange={(val) => setRememberMe(val === true)}
+                            />
+                            <label htmlFor="rememberMe" className="text-sm text-gray-700 cursor-pointer">
+                                {t("rememberMe")}
+                            </label>
+                        </div>
 
                         <Button 
                             type="submit" 

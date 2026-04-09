@@ -15,6 +15,7 @@ import { CheckoutCancel } from "@/pages/CheckoutCancel"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Users from "@/pages/backoffice/Users"
 import { Checkout } from "@/pages/frontoffice/Checkout"
+import { Checkout as StripeCheckout } from "@/pages/Checkout"
 import { CheckoutConfirmation } from "@/pages/frontoffice/CheckoutConfirmation"
 
 export default function CustomRoutes() {
@@ -50,6 +51,14 @@ export default function CustomRoutes() {
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />
         <Route path="/checkout/confirmation" element={<CheckoutConfirmation />} />
+        <Route
+          path="/checkout/payment"
+          element={
+            <ProtectedRoute requiredRoles={[]}>
+              <StripeCheckout />
+            </ProtectedRoute>
+          }
+        />
       </Route>
     </Routes>
   )

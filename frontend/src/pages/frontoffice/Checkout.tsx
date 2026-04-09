@@ -11,6 +11,7 @@ import type { CheckoutStep } from "@/types/interfaces/Checkout/CheckoutStep"
 import { AddressForm } from "@/components/forms/AddressForm"
 import { SameAddressToggle } from "@/components/forms/SameAddressToggle"
 import { useCheckout } from "@/hooks/useCheckout"
+import { useAuth } from "@/hooks/useAuth"
 
 function validateAddress(data: AddressFormData, t: (key: string) => string): Partial<Record<keyof AddressFormData, string>> {
   const errors: Partial<Record<keyof AddressFormData, string>> = {}
@@ -27,6 +28,7 @@ export const Checkout = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
+  const { accessToken, isAuthenticated } = useAuth()
   const {
     billingAddress,
     shippingAddress,
@@ -38,7 +40,6 @@ export const Checkout = () => {
     setSameAddress,
     setLoading,
     setError,
-    setConfirmedOrder,
   } = useCheckout()
 
   const [cartItems, setCartItems] = useState<CheckoutCartItem[]>([])
@@ -53,15 +54,13 @@ export const Checkout = () => {
   const currentStep: CheckoutStep = searchParams.get("step") === "address" ? "address" : "cart"
 
   useEffect(() => {
+    if (!isAuthenticated || !accessToken) return
+
     const load = async () => {
       setError(null)
-
-      // TODO: DESIR — replace with auth context once gateway JWT PR is merged
-      // and block checkout context loading when no authenticated session exists.
-
       setLoading(true)
       try {
-        const context: CheckoutContext = await getCheckoutContext()
+        const context: CheckoutContext = await getCheckoutContext(accessToken)
 
         setCartItems(
           context.cart.items.map((item) => ({
@@ -99,14 +98,16 @@ export const Checkout = () => {
           country: context.addresses.shipping.country,
         })
 
-        // TODO: DESIR — replace with auth context once gateway JWT PR is merged
-        // and sync profile data through auth provider instead of checkout page.
       } catch (caughtError: unknown) {
-        if (typeof caughtError === "object" && caughtError !== null && "message" in caughtError) {
-          const message = (caughtError as { message?: unknown }).message
-          setError(typeof message === "string" ? message : t("unableToLoadCheckout"))
-        } else {
-          setError(t("unableToLoadCheckout"))
+        const status = (caughtError as { status?: unknown })?.status
+        // 404 = pas d'adresses ou panier vide → on laisse l'utilisateur remplir manuellement
+        if (status !== 404) {
+          if (typeof caughtError === "object" && caughtError !== null && "message" in caughtError) {
+            const message = (caughtError as { message?: unknown }).message
+            setError(typeof message === "string" ? message : t("unableToLoadCheckout"))
+          } else {
+            setError(t("unableToLoadCheckout"))
+          }
         }
       } finally {
         setLoading(false)
@@ -114,7 +115,7 @@ export const Checkout = () => {
     }
 
     load()
-  }, [setBillingAddress, setError, setLoading, setShippingAddress, t])
+  }, [isAuthenticated, accessToken, setBillingAddress, setError, setLoading, setShippingAddress, t])
 
   const totalItems = useMemo(() => cartItems.reduce((sum, item) => sum + item.quantity, 0), [cartItems])
   const cartTotal = useMemo(() => cartItems.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0), [cartItems])
@@ -171,8 +172,17 @@ export const Checkout = () => {
     // Pass: { cartId, billingAddressId, shippingAddressId, totalAmount }
     // On Stripe success → POST /orders is called by Marie's webhook
     // On success → navigate to /checkout/confirmation with order data
-    setConfirmedOrder(null)
-    setSubmitError(t("stripeIntegrationPending"))
+    navigate("/checkout/payment", {
+      state: {
+        cartItems: cartItems.map((item) => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          unitPriceCents: Math.round(item.unitPrice * 100),
+          isRecurring: item.type !== undefined && item.type !== "PHYSICAL",
+        })),
+      },
+    })
   }
 
   if (loading) {

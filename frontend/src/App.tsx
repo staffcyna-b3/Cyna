@@ -13,7 +13,9 @@ function App() {
       <BrowserRouter>
         <StripeProvider>
           <AuthProvider>
-            <CustomRoutes />
+            <CheckoutProvider>
+              <CustomRoutes />
+            </CheckoutProvider>
           </AuthProvider>
         </StripeProvider>
       </BrowserRouter>
