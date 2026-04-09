@@ -13,6 +13,10 @@ import { AuthController } from './controllers/auth.controller';
 import cookieParser from 'cookie-parser';
 import roleRoutes from './routes/role.route';
 
+if (!process.env.JWT_SECRET) {
+  throw new Error('JWT_SECRET manquant dans les variables d\'environnement');
+}
+
 export const createApp = (): Express => {
   const app = express();
 

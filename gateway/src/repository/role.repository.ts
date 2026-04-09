@@ -1,32 +1,28 @@
+import UserRole from "../models/UserRole";
+import User from "../models/User";
 import { UserRoleType } from "../enum/UserRoleType.enum";
-import { RoleRepository } from "../repository/role.repository";
 
-export class RoleService {
-    // Injection du repository via le constructeur
-    constructor(private roleRepository: RoleRepository) {}  
+export class RoleRepository {
 
-    async assignRole(userId: string, role: UserRoleType) {
-        if (!userId || !role) {
-            throw new Error("Données manquantes");
-        }
-        return await this.roleRepository.assignRoleToUser(userId, role);
+    async assignRoleToUser(userId: string, role: UserRoleType) {
+        // upsert : met à jour la ligne si elle existe, la crée sinon
+        const [userRole] = await UserRole.upsert({ user_id: userId, role });
+        return userRole;
     }
 
-    async getAllUsersWithRoles() {
-        return await this.roleRepository.findAllUsersWithRoles();
+    async findAllUsersWithRoles() {
+        return await User.findAll({
+            include: [{ model: UserRole, as: "userRole" }]
+        });
     }
 
-    async getUserWithRole(userId: string) {
-        if (!userId) {
-            throw new Error("userId manquant");
-        }
-        return await this.roleRepository.findUserWithRole(userId);
+    async findUserWithRole(userId: string) {
+        return await User.findByPk(userId, {
+            include: [{ model: UserRole, as: "userRole" }]
+        });
     }
 
-    async removeUserRoles(userId: string) {
-        if (!userId) {
-            throw new Error("userId manquant");
-        }
-        return await this.roleRepository.deleteRolesByUserId(userId);
+    async deleteRolesByUserId(userId: string) {
+        return await UserRole.destroy({ where: { user_id: userId } });
     }
 }

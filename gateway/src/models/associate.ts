@@ -2,9 +2,9 @@ import User from './User';
 import UserRole from './UserRole';
 
 // User Associations
-User.hasMany(UserRole, {
+User.hasOne(UserRole, {
   foreignKey: 'user_id',
-  as: 'roles',
+  as: 'userRole',
   onDelete: 'CASCADE',
 });
 UserRole.belongsTo(User, {
