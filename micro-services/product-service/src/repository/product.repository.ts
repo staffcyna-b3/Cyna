@@ -20,17 +20,21 @@ export default class ProductRepository extends AbstractRepository<Product> {
             },
             {
                 association: 'category',
-                attributes: ['id', 'name', 'type'],
+                attributes: ['id', 'name', 'description', 'type'],
                 required: false,
             },
         ];
     }
 
     async listProducts(options: ProductListOptionsDto): Promise<ProductListResponseDto> {
+        const safePage = Number.isInteger(options?.page) && (options?.page as number) > 0 ? (options.page as number) : 1;
+        const safeLimit = Number.isInteger(options?.limit) && (options?.limit as number) > 0 ? Math.min(options.limit as number, 100) : 10;
+        const where = (options?.where ?? (options?.filters as unknown as WhereOptions<Product>)) as WhereOptions<Product> | undefined;
+
         const { rows, count, page, totalPages } = await this.list({
-            page: options.page,
-            limit: options.limit,
-            where: (options.where ?? (options.filters as unknown as WhereOptions<Product>)) as WhereOptions<Product> | undefined,
+            page: safePage,
+            limit: safeLimit,
+            where,
             order: options.order,
             include: this.defaultIncludes,
         });
@@ -39,7 +43,7 @@ export default class ProductRepository extends AbstractRepository<Product> {
             rows: rows.map((product) => mapProductToDto(product)),
             count,
             page,
-            limit: options.limit || 10,
+            limit: safeLimit,
             totalPages,
         };
     }

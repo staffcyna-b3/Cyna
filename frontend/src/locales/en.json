@@ -108,5 +108,15 @@
   "allProducts": "All products",
   "noCategory": "No category",
   "pricing": "Pricing",
-  "days": "days"
+  "days": "days",
+  "discoverSolutions": "Discover our {{abbr}} solutions",
+  "catalogBannerDefaultDescription": "Browse all our solutions and find the offers that fit your needs.",
+  "language": "Language",
+  "cart": "Cart",
+  "account": "Account",
+  "searchProductPlaceholder": "Search for a product...",
+  "searching": "Searching...",
+  "noProductFound": "No product found",
+  "previous": "Previous",
+  "next": "Next"
 }

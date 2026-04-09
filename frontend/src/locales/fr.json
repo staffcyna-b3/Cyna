@@ -108,5 +108,15 @@
   "allProducts": "Tous les produits",
   "noCategory": "Aucune catégorie",
   "pricing": "Tarification",
-  "days": "jours"
+  "days": "jours",
+  "discoverSolutions": "Découvrez nos solutions {{abbr}}",
+  "catalogBannerDefaultDescription": "Parcourez toutes nos solutions et découvrez les offres adaptées à vos besoins.",
+  "language": "Langue",
+  "cart": "Panier",
+  "account": "Compte",
+  "searchProductPlaceholder": "Rechercher un produit...",
+  "searching": "Recherche...",
+  "noProductFound": "Aucun produit trouvé",
+  "previous": "Précédent",
+  "next": "Suivant"
 }

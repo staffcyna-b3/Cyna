@@ -5,6 +5,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { CatalogService } from '@/services/CatalogService';
 import { ProductSuggestion } from '@/types/interfaces/catalog/ProductSuggestion';
+import { useTranslation } from 'react-i18next';
 
 export default function Navbar() {
     const navigate = useNavigate();
@@ -13,6 +14,7 @@ export default function Navbar() {
     const { cartCount } = useCart();
     const service = useMemo(() => CatalogService.getInstance(), []);
     const searchContainerRef = useRef<HTMLDivElement | null>(null);
+    const { t } = useTranslation();
 
     const [search, setSearch] = useState('');
     const [suggestions, setSuggestions] = useState<ProductSuggestion[]>([]);
@@ -82,7 +84,7 @@ export default function Navbar() {
                 <div className="flex items-center justify-between gap-3">
                     <Link
                         to="/"
-                        className="shrink-0 text-[2rem] font-black uppercase leading-none tracking-tight text-[#3d49f5] sm:text-[2.7rem] lg:text-[3.2rem]"
+                        className="font-space-grotesk shrink-0 text-[2rem] font-black uppercase leading-none tracking-tight text-[#3d49f5] sm:text-[2.7rem] lg:text-[3.2rem]"
                     >
                         CYNA
                     </Link>
@@ -92,7 +94,7 @@ export default function Navbar() {
                             <select
                                 value={currentLanguage.code}
                                 onChange={(event) => setLanguage(event.target.value)}
-                                aria-label="language"
+                                aria-label={t('language')}
                                 className="appearance-none bg-transparent pr-5 text-sm font-semibold outline-none sm:text-base lg:text-lg"
                             >
                                 {availableLanguages.map((language) => (
@@ -107,6 +109,7 @@ export default function Navbar() {
                         <button
                             type="button"
                             onClick={() => setIsSuggestionsOpen(false)}
+                            aria-label={t('cart')}
                             className="relative flex items-center gap-2 text-sm font-semibold sm:text-base lg:text-lg"
                         >
                             <span className="relative">
@@ -115,10 +118,10 @@ export default function Navbar() {
                                     {cartCount}
                                 </span>
                             </span>
-                            <span className="hidden sm:inline">Panier</span>
+                            <span className="hidden sm:inline">{t('cart')}</span>
                         </button>
 
-                        <button type="button" className="flex items-center justify-center" aria-label="account">
+                        <button type="button" className="flex items-center justify-center" aria-label={t('account')}>
                             <User className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />
                         </button>
                     </div>
@@ -136,12 +139,12 @@ export default function Navbar() {
                                     }
                                 }}
                                 type="search"
-                                placeholder="Rechercher un produit..."
+                                placeholder={t('searchProductPlaceholder')}
                                 className="h-12 w-full rounded-full border-2 border-[#372cca] bg-[#1d155f] pl-5 pr-14 text-base text-white outline-none transition placeholder:text-white/78 focus:border-[#4752ff] focus:bg-[#231a72] sm:h-14 sm:pl-6 sm:pr-16 sm:text-lg"
                             />
                             <button
                                 type="submit"
-                                aria-label="search"
+                                aria-label={t('search')}
                                 className="absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-[#3d49f5] text-white shadow-[0_8px_18px_rgba(61,73,245,0.35)] transition hover:scale-105 sm:h-12 sm:w-12"
                             >
                                 <Search className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -151,7 +154,7 @@ export default function Navbar() {
                         {isSuggestionsOpen && (
                             <div className="absolute left-0 right-0 top-[calc(100%+10px)] overflow-hidden rounded-[22px] border border-[#d8def8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.16)] sm:rounded-[26px]">
                                 {isLoading ? (
-                                    <div className="px-5 py-4 text-sm text-[#5f6799]">Recherche...</div>
+                                    <div className="px-5 py-4 text-sm text-[#5f6799]">{t('searching')}</div>
                                 ) : suggestions.length > 0 ? (
                                     suggestions.map((suggestion) => (
                                         <button
@@ -165,7 +168,7 @@ export default function Navbar() {
                                         </button>
                                     ))
                                 ) : (
-                                    <div className="px-5 py-4 text-sm text-[#5f6799]">Aucun produit trouve</div>
+                                    <div className="px-5 py-4 text-sm text-[#5f6799]">{t('noProductFound')}</div>
                                 )}
                             </div>
                         )}

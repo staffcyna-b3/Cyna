@@ -1,6 +1,6 @@
-import { useEffect, useContext, useMemo, useState } from 'react';
+import { useEffect, useContext, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal, ArrowUpWideNarrow } from 'lucide-react';
+import { SlidersHorizontal, ArrowDown, ArrowUpWideNarrow } from 'lucide-react';
 import { CatalogSortBy } from '../../types/enums/catalog/CatalogSortBy';
 import { SortOrder } from '../../types/enums/SortOrder';
 import useCatalogFetch from '../../hooks/useCatalogFetch';
@@ -10,6 +10,7 @@ import Pagination from '../../components/ui/Pagination';
 import { Button } from '../../components/ui/button';
 import FilterPanel from '../../components/FilterPanel';
 import LoadingSkeleton from '../../components/ui/LoadingSkeleton';
+import ServiceDetailLayout from '../../components/ServiceDetailLayout';
 import { useTranslation } from 'react-i18next';
 
 export default function CatalogList() {
@@ -18,6 +19,7 @@ export default function CatalogList() {
     const { t } = useTranslation();
     const [searchParams] = useSearchParams();
     const [filtersOpen, setFiltersOpen] = useState(false);
+    const [panelMode, setPanelMode] = useState<'filters' | 'sort'>('filters');
     const [initialDataMin, setInitialDataMin] = useState<number | undefined>(undefined);
     const [initialDataMax, setInitialDataMax] = useState<number | undefined>(undefined);
     const [localMin, setLocalMin] = useState<number | undefined>(ctx.minPrice ?? undefined);
@@ -26,6 +28,31 @@ export default function CatalogList() {
     const [localIsService, setLocalIsService] = useState<boolean | undefined>(ctx.isService ?? undefined);
     const [localSort, setLocalSort] = useState<string | ''>(ctx.sortBy ? `${ctx.sortBy}:${ctx.sortOrder ?? SortOrder.ASC}` : '');
     const [localSearch, setLocalSearch] = useState<string | undefined>(ctx.search ?? undefined);
+    const catalogStartRef = useRef<HTMLDivElement | null>(null);
+
+    const getAbbreviation = (name: string): string => {
+        const match = name.match(/([A-Z]+)\s*\(/);
+        return match ? match[1] : name.substring(0, 3).toUpperCase();
+    };
+
+    const firstProduct = data?.rows?.[0];
+    const category = firstProduct?.category;
+    const categoryName = category?.name?.trim() || t('allProducts');
+    const categoryDescription =
+        category?.description?.trim() || t('catalogBannerDefaultDescription');
+    const categoryAbbreviation = getAbbreviation(categoryName);
+
+    const scrollToCatalogControls = () => {
+        if (!catalogStartRef.current) return;
+        const targetTop =
+            catalogStartRef.current.getBoundingClientRect().top +
+            window.scrollY -
+            72;
+        window.scrollTo({
+            top: Math.max(0, targetTop),
+            behavior: 'smooth',
+        });
+    };
 
     const categoryIdFromQuery = useMemo(
         () => searchParams.get('categoryId') ?? searchParams.get('category') ?? undefined,
@@ -64,11 +91,13 @@ export default function CatalogList() {
 
     const openFilters = () => {
         syncLocalStateFromContext();
+        setPanelMode('filters');
         setFiltersOpen(true);
     };
 
     const openSort = () => {
         syncLocalStateFromContext();
+        setPanelMode('sort');
         setFiltersOpen(true);
     };
 
@@ -89,6 +118,30 @@ export default function CatalogList() {
         }
 
         ctx.setPage(1);
+        setFiltersOpen(false);
+    };
+
+    const applySort = (value: string | '') => {
+        let nextSortBy: CatalogSortBy | undefined;
+        let nextSortOrder: SortOrder | undefined;
+
+        if (!value) {
+            ctx.setSortBy(undefined);
+            ctx.setSortOrder(undefined);
+        } else {
+            const [by, order] = value.split(':');
+            nextSortBy = by as unknown as CatalogSortBy;
+            nextSortOrder = order === 'desc' ? SortOrder.DESC : SortOrder.ASC;
+            ctx.setSortBy(nextSortBy);
+            ctx.setSortOrder(nextSortOrder);
+        }
+
+        ctx.setPage(1);
+        void fetchCatalog({
+            page: 1,
+            sortBy: nextSortBy,
+            sortOrder: nextSortOrder,
+        });
         setFiltersOpen(false);
     };
 
@@ -159,7 +212,30 @@ export default function CatalogList() {
     return (
         <div className="px-4 pb-32 pt-4 md:min-h-screen md:px-6 md:pb-20 lg:px-10 xl:px-16">
             <div className="mx-auto max-w-6xl">
-                <div className="mb-6 flex">
+                <div className="mb-12">
+                    <ServiceDetailLayout
+                        title={categoryName}
+                        description={categoryDescription}
+                        abbreviation={categoryAbbreviation}
+                    >
+                        <button
+                            type="button"
+                            onClick={scrollToCatalogControls}
+                            className="group inline-flex w-full max-w-130 items-center justify-between rounded-full border border-[#4f5bff] bg-[linear-gradient(180deg,rgba(10,16,70,0.9)_0%,rgba(6,11,56,0.95)_100%)] pl-5 pr-2 py-2 text-sm font-semibold text-white shadow-[0_10px_36px_rgba(25,70,255,0.38)] transition-all duration-300 hover:border-[#7281ff] hover:shadow-[0_14px_42px_rgba(42,108,255,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7b61ff]/60"
+                        >
+                            <span className="truncate pr-3">
+                                {t('discoverSolutions', {
+                                    abbr: categoryAbbreviation,
+                                })}
+                            </span>
+                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-r from-[#7b61ff] to-[#2b6ef6] shadow-[0_4px_14px_rgba(91,107,255,0.75)] transition-transform duration-300 group-hover:translate-y-0.5">
+                                <ArrowDown className="h-4 w-4" />
+                            </span>
+                        </button>
+                    </ServiceDetailLayout>
+                </div>
+
+                <div ref={catalogStartRef} className="mb-6 flex">
                     <div className="inline-flex w-full max-w-max items-center rounded-[24px] border border-white/10 bg-[rgba(52,52,72,0.92)] p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.24)] backdrop-blur-md">
                         <button
                             type="button"
@@ -231,8 +307,10 @@ export default function CatalogList() {
 
                 <FilterPanel
                     open={filtersOpen}
+                    mode={panelMode}
                     onClose={cancelFilters}
                     onApply={applyFilters}
+                    onApplySort={applySort}
                     localSearch={localSearch}
                     setLocalSearch={setLocalSearch}
                     localMin={localMin}
