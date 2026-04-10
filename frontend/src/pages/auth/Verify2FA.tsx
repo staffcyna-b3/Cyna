@@ -22,7 +22,7 @@ export const Verify2FA: React.FC = () => {
 
     // Si la 2FA est validée et qu'il n'y a plus de session pending, rediriger selon le rôle.
     if (user && !sessionId) {
-      if(user.role === 'ADMIN' || user.role === 'COMMERCIAL') {
+      if(user.role === 'admin' || user.role === 'commercial') {
         navigate('/dashboard');
       } else {
         navigate('/');

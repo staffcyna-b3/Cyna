@@ -5,6 +5,7 @@ import { User } from '@/types/interfaces/User.interface';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const hasCheckedRememberMe = useRef(false);
@@ -88,13 +89,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         const data = await response.json();
-        
+
         // Stocker SEULEMENT le sessionId (pas d'infos utilisateur)
         if (data.requires2FA) {
           sessionStorage.setItem('pending_2fa_session_id', data.sessionId);
           sessionStorage.setItem('pending_2fa_remember_me', rememberMe.toString());
         } else {
           // Si pas de 2FA, connecter directement (rare mais possible)
+          setAccessToken(data.accessToken ?? null);
           setUser({
             id: data.id,
             email: data.email,
@@ -140,6 +142,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           throw new Error('Données utilisateur manquantes après vérification 2FA');
         }
 
+        setAccessToken(data.data.accessToken ?? null);
         setUser({
           id: userData.id,
           email: userData.email,
@@ -180,17 +183,62 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
     } catch (err) {
       console.error('Erreur vérification remember me:', err);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
-  // Au chargement initial, vérifier le remember me token
+  // Au chargement initial : tenter le refresh JWT, sinon fallback sur remember-me
   useEffect(() => {
-    // Evite le double appel en dev avec React.StrictMode
     if (hasCheckedRememberMe.current) return;
     hasCheckedRememberMe.current = true;
-    verifyRememberMe();
+
+    const initAuth = async () => {
+      try {
+        // 1. Tenter de rafraîchir l'accessToken via le refreshToken cookie
+        const refreshResponse = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+
+        if (refreshResponse.ok) {
+          const refreshData = await refreshResponse.json();
+          const token = refreshData.data?.accessToken;
+
+          if (token) {
+            // 2. Récupérer les infos utilisateur avec le nouvel accessToken
+            const meResponse = await fetch('/api/auth/me', {
+              credentials: 'include',
+              headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (meResponse.ok) {
+              const meData = await meResponse.json();
+              const userData = meData.data?.user;
+              if (userData) {
+                setAccessToken(token);
+                setUser({
+                  id: userData.id,
+                  email: userData.email,
+                  full_name: userData.full_name,
+                  email_verified: userData.email_verified,
+                  role: userData.role,
+                });
+                return;
+              }
+            }
+          }
+        }
+
+        // 3. Fallback : vérifier le cookie remember-me
+        await verifyRememberMe();
+      } catch (err) {
+        console.error('Erreur initialisation auth:', err);
+        await verifyRememberMe();
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initAuth();
   }, [verifyRememberMe]);
 
   const logout = useCallback(async () => {
@@ -204,6 +252,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('Erreur lors de la déconnexion:', err);
       } finally {
         setUser(null);
+        setAccessToken(null);
       }
   }, []);
 
@@ -279,6 +328,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     user,
+    accessToken,
     isLoading,
     isAuthenticated: !!user,
     register,

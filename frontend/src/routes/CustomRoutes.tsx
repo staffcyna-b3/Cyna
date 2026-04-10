@@ -4,12 +4,14 @@ import HomePage from "../pages/frontoffice/Home"
 import { Register } from "../pages/auth/Register"
 import { Login } from "@/pages/auth/Login"
 import { ConfirmEmail } from "@/pages/auth/ConfirmEmail"
-import { Dashboard } from "@/pages/backoffice/Dashboard"
+import Dashboard from "@/pages/backoffice/Dashboard"
 import { ProtectedRoute } from "@/components/protectedRoute"
 import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
 import { Verify2FA } from "@/pages/auth/Verify2FA"
 import { UserRole } from "@/types/enums/UserRole.enum"
+import BackOfficeLayout from "@/layouts/BackOfficeLayout"
+import Users from "@/pages/backoffice/Users"
 import CatalogDetail from "../pages/catalog/Detail"
 import CatalogList from "../pages/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
@@ -25,14 +27,26 @@ export default function CustomRoutes() {
       <Route path="/request-reset" element={<RequestReset />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-2fa" element={<Verify2FA />} />
-      <Route 
-        path="/dashboard" 
-        element={
-          <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
-            <Dashboard />
-          </ProtectedRoute>
-        } 
-      />
+
+      {/* Backoffice routes */}
+      <Route element={<BackOfficeLayout />}>
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Users />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
 
       <Route element={<MainLayout />}>
         <Route element={<CatalogLayout />}>

@@ -3,6 +3,7 @@ import { User } from '../types/interfaces/User.interface';
 
 export interface AuthContextType {
   user: User | null;
+  accessToken: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   register: (email: string, password: string, full_name: string) => Promise<void>;
