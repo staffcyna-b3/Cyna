@@ -99,10 +99,11 @@ function postWebhook(payload) {
 // ─── Mock payloads ────────────────────────────────────────────────────────────
 
 const NOW                  = Math.floor(Date.now() / 1000);
-const MOCK_USER_ID         = 'user_test_aabbcc112233';
+const MOCK_USER_ID         = 'user_test_aabbcc112233'; // unused for email — see MOCK_USER_EMAIL
+const MOCK_USER_EMAIL      = process.env.TEST_USER_EMAIL || 'marie.richir35@gmail.com';
 const MOCK_CUSTOMER_ID     = 'cus_test_aabbcc112233';
-const MOCK_PAYMENT_INTENT  = 'pi_test_3TGG7e2eZvKYlo2C0000001';
-// const MOCK_PAYMENT_INTENT  = 'pi_3THRyl1AdBsYOB9D1lifSxTu'; // Test avec un PaymentIntent existant dans la base de données
+// const MOCK_PAYMENT_INTENT  = 'pi_test_3TGG7e2eZvKYlo2C0000001';
+const MOCK_PAYMENT_INTENT  = 'pi_3TKaUT1AdBsYOB9D1YPNJT6S'; // Test avec un PaymentIntent existant dans la base de données
 const MOCK_INVOICE_ID      = 'in_test_1NjVin2eZvKYlo2CzGRuJ9A6';
 const MOCK_SUBSCRIPTION_ID = 'sub_test_1NjVin2eZvKYlo2C0000001';
 const MOCK_PRICE_ID        = 'price_test_cynapro_monthly';
@@ -126,7 +127,7 @@ const EVENTS = [
           currency:       'eur',
           status:         'succeeded',
           description:    'CYNA — Abonnement Pro (mensuel)',
-          metadata:       { userId: MOCK_USER_ID },
+          metadata:       { userId: MOCK_USER_ID, userEmail: MOCK_USER_EMAIL },
           customer:       MOCK_CUSTOMER_ID,
           payment_method: 'pm_test_card_visa',
           created:        NOW,

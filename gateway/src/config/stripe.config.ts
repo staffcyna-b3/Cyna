@@ -7,5 +7,15 @@ if (!stripeSecretKey) {
 }
 
 export const stripe = new Stripe(stripeSecretKey, { apiVersion: '2026-02-25.clover' });
-export const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY || '';
-export const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || '';
+
+const stripePublishableKey = process.env.STRIPE_PUBLISHABLE_KEY;
+if (!stripePublishableKey) {
+  throw new Error('STRIPE_PUBLISHABLE_KEY is not defined');
+}
+export { stripePublishableKey };
+
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+if (!stripeWebhookSecret) {
+  throw new Error('STRIPE_WEBHOOK_SECRET is not defined');
+}
+export { stripeWebhookSecret };

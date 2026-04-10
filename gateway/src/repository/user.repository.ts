@@ -127,6 +127,11 @@ export class UserRepository implements IUserRepository, IPaymentUserRepository {
     );
   }
 
+  async findEmailById(userId: string): Promise<string | null> {
+    const user = await User.findOne({ where: { id: userId }, attributes: ['email'] });
+    return user?.email ?? null;
+  }
+
   async findStripeCustomerId(userId: string): Promise<string | null> {
     const user = await User.findOne({ where: { id: userId }, attributes: ['stripe_customer_id'] });
     return user?.stripe_customer_id ?? null;

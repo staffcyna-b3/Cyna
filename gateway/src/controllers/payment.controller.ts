@@ -35,7 +35,8 @@ export class PaymentController {
         amount,
         currency,
         authenticatedUserId,
-        description
+        description,
+        req.user?.email
       );
 
       return res.status(201).json(payload);

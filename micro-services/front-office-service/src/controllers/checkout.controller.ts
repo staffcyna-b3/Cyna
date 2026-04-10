@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { ICheckoutService } from '../interfaces/CheckoutService';
+import { isValidUuid } from '../common/validation';
 
 export class CheckoutController {
   constructor(private readonly checkoutService: ICheckoutService) {}
@@ -11,7 +12,7 @@ export class CheckoutController {
       const userIdHeader = req.headers['x-user-id'];
       const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
 
-      if (!userId || typeof userId !== 'string') {
+      if (!isValidUuid(userId)) {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 

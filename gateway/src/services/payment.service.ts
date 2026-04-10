@@ -1,23 +1,25 @@
 import axios from 'axios';
 import Stripe from 'stripe';
-import { OrderStatus } from '../models/Payment';
+import { OrderStatus } from '../enum/OrderStatus.enum';
 import { stripe } from '../config/stripe.config';
 import { Logger } from '../common/logger';
 import { MICROSERVICES } from '../config/microService.config';
 import { IOrderRepository } from '../interfaces/IOrderRepository';
 import { IPaymentUserRepository } from '../interfaces/IPaymentUserRepository';
+import { IMailService } from '../interfaces/IMailService';
 import { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
 
 const toOrderStatus = (stripeStatus: string): OrderStatus => {
-  if (stripeStatus === 'succeeded') return 'success';
-  if (stripeStatus === 'canceled' || stripeStatus === 'payment_failed') return 'error';
-  return 'pending';
+  if (stripeStatus === 'succeeded') return OrderStatus.SUCCESS;
+  if (stripeStatus === 'canceled' || stripeStatus === 'payment_failed') return OrderStatus.ERROR;
+  return OrderStatus.PENDING;
 };
 
 export class PaymentService {
   constructor(
     private readonly orderRepository: IOrderRepository,
-    private readonly paymentUserRepository: IPaymentUserRepository
+    private readonly paymentUserRepository: IPaymentUserRepository,
+    private readonly mailService: IMailService
   ) {}
 
   // ─── One-time payment ───────────────────────────────────────────────────────
@@ -26,7 +28,8 @@ export class PaymentService {
     amount: number,
     currency: string,
     userId: string,
-    description?: string
+    description?: string,
+    userEmail?: string
   ) {
     const normalizedAmount = this.normalizeAmount(amount);
     const normalizedCurrency = this.normalizeCurrency(currency);
@@ -37,7 +40,7 @@ export class PaymentService {
         amount: normalizedAmount,
         currency: normalizedCurrency,
         description,
-        metadata: { userId },
+        metadata: { userId, ...(userEmail ? { userEmail } : {}) },
         automatic_payment_methods: { enabled: true },
       });
     } catch (stripeError) {
@@ -177,6 +180,7 @@ export class PaymentService {
         customer: customer.id,
         metadata: {
           userId,
+          userEmail,
           subscriptionId: subscription.id,
           invoiceId: invoice.id,
         },
@@ -197,7 +201,7 @@ export class PaymentService {
       total_amount: totalAmountCents / 100,
       stripe_payment_intent_id: paymentIntentId,
       payment_type: 'subscription',
-      status: 'pending',
+      status: OrderStatus.PENDING,
     });
 
     // API 2026-02-25.clover: period is on subscription items, not on subscription directly
@@ -236,7 +240,7 @@ export class PaymentService {
         const intent = event.data.object as Stripe.PaymentIntent;
 
         const existing = await this.orderRepository.findByPaymentIntentId(intent.id);
-        if (existing?.status === 'success') {
+        if (existing?.status === OrderStatus.SUCCESS) {
           Logger.info('[STRIPE WEBHOOK] payment_intent.succeeded already processed, skipping', {
             eventId: event.id,
             paymentIntentId: intent.id,
@@ -244,8 +248,38 @@ export class PaymentService {
           break;
         }
 
-        await this.updateOrderStatus(intent.id, 'success');
+        await this.updateOrderStatus(intent.id, OrderStatus.SUCCESS);
         await this.sendTransactionToProductService(intent, 'succeeded', event.id);
+
+        const userId = intent.metadata?.userId;
+        const emailFromMetadata = intent.metadata?.userEmail;
+        const recipientEmail = emailFromMetadata
+          ?? (userId ? await this.paymentUserRepository.findEmailById(userId) : null);
+
+        if (recipientEmail) {
+          try {
+            await this.mailService.sendOrderConfirmationEmail(recipientEmail, {
+              amountCents: intent.amount,
+              currency: intent.currency,
+              paymentIntentId: intent.id,
+              paymentType: intent.metadata?.subscriptionId ? 'subscription' : 'one_time',
+            });
+            Logger.info('[STRIPE WEBHOOK] Order confirmation email sent', {
+              paymentIntentId: intent.id,
+            });
+          } catch (err) {
+            Logger.error('[STRIPE WEBHOOK] Failed to send order confirmation email', {
+              paymentIntentId: intent.id,
+              error: (err as any)?.message,
+            });
+          }
+        } else {
+          Logger.error('[STRIPE WEBHOOK] No email found for order confirmation', {
+            paymentIntentId: intent.id,
+            hasUserId: !!userId,
+            hasEmailInMetadata: !!emailFromMetadata,
+          });
+        }
 
         // 2026-02-25.clover workaround: if this PI was created for a subscription invoice,
         // mark the invoice as paid so Stripe activates the subscription and fires
@@ -284,7 +318,7 @@ export class PaymentService {
         const intent = event.data.object as Stripe.PaymentIntent;
 
         const existing = await this.orderRepository.findByPaymentIntentId(intent.id);
-        if (existing?.status === 'error') {
+        if (existing?.status === OrderStatus.ERROR) {
           Logger.info('[STRIPE WEBHOOK] payment_intent.payment_failed already processed, skipping', {
             eventId: event.id,
             paymentIntentId: intent.id,
@@ -292,7 +326,7 @@ export class PaymentService {
           break;
         }
 
-        await this.updateOrderStatus(intent.id, 'error');
+        await this.updateOrderStatus(intent.id, OrderStatus.ERROR);
         await this.sendTransactionToProductService(intent, 'failed', event.id);
         Logger.info('[STRIPE WEBHOOK] payment_intent.payment_failed processed', {
           eventId: event.id,

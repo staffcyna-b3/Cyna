@@ -12,7 +12,7 @@ const buildApp = (controller: PaymentController, authenticatedUserId?: string) =
 
   if (authenticatedUserId) {
     app.use((req, _res, next) => {
-      (req as any).user = { userId: authenticatedUserId };
+      (req as any).user = { userId: authenticatedUserId, email: 'test@example.com' };
       next();
     });
   }
@@ -57,7 +57,7 @@ describe('PaymentController', () => {
         paymentIntentId: 'pi_test_123',
       });
       expect(mockService.createPaymentIntent).toHaveBeenCalledWith(
-        481500, 'eur', 'user-abc', undefined
+        481500, 'eur', 'user-abc', undefined, 'test@example.com'
       );
     });
 

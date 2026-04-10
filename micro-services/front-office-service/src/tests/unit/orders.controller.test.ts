@@ -4,10 +4,12 @@ import { IOrderService } from '../../interfaces/OrderService';
 import { HttpError } from '../../common/httpError';
 import { OrderStatus } from '../../enum/OrderStatus';
 
+const VALID_USER_UUID = '00000000-0000-0000-0000-000000009999';
+
 type MockReqOverrides = Record<string, unknown>;
 
 const mockReq = (overrides: MockReqOverrides = {}) => ({
-  headers: { 'x-user-id': '9999' },
+  headers: { 'x-user-id': VALID_USER_UUID },
   params: {},
   body: {},
   ...overrides,
@@ -68,6 +70,16 @@ describe('OrderController', () => {
 
     it('returns 401 when x-user-id header is missing', async () => {
       const req = mockReq({ headers: {} }) as any;
+      const res = mockRes();
+
+      await controller.create(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(service.createOrder).not.toHaveBeenCalled();
+    });
+
+    it('returns 401 when x-user-id is not a valid UUID', async () => {
+      const req = mockReq({ headers: { 'x-user-id': 'not-a-uuid' } }) as any;
       const res = mockRes();
 
       await controller.create(req, res);
@@ -137,7 +149,7 @@ describe('OrderController', () => {
       expect(service.getOrderById).toHaveBeenCalledWith(
         expect.objectContaining({
           orderId: 'order-1',
-          userId: '9999',
+          userId: VALID_USER_UUID,
         })
       );
       expect(res.status).toHaveBeenCalledWith(200);

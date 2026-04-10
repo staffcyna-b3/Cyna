@@ -29,10 +29,11 @@ vi.mock('../config/microService.config', () => ({
 
 // ── Imports (après les mocks) ─────────────────────────────────────────────────
 
-import { PaymentService, SubscriptionItem } from '../services/payment.service';
+import { PaymentService } from '../services/payment.service';
 import { stripe } from '../config/stripe.config';
 import type { IOrderRepository } from '../interfaces/IOrderRepository';
 import type { IPaymentUserRepository } from '../interfaces/IPaymentUserRepository';
+import type { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
 import axios from 'axios';
 
 // ── Factories ─────────────────────────────────────────────────────────────────
@@ -46,6 +47,14 @@ const makeOrderRepo = (): IOrderRepository => ({
 const makeUserRepo = (): IPaymentUserRepository => ({
   findStripeCustomerId:    vi.fn().mockResolvedValue(null),
   updateStripeCustomerId:  vi.fn().mockResolvedValue(undefined),
+  findEmailById:           vi.fn().mockResolvedValue(null),
+});
+
+const makeMailService = () => ({
+  sendConfirmationEmail:       vi.fn().mockResolvedValue(undefined),
+  sendPasswordResetEmail:      vi.fn().mockResolvedValue(undefined),
+  send2FACode:                 vi.fn().mockResolvedValue(undefined),
+  sendOrderConfirmationEmail:  vi.fn().mockResolvedValue(undefined),
 });
 
 // ── Tests ────────────────────────────────────────────────────────────────────
@@ -59,7 +68,7 @@ describe('PaymentService', () => {
     vi.clearAllMocks();
     orderRepo = makeOrderRepo();
     userRepo  = makeUserRepo();
-    service   = new PaymentService(orderRepo, userRepo);
+    service   = new PaymentService(orderRepo, userRepo, makeMailService());
   });
 
   // ── createPaymentIntent ───────────────────────────────────────────────────

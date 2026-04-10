@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 import { Logger } from '../common/logger';
 import emailTemplates from '../templates/emailTemplates';
 import { IMailService } from '../interfaces';
+import { IOrderConfirmationDetails } from '../interfaces/IOrderConfirmationDetails';
 
 export class MailService implements IMailService {
   private transporter = nodemailer.createTransport({
@@ -66,6 +67,26 @@ export class MailService implements IMailService {
       Logger.info(`Code 2FA envoyé à ${email}`);
     } catch (error) {
       Logger.error('Erreur envoi code 2FA:', error);
+      throw error;
+    }
+  }
+
+  async sendOrderConfirmationEmail(email: string, details: IOrderConfirmationDetails) {
+    try {
+      const template = emailTemplates.fr.orderConfirmation;
+      const amount = (details.amountCents / 100).toFixed(2);
+
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: template.subject,
+        html: template.html(amount, details.currency, details.paymentIntentId),
+      };
+
+      await this.transporter.sendMail(mailOptions);
+      Logger.info(`Email de confirmation de commande envoyé à ${email}`);
+    } catch (error) {
+      Logger.error('Erreur envoi email confirmation de commande:', error);
       throw error;
     }
   }

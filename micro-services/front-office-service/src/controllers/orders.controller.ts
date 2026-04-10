@@ -5,6 +5,7 @@ import { CreateOrderRequest } from '../dto/request/CreateOrderRequest';
 import { GetOrderRequest } from '../dto/request/GetOrderRequest';
 import { IOrderService } from '../interfaces/OrderService';
 import { OrderStatus } from '../enum/OrderStatus';
+import { isValidUuid } from '../common/validation';
 
 export class OrderController {
   private readonly orderService: IOrderService;
@@ -18,7 +19,7 @@ export class OrderController {
       const userIdHeader = req.headers['x-user-id'];
       const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
 
-      if (!userId || typeof userId !== 'string') {
+      if (!isValidUuid(userId)) {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
@@ -49,7 +50,7 @@ export class OrderController {
       const userIdHeader = req.headers['x-user-id'];
       const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
 
-      if (!userId || typeof userId !== 'string') {
+      if (!isValidUuid(userId)) {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
