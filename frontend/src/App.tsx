@@ -4,6 +4,7 @@ import { LanguageProvider } from './providers/LanguageProvider';
 import CustomRoutes from './routes/CustomRoutes';
 import { AuthProvider } from './providers/AuthProvider';
 import { CartProvider } from './providers/CartProvider';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <BrowserRouter>
         <AuthProvider>
           <CartProvider>
+            <Toaster position="top-right" />
             <CustomRoutes />
           </CartProvider>
         </AuthProvider>

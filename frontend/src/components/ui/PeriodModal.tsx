@@ -1,24 +1,34 @@
 import { Button } from './button';
-import { addToCart } from '@/lib/cart';
+import { useCart } from '@/hooks/useCart';
 import { Period } from '@/types/Period';
 import { PeriodEnum } from '@/types/enums/Period';
 import { useTranslation } from 'react-i18next';
 
 export default function PeriodModal({
-  open,
-  onClose,
-  productId,
+    open,
+    onClose,
+    productId,
+    productName,
+    unitPrice,
 }: {
-  open: boolean;
-  onClose: () => void;
-  productId: string;
+    open: boolean;
+    onClose: () => void;
+    productId: string;
+    productName?: string;
+    unitPrice?: number;
 }) {
     const { t } = useTranslation();
+    const { addToCart } = useCart();
+
     if (!open) return null;
 
-    const handleSelect = (p: Period) => {
-        addToCart(productId, { period: p });
-        onClose();
+    const handleSelect = async (p: Period) => {
+        try {
+            await addToCart(productId, { period: p, name: productName, unitPrice, isService: true });
+            onClose();
+        } catch {
+            // ignore
+        }
     };
 
     return (

@@ -1,22 +1,38 @@
-import { ReactNode, useEffect, useState } from 'react';
-import { CartContext } from '@/contexts/CartContext';
-import { getCartCount, getCartUpdatedEventName } from '@/lib/cart';
+import { useEffect, useState, type ReactNode } from 'react';
+import { CartContext } from '../contexts/CartContext';
+import { useGuestCart } from '../hooks/useGuestCart';
+import { useAuthCart } from '../hooks/useAuthCart';
 
-export function CartProvider({ children }: { children: ReactNode }) {
-    const [cartCount, setCartCount] = useState<number>(() => getCartCount());
+const hasValidToken = () => !!localStorage.getItem('accessToken');
 
+export const CartProvider = ({ children }: { children: ReactNode }) => {
+    const [isLoggedIn, setIsLoggedIn] = useState(hasValidToken);
+    const guestCart = useGuestCart();
+    const authCart = useAuthCart();
+
+    // Écoute les changements de token (login / logout depuis AuthProvider)
     useEffect(() => {
-        const handleCartUpdate = () => setCartCount(getCartCount());
-        const cartEventName = getCartUpdatedEventName();
-
-        window.addEventListener(cartEventName, handleCartUpdate as EventListener);
-        window.addEventListener('storage', handleCartUpdate);
-
-        return () => {
-            window.removeEventListener(cartEventName, handleCartUpdate as EventListener);
-            window.removeEventListener('storage', handleCartUpdate);
-        };
+        const handleTokenChange = () => setIsLoggedIn(hasValidToken());
+        window.addEventListener('cart:auth-change', handleTokenChange);
+        return () => window.removeEventListener('cart:auth-change', handleTokenChange);
     }, []);
 
-    return <CartContext.Provider value={{ cartCount }}>{children}</CartContext.Provider>;
-}
+    // Charge le bon panier quand l'état d'auth change
+    useEffect(() => {
+        if (isLoggedIn) {
+            void authCart.fetchCart();
+        } else {
+            void guestCart.fetchCart();
+        }
+    }, [isLoggedIn]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const cart = isLoggedIn ? authCart : guestCart;
+
+    return (
+        <CartContext.Provider value={cart}>
+            {children}
+        </CartContext.Provider>
+    );
+};
+
+export default CartProvider;

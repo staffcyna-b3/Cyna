@@ -39,7 +39,7 @@ export class GatewayController {
       'X-Forwarded-For': req.ip || '',
       'X-Request-ID': req.id || '',
       'User-Agent': req.headers['user-agent'] || '',
-      'x-user-id': req.user?.userId || '',
+      'x-user-id': req.user?.userId || (req.headers['x-guest-id'] as string) || '',
     };
   }
 }

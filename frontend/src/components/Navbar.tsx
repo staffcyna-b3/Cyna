@@ -6,12 +6,15 @@ import { useCart } from '@/hooks/useCart';
 import { CatalogService } from '@/services/CatalogService';
 import { ProductSuggestion } from '@/types/interfaces/catalog/ProductSuggestion';
 import { useTranslation } from 'react-i18next';
+import { formatCurrency } from '@/utils/currencyFormatter';
+import placeholder from '@/assets/pictures/placeholder.svg';
 
 export default function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentLanguage, availableLanguages, setLanguage } = useLanguage();
-    const { cartCount } = useCart();
+    const { items } = useCart();
+    const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
     const service = useMemo(() => CatalogService.getInstance(), []);
     const searchContainerRef = useRef<HTMLDivElement | null>(null);
     const { t } = useTranslation();
@@ -106,20 +109,64 @@ export default function Navbar() {
                             <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2" />
                         </div>
 
-                        <button
-                            type="button"
-                            onClick={() => setIsSuggestionsOpen(false)}
-                            aria-label={t('cart')}
-                            className="relative flex items-center gap-2 text-sm font-semibold sm:text-base lg:text-lg"
-                        >
-                            <span className="relative">
-                                <ShoppingCart className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />
-                                <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#3d49f5] px-1 text-[11px] font-bold leading-none text-white">
-                                    {cartCount}
+                        <div className="relative group">
+                            <button
+                                type="button"
+                                onClick={() => { setIsSuggestionsOpen(false); navigate('/cart'); }}
+                                aria-label={t('cart.title')}
+                                className="relative flex items-center gap-2 text-sm font-semibold sm:text-base lg:text-lg"
+                            >
+                                <span className="relative">
+                                    <ShoppingCart className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />
+                                    {cartCount > 0 && (
+                                        <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#3d49f5] px-1 text-[11px] font-bold leading-none text-white">
+                                            {cartCount}
+                                        </span>
+                                    )}
                                 </span>
-                            </span>
-                            <span className="hidden sm:inline">{t('cart')}</span>
-                        </button>
+                                <span className="hidden sm:inline">{t('cart.title')}</span>
+                            </button>
+
+                            {/* Dropdown panier au hover */}
+                            <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
+                                <div className="w-80 rounded-2xl border border-[#e0e4f8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.18)] overflow-hidden">
+                                    {items.length === 0 ? (
+                                        <p className="px-5 py-6 text-center text-sm text-gray-400">{t('cart.empty')}</p>
+                                    ) : (
+                                        <>
+                                            <ul className="max-h-72 overflow-y-auto divide-y divide-gray-100">
+                                                {items.map((item) => (
+                                                    <li key={item.id} className="flex items-center gap-3 px-4 py-3">
+                                                        <img
+                                                            src={item.imageUrl ?? placeholder}
+                                                            alt={item.name}
+                                                            className="h-12 w-12 rounded-lg object-cover shrink-0 bg-gray-100"
+                                                        />
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
+                                                            <p className="text-xs text-gray-500">
+                                                                {item.quantity} × {formatCurrency(item.unitPrice)}
+                                                            </p>
+                                                        </div>
+                                                        <p className="text-sm font-bold text-[#3d49f5] shrink-0">
+                                                            {formatCurrency(item.subtotal)}
+                                                        </p>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            <div className="border-t border-gray-100 px-4 py-3">
+                                                <Link
+                                                    to="/cart"
+                                                    className="flex w-full items-center justify-center rounded-full bg-[#3d49f5] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2d38d4]"
+                                                >
+                                                    {t('cart.title')} →
+                                                </Link>
+                                            </div>
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
 
                         <button type="button" className="flex items-center justify-center" aria-label={t('account')}>
                             <User className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />

@@ -1,7 +1,4 @@
 import { createContext } from 'react';
+import { CartContextValue } from '../types/interfaces/cart/CartContextValue';
 
-export interface CartContextType {
-    cartCount: number;
-}
-
-export const CartContext = createContext<CartContextType | undefined>(undefined);
+export const CartContext = createContext<CartContextValue | undefined>(undefined);

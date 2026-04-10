@@ -177,6 +177,9 @@ export default function CatalogDetail(): JSX.Element {
                                 <AddToCartButton
                                     disabled={!isAvailable}
                                     productId={product.id}
+                                    name={product.name}
+                                    unitPrice={product.price}
+                                    isService={true}
                                     text={
                                         isAvailable
                                             ? t('addToCart')
@@ -238,6 +241,10 @@ export default function CatalogDetail(): JSX.Element {
                                     <AddToCartButton
                                         disabled={!isAvailable}
                                         productId={product.id}
+                                        name={product.name}
+                                        unitPrice={product.price}
+                                        isService={false}
+                                        stock={product.stock}
                                         text={
                                             isAvailable
                                                 ? t('addToCart')

@@ -111,14 +111,24 @@ export const CatalogProductCard = ({
                                         onClick={() => setShowPeriodModal(true)}
                                         skipAddToCart={true}
                                     />
-                                    <PeriodModal open={showPeriodModal} onClose={() => setShowPeriodModal(false)} productId={product.id} />
+                                    <PeriodModal
+                                        open={showPeriodModal}
+                                        onClose={() => setShowPeriodModal(false)}
+                                        productId={product.id}
+                                        productName={product.name}
+                                        unitPrice={product.price}
+                                    />
                                 </>
-                            ) : ( 
+                            ) : (
                                 <>
                                     <AddToCartButton
                                             disabled={!CanBeAddToCart(product)}
                                             productId={product.id}
                                             quantity={1}
+                                            name={product.name}
+                                            unitPrice={product.price}
+                                            isService={false}
+                                            stock={product.stock}
                                     />
                                 </>
                             )}
