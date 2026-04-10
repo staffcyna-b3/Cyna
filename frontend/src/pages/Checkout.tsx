@@ -31,6 +31,7 @@ const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
 
 export const Checkout: React.FC = () => {
+  console.log('Rendering Checkout page');
   const { t } = useTranslation();
   const { user, accessToken, isLoading: isAuthLoading } = useAuth();
   const { stripePromise, isConfigured } = useStripeConfig();
@@ -127,6 +128,12 @@ export const Checkout: React.FC = () => {
 
     createIntent();
   }, [isConfigured, user?.id, accessToken, totalCents]);
+
+  console.log('Checkout state:', {
+    clientSecret,
+    paymentIntentId,
+    stripePromise
+  });
 
   return (
     <div className="min-h-screen flex flex-col">

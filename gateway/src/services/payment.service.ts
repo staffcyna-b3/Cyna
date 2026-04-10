@@ -64,6 +64,7 @@ export class PaymentService {
     await this.orderRepository.create({
       user_id: userId,
       total_amount: intent.amount / 100,
+      currency: normalizedCurrency,
       stripe_payment_intent_id: intent.id,
       payment_type: 'one_time',
       status: toOrderStatus(intent.status),
@@ -199,6 +200,7 @@ export class PaymentService {
     await this.orderRepository.create({
       user_id: userId,
       total_amount: totalAmountCents / 100,
+      currency: subscriptionItems[0].currency,
       stripe_payment_intent_id: paymentIntentId,
       payment_type: 'subscription',
       status: OrderStatus.PENDING,

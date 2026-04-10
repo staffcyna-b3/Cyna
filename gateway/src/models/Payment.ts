@@ -1,15 +1,16 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database.config';
-import { OrderAttributes } from '../interfaces/OrderAttributes.interface';
+import { PaymentAttributes } from '../interfaces/PaymentAttributes.interface';
 import { OrderStatus } from '../enum/OrderStatus.enum';
 import { PaymentType } from '../enum/PaymentType.enum';
 
-type OrderCreationAttributes = Optional<OrderAttributes, 'id' | 'created_at' | 'updated_at' | 'payment_type'>;
+type PaymentCreationAttributes = Optional<PaymentAttributes, 'id' | 'created_at' | 'updated_at' | 'payment_type'>;
 
-class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
+class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> implements PaymentAttributes {
   declare id: string;
   declare user_id: string;
   declare total_amount: number;
+  declare currency: string;
   declare status: OrderStatus;
   declare stripe_payment_intent_id: string;
   declare payment_type: PaymentType;
@@ -17,7 +18,7 @@ class Order extends Model<OrderAttributes, OrderCreationAttributes> implements O
   declare readonly updated_at: Date;
 }
 
-Order.init(
+Payment.init(
   {
     id: {
       type: DataTypes.CHAR(36),
@@ -30,6 +31,10 @@ Order.init(
     },
     total_amount: {
       type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    currency: {
+      type: DataTypes.STRING(8),
       allowNull: false,
     },
     status: {
@@ -50,7 +55,7 @@ Order.init(
   },
   {
     sequelize,
-    tableName: 'orders',
+    tableName: 'payments',
     timestamps: true,
     createdAt: 'created_at',
     updatedAt: 'updated_at',
@@ -58,4 +63,4 @@ Order.init(
   }
 );
 
-export default Order;
+export default Payment;

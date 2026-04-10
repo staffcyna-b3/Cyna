@@ -5,6 +5,7 @@ export class PaymentController {
   constructor(private readonly paymentService: PaymentService) {}
 
   async createIntent(req: Request, res: Response, next: NextFunction) {
+    console.log('Received request to create payment intent with body:', req.body);
     try {
       const { amount, currency, description, userId } = req.body as {
         amount: number;
@@ -44,7 +45,7 @@ export class PaymentController {
       return next(error);
     }
   }
-
+  
   async createSubscription(req: Request, res: Response, next: NextFunction) {
     try {
       const { subscriptionItems, oneTimeAmountCents, oneTimeDescription, userEmail } = req.body as {
@@ -53,9 +54,9 @@ export class PaymentController {
         oneTimeDescription?: string;
         userEmail: string;
       };
-
+      
       const authenticatedUserId = req.user?.userId;
-
+      
       if (!authenticatedUserId) {
         return res.status(401).json({
           success: false,
@@ -63,7 +64,7 @@ export class PaymentController {
           message: 'Utilisateur non authentifié',
         });
       }
-
+      
       if (!Array.isArray(subscriptionItems) || subscriptionItems.length === 0) {
         return res.status(400).json({
           success: false,
@@ -71,7 +72,7 @@ export class PaymentController {
           message: 'Au moins un item d\'abonnement est requis',
         });
       }
-
+      
       if (!userEmail) {
         return res.status(400).json({
           success: false,
@@ -79,7 +80,7 @@ export class PaymentController {
           message: 'L\'email utilisateur est requis pour créer un abonnement Stripe',
         });
       }
-
+      
       const payload = await this.paymentService.createSubscription(
         subscriptionItems,
         oneTimeAmountCents ?? 0,
@@ -87,9 +88,10 @@ export class PaymentController {
         authenticatedUserId,
         userEmail
       );
-
+      
       return res.status(201).json(payload);
     } catch (error) {
+      console.log('Error in createSubscription:', error);
       return next(error);
     }
   }
