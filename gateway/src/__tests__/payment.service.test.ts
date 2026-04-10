@@ -99,6 +99,7 @@ describe('PaymentService', () => {
       expect(orderRepo.create).toHaveBeenCalledWith({
         user_id:                  'user-123',
         total_amount:             4815,
+        currency:                 'eur',
         stripe_payment_intent_id: 'pi_test_abc123',
         payment_type:             'one_time',
         status:                   'pending',
