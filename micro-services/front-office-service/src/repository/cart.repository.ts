@@ -51,11 +51,14 @@ export class CartRepository implements ICartRepository {
     });
   }
 
-  async addItem(cartId: string, productId: string, quantity: number): Promise<CartItem> {
+  async addItem(cartId: string, productId: string, quantity: number, productName: string, unitPrice: number, period?: number): Promise<CartItem> {
     return await CartItem.create({
       cart_id: cartId,
       product_id: productId,
-      quantity
+      quantity,
+      product_name: productName,
+      unit_price: unitPrice,
+      ...(period !== undefined && { period }),
     });
   }
 
@@ -73,9 +76,5 @@ export class CartRepository implements ICartRepository {
     if (!item) return null;
 
     return await item.update({ quantity });
-  }
-
-  async clearCartItems(cartId: string): Promise<void> {
-    await CartItem.destroy({ where: { cart_id: cartId } });
   }
 }

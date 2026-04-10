@@ -25,6 +25,7 @@ export class CartController {
 
       const productId = req.body.productId as string;
       const quantity = Number(req.body.quantity);
+      const period = req.body.period !== undefined ? Number(req.body.period) : undefined;
 
       if (!productId) {
         return res.status(422).json({ message: 'Le champ productId est requis' });
@@ -34,7 +35,7 @@ export class CartController {
         return res.status(422).json({ message: 'La quantité est invalide' });
       }
 
-      const item = await this.cartService.addToCart(userId, productId, quantity);
+      const item = await this.cartService.addToCart(userId, productId, quantity, period);
       return res.status(201).json(item);
     } catch (error) {
       return this.handleError(res, error, "Erreur lors de l'ajout au panier");
@@ -70,6 +71,18 @@ export class CartController {
       return res.status(200).json(item);
     } catch (error) {
       return this.handleError(res, error, "Erreur lors de la mise à jour de l'article");
+    }
+  }
+
+  async clearCart(req: Request, res: Response) {
+    try {
+      const userId = this.getUserId(req, res);
+      if (!userId) return;
+
+      await this.cartService.clearCart(userId);
+      return res.status(200).json({ message: 'Panier vidé avec succès' });
+    } catch (error) {
+      return this.handleError(res, error, 'Erreur lors du vidage du panier');
     }
   }
 

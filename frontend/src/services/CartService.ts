@@ -1,3 +1,5 @@
+const GATEWAY_URL = import.meta.env.VITE_GATEWAY_URL ?? '';
+
 export class CartService {
     private static instance: CartService;
 
@@ -8,17 +10,10 @@ export class CartService {
         return CartService.instance;
     }
 
-    private getOptions(method: string, body?: any) {
-        //Chercher le token
+    private getOptions(method: string, body?: object) {
         const token = localStorage.getItem('accessToken');
-        const headers: Record<string, string> = {
-            'Content-Type': 'application/json'
-        };
-
-        //S'il existe, on l'ajoute en tant que passeport (Bearer)
-        if (token) {
-            headers['Authorization'] = `Bearer ${token}`;
-        }
+        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+        if (token) headers['Authorization'] = `Bearer ${token}`;
 
         return {
             method,
@@ -29,26 +24,32 @@ export class CartService {
     }
 
     public async getCart() {
-        const response = await fetch('/api/front-office/cart', this.getOptions('GET'));
+        const response = await fetch(`${GATEWAY_URL}/api/front-office/cart`, this.getOptions('GET'));
         if (!response.ok) throw new Error('Erreur récupération panier');
         return await response.json();
     }
 
-    public async addItem(productId: string, quantity: number) {
-        const response = await fetch('/api/front-office/cart/items', this.getOptions('POST', { productId, quantity }));
+    public async addItem(productId: string, quantity: number, period?: number) {
+        const response = await fetch(`${GATEWAY_URL}/api/front-office/cart/items`, this.getOptions('POST', { productId, quantity, ...(period !== undefined && { period }) }));
         if (!response.ok) throw new Error('Erreur ajout au panier');
         return await response.json();
     }
 
     public async updateItem(itemId: string, quantity: number) {
-        const response = await fetch(`/api/front-office/cart/items/${itemId}`, this.getOptions('PUT', { quantity }));
+        const response = await fetch(`${GATEWAY_URL}/api/front-office/cart/items/${itemId}`, this.getOptions('PATCH', { quantity }));
         if (!response.ok) throw new Error('Erreur mise à jour quantité');
         return await response.json();
     }
 
     public async removeItem(itemId: string) {
-        const response = await fetch(`/api/front-office/cart/items/${itemId}`, this.getOptions('DELETE'));
+        const response = await fetch(`${GATEWAY_URL}/api/front-office/cart/items/${itemId}`, this.getOptions('DELETE'));
         if (!response.ok) throw new Error('Erreur suppression article');
+        return await response.json();
+    }
+
+    public async clearCart() {
+        const response = await fetch(`${GATEWAY_URL}/api/front-office/cart`, this.getOptions('DELETE'));
+        if (!response.ok) throw new Error('Erreur vidage panier');
         return await response.json();
     }
 }

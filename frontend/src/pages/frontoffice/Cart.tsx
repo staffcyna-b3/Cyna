@@ -7,12 +7,19 @@ import { formatCurrency } from '@/utils/currencyFormatter';
 
 export default function CartPage() {
     const { t } = useTranslation();
-    const { items, totalAmount, updateQuantity, removeFromCart, isLoading } = useCart();
+    const { items, totalAmount, updateQuantity, removeFromCart, clearCart, isLoading, error, fetchCart } = useCart();
     const navigate = useNavigate();
 
     const hasUnavailableItems = items.some((item) => item.unavailable);
 
     if (isLoading) return <div className="p-8 text-center text-gray-500">{t('loading')}</div>;
+
+    if (error) return (
+        <div className="p-8 text-center">
+            <p className="text-red-500 mb-4">{error}</p>
+            <Button onClick={() => void fetchCart()}>{t('retry') || 'Réessayer'}</Button>
+        </div>
+    );
 
     return (
         <>
@@ -33,7 +40,15 @@ export default function CartPage() {
 
                     {/* Colonne gauche */}
                     <div className="flex-1 min-w-0">
-                        <h1 className="text-5xl font-bold mb-8">{t('cart.title')}</h1>
+                        <div className="flex items-center justify-between mb-8">
+                            <h1 className="text-5xl font-bold">{t('cart.title')}</h1>
+                            <button
+                                onClick={() => void clearCart()}
+                                className="text-sm text-gray-400 hover:text-red-500 transition-colors"
+                            >
+                                {t('cart.clearCart') || 'Vider le panier'}
+                            </button>
+                        </div>
 
                         {/* Bannière indisponibilité */}
                         {hasUnavailableItems && (
@@ -78,7 +93,6 @@ export default function CartPage() {
                             </div>
                             <Button
                                 className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 text-base rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
-
                                 onClick={() => navigate('/checkout')}
                                 disabled={hasUnavailableItems}
                             >

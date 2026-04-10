@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { CartItem } from '@/types/interfaces/cart/CartItem';
-import { PeriodEnum } from '@/types/enums/Period';
 import { formatCurrency } from '@/utils/currencyFormatter';
 import placeholder from '@/assets/pictures/placeholder.svg';
 
@@ -10,32 +9,24 @@ interface Props {
     onUpdateQuantity: (itemId: string, quantity: number) => void;
 }
 
-const PERIOD_MONTHS: Record<string, number> = {
-    [PeriodEnum.ThreeMonths]: 3,
-    [PeriodEnum.SixMonths]: 6,
-    [PeriodEnum.OneYear]: 12,
-};
-
-const PERIOD_LABEL: Record<string, string> = {
-    [PeriodEnum.ThreeMonths]: '3 mois',
-    [PeriodEnum.SixMonths]: '6 mois',
-    [PeriodEnum.OneYear]: 'an',
+const getPeriodLabel = (months: number): string => {
+    if (months === 12) return 'an';
+    return `${months} mois`;
 };
 
 export const CartItemCard = ({ item, onRemove, onUpdateQuantity }: Props) => {
     const { t } = useTranslation();
 
-    const months = item.billingPeriod ? (PERIOD_MONTHS[item.billingPeriod] ?? 1) : 1;
-    const periodLabel = item.billingPeriod ? (PERIOD_LABEL[item.billingPeriod] ?? '') : '';
-    const periodTotal = item.unitPrice * months;
+    const periodLabel = item.period ? getPeriodLabel(item.period) : '';
+    const periodTotal = item.period ? item.unitPrice * item.period : item.unitPrice;
 
     // Texte du prix principal
-    const priceDisplay = item.isService && item.billingPeriod
+    const priceDisplay = item.isService && item.period
         ? <>{formatCurrency(periodTotal)} <span className="font-normal text-gray-500 text-sm">/ {periodLabel}</span></>
         : <>{formatCurrency(item.unitPrice)}</>;
 
     // Texte du sous-total
-    const subtotalDisplay = item.isService && item.billingPeriod
+    const subtotalDisplay = item.isService && item.period
         ? <>{formatCurrency(item.unitPrice)} <span className="text-gray-400 text-xs">/ mois</span></>
         : <>{formatCurrency(item.subtotal)}</>;
 

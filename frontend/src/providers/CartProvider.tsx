@@ -3,8 +3,13 @@ import { CartContext } from '../contexts/CartContext';
 import { CartService } from '../services/CartService';
 import { CartItem } from '../types/interfaces/cart/CartItem';
 import { AddToCartOptions } from '../types/interfaces/cart/AddToCartOptions';
-import { saveSaaSDuration, removeSaaSDuration, getAllSaaSDurations } from '../lib/cartStorage';
 import { toast } from 'react-hot-toast';
+
+const PERIOD_TO_MONTHS: Record<string, number> = {
+    '3m': 3,
+    '6m': 6,
+    '1y': 12,
+};
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const service = CartService.getInstance();
@@ -12,27 +17,21 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [items, setItems] = useState<CartItem[]>([]);
     const [totalAmount, setTotalAmount] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
-    // cartId exposé dans le context 
+    const [error, setError] = useState<string | null>(null);
+    // cartId exposé dans le context
     const [cartId, setCartId] = useState<string | null>(null);
 
     const fetchCart = useCallback(async () => {
         setIsLoading(true);
+        setError(null);
         try {
             const data = await service.getCart();
-            const fetchedItems: CartItem[] = data.items || [];
-
-            // Fusionner les périodes choisies (localStorage) dans chaque item service
-            const durations = getAllSaaSDurations();
-            const itemsWithPeriod = fetchedItems.map((item) =>
-                item.isService ? { ...item, billingPeriod: durations[item.productId] } : item
-            );
-
-            setItems(itemsWithPeriod);
+            setItems(data.items || []);
             setTotalAmount(data.totalAmount || 0);
             setCartId(data.id || null);
-
-        } catch (error) {
-            console.error(error);
+        } catch (err) {
+            console.error(err);
+            setError('Impossible de charger le panier');
         } finally {
             setIsLoading(false);
         }
@@ -41,17 +40,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const addToCart = useCallback(async (productId: string, options: AddToCartOptions) => {
         try {
             const qty = options.quantity || 1;
-
-            if (options.period) {
-                saveSaaSDuration(productId, String(options.period));
-            }
-
-            await service.addItem(productId, qty);
+            const periodMonths = options.period ? (PERIOD_TO_MONTHS[options.period] ?? undefined) : undefined;
+            await service.addItem(productId, qty, periodMonths);
             await fetchCart();
             toast.success('Produit ajouté au panier');
-        } catch (error) {
+        } catch (err) {
             toast.error('Erreur lors de l\'ajout');
-            throw error;
+            throw err;
         }
     }, [service, fetchCart]);
 
@@ -59,21 +54,31 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         try {
             await service.updateItem(itemId, quantity);
             await fetchCart();
-        } catch (error) {
+        } catch (err) {
             toast.error('Erreur de mise à jour');
-            throw error;
+            throw err;
         }
     }, [service, fetchCart]);
 
-    const removeFromCart = useCallback(async (itemId: string, productId: string) => {
+    const removeFromCart = useCallback(async (itemId: string) => {
         try {
             await service.removeItem(itemId);
-            removeSaaSDuration(productId);
             await fetchCart();
             toast.success('Produit retiré');
-        } catch (error) {
+        } catch (err) {
             toast.error('Erreur de suppression');
-            throw error;
+            throw err;
+        }
+    }, [service, fetchCart]);
+
+    const clearCart = useCallback(async () => {
+        try {
+            await service.clearCart();
+            await fetchCart();
+            toast.success('Panier vidé');
+        } catch (err) {
+            toast.error('Erreur lors du vidage du panier');
+            throw err;
         }
     }, [service, fetchCart]);
 
@@ -91,10 +96,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                 items,
                 totalAmount,
                 isLoading,
+                error,
                 fetchCart,
                 addToCart,
                 removeFromCart,
-                updateQuantity
+                updateQuantity,
+                clearCart,
             }}
         >
             {children}

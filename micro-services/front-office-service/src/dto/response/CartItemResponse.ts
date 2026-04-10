@@ -6,6 +6,7 @@ export interface CartItemResponse {
   unitPrice: number;
   subtotal: number;
   isService: boolean;
+  period?: number;
   unavailable?: boolean;
   imageUrl?: string;
 }

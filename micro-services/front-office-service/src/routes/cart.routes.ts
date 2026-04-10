@@ -12,7 +12,8 @@ const cartController = new CartController(cartService);
 
 router.get('/', (req, res) => cartController.getCart(req, res));
 router.post('/items', (req, res) => cartController.addToCart(req, res));
-router.put('/items/:itemId', (req, res) => cartController.updateCartItem(req, res));
+router.patch('/items/:itemId', (req, res) => cartController.updateCartItem(req, res));
 router.delete('/items/:itemId', (req, res) => cartController.removeFromCart(req, res));
+router.delete('/', (req, res) => cartController.clearCart(req, res));
 
-export default router; 
+export default router;

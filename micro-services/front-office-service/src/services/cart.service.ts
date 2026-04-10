@@ -33,14 +33,22 @@ export class CartService implements ICartService {
         ? `data:image/jpeg;base64,${(mainImage.image as Buffer).toString('base64')}`
         : undefined;
 
-      const base = {
+      // Utiliser le prix snapshot stocké dans cart_items
+      const unitPrice = Number(item.unit_price);
+      // Pour les services avec période : subtotal = unitPrice * quantity * period
+      const subtotal = item.period
+        ? unitPrice * item.quantity * item.period
+        : unitPrice * item.quantity;
+
+      const base: CartItemResponse = {
         id: item.id,
         productId: item.product_id,
-        name: item.product.name,
+        name: item.product_name,
         quantity: item.quantity,
-        unitPrice: Number(item.product.price),
-        subtotal: item.quantity * Number(item.product.price),
+        unitPrice,
+        subtotal,
         isService: item.product.is_service,
+        period: item.period ?? undefined,
         imageUrl,
       };
 
@@ -60,7 +68,7 @@ export class CartService implements ICartService {
     };
   }
 
-  async addToCart(userId: string, productId: string, quantity: number): Promise<CartItem> {
+  async addToCart(userId: string, productId: string, quantity: number, period?: number): Promise<CartItem> {
 
     if (quantity <= 0) {
       throw new HttpError(422, 'La quantité doit être supérieure à 0');
@@ -100,7 +108,14 @@ export class CartService implements ICartService {
       ) as CartItem;
     }
 
-    return await this.cartRepository.addItem(cart.id, productId, quantity);
+    return await this.cartRepository.addItem(
+      cart.id,
+      productId,
+      quantity,
+      product.name,
+      Number(product.price),
+      period,
+    );
   }
 
   async removeFromCart(userId: string, itemId: string): Promise<void> {
@@ -141,5 +156,15 @@ export class CartService implements ICartService {
     }
 
     return await this.cartRepository.updateItem(itemId, cart.id, quantity);
+  }
+
+  async clearCart(userId: string): Promise<void> {
+    const cart = await this.cartRepository.findByUserIdWithItems(userId);
+
+    if (!cart) {
+      throw new HttpError(404, 'Panier introuvable');
+    }
+
+    await this.cartRepository.clearByCartId(cart.id);
   }
 }

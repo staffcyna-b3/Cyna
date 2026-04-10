@@ -6,15 +6,21 @@ interface CartItemAttributes {
   cart_id: string;
   product_id: string;
   quantity: number;
+  period: number | null;
+  product_name: string;
+  unit_price: number;
 }
 
-export interface CartItemCreationAttributes extends Optional<CartItemAttributes, 'id'> {}
+export interface CartItemCreationAttributes extends Optional<CartItemAttributes, 'id' | 'period'> {}
 
 class CartItem extends Model<CartItemAttributes, CartItemCreationAttributes> implements CartItemAttributes {
   declare id: string;
   declare cart_id: string;
   declare product_id: string;
   declare quantity: number;
+  declare period: number | null;
+  declare product_name: string;
+  declare unit_price: number;
 }
 
 CartItem.init(
@@ -38,6 +44,18 @@ CartItem.init(
       validate: {
         min: 1,
       },
+    },
+    period: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    product_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    unit_price: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
     },
   },
   {
