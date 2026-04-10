@@ -40,8 +40,8 @@ export default function CustomRoutes() {
           <Route path="/" element={<HomePage />} />
           <Route path="/catalog" element={<CatalogList />} />
           <Route path="/catalog/:id" element={<CatalogDetail />} />
-          <Route path="/cart" element={<CartPage />} />
         </Route>
+        <Route path="/cart" element={<CartPage />} />
       </Route>
     </Routes>
   )

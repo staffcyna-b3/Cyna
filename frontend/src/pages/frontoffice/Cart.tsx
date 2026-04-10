@@ -22,12 +22,7 @@ export default function CartPage() {
     );
 
     return (
-        <>
-        <style>{`
-            .cart-page, .cart-page * { color: #111827 !important; }
-            .cart-summary, .cart-summary * { color: #ffffff !important; }
-        `}</style>
-        <div className="cart-page min-h-screen bg-white">
+        <div className="min-h-screen bg-white" style={{ color: '#111827' }}>
         <div className="container mx-auto p-8 max-w-6xl">
             {items.length === 0 ? (
                 <div className="text-center py-20">
@@ -42,12 +37,13 @@ export default function CartPage() {
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-8">
                             <h1 className="text-5xl font-bold">{t('cart.title')}</h1>
-                            <button
+                            <Button
                                 onClick={() => void clearCart()}
+                                variant="outline"
                                 className="text-sm text-gray-400 hover:text-red-500 transition-colors"
                             >
                                 {t('cart.clearCart') || 'Vider le panier'}
-                            </button>
+                            </Button>
                         </div>
 
                         {/* Bannière indisponibilité */}
@@ -77,16 +73,16 @@ export default function CartPage() {
                                 {t('cart.totalProducts', { count: items.length })}
                             </p>
                             <div className="text-right mt-1">
-                                <button
+                                <Button
                                     onClick={() => navigate('/catalog')}
-                                    className="text-sm text-blue-600 hover:underline"
+                                    variant="cyna"
                                 >
                                     {t('cart.continueShopping')}
-                                </button>
+                                </Button>
                             </div>
                         </div>
 
-                        <div className="cart-summary bg-black text-white p-6 rounded-xl sticky top-8">
+                        <div className="bg-black text-white p-6 rounded-xl sticky top-8">
                             <p className="text-sm text-gray-400 mb-1">{t('cart.total')}</p>
                             <div className="text-4xl font-bold mb-6">
                                 {formatCurrency(totalAmount)}
@@ -105,6 +101,5 @@ export default function CartPage() {
             )}
         </div>
         </div>
-        </>
     );
 }

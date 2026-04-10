@@ -87,9 +87,9 @@ export default function Navbar() {
                 <div className="flex items-center justify-between gap-3">
                     <Link
                         to="/"
-                        className="font-space-grotesk shrink-0 text-[2rem] font-black uppercase leading-none tracking-tight text-[#3d49f5] sm:text-[2.7rem] lg:text-[3.2rem]"
+                        className="font-space-grotesk shrink-0 text-[2rem] font-black uppercase leading-none tracking-tight text-[#372CCA] sm:text-[2.7rem] lg:text-[3.2rem]"
                     >
-                        CYNA
+                        CYNA.
                     </Link>
 
                     <div className="flex items-center gap-3 text-[#3d49f5] sm:gap-5 lg:min-w-[220px] lg:justify-end">
