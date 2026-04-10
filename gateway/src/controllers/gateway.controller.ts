@@ -10,12 +10,12 @@ export class GatewayController {
 
   async proxy(req: Request, res: Response, microservice: MicroServiceEnum) {
     try {
-      const originalPath = req.baseUrl + req.path;
+      const originalPath = req.originalUrl || (req.baseUrl + req.path);
       Logger.info(`[GATEWAY] Proxying ${req.method} ${originalPath} to ${microservice}`);
 
       const headers = this.prepareHeaders(req);
 
-      // Remove /api in the initial path
+      // Remove /api in the initial path (originalUrl includes query string)
       const cleanPath = originalPath.replace(/^\/api/, '');
 
       const response = await this.proxyService.forward(

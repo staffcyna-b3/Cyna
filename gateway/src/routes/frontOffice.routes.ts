@@ -10,6 +10,6 @@ const controller = new GatewayController();
 
 router.use( authMiddleware, requireRole(UserRoleType.USER))
 
-router.all('/{*path}', (req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
+router.use((req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
 
 export default router;

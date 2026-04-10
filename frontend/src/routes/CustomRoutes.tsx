@@ -10,6 +10,9 @@ import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
 import { Verify2FA } from "@/pages/auth/Verify2FA"
 import { UserRole } from "@/types/enums/UserRole.enum"
+import CatalogDetail from "../pages/catalog/Detail"
+import CatalogList from "../pages/catalog/Index"
+import CatalogLayout from "@/layouts/CatalogLayout"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -32,7 +35,11 @@ export default function CustomRoutes() {
       />
 
       <Route element={<MainLayout />}>
-        <Route path="/" element={<HomePage />} />
+        <Route element={<CatalogLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/catalog" element={<CatalogList />} />
+          <Route path="/catalog/:id" element={<CatalogDetail />} />
+        </Route>
       </Route>
     </Routes>
   )
