@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database.config';
+import { UserRole } from './associate';
 
 interface UserAttributes {
   id: string;
@@ -10,9 +11,16 @@ interface UserAttributes {
   email_verified: boolean;
   created_at: Date;
   updated_at: Date;
+  remember_me_token?: string | null;
+  email_confirmation_token?: string | null;
+  email_confirmed_at?: Date | null;
+  password_reset_token?: string | null;
+  twofa_code?: string | null;
+  twofa_expires_at?: Date | null;
+  twofa_attempts?: number;
 }
 
-export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token'> {}
+export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token' | 'remember_me_token' | 'email_confirmation_token' | 'email_confirmed_at' | 'password_reset_token' | 'twofa_code' | 'twofa_expires_at' | 'twofa_attempts'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   declare id: string;
@@ -23,6 +31,14 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   declare email_verified: boolean;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
+  declare remember_me_token?: string | null;
+  declare email_confirmation_token?: string | null;
+  declare email_confirmed_at?: Date | null;
+  declare password_reset_token?: string | null;
+  declare userRole?: InstanceType<typeof UserRole>;
+  declare twofa_code?: string | null;
+  declare twofa_expires_at?: Date | null;
+  declare twofa_attempts?: number;
 }
 
 User.init(
@@ -60,6 +76,34 @@ User.init(
     updated_at: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
+    },
+    remember_me_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    email_confirmation_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    email_confirmed_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    password_reset_token: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
+    twofa_code: {
+      type: DataTypes.STRING(10),
+      allowNull: true,
+    },
+    twofa_expires_at: {
+      type: DataTypes.DATE,
+      allowNull: true,
+    },
+    twofa_attempts: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
   },
   {
