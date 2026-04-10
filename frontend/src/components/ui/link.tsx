@@ -1,4 +1,4 @@
-import { href, NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 export function Link({ to, children }: { to: string; children: React.ReactNode }) {
   return (

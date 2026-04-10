@@ -67,7 +67,7 @@ export const Register: React.FC = () => {
             setTimeout(() => {
                 navigate('/confirm-email');
             }, 2000);
-        } catch (error: any) {
+        } catch (error: unknown) {
             const message = error instanceof Error ? error.message : t('RegistrationError');
             setErrors({ submit: message });
         } finally {

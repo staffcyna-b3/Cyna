@@ -8,11 +8,11 @@ interface CategoryAttributes {
   description?: string | null;
   image?: Buffer | null;
   type: CategoryType;
-  created_at: Date;
-  updated_at: Date;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export interface CategoryCreationAttributes extends Optional<CategoryAttributes, 'id' | 'created_at' | 'updated_at' | 'description' | 'image'> {}
+export interface CategoryCreationAttributes extends Optional<CategoryAttributes, 'id' | 'createdAt' | 'updatedAt' | 'description' | 'image'> {}
 
 class Category extends Model<CategoryAttributes, CategoryCreationAttributes> implements CategoryAttributes {
   declare id: string;
@@ -20,8 +20,8 @@ class Category extends Model<CategoryAttributes, CategoryCreationAttributes> imp
   declare description?: string | null;
   declare image?: Buffer | null;
   declare type: CategoryType;
-  declare readonly created_at: Date;
-  declare readonly updated_at: Date;
+  declare readonly createdAt: Date;
+  declare readonly updatedAt: Date;
 }
 
 Category.init(
@@ -48,11 +48,11 @@ Category.init(
       type: DataTypes.ENUM(...Object.values(CategoryType)),
       allowNull: false,
     },
-    created_at: {
+    createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    updated_at: {
+    updatedAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
