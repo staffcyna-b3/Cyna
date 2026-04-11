@@ -21,4 +21,5 @@ export interface CheckoutConfirmationState {
     country: string
   }
   total_amount?: number
+  paymentIntentId?: string
 }

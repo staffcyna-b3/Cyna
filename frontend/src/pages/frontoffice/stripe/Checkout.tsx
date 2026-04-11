@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { StripePaymentForm } from '@/components/StripePaymentForm';
+import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
 import { useStripeConfig } from '@/context/StripeContext';
 import { Typography } from '@/components/ui/typography';
 import { CartItem } from '@/types/interfaces/CartItem.interface';
@@ -58,6 +58,8 @@ export const Checkout: React.FC = () => {
     [oneTimeItems],
   );
 
+  const hasCreatedIntent = useRef(false);
+
   const [isLoadingIntent, setIsLoadingIntent] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -65,6 +67,8 @@ export const Checkout: React.FC = () => {
 
   useEffect(() => {
     if (!isConfigured || !user?.id || !accessToken || totalCents <= 0) return;
+    if (hasCreatedIntent.current) return;
+    hasCreatedIntent.current = true;
 
     const createIntent = async () => {
       setIsLoadingIntent(true);

@@ -65,3 +65,19 @@ export async function getOrder(orderId: string, token: string): Promise<GetOrder
 
   return parseJsonResponse<GetOrderResponse>(res)
 }
+
+export async function updateOrderStatus(
+  orderId: string,
+  status: 'PAID' | 'CANCELLED',
+  token: string
+): Promise<void> {
+  const res = await fetch(`/api/front-office/orders/${orderId}/status`, {
+    method: 'PATCH',
+    headers: withAuthHeaders(token),
+    body: JSON.stringify({ status }),
+  })
+
+  if (!res.ok) {
+    throw await parseError(res)
+  }
+}

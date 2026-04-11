@@ -168,10 +168,6 @@ export const Checkout = () => {
       return
     }
 
-    // TODO: MARIE — Stripe payment step starts here
-    // Pass: { cartId, billingAddressId, shippingAddressId, totalAmount }
-    // On Stripe success → POST /orders is called by Marie's webhook
-    // On success → navigate to /checkout/confirmation with order data
     navigate("/checkout/payment", {
       state: {
         cartItems: cartItems.map((item) => ({
@@ -181,6 +177,9 @@ export const Checkout = () => {
           unitPriceCents: Math.round(item.unitPrice * 100),
           isRecurring: item.type !== undefined && item.type !== "PHYSICAL",
         })),
+        cartId: checkoutIds.cartId,
+        billingAddressId: checkoutIds.billingAddressId,
+        shippingAddressId: checkoutIds.shippingAddressId,
       },
     })
   }

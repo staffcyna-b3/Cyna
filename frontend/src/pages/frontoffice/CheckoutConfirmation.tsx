@@ -11,18 +11,19 @@ export const CheckoutConfirmation = () => {
   const { confirmedOrder } = useCheckout()
   const checkoutState = (state ?? {}) as CheckoutConfirmationState
   const order = checkoutState.order ?? (confirmedOrder as CheckoutConfirmationState["order"] | null)
+  const paymentIntentId = checkoutState.paymentIntentId
 
-  if (!order) {
+  if (!order && !paymentIntentId) {
     return <Navigate to="/cart" replace />
   }
 
-  const total = order.total_amount ?? checkoutState.total_amount ?? 0
+  const total = order?.total_amount ?? checkoutState.total_amount ?? 0
   const fallbackItems: ConfirmationItem[] =
-    order.items?.map((item) => ({
+    order?.items?.map((item) => ({
       id: item.id,
       name: item.product_name,
       quantity: item.quantity,
-      unitPrice: item.unit_price,
+      unitPrice: Number(item.unit_price),
     })) ?? []
   const items = checkoutState.items ?? fallbackItems
 
@@ -32,19 +33,23 @@ export const CheckoutConfirmation = () => {
   return (
     <div className="max-w-5xl mx-auto px-4 py-10 space-y-5">
       <h1 className="text-3xl font-semibold">{t("orderConfirmed")}</h1>
-      <p className="text-muted-foreground">{t("orderNumber")} {order.id}</p>
+      {order?.id ? (
+        <p className="text-muted-foreground">{t("orderNumber")} {order.id}</p>
+      ) : null}
 
-      <div className="rounded-md border p-4 space-y-3">
-        <h2 className="text-lg font-medium">{t("orderedItems")}</h2>
-        {items.map((item) => (
-          <div key={item.id} className="flex justify-between text-sm">
-            <span>{item.name}</span>
-            <span>
-              {item.quantity} {t("multiply")} {t("currency")}{item.unitPrice.toFixed(2)} {t("equals")} {t("currency")}{(item.quantity * item.unitPrice).toFixed(2)}
-            </span>
-          </div>
-        ))}
-      </div>
+      {items.length > 0 ? (
+        <div className="rounded-md border p-4 space-y-3">
+          <h2 className="text-lg font-medium">{t("orderedItems")}</h2>
+          {items.map((item) => (
+            <div key={item.id} className="flex justify-between text-sm">
+              <span>{item.name}</span>
+              <span>
+                {item.quantity} {t("multiply")} {t("currency")}{item.unitPrice.toFixed(2)} {t("equals")} {t("currency")}{(item.quantity * item.unitPrice).toFixed(2)}
+              </span>
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       {billingAddress ? (
         <div className="rounded-md border p-4 space-y-1">
@@ -66,10 +71,16 @@ export const CheckoutConfirmation = () => {
         </div>
       ) : null}
 
-      <div className="rounded-md border p-4 flex justify-between">
-        <span className="font-medium">{t("totalAmount")}</span>
-        <span className="font-medium">{t("currency")}{Number(total).toFixed(2)}</span>
-      </div>
+      {total > 0 ? (
+        <div className="rounded-md border p-4 flex justify-between">
+          <span className="font-medium">{t("totalAmount")}</span>
+          <span className="font-medium">{t("currency")}{Number(total).toFixed(2)}</span>
+        </div>
+      ) : null}
+
+      {paymentIntentId ? (
+        <p className="text-sm text-muted-foreground">{t("stripeReference")} {paymentIntentId}</p>
+      ) : null}
 
       <p className="text-muted-foreground">{t("confirmationEmailSent")}</p>
 
