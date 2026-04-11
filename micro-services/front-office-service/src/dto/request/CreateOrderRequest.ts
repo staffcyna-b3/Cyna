@@ -4,4 +4,5 @@ export interface CreateOrderRequest {
   cartId: string;
   billingAddressId: string;
   shippingAddressId: string;
+  stripePaymentIntentId?: string;
 }

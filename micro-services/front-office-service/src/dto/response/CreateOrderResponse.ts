@@ -8,6 +8,7 @@ export interface CreateOrderResponse {
   user_id: string;
   status: OrderStatus;
   total_amount: number;
+  stripe_payment_intent_id?: string | null;
   items: OrderItemResponse[];
   billingAddress: AddressSnapshotResponse;
   shippingAddress: AddressSnapshotResponse;

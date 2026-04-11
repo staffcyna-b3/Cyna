@@ -16,7 +16,7 @@ export class OrderService implements IOrderService {
     }
 
     async createOrder(createOrderRequest: CreateOrderRequest): Promise<CreateOrderResponse> {
-        const { userId, userEmail, cartId, billingAddressId, shippingAddressId } = createOrderRequest;
+        const { userId, userEmail, cartId, billingAddressId, shippingAddressId, stripePaymentIntentId } = createOrderRequest;
 
         const normalizedCartId = String(cartId);
         const normalizedBillingAddressId = String(billingAddressId);
@@ -75,6 +75,7 @@ export class OrderService implements IOrderService {
             shipping_address_snapshot: shippingAddress.toJSON(),
             total_amount: Number(totalAmount.toFixed(2)),
             status: OrderStatus.PENDING,
+            stripe_payment_intent_id: stripePaymentIntentId ?? null,
         });
 
         await this.orderRepository.createItems(

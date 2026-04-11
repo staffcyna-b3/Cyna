@@ -43,7 +43,7 @@ console.log('state passed to StripePaymentForm', state);
     if (cartId && billingAddressId && shippingAddressId && accessToken) {
       try {
         const order = await createOrder(
-          { cartId, billingAddressId, shippingAddressId },
+          { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId: paymentIntentId },
           accessToken
         );
         await updateOrderStatus(order.id, 'PAID', accessToken);
