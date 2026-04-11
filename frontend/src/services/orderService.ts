@@ -28,6 +28,23 @@ const parseJsonResponse = async <T>(res: Response): Promise<T> => {
   throw new Error(`Expected JSON response but received '${contentType || "unknown"}': ${bodyPreview}`)
 }
 
+export interface UserAddresses {
+  billing: { id: string; addressLine1: string; city: string; postcode: string; country: string } | null
+  shipping: { id: string; addressLine1: string; city: string; postcode: string; country: string } | null
+}
+
+export async function getUserAddresses(token: string): Promise<UserAddresses> {
+  const res = await fetch("/api/front-office/addresses", {
+    headers: withAuthHeaders(token),
+  })
+
+  if (!res.ok) {
+    throw await parseError(res)
+  }
+
+  return parseJsonResponse<UserAddresses>(res)
+}
+
 export async function getCheckoutContext(token: string): Promise<CheckoutContext> {
   const res = await fetch("/api/front-office/checkout/context", {
     headers: withAuthHeaders(token),

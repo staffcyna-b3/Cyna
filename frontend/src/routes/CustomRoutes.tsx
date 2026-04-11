@@ -13,14 +13,13 @@ import { CheckoutSuccess } from "@/pages/frontOffice/stripe/CheckoutSuccess"
 import { CheckoutCancel } from "@/pages/frontOffice/stripe/CheckoutCancel"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Users from "@/pages/backOffice/Users"
-import { Checkout } from "@/pages/frontOffice/Checkout"
 import { Checkout as StripeCheckout } from "@/pages/frontOffice/stripe/Checkout"
 import { CheckoutConfirmation } from "@/pages/frontOffice/CheckoutConfirmation"
 import CatalogDetail from "../pages/catalog/Detail"
 import CatalogList from "../pages/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
-import CartPage from "@/pages/frontOffice/Cart";
 import Dashboard from "@/pages/backOffice/Dashboard"
+import { Cart } from "@/pages/frontOffice/Cart"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -51,8 +50,7 @@ export default function CustomRoutes() {
       <Route element={<MainLayout />}>
         <Route element={<CatalogLayout />}>
           <Route path="/" element={<HomePage />} />
-        <Route path="/cart" element={<Checkout />} />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />
         <Route path="/checkout/confirmation" element={<CheckoutConfirmation />} />
@@ -67,7 +65,6 @@ export default function CustomRoutes() {
           <Route path="/catalog" element={<CatalogList />} />
           <Route path="/catalog/:id" element={<CatalogDetail />} />
         </Route>
-        <Route path="/cart" element={<CartPage />} />
       </Route>
     </Routes>
   )

@@ -1,19 +1,83 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react"
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react"
 import {
   CheckoutContext,
   emptyAddress,
 } from "@/contexts/CheckoutContext"
+import { useAuth } from "@/hooks/useAuth"
+import { getUserAddresses } from "@/services/orderService"
 import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
-import type { CheckoutContextValue } from "@/types/interfaces/Checkout/CheckoutContextValue"
+import type { CheckoutContextValue, CheckoutIds } from "@/types/interfaces/Checkout/CheckoutContextValue"
 import type { ConfirmedOrder } from "@/types/interfaces/CheckoutConfirmation/ConfirmedOrder"
 
 export function CheckoutProvider({ children }: { children: ReactNode }) {
+  const { accessToken, user } = useAuth()
+
   const [billingAddress, setBillingAddressState] = useState<AddressFormData>(emptyAddress)
   const [shippingAddress, setShippingAddressState] = useState<AddressFormData>(emptyAddress)
   const [sameAddress, setSameAddressState] = useState(false)
   const [loading, setLoadingState] = useState(false)
   const [error, setErrorState] = useState<string | null>(null)
   const [confirmedOrder, setConfirmedOrderState] = useState<ConfirmedOrder | null>(null)
+  const [checkoutIds, setCheckoutIds] = useState<CheckoutIds | null>(null)
+  const [isLoadingContext, setIsLoadingContext] = useState(false)
+
+  // Fetches addresses only — works regardless of cart state.
+  // checkoutIds (cartId + address IDs) are set separately by Cart when the user validates.
+  const fetchCheckoutContext = useCallback(async () => {
+    if (!accessToken || !user) return
+    setIsLoadingContext(true)
+    try {
+      const addresses = await getUserAddresses(accessToken)
+      const nameParts = (user.full_name ?? "").trim().split(/\s+/)
+      const firstName = nameParts[0] ?? ""
+      const lastName = nameParts.slice(1).join(" ")
+
+      if (addresses.billing) {
+        setBillingAddressState({
+          firstName,
+          lastName,
+          addressLine1: addresses.billing.addressLine1,
+          city: addresses.billing.city,
+          postcode: addresses.billing.postcode,
+          country: addresses.billing.country,
+        })
+      }
+      if (addresses.shipping) {
+        setShippingAddressState({
+          firstName,
+          lastName,
+          addressLine1: addresses.shipping.addressLine1,
+          city: addresses.shipping.city,
+          postcode: addresses.shipping.postcode,
+          country: addresses.shipping.country,
+        })
+      }
+      if (addresses.billing && addresses.shipping) {
+        setCheckoutIds((prev) => ({
+          cartId: prev?.cartId ?? null,
+          billingAddressId: addresses.billing!.id,
+          shippingAddressId: addresses.shipping!.id,
+        }))
+      }
+    } catch (err: unknown) {
+      // 404 = user has no addresses yet — silently allow manual entry
+      const status = (err as { status?: unknown })?.status
+      if (status !== 404) {
+        console.error("Failed to fetch user addresses", err)
+      }
+    } finally {
+      setIsLoadingContext(false)
+    }
+  }, [accessToken, user])
+
+  // Clear state on logout
+  useEffect(() => {
+    if (!user) {
+      setBillingAddressState(emptyAddress)
+      setShippingAddressState(emptyAddress)
+      setCheckoutIds(null)
+    }
+  }, [user])
 
   const setBillingAddress = useCallback((data: AddressFormData) => {
     setBillingAddressState(data)
@@ -39,6 +103,10 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     setConfirmedOrderState(value)
   }, [])
 
+  const setCheckoutIdsValue = useCallback((value: CheckoutIds | null) => {
+    setCheckoutIds(value)
+  }, [])
+
   const resetCheckoutState = useCallback(() => {
     setBillingAddressState(emptyAddress)
     setShippingAddressState(emptyAddress)
@@ -46,6 +114,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     setLoadingState(false)
     setErrorState(null)
     setConfirmedOrderState(null)
+    setCheckoutIds(null)
   }, [])
 
   const value = useMemo<CheckoutContextValue>(
@@ -56,6 +125,10 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
       loading,
       error,
       confirmedOrder,
+      checkoutIds,
+      isLoadingContext,
+      fetchCheckoutContext,
+      setCheckoutIds: setCheckoutIdsValue,
       setBillingAddress,
       setShippingAddress,
       setSameAddress,
@@ -71,6 +144,10 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
       loading,
       error,
       confirmedOrder,
+      checkoutIds,
+      isLoadingContext,
+      fetchCheckoutContext,
+      setCheckoutIdsValue,
       setBillingAddress,
       setShippingAddress,
       setSameAddress,

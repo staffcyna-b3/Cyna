@@ -1,39 +1,27 @@
 import React, { useState } from 'react';
 import { PaymentElement, useElements, useStripe } from '@stripe/react-stripe-js';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { StripePaymentFormProps } from '@/types/interfaces/StripePaymentFormProps.interface';
 import { useAuth } from '@/hooks/useAuth';
+import { useCheckout } from '@/hooks/useCheckout';
 import { createOrder, updateOrderStatus } from '@/services/orderService';
-import type { LocationState } from '@/types/interfaces/LocationState.interface';
-
-const formatEuro = (amountCents: number) =>
-  new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
 
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
-  amountCents,
-  description,
   paymentIntentId,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
-  const { state } = useLocation();
   const { t } = useTranslation();
-  // TODO DESIR: replace with real auth context once gateway JWT PR is merged
   const { accessToken } = useAuth();
-console.log('state passed to StripePaymentForm', state);
+  const { checkoutIds } = useCheckout();
 
-  // TODO: REMOVE MOCK — lier à Checkout.tsx une fois le flow complet
-  const MOCK_STATE = {
-    cartId: '00000000-0000-0000-0000-000000007001',
-    billingAddressId: '00000000-0000-0000-0000-000000009001',
-    shippingAddressId: '00000000-0000-0000-0000-000000009002',
-  };
-  const checkoutState = (state as LocationState) ?? MOCK_STATE; // TODO: REMOVE MOCK
-  const { cartId, billingAddressId, shippingAddressId } = checkoutState;
+  const cartId = checkoutIds?.cartId ?? null;
+  const billingAddressId = checkoutIds?.billingAddressId ?? null;
+  const shippingAddressId = checkoutIds?.shippingAddressId ?? null;
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -50,10 +38,8 @@ console.log('state passed to StripePaymentForm', state);
         navigate('/checkout/confirmation', { state: { order, paymentIntentId } });
         return;
       } catch (err) {
-        // Le paiement a réussi — ne pas bloquer l'utilisateur
+        // Payment succeeded — don't block the user, log and fall through to confirmation
         console.error('Order creation failed after payment', err);
-        // TODO: REMOVE AFTER TESTING — affichage debug temporaire
-        alert(`Order creation failed: ${err instanceof Error ? err.message : JSON.stringify(err)}`);
       }
     } else {
       console.error('Missing required data for createOrder:', {
@@ -62,8 +48,6 @@ console.log('state passed to StripePaymentForm', state);
         shippingAddressId,
         hasToken: !!accessToken,
       });
-      // TODO: REMOVE AFTER TESTING
-      alert(`Missing data: cartId=${cartId} billingId=${billingAddressId} shippingId=${shippingAddressId} token=${!!accessToken}`);
     }
     // Fallback : naviguer quand même avec la référence Stripe
     navigate('/checkout/confirmation', { state: { paymentIntentId } });
@@ -107,12 +91,6 @@ console.log('state passed to StripePaymentForm', state);
 
     setIsSubmitting(false);
   };
-
-  // if (!state?.cartId || !state?.billingAddressId || !state?.shippingAddressId) {
-  //   return (
-  //     <Navigate to="/checkout" replace />
-  //   )
-  // }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">

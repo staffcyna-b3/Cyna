@@ -94,7 +94,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           sessionStorage.setItem('pending_2fa_session_id', data.sessionId);
           sessionStorage.setItem('pending_2fa_remember_me', rememberMe.toString());
         } else {
-          if (data.accessToken) { localStorage.setItem('accessToken', data.accessToken); window.dispatchEvent(new Event('cart:auth-change')); }
+          if (data.accessToken) {
+            localStorage.setItem('accessToken', data.accessToken);
+            setAccessToken(data.accessToken);
+            window.dispatchEvent(new Event('cart:auth-change'));
+          }
           setUser({
             id: data.id,
             email: data.email,

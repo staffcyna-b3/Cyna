@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { OrderController } from '../controllers/orders.controller';
 import { CheckoutController } from '../controllers/checkout.controller';
+import { AddressesController } from '../controllers/addresses.controller';
 import { OrderRepository } from '../repository/orders.repository';
 import { CartRepository } from '../repository/cart.repository';
 import { AddressRepository } from '../repository/address.repository';
@@ -31,7 +32,9 @@ const checkoutService = new CheckoutService(cartRepository, addressRepository);
 
 const orderController = new OrderController(orderService);
 const checkoutController = new CheckoutController(checkoutService);
+const addressesController = new AddressesController(addressRepository);
 
+router.get('/addresses', (req, res) => addressesController.getAddresses(req, res));
 router.get('/checkout/context', (req, res) => checkoutController.getCheckoutContext(req, res));
 
 router.post('/orders', (req, res) => orderController.create(req, res));

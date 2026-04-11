@@ -19,7 +19,7 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/subscriptions', subscriptionRoutes)
-app.use('/orders', ordersRoutes) // TODO check update route beofre it wasonly '/'
+app.use('/', ordersRoutes)
 
 app.use('/front-office/cart', cartRoutes) // TODO why ?
 app.use('/cart', cartRoutes)

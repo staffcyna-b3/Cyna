@@ -1,105 +1,275 @@
-import { useTranslation } from 'react-i18next';
-import { useCart } from '@/hooks/useCart';
-import { CartItemCard } from '@/components/ui/CartItemCard';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import { formatCurrency } from '@/utils/currencyFormatter';
+import { useEffect, useMemo, useState } from "react"
+import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { useTranslation } from "react-i18next"
+import { Button } from "@/components/ui/button"
+import { CartItem } from "@/components/CartItem"
+import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
+import type { CheckoutStep } from "@/types/interfaces/Checkout/CheckoutStep"
+import { AddressForm } from "@/components/forms/AddressForm"
+import { SameAddressToggle } from "@/components/forms/SameAddressToggle"
+import { useCheckout } from "@/hooks/useCheckout"
+import { useAuth } from "@/hooks/useAuth"
+import useCart from "@/hooks/useCart"
 
-export default function CartPage() {
-    const { t } = useTranslation();
-    const { items, totalAmount, updateQuantity, removeFromCart, clearCart, isLoading, error, fetchCart } = useCart();
-    const navigate = useNavigate();
+function validateAddress(data: AddressFormData, t: (key: string) => string): Partial<Record<keyof AddressFormData, string>> {
+  const errors: Partial<Record<keyof AddressFormData, string>> = {}
+  if (!data.firstName.trim()) errors.firstName = t("requiredField")
+  if (!data.lastName.trim()) errors.lastName = t("requiredField")
+  if (!data.addressLine1.trim()) errors.addressLine1 = t("requiredField")
+  if (!data.city.trim()) errors.city = t("requiredField")
+  if (!data.postcode.trim()) errors.postcode = t("requiredField")
+  if (!data.country.trim()) errors.country = t("requiredField")
+  return errors
+}
 
-    const hasUnavailableItems = items.some((item) => item.unavailable);
+export const Cart = () => {
+  const { t } = useTranslation()
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const { accessToken, isAuthenticated } = useAuth()
+  const {
+    billingAddress,
+    shippingAddress,
+    sameAddress,
+    loading: checkoutLoading,
+    error: checkoutError,
+    checkoutIds,
+    setBillingAddress,
+    setShippingAddress,
+    setSameAddress,
+    setLoading,
+    setCheckoutIds,
+    fetchCheckoutContext,
+  } = useCheckout()
+  const { cartId, items, totalAmount, updateQuantity, removeFromCart, clearCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
 
-    if (isLoading) return <div className="p-8 text-center text-gray-500">{t('loading')}</div>;
+  const hasUnavailableItems = items.some((item) => item.unavailable);
 
-    if (error) return (
-        <div className="p-8 text-center">
-            <p className="text-red-500 mb-4">{error}</p>
-            <Button onClick={() => void fetchCart()}>{t('retry') || 'Réessayer'}</Button>
-        </div>
-    );
 
+  const [billingErrors, setBillingErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
+  const [shippingErrors, setShippingErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
+  const [isEditingBillingAddress, setIsEditingBillingAddress] = useState(false)
+  const [isEditingShippingAddress, setIsEditingShippingAddress] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
+
+  const currentStep: CheckoutStep = searchParams.get("step") === "address" ? "address" : "cart"
+
+  useEffect(() => {
+    if (!isAuthenticated || !accessToken) return
+    setLoading(true)
+    fetchCheckoutContext().finally(() => setLoading(false))
+  }, [isAuthenticated, accessToken, fetchCheckoutContext, setLoading])
+
+  const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items])
+  const deliveryFee = useMemo(() => {
+    // TODO: delivery fee calculation — fixed rate for physical
+    // products, 0 for SaaS. To be confirmed with LUCAS for
+    // product type data shape.
+    const hasPhysicalProduct = items.some((item) => item.isService === false)
+    return hasPhysicalProduct ? 5.99 : 0
+  }, [items])
+  const finalTotal = useMemo(() => totalAmount + deliveryFee, [totalAmount, deliveryFee])
+
+  const handleQuantityChange = (itemId: string, quantity: number) => {
+    updateQuantity(itemId, quantity)
+  }
+
+  const handleRemoveItem = (itemId: string) => {
+    // TODO: why wo we need productId and itemId? Can't we just use itemId?
+    removeFromCart(itemId)
+  }
+
+  const handleContinue = () => {
+    // TODO: chek user is connecter if not ask user to login or register and redirect flow for unauthenticated users.
+    console.log("User is authenticated:", isAuthenticated)
+    if (!isAuthenticated) {
+      navigate("/login?redirect=/cart?step=address")
+      return
+    }
+    console.log(billingAddress, shippingAddress, sameAddress)
+    navigate("/cart?step=address")
+  }
+
+  const handleValider = async () => {
+    setSubmitError(null)
+
+    const nextBillingErrors = validateAddress(billingAddress, t)
+    const nextShippingErrors = sameAddress ? {} : validateAddress(shippingAddress, t)
+    setBillingErrors(nextBillingErrors)
+    setShippingErrors(nextShippingErrors)
+
+    if (Object.keys(nextBillingErrors).length > 0 || Object.keys(nextShippingErrors).length > 0) {
+      if (Object.keys(nextBillingErrors).length > 0) setIsEditingBillingAddress(true)
+      if (Object.keys(nextShippingErrors).length > 0) setIsEditingShippingAddress(true)
+      return
+    }
+    console.log(cartId, checkoutIds.billingAddressId, checkoutIds.shippingAddressId)
+    
+    if (!cartId || !checkoutIds?.billingAddressId || !checkoutIds?.shippingAddressId) {
+      setSubmitError(t("missingCartOrAddress"))
+      return
+    }
+
+    navigate("/checkout/payment", {
+      state: {
+        items: items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          unitPriceCents: Math.round(item.unitPrice * 100),
+          isRecurring: item.isService && item.period !== null,
+        })),
+        cartId,
+        billingAddressId: checkoutIds.billingAddressId,
+        shippingAddressId: checkoutIds.shippingAddressId,
+      },
+    })
+  }
+
+  if (checkoutLoading || cartLoading) {
+    return <div className="py-20 px-40">{t("loading")}</div>
+  }
+
+  if (checkoutError || cartError) {
     return (
-        <div className="min-h-screen bg-white" style={{ color: '#111827' }}>
-        <div className="container mx-auto p-8 max-w-6xl">
-            {items.length === 0 ? (
-                <div className="text-center py-20">
-                    <h1 className="text-5xl font-bold mb-8">{t('cart.title')}</h1>
-                    <p className="text-xl mb-6 text-gray-500">{t('cart.empty')}</p>
-                    <Button onClick={() => navigate('/catalog')}>{t('cart.continueShopping')}</Button>
-                </div>
-            ) : (
-                <div className="flex gap-8">
+      <div className="p-8 text-center">
+        <p className="text-red-500 mb-4">{checkoutError || cartError}</p>
+        <Button onClick={() => void fetchCart()}>{t('retry') || 'Réessayer'}</Button>
+      </div>
+    )
+  }
 
-                    {/* Colonne gauche */}
-                    <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-8">
-                            <h1 className="text-5xl font-bold">{t('cart.title')}</h1>
-                            <Button
-                                onClick={() => void clearCart()}
-                                variant="outline"
-                                className="text-sm text-gray-400 hover:text-red-500 transition-colors"
-                            >
-                                {t('cart.clearCart') || 'Vider le panier'}
-                            </Button>
-                        </div>
-
-                        {/* Bannière indisponibilité */}
-                        {hasUnavailableItems && (
-                            <div className="flex items-center gap-3 px-4 py-3 mb-6 bg-red-50 border border-red-200 rounded-xl text-sm text-red-500">
-                                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" className="shrink-0">
-                                    <path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13zM7.25 5a.75.75 0 011.5 0v3.5a.75.75 0 01-1.5 0V5zm.75 6.5a.75.75 0 110-1.5.75.75 0 010 1.5z" fill="currentColor" />
-                                </svg>
-                                {t('cart.unavailableWarning')}
-                            </div>
-                        )}
-
-                        {items.map(item => (
-                            <CartItemCard
-                                key={item.id}
-                                item={item}
-                                onRemove={removeFromCart}
-                                onUpdateQuantity={updateQuantity}
-                            />
-                        ))}
-                    </div>
-
-                    {/* Colonne droite */}
-                    <div className="w-64 shrink-0">
-                        <div className="mb-6">
-                            <p className="text-lg font-semibold text-right">
-                                {t('cart.totalProducts', { count: items.length })}
-                            </p>
-                            <div className="text-right mt-1">
-                                <Button
-                                    onClick={() => navigate('/catalog')}
-                                    variant="cyna"
-                                >
-                                    {t('cart.continueShopping')}
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className="bg-black text-white p-6 rounded-xl sticky top-8">
-                            <p className="text-sm text-gray-400 mb-1">{t('cart.total')}</p>
-                            <div className="text-4xl font-bold mb-6">
-                                {formatCurrency(totalAmount)}
-                            </div>
-                            <Button
-                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 text-base rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
-                                onClick={() => navigate('/checkout')}
-                                disabled={hasUnavailableItems}
-                            >
-                                {t('cart.checkoutBtn')}
-                            </Button>
-                        </div>
-                    </div>
-
-                </div>
-            )}
+  if (currentStep === "cart" && items.length === 0) {
+    return (
+      <div className="py-20 px-40">
+        <div className="rounded-lg border p-6 flex flex-col gap-4 w-fit">
+          <p>{t("emptyCart")}</p>
+          <Button asChild>
+            <Link to="/products">{t("viewProducts")}</Link>
+          </Button>
         </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="py-20 px-40 min-h-screen bg-white">
+      <div className="flex justify-between mb-10">
+        <p className="text-5xl">{currentStep === "cart" ? t("cart") : t("shippingAddress")}</p>
+        <div>
+          <p className="text-lg">{t("totalOf")} {totalItems} {t("items")}</p>
+          <Link to="/products" className="text-primary">{t("continueShopping")}</Link>
         </div>
-    );
+      </div>
+
+      <div className="flex justify-between gap-8">
+        {currentStep === "cart" ? (
+          <div className="flex flex-col gap-2 flex-1">
+            {items.map((item) => (
+              <CartItem
+                item={item}
+                key={item.id}
+                onQuantityChange={handleQuantityChange}
+                onRemove={handleRemoveItem}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4 flex-1">
+            <div className="bg-muted/30 rounded-lg p-4 flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <p className="text-lg font-medium">{t("billingAddress")}</p>
+                <Button variant="ghost" onClick={() => setIsEditingBillingAddress((prev) => !prev)}>{t("update")}</Button>
+              </div>
+
+              {isEditingBillingAddress ? (
+                <AddressForm
+                  title=""
+                  value={billingAddress}
+                  onChange={setBillingAddress}
+                  errors={billingErrors}
+                />
+              ) : (
+                <>
+                  <p>{[billingAddress.firstName, billingAddress.lastName].filter(Boolean).join(" ") || "-"}</p>
+                  <p>{billingAddress.addressLine1 || "-"}</p>
+                  <p>{billingAddress.city || "-"}</p>
+                  <p>{billingAddress.postcode || "-"}</p>
+                  <p>{billingAddress.country || "-"}</p>
+                </>
+              )}
+            </div>
+
+            <SameAddressToggle checked={sameAddress} onChange={setSameAddress} />
+
+            {!sameAddress ? (
+              <div className="bg-muted/30 rounded-lg p-4 flex flex-col gap-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-lg font-medium">{t("shippingAddress")}</p>
+                  <Button variant="ghost" onClick={() => setIsEditingShippingAddress((prev) => !prev)}>{t("update")}</Button>
+                </div>
+
+                {isEditingShippingAddress ? (
+                  <AddressForm
+                    title=""
+                    value={shippingAddress}
+                    onChange={setShippingAddress}
+                    errors={shippingErrors}
+                  />
+                ) : (
+                  <>
+                    <p>{[shippingAddress.firstName, shippingAddress.lastName].filter(Boolean).join(" ") || "-"}</p>
+                    <p>{shippingAddress.addressLine1 || "-"}</p>
+                    <p>{shippingAddress.city || "-"}</p>
+                    <p>{shippingAddress.postcode || "-"}</p>
+                    <p>{shippingAddress.country || "-"}</p>
+                  </>
+                )}
+              </div>
+            ) : null}
+          </div>
+        )}
+
+        <div className="bg-black rounded-lg py-4 px-6 h-fit gap-4 flex flex-col items-end">
+          {currentStep === "address" ? (
+            <>
+              <p className="text-white self-start font-medium">{t("summary")}</p>
+              <div className="w-full text-white text-sm flex flex-col gap-2">
+                {items.map((item) => (
+                  <div key={item.id} className="flex justify-between gap-3">
+                    <span>{item.name} x{item.quantity}</span>
+                    <span>{t("currency")}{item.subtotal.toFixed(2)}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="w-full border-t border-white/20" />
+              <div className="w-full text-white text-sm flex justify-between">
+                <span>{t("subtotal")}</span>
+                <span>{t("currency")}{totalAmount.toFixed(2)}</span>
+              </div>
+              <div className="w-full text-white text-sm flex justify-between">
+                <span>{t("shipping")}</span>
+                <span>{t("currency")}{deliveryFee.toFixed(2)}</span>
+              </div>
+              <div className="w-full text-white flex justify-between font-semibold">
+                <span>{t("total")}</span>
+                <span>{t("currency")}{finalTotal.toFixed(2)}</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <p className="text-white">{t("total")}</p>
+              <p className="text-white">{t("currency")}{finalTotal.toFixed(2)}</p>
+            </>
+          )}
+          {currentStep === "cart" ? (
+            <Button onClick={handleContinue}>{t("proceed")}</Button>
+          ) : (
+            <Button onClick={handleValider}>{t("validate")}</Button>
+          )}
+          {submitError ? <p className="text-destructive text-sm">{submitError}</p> : null}
+        </div>
+      </div>
+    </div>
+  )
 }
