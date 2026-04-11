@@ -17,6 +17,10 @@ import Users from "@/pages/backoffice/Users"
 import { Checkout } from "@/pages/frontoffice/Checkout"
 import { Checkout as StripeCheckout } from "@/pages/frontoffice/stripe/Checkout"
 import { CheckoutConfirmation } from "@/pages/frontoffice/CheckoutConfirmation"
+import CatalogDetail from "../pages/catalog/Detail"
+import CatalogList from "../pages/catalog/Index"
+import CatalogLayout from "@/layouts/CatalogLayout"
+import CartPage from "@/pages/frontoffice/Cart";
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -45,7 +49,8 @@ export default function CustomRoutes() {
 
       {/* Frontoffice routes */}
       <Route element={<MainLayout />}>
-        <Route path="/" element={<HomePage />} />
+        <Route element={<CatalogLayout />}>
+          <Route path="/" element={<HomePage />} />
         <Route path="/cart" element={<Checkout />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
@@ -59,6 +64,10 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
+          <Route path="/catalog" element={<CatalogList />} />
+          <Route path="/catalog/:id" element={<CatalogDetail />} />
+        </Route>
+        <Route path="/cart" element={<CartPage />} />
       </Route>
     </Routes>
   )

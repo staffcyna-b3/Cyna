@@ -11,7 +11,7 @@ export class GatewayController {
 
   async proxy(req: Request, res: Response, microservice: MicroServiceEnum) {
     try {
-      const originalPath = req.baseUrl + req.path;
+      const originalPath = req.originalUrl || (req.baseUrl + req.path);
       Logger.info(`[GATEWAY] Proxying ${req.method} ${originalPath} to ${microservice}`);
 
       const headers = this.prepareHeaders(req);
@@ -45,7 +45,7 @@ export class GatewayController {
       'X-Forwarded-For': req.ip || '',
       'X-Request-ID': req.id || '',
       'User-Agent': req.headers['user-agent'] || '',
-      'x-user-id': req.user?.userId || '',
+      'x-user-id': req.user?.userId || (req.headers['x-guest-id'] as string) || '',
     };
   }
 }

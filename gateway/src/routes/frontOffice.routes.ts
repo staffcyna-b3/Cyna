@@ -2,12 +2,17 @@ import { Router } from 'express';
 import { GatewayController } from '../controllers/gateway.controller';
 import { MicroServiceEnum } from '../enum/microService.enum';
 import { authMiddleware } from '../middlewares/auth.middleware';
+import { optionalAuth } from '../middlewares/optional-auth.middleware';
+import { requireRole } from '../middlewares/role.guard';
+import { UserRoleType } from '../enum/UserRoleType.enum';
 
 const router = Router();
 const controller = new GatewayController();
 
-router.use(authMiddleware);
+router.use('/cart', optionalAuth, (req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
 
-router.all('/{*path}', (req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
+// Toutes les autres routes front-office nécessitent d'être connecté
+router.use(authMiddleware, requireRole(UserRoleType.USER));
+router.use((req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
 
 export default router;

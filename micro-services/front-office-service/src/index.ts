@@ -5,6 +5,7 @@ import { initDb } from './models/index'
 import { Logger } from './common/logger'
 import ordersRoutes from './routes/orders.routes'
 import subscriptionRoutes from './routes/subscription.routes'
+import cartRoutes from './routes/cart.routes'
 
 dotenv.config()
 
@@ -18,7 +19,10 @@ app.use(cors())
 app.use(express.json())
 
 app.use('/subscriptions', subscriptionRoutes)
-app.use('/', ordersRoutes)
+app.use('/orders', ordersRoutes) // TODO check update route beofre it wasonly '/'
+
+app.use('/front-office/cart', cartRoutes) // TODO why ?
+app.use('/cart', cartRoutes)
 
 initDb()
 
