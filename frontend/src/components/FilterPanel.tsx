@@ -3,7 +3,7 @@ import RangeSlider from './ui/RangeSliderRadix';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useTranslation } from 'react-i18next';
-import Select from './ui/Select';
+import Select from './ui/Select'; // ! TO FIX
 import { cn } from '@/lib/utils';
 import { FilterPanelProps } from '@/types/interfaces/catalog/FilterPanelProps';
 

@@ -5,6 +5,12 @@ echo "Démarrage de l'installation complète..."
 # ==================== INSTALLATION DES DÉPENDANCES ====================
 echo "Installation des dépendances..."
 
+echo "→ Frontend..."
+cd frontend
+npm install
+cd ..
+
+
 echo "→ Gateway..."
 cd gateway
 npm install
