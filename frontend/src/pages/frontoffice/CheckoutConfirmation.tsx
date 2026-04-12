@@ -81,8 +81,9 @@ export const CheckoutConfirmation = () => {
       <p className="text-muted-foreground">{t("confirmationEmailSent")}</p>
 
       <div className="flex gap-3">
-        <Button asChild>
-          <Link to="/account/orders">{t("viewMyOrders")}</Link>
+        <Button asChild disabled>
+          {/* <Link to="/account/orders">{t("viewMyOrders")}</Link> */}
+          <span>{t("viewMyOrders")}</span>
         </Button>
         <Button asChild variant="outline">
           <Link to="/catalog">{t("backToProducts")}</Link>

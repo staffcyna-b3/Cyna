@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, LogOut, Search, ShoppingCart, User } from 'lucide-react';
+import { ArrowRight, ChevronDown, LogOut, Search, ShoppingCart, User } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
@@ -118,22 +118,20 @@ export default function Navbar() {
                         </div>
 
                         <div className="relative group">
-                            <button
-                                type="button"
+                            <Button
+                                variant='ghost'
+                                size='icon'
                                 onClick={() => { setIsSuggestionsOpen(false); navigate('/cart'); }}
                                 aria-label={t('cart.title')}
-                                className="relative flex items-center gap-2 text-sm font-semibold sm:text-base lg:text-lg"
+                                className="relative"
                             >
-                                <span className="relative">
-                                    <ShoppingCart className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />
+                                    <ShoppingCart strokeWidth={3} />
                                     {cartCount > 0 && (
                                         <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-[#3d49f5] px-1 text-[11px] font-bold leading-none text-white">
                                             {cartCount}
                                         </span>
                                     )}
-                                </span>
-                                <span className="hidden sm:inline">{t('cart.title')}</span>
-                            </button>
+                            </Button>
 
                             {/* Dropdown panier au hover */}
                             <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
@@ -162,12 +160,11 @@ export default function Navbar() {
                                                     </li>
                                                 ))}
                                             </ul>
-                                            <div className="border-t border-gray-100 px-4 py-3">
+                                            <div className="border-t border-gray-100 px-4 py-3 flex justify-center">
                                                 <Link
                                                     to="/cart"
-                                                    className="flex w-full items-center justify-center rounded-full bg-[#3d49f5] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#2d38d4]"
                                                 >
-                                                    {t('cart.title')} →
+                                                    {t('cart.seeCart')}
                                                 </Link>
                                             </div>
                                         </>
@@ -176,13 +173,13 @@ export default function Navbar() {
                             </div>
                         </div>
 
-                        <button type="button" className="flex items-center justify-center" aria-label={t('account')}>
-                            <User className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />
-                        </button>
+                        <Button variant="ghost" size="icon" className="flex items-center justify-center" aria-label={t('account')}>
+                            <User strokeWidth={3} />
+                        </Button>
 
                         {isAuthenticated && (
-                            <Button variant="ghost" onClick={handleLogout} aria-label={t('logout')}>
-                                <LogOut className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />
+                            <Button variant="ghost" size="icon" onClick={handleLogout} aria-label={t('logout')}>
+                                <LogOut strokeWidth={3} />
                             </Button>
                         )}
                     </div>
@@ -203,13 +200,14 @@ export default function Navbar() {
                                 placeholder={t('searchProductPlaceholder')}
                                 className="h-12 w-full rounded-full border-2 border-[#372cca] bg-[#1d155f] pl-5 pr-14 text-base text-white outline-none transition placeholder:text-white/78 focus:border-[#4752ff] focus:bg-[#231a72] sm:h-14 sm:pl-6 sm:pr-16 sm:text-lg"
                             />
-                            <button
-                                type="submit"
+                            <Button
+                                variant='cyna'
+                                size='icon'
                                 aria-label={t('search')}
                                 className="absolute right-1 top-1 flex h-10 w-10 items-center justify-center rounded-full bg-[#3d49f5] text-white shadow-[0_8px_18px_rgba(61,73,245,0.35)] transition hover:scale-105 sm:h-12 sm:w-12"
                             >
-                                <Search className="h-5 w-5 sm:h-6 sm:w-6" />
-                            </button>
+                                <Search />
+                            </Button>
                         </form>
 
                         {isSuggestionsOpen && (
@@ -218,15 +216,16 @@ export default function Navbar() {
                                     <div className="px-5 py-4 text-sm text-[#5f6799]">{t('searching')}</div>
                                 ) : suggestions.length > 0 ? (
                                     suggestions.map((suggestion) => (
-                                        <button
+                                        <Button
+                                            variant="ghost"
+                                            size='icon'
                                             key={suggestion.id}
-                                            type="button"
                                             onClick={() => goToProduct(suggestion.id)}
                                             className="flex w-full items-center justify-between px-5 py-4 text-left text-[#181d42] transition hover:bg-[#f3f5ff]"
                                         >
                                             <span className="font-medium">{suggestion.name}</span>
-                                            <Search className="h-4 w-4 text-[#6b74b2]" />
-                                        </button>
+                                            <ArrowRight />
+                                        </Button>
                                     ))
                                 ) : (
                                     <div className="px-5 py-4 text-sm text-[#5f6799]">{t('noProductFound')}</div>

@@ -173,10 +173,10 @@ export const Cart = () => {
 
   if (currentStep === "cart" && items.length === 0) {
     return (
-      <div className="py-20 px-40">
-        <div className="rounded-lg border p-6 flex flex-col gap-4 w-fit">
+      <div className="py-20 px-40 flex justify-center items-center">
+        <div className="rounded-lg p-6 flex flex-col gap-4 w-fit">
           <p>{t("emptyCart")}</p>
-          <Button asChild>
+          <Button variant={'cyna'} asChild>
             <Link to="/catalog">{t("viewProducts")}</Link>
           </Button>
         </div>

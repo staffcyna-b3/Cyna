@@ -27,9 +27,6 @@ export default function SimilarProductsCarousel({
         <div className="w-full mt-12 pt-8 border-t border-white/5">
             <div className="flex items-center justify-between mb-6">
                 <div>
-                    <h3 className="text-2xl lg:text-3xl font-bold mb-1">
-                        {t('similarProducts')}
-                    </h3>
                     <p className="text-sm text-[#9aa0c7]">
                         {t('nProductsAvailable', { count: safeData.length })}
                     </p>
