@@ -20,6 +20,7 @@ import CatalogDetail from "../pages/catalog/Detail"
 import CatalogList from "../pages/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
 import { Cart } from "@/pages/frontoffice/Cart"
+import { User } from "lucide-react"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -68,7 +69,7 @@ export default function CustomRoutes() {
         <Route
           path="/checkout/payment"
           element={
-            <ProtectedRoute requiredRoles={[]}>
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
               <StripeCheckout />
             </ProtectedRoute>
           }

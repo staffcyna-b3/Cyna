@@ -47,7 +47,6 @@ export const Cart = () => {
 
   const hasUnavailableItems = items.some((item) => item.unavailable);
 
-
   const [billingErrors, setBillingErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
   const [shippingErrors, setShippingErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
   const [isEditingBillingAddress, setIsEditingBillingAddress] = useState(false)
@@ -139,7 +138,7 @@ export const Cart = () => {
     // Toujours mettre à jour checkoutIds avec le cartId courant,
     // que les adresses viennent de la DB ou d'une nouvelle saisie.
     setCheckoutIds({ cartId: cartId ?? null, billingAddressId: resolvedBillingId!, shippingAddressId: resolvedShippingId! })
-
+console.log("Navigating to payment with cartId:", cartId, "billingAddressId:", resolvedBillingId, "shippingAddressId:", resolvedShippingId)
     navigate("/checkout/payment", {
       state: {
         cartItems: items.map((item) => ({
