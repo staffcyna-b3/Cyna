@@ -53,7 +53,7 @@ export function useAuthCart() {
         }
     }, [service, fetchCart]);
 
-    const removeFromCart = useCallback(async (itemId: string, _productId: string) => {
+    const removeFromCart = useCallback(async (itemId: string) => {
         try {
             await service.removeItem(itemId);
             await fetchCart();

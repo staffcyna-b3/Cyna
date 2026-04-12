@@ -9,7 +9,7 @@ export interface CartContextValue {
     error: string | null;
     fetchCart: () => Promise<void>;
     addToCart: (productId: string, options: AddToCartOptions) => Promise<void>;
-    removeFromCart: (itemId: string, productId: string) => Promise<void>;
+    removeFromCart: (itemId: string) => Promise<void>;
     updateQuantity: (itemId: string, quantity: number) => Promise<void>;
     clearCart: () => Promise<void>;
 }

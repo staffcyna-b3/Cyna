@@ -85,7 +85,7 @@ export function useGuestCart() {
         ));
     }, [persist]);
 
-    const removeFromCart = useCallback(async (itemId: string, _productId: string) => {
+    const removeFromCart = useCallback(async (itemId: string) => {
         persist(loadGuestCart().filter(i => i.id !== itemId));
         toast.success('Produit retiré');
     }, [persist]);

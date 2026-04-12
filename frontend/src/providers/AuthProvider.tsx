@@ -145,7 +145,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           throw new Error('Données utilisateur manquantes après vérification 2FA');
         }
 
-        if (accessToken) localStorage.setItem('accessToken', accessToken);
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+          window.dispatchEvent(new Event('cart:auth-change'));
+        }
 
         setUser({
           id: userData.id,
@@ -177,6 +180,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.ok) {
         const data = await response.json();
         if (data.authenticated) {
+          if (data.accessToken) {
+            localStorage.setItem('accessToken', data.accessToken);
+            window.dispatchEvent(new Event('cart:auth-change'));
+          }
           setUser({
             id: data.id,
             email: data.email,

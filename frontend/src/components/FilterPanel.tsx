@@ -3,7 +3,7 @@ import RangeSlider from './ui/RangeSliderRadix';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { useTranslation } from 'react-i18next';
-import Select from './ui/Select'; // ! TO FIX
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { cn } from '@/lib/utils';
 import { FilterPanelProps } from '@/types/interfaces/catalog/FilterPanelProps';
 
@@ -74,20 +74,18 @@ export default function FilterPanel({
                                 {t('sortBy')}
                             </label>
                             <Select
-                                className="w-full bg-[#12101b] border-[#2a2a3d] text-[#b7bdd9]"
-                                value={localSort}
-                                onChange={(
-                                    e: React.ChangeEvent<HTMLSelectElement>
-                                ) => setLocalSort(e.target.value as string | '')}
+                                value={localSort === '' ? 'none' : localSort}
+                                onValueChange={(value) => setLocalSort(value === 'none' ? '' : value)}
                             >
-                                <option value="">{t('defaultSort')}</option>
-                                <option value={`price:asc`}>{t('priceAsc')}</option>
-                                <option value={`price:desc`}>
-                                    {t('priceDesc')}
-                                </option>
-                                <option value={`priority:desc`}>
-                                    {t('priority')}
-                                </option>
+                                <SelectTrigger className="w-full bg-[#12101b] border-[#2a2a3d] text-[#b7bdd9]">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="none">{t('defaultSort')}</SelectItem>
+                                    <SelectItem value="price:asc">{t('priceAsc')}</SelectItem>
+                                    <SelectItem value="price:desc">{t('priceDesc')}</SelectItem>
+                                    <SelectItem value="priority:desc">{t('priority')}</SelectItem>
+                                </SelectContent>
                             </Select>
                         </div>
                     ) : (

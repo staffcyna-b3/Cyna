@@ -75,18 +75,17 @@ export const Cart = () => {
   }
 
   const handleRemoveItem = (itemId: string) => {
-    // TODO: why wo we need productId and itemId? Can't we just use itemId?
     removeFromCart(itemId)
   }
 
   const handleContinue = () => {
     // TODO: chek user is connecter if not ask user to login or register and redirect flow for unauthenticated users.
-    console.log("User is authenticated:", isAuthenticated)
+    // console.log("User is authenticated:", isAuthenticated)
     if (!isAuthenticated) {
-      navigate("/login?redirect=/cart?step=address")
+      navigate("/login", { state: { from: { pathname: "/cart?step=address" } } })
       return
     }
-    console.log(billingAddress, shippingAddress, sameAddress)
+    // console.log(billingAddress, shippingAddress, sameAddress)
     navigate("/cart?step=address")
   }
 
