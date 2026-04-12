@@ -9,35 +9,17 @@ import { Typography } from '@/components/ui/typography';
 import { CartItem } from '@/types/interfaces/CartItem.interface';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
 
-const MOCK_CART_ITEMS: CartItem[] = [
-  {
-    id: '0d9caf37-0956-464b-bc57-a4ddb9728aba',
-    name: 'Cyna XDR Complete',
-    quantity: 2,
-    unitPriceCents: 149999,
-    isRecurring: true,
-    billingPeriod: 'monthly',
-  },
-  {
-    id: 'mock-2',
-    name: 'Station blanche grand format',
-    quantity: 2,
-    unitPriceCents: 120000,
-    isRecurring: false,
-  },
-];
-
 const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
 
 export const Checkout: React.FC = () => {
-  console.log('Rendering Checkout page');
   const { t } = useTranslation();
   const { user, accessToken, isLoading: isAuthLoading } = useAuth();
   const { stripePromise, isConfigured } = useStripeConfig();
   const location = useLocation();
 
-  const cartItems = (location.state as LocationState)?.cartItems ?? MOCK_CART_ITEMS;
+  const cartItems = (location.state as LocationState)?.cartItems ?? [];
+  const billingAddress = (location.state as LocationState)?.billingAddress ?? null;
 
   const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isRecurring), [cartItems]);
   const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isRecurring), [cartItems]);
@@ -133,20 +115,16 @@ export const Checkout: React.FC = () => {
     createIntent();
   }, [isConfigured, user?.id, accessToken, totalCents]);
 
-  console.log('Checkout state:', {
-    clientSecret,
-    paymentIntentId,
-    stripePromise
-  });
+  // console.log('Checkout state:', { clientSecret, paymentIntentId, stripePromise });
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Full-width header */}
-      <div className="w-full bg-white border-b border-gray-200 px-8 lg:px-12 py-5">
+      {/* <div className="w-full bg-white border-b border-gray-200 px-8 lg:px-12 py-5">
         <Typography variant="h2" className="!text-left !pb-0 text-[#372CCA]">
           {t('Cyna')}
         </Typography>
-      </div>
+      </div> */}
 
       {/* Two-column layout */}
       <div className="flex flex-col lg:flex-row flex-1">
@@ -154,25 +132,35 @@ export const Checkout: React.FC = () => {
         <div className="w-full lg:w-3/5 bg-white flex flex-col p-8 lg:p-12">
           {/* Contact */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('Contact')}</h2>
+            <Typography variant="h2" className="text-xl font-bold text-gray-900 mb-4">
+              {t('Contact')}
+            </Typography>
             {isAuthLoading ? (
               <div className="w-full rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-400 animate-pulse">
                 {t('loading')}
               </div>
             ) : (
-              <input
-                type="email"
-                value={user?.email ?? ''}
-                readOnly
-                placeholder={t('loginToSeeMail')}
-                className="w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 focus:outline-none"
-              />
+              <div className="rounded-lg border border-gray-200 bg-white px-4 py-3 space-y-1">
+                {billingAddress && (
+                  <>
+                    <p className="text-sm font-medium text-gray-900">
+                      {[billingAddress.firstName, billingAddress.lastName].filter(Boolean).join(' ')}
+                    </p>
+                    <p className="text-sm text-gray-600">{billingAddress.addressLine1}</p>
+                    <p className="text-sm text-gray-600">
+                      {[billingAddress.postcode, billingAddress.city, billingAddress.country].filter(Boolean).join(' ')}
+                    </p>
+                    <div className="border-t border-gray-100 my-2" />
+                  </>
+                )}
+                <p className="text-sm text-gray-700">{user?.email ?? ''}</p>
+              </div>
             )}
           </div>
 
           {/* Payment */}
           <div>
-            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('Payment')}</h2>
+            <Typography variant="h2" className="text-xl font-bold text-gray-900 mb-4">{t('Payment')}</Typography>
 
             {apiError && (
               <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">

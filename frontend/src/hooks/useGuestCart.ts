@@ -44,7 +44,7 @@ export function useGuestCart() {
             }
             persist(current.map(i =>
                 i.productId === productId
-                    ? { ...i, quantity: newQty, subtotal: i.unitPrice * newQty }
+                    ? { ...i, quantity: newQty, subtotal: i.period ? i.unitPrice * newQty * i.period : i.unitPrice * newQty }
                     : i
             ));
         } else {
@@ -81,7 +81,7 @@ export function useGuestCart() {
             return;
         }
         persist(current.map(i =>
-            i.id === itemId ? { ...i, quantity, subtotal: i.unitPrice * quantity } : i
+            i.id === itemId ? { ...i, quantity, subtotal: i.period ? i.unitPrice * quantity * i.period : i.unitPrice * quantity } : i
         ));
     }, [persist]);
 

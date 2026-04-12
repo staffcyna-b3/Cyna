@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { StripePaymentFormProps } from '@/types/interfaces/StripePaymentFormProps.interface';
 import { useAuth } from '@/hooks/useAuth';
 import { useCheckout } from '@/hooks/useCheckout';
+import useCart from '@/hooks/useCart';
 import { createOrder, updateOrderStatus } from '@/services/orderService';
 
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
@@ -18,6 +19,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   const { t } = useTranslation();
   const { accessToken } = useAuth();
   const { checkoutIds } = useCheckout();
+  const { clearCart } = useCart();
 
   const cartId = checkoutIds?.cartId ?? null;
   const billingAddressId = checkoutIds?.billingAddressId ?? null;
@@ -35,6 +37,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
           accessToken
         );
         await updateOrderStatus(order.id, 'PAID', accessToken);
+        await clearCart();
         navigate('/checkout/confirmation', { state: { order, paymentIntentId } });
         return;
       } catch (err) {

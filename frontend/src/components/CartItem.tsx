@@ -33,7 +33,7 @@ export const CartItem = ({ item, onQuantityChange, onRemove }: CartItemProps) =>
     <div className="flex bg-muted/80 p-4 rounded-lg gap-4">
       <div className="flex flex-col gap-2">
         <p>{item.name}</p>
-        <p>{t("currency")}{priceDisplay}</p>
+        <p>{priceDisplay}</p>
         <div className="flex gap-2 items-center">
           {/* // TODO: replace gray */}
           <div className="flex items-center gap-1 px-1.5 bg-gray-200 rounded-lg w-fit justify-center">
@@ -43,7 +43,7 @@ export const CartItem = ({ item, onQuantityChange, onRemove }: CartItemProps) =>
           </div>
           <Button variant="ghost" onClick={() => onRemove(item.id)}><LucideTrash /></Button>
         </div>
-        <p>{t("total")} {t("currency")}{totalDisplay}</p>
+        <p>{t("total")} {totalDisplay}</p>
       </div>
     </div>
   )

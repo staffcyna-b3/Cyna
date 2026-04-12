@@ -11,6 +11,7 @@ import { useCheckout } from "@/hooks/useCheckout"
 import { useAuth } from "@/hooks/useAuth"
 import useCart from "@/hooks/useCart"
 import { saveAddresses } from "@/services/orderService"
+import { formatCurrency } from "@/utils/currencyFormatter"
 
 function validateAddress(data: AddressFormData, t: (key: string) => string): Partial<Record<keyof AddressFormData, string>> {
   const errors: Partial<Record<keyof AddressFormData, string>> = {}
@@ -42,7 +43,7 @@ export const Cart = () => {
     setCheckoutIds,
     fetchCheckoutContext,
   } = useCheckout()
-  const { cartId, items, totalAmount, updateQuantity, removeFromCart, clearCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
+  const { cartId, items, updateQuantity, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
 
   const hasUnavailableItems = items.some((item) => item.unavailable);
 
@@ -69,7 +70,12 @@ export const Cart = () => {
     const hasPhysicalProduct = items.some((item) => item.isService === false)
     return hasPhysicalProduct ? 5.99 : 0
   }, [items])
-  const finalTotal = useMemo(() => totalAmount + deliveryFee, [totalAmount, deliveryFee])
+  // immediateTotal = ce qui est débité immédiatement (1 période pour les abonnements, pas le total du contrat)
+  const immediateTotal = useMemo(
+    () => items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
+    [items]
+  )
+  const finalTotal = useMemo(() => immediateTotal + deliveryFee, [immediateTotal, deliveryFee])
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
     updateQuantity(itemId, quantity)
@@ -132,21 +138,23 @@ export const Cart = () => {
 
     navigate("/checkout/payment", {
       state: {
-        items: items.map((item) => ({
+        cartItems: items.map((item) => ({
           id: item.id,
           name: item.name,
           quantity: item.quantity,
           unitPriceCents: Math.round(item.unitPrice * 100),
-          isRecurring: item.isService && item.period !== null,
+          isRecurring: item.isService === true && item.period != null,
+          billingPeriod: item.period === 12 ? 'yearly' : item.period != null ? 'monthly' : undefined,
         })),
         cartId,
         billingAddressId: resolvedBillingId,
         shippingAddressId: resolvedShippingId,
+        billingAddress,
       },
     })
   }
 
-  if (checkoutLoading || cartLoading) {
+  if ((checkoutLoading || cartLoading) && items.length === 0) {
     return <div className="py-20 px-40">{t("loading")}</div>
   }
 
@@ -175,7 +183,7 @@ export const Cart = () => {
   return (
     <div className="py-20 px-40 min-h-screen bg-white">
       <div className="flex justify-between mb-10">
-        <p className="text-5xl">{currentStep === "cart" ? t("cart") : t("shippingAddress")}</p>
+        <p className="text-5xl">{currentStep === "cart" ? t("cart.title") : t("shippingAddress")}</p>
         <div>
           <p className="text-lg">{t("totalOf")} {totalItems} {t("items")}</p>
           <Link to="/products" className="text-primary">{t("continueShopping")}</Link>
@@ -258,28 +266,28 @@ export const Cart = () => {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between gap-3">
                     <span>{item.name} x{item.quantity}</span>
-                    <span>{t("currency")}{item.subtotal.toFixed(2)}</span>
+                    <span>{formatCurrency(item.unitPrice * item.quantity)}</span>
                   </div>
                 ))}
               </div>
               <div className="w-full border-t border-white/20" />
               <div className="w-full text-white text-sm flex justify-between">
                 <span>{t("subtotal")}</span>
-                <span>{t("currency")}{totalAmount.toFixed(2)}</span>
+                <span>{formatCurrency(immediateTotal)}</span>
               </div>
               <div className="w-full text-white text-sm flex justify-between">
                 <span>{t("shipping")}</span>
-                <span>{t("currency")}{deliveryFee.toFixed(2)}</span>
+                <span>{formatCurrency(deliveryFee)}</span>
               </div>
               <div className="w-full text-white flex justify-between font-semibold">
                 <span>{t("total")}</span>
-                <span>{t("currency")}{finalTotal.toFixed(2)}</span>
+                <span>{formatCurrency(finalTotal)}</span>
               </div>
             </>
           ) : (
             <>
               <p className="text-white">{t("total")}</p>
-              <p className="text-white">{t("currency")}{finalTotal.toFixed(2)}</p>
+              <p className="text-white">{formatCurrency(finalTotal)}</p>
             </>
           )}
           {currentStep === "cart" ? (
