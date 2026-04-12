@@ -150,11 +150,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           window.dispatchEvent(new Event('cart:auth-change'));
         }
 
-        if (accessToken) {
-          localStorage.setItem('accessToken', accessToken);
-          window.dispatchEvent(new Event('cart:auth-change'));
-        }
-
         setAccessToken(data.data.accessToken ?? null);
         setUser({
           id: userData.id,
@@ -303,7 +298,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     user,
-    accessToken,
     accessToken,
     isLoading,
     isAuthenticated: !!user,
