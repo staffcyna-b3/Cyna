@@ -21,12 +21,12 @@ export const CartItem = ({ item, onQuantityChange, onRemove }: CartItemProps) =>
 
   // Texte du prix principal
   const priceDisplay = item.isService && item.period
-    ? <>{formatCurrency(periodTotal)} <span className="font-normal text-gray-500 text-sm">/ {periodLabel}</span></>
+    ? <>{formatCurrency(periodTotal)} <span className="font-normal text-gray-500 text-sm">{t("for a total period of")} {periodLabel}</span></>
     : <>{formatCurrency(item.unitPrice)}</>;
 
   // Texte du sous-total
   const totalDisplay = item.isService && item.period
-    ? <>{formatCurrency(item.unitPrice * item.quantity * item.period)} <span className="text-gray-400 text-xs"></span></>
+    ? <>{formatCurrency(item.unitPrice * item.quantity)} <span className="text-gray-400 text-xs">{t("per month")}</span></>
     : <>{formatCurrency(item.subtotal)}</>;
 
   return (
