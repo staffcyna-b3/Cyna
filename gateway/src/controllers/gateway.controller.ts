@@ -17,11 +17,18 @@ export class GatewayController {
       const headers = this.prepareHeaders(req);
 
       const cleanPath = originalPath.replace(/^\/api/, '');
+
+      // Split query string before prefix matching so "?search=foo" is not
+      // mistaken for a path segment and causes the prefix to be missed.
+      const qIdx = cleanPath.indexOf('?');
+      const pathOnly = qIdx >= 0 ? cleanPath.slice(0, qIdx) : cleanPath;
+      const queryPart = qIdx >= 0 ? cleanPath.slice(qIdx) : '';
+
       const servicePrefix = MICROSERVICES[microservice].routes.find((route) =>
-        cleanPath === route || cleanPath.startsWith(`${route}/`)
+        pathOnly === route || pathOnly.startsWith(`${route}/`)
       );
       const forwardPath = servicePrefix
-        ? cleanPath.slice(servicePrefix.length) || '/'
+        ? (pathOnly.slice(servicePrefix.length) || '/') + queryPart
         : cleanPath || '/';
 
       const response = await this.proxyService.forward(

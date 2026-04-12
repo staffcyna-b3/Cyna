@@ -31,7 +31,7 @@ export const CheckoutConfirmation = () => {
   const shippingAddress = checkoutState.shippingAddress
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10 space-y-5">
+    <div className="mx-auto px-40 py-10 space-y-5 bg-white min-h-screen">
       <h1 className="text-3xl font-semibold">{t("orderConfirmed")}</h1>
       {order?.id ? (
         <p className="text-muted-foreground">{t("orderNumber")} {order.id}</p>
@@ -78,10 +78,6 @@ export const CheckoutConfirmation = () => {
         </div>
       ) : null}
 
-      {paymentIntentId ? (
-        <p className="text-sm text-muted-foreground">{t("stripeReference")} {paymentIntentId}</p>
-      ) : null}
-
       <p className="text-muted-foreground">{t("confirmationEmailSent")}</p>
 
       <div className="flex gap-3">
@@ -89,7 +85,7 @@ export const CheckoutConfirmation = () => {
           <Link to="/account/orders">{t("viewMyOrders")}</Link>
         </Button>
         <Button asChild variant="outline">
-          <Link to="/products">{t("backToProducts")}</Link>
+          <Link to="/catalog">{t("backToProducts")}</Link>
         </Button>
       </div>
     </div>

@@ -177,7 +177,7 @@ export const Cart = () => {
         <div className="rounded-lg border p-6 flex flex-col gap-4 w-fit">
           <p>{t("emptyCart")}</p>
           <Button asChild>
-            <Link to="/products">{t("viewProducts")}</Link>
+            <Link to="/catalog">{t("viewProducts")}</Link>
           </Button>
         </div>
       </div>
@@ -190,7 +190,7 @@ export const Cart = () => {
         <p className="text-5xl">{currentStep === "cart" ? t("cart.title") : t("shippingAddress")}</p>
         <div>
           <p className="text-lg">{t("totalOf")} {totalItems} {t("items")}</p>
-          <Link to="/products" className="text-primary">{t("continueShopping")}</Link>
+          <Link to="/catalog" className="text-primary">{t("continueShopping")}</Link>
         </div>
       </div>
 

@@ -18,8 +18,11 @@ app.use(express.json())
 
 initDb()
 
+// Categories must be registered before product routes to avoid the /:id
+// catch-all intercepting GET /categories.
 app.use('/categories', categoryRoutes);
-app.use('/products', productRoutes);
+// Gateway strips the /products prefix before forwarding, so mount at root.
+app.use('/', productRoutes);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000
 

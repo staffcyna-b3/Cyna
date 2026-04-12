@@ -50,6 +50,9 @@ export default function CustomRoutes() {
       <Route element={<MainLayout />}>
         <Route element={<CatalogLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/catalog" element={<CatalogList />} />
+          <Route path="/catalog/:id" element={<CatalogDetail />} />
+        </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />
@@ -62,9 +65,6 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
-          <Route path="/catalog" element={<CatalogList />} />
-          <Route path="/catalog/:id" element={<CatalogDetail />} />
-        </Route>
       </Route>
     </Routes>
   )

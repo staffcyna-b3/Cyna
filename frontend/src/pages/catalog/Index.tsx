@@ -8,7 +8,7 @@ import CatalogProductCard from '../../components/CatalogProductCard';
 import { CatalogContext } from '../../contexts/CatalogContext';
 import Pagination from '../../components/ui/Pagination';
 import { Button } from '../../components/ui/button';
-// import FilterPanel from '../../components/FilterPanel';
+import FilterPanel from '../../components/FilterPanel';
 import LoadingSkeleton from '../../components/ui/LoadingSkeleton';
 import ServiceDetailLayout from '../../components/ServiceDetailLayout';
 import { useTranslation } from 'react-i18next';
@@ -305,7 +305,7 @@ export default function CatalogList() {
                     </div>
                 )}
 
-                {/* <FilterPanel
+                <FilterPanel
                     open={filtersOpen}
                     mode={panelMode}
                     onClose={cancelFilters}
@@ -325,7 +325,7 @@ export default function CatalogList() {
                     setLocalSort={setLocalSort}
                     sliderMin={sliderMin}
                     sliderMax={sliderMax}
-                /> */}
+                />
 
                 {loading && <LoadingSkeleton count={8} />}
                 {error && (
