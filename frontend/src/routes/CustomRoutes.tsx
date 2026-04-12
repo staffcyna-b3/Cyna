@@ -4,21 +4,21 @@ import HomePage from "../pages/frontoffice/Home"
 import { Register } from "../pages/auth/Register"
 import { Login } from "@/pages/auth/Login"
 import { ConfirmEmail } from "@/pages/auth/ConfirmEmail"
+import Dashboard from "@/pages/backoffice/Dashboard"
 import { ProtectedRoute } from "@/components/protectedRoute"
 import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
 import { Verify2FA } from "@/pages/auth/Verify2FA"
 import { UserRole } from "@/types/enums/UserRole.enum"
-import { CheckoutSuccess } from "@/pages/frontoffice/stripe/CheckoutSuccess"
-import { CheckoutCancel } from "@/pages/frontoffice/stripe/CheckoutCancel"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Users from "@/pages/backoffice/Users"
+import { CheckoutSuccess } from "@/pages/frontoffice/stripe/CheckoutSuccess"
+import { CheckoutCancel } from "@/pages/frontoffice/stripe/CheckoutCancel"
 import { Checkout as StripeCheckout } from "@/pages/frontoffice/stripe/Checkout"
 import { CheckoutConfirmation } from "@/pages/frontoffice/CheckoutConfirmation"
 import CatalogDetail from "../pages/catalog/Detail"
 import CatalogList from "../pages/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
-import Dashboard from "@/pages/backoffice/Dashboard"
 import { Cart } from "@/pages/frontoffice/Cart"
 
 export default function CustomRoutes() {
@@ -34,18 +34,26 @@ export default function CustomRoutes() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-2fa" element={<Verify2FA />} />
 
-      {/* Backoffice routes — protected by role */}
-      <Route
-        element={
-          <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
-            <BackOfficeLayout />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/users" element={<Users />} />
+      {/* Backoffice routes */}
+      <Route element={<BackOfficeLayout />}>
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/users"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Users />
+            </ProtectedRoute>
+          }
+        />
       </Route>
-
+      
       {/* Frontoffice routes */}
       <Route element={<MainLayout />}>
         <Route element={<CatalogLayout />}>

@@ -150,6 +150,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           window.dispatchEvent(new Event('cart:auth-change'));
         }
 
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+          window.dispatchEvent(new Event('cart:auth-change'));
+        }
+
+        setAccessToken(data.data.accessToken ?? null);
         setUser({
           id: userData.id,
           email: userData.email,
@@ -201,7 +207,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  // Au chargement initial, vérifier le remember me token
+  // Au chargement initial : tenter le refresh JWT, sinon fallback sur remember-me
   useEffect(() => {
     // Evite le double appel en dev avec React.StrictMode
     if (hasInitialized.current) return;
@@ -220,6 +226,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.error('Erreur lors de la déconnexion:', err);
       } finally {
         setUser(null);
+        setAccessToken(null);
         setAccessToken(null);
       }
   }, []);
@@ -296,6 +303,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     user,
+    accessToken,
     accessToken,
     isLoading,
     isAuthenticated: !!user,
