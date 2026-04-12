@@ -10,6 +10,7 @@ import { SameAddressToggle } from "@/components/forms/SameAddressToggle"
 import { useCheckout } from "@/hooks/useCheckout"
 import { useAuth } from "@/hooks/useAuth"
 import useCart from "@/hooks/useCart"
+import { saveAddresses } from "@/services/orderService"
 
 function validateAddress(data: AddressFormData, t: (key: string) => string): Partial<Record<keyof AddressFormData, string>> {
   const errors: Partial<Record<keyof AddressFormData, string>> = {}
@@ -102,11 +103,31 @@ export const Cart = () => {
       if (Object.keys(nextShippingErrors).length > 0) setIsEditingShippingAddress(true)
       return
     }
-    console.log(cartId, checkoutIds.billingAddressId, checkoutIds.shippingAddressId)
-    
-    if (!cartId || !checkoutIds?.billingAddressId || !checkoutIds?.shippingAddressId) {
+    if (!cartId) {
       setSubmitError(t("missingCartOrAddress"))
       return
+    }
+
+    // Si les adresses ne sont pas encore en DB (nouvel utilisateur),
+    // on les sauvegarde avant de naviguer vers le paiement.
+    let resolvedBillingId = checkoutIds?.billingAddressId
+    let resolvedShippingId = checkoutIds?.shippingAddressId
+
+    if (!resolvedBillingId || !resolvedShippingId) {
+      try {
+        const effectiveShipping = sameAddress ? billingAddress : shippingAddress
+        const saved = await saveAddresses(
+          { addressLine1: billingAddress.addressLine1, city: billingAddress.city, postcode: billingAddress.postcode, country: billingAddress.country },
+          { addressLine1: effectiveShipping.addressLine1, city: effectiveShipping.city, postcode: effectiveShipping.postcode, country: effectiveShipping.country },
+          accessToken!
+        )
+        resolvedBillingId = saved.billing!.id
+        resolvedShippingId = saved.shipping!.id
+        setCheckoutIds({ cartId: cartId ?? null, billingAddressId: resolvedBillingId, shippingAddressId: resolvedShippingId })
+      } catch {
+        setSubmitError(t("missingCartOrAddress"))
+        return
+      }
     }
 
     navigate("/checkout/payment", {
@@ -119,8 +140,8 @@ export const Cart = () => {
           isRecurring: item.isService && item.period !== null,
         })),
         cartId,
-        billingAddressId: checkoutIds.billingAddressId,
-        shippingAddressId: checkoutIds.shippingAddressId,
+        billingAddressId: resolvedBillingId,
+        shippingAddressId: resolvedShippingId,
       },
     })
   }

@@ -162,6 +162,7 @@
   "searching": "Searching...",
   "noProductFound": "No product found",
   "previous": "Previous",
-  "next": "Next"
+  "next": "Next",
+  "totalOf": "Total of "
 }
 

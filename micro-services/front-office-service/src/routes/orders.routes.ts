@@ -7,6 +7,7 @@ import { CartRepository } from '../repository/cart.repository';
 import { AddressRepository } from '../repository/address.repository';
 import { OrderService } from '../services/orders.service';
 import { CheckoutService } from '../services/checkout.service';
+import { AddressService } from '../services/address.service';
 
 /*
 STRIPE INTEGRATION NOTE — for Marie
@@ -29,12 +30,14 @@ const addressRepository = new AddressRepository();
 
 const orderService = new OrderService(orderRepository);
 const checkoutService = new CheckoutService(cartRepository, addressRepository);
+const addressService = new AddressService(addressRepository);
 
 const orderController = new OrderController(orderService);
 const checkoutController = new CheckoutController(checkoutService);
-const addressesController = new AddressesController(addressRepository);
+const addressesController = new AddressesController(addressService);
 
 router.get('/addresses', (req, res) => addressesController.getAddresses(req, res));
+router.put('/addresses', (req, res) => addressesController.upsertAddresses(req, res));
 router.get('/checkout/context', (req, res) => checkoutController.getCheckoutContext(req, res));
 
 router.post('/orders', (req, res) => orderController.create(req, res));

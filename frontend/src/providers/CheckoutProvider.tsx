@@ -22,7 +22,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
   const [isLoadingContext, setIsLoadingContext] = useState(false)
 
   // Fetches addresses only — works regardless of cart state.
-  // checkoutIds (cartId + address IDs) are set separately by Cart when the user validates.
+  // cartId comes from CartContext (useCart) which is populated via authCart.fetchCart().
   const fetchCheckoutContext = useCallback(async () => {
     if (!accessToken || !user) return
     setIsLoadingContext(true)
@@ -60,7 +60,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
         }))
       }
     } catch (err: unknown) {
-      // 404 = user has no addresses yet — silently allow manual entry
+      // 404 = pas encore d'adresses en DB — saisie manuelle autorisée
       const status = (err as { status?: unknown })?.status
       if (status !== 404) {
         console.error("Failed to fetch user addresses", err)

@@ -1,40 +1,59 @@
 import { Request, Response } from 'express';
 import { HttpError } from '../common/HttpError';
 import { Logger } from '../common/logger';
-import { IAddressRepository } from '../interfaces/AddressRepository';
-import { AddressType } from '../enum/AddressType';
+import { IAddressService } from '../interfaces/AddressService';
+import { AddressUpsertData } from '../interfaces/AddressUpsertData';
 import { isValidUuid } from '../common/validation';
 
 export class AddressesController {
-  constructor(private readonly addressRepository: IAddressRepository) {}
+  constructor(private readonly addressService: IAddressService) {}
 
   async getAddresses(req: Request, res: Response) {
     try {
-      const userIdHeader = req.headers['x-user-id'];
-      const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
+      const userId = this.getUserId(req, res);
+      if (!userId) return;
 
-      if (!isValidUuid(userId)) {
-        return res.status(401).json({ message: 'Unauthorized' });
-      }
-
-      const addresses = await this.addressRepository.findAllByUserId(userId);
-      const billing = addresses.find((a) => a.type === AddressType.BILLING);
-      const shipping = addresses.find((a) => a.type === AddressType.SHIPPING);
-
-      return res.status(200).json({
-        billing: billing
-          ? { id: billing.id, addressLine1: billing.address_line1, city: billing.city, postcode: billing.postcode, country: billing.country }
-          : null,
-        shipping: shipping
-          ? { id: shipping.id, addressLine1: shipping.address_line1, city: shipping.city, postcode: shipping.postcode, country: shipping.country }
-          : null,
-      });
+      const result = await this.addressService.getAddresses(userId);
+      return res.status(200).json(result);
     } catch (error: unknown) {
-      if (error instanceof HttpError) {
-        return res.status(error.statusCode).json({ message: error.message });
-      }
-      Logger.error('Error fetching addresses', { message: error instanceof Error ? error.message : String(error) });
-      return res.status(500).json({ message: 'Internal server error' });
+      return this.handleError(res, error, 'Error fetching addresses');
     }
+  }
+
+  async upsertAddresses(req: Request, res: Response) {
+    try {
+      const userId = this.getUserId(req, res);
+      if (!userId) return;
+
+      const billing = req.body.billing as AddressUpsertData;
+      const shipping = req.body.shipping as AddressUpsertData;
+
+      if (!billing || !shipping) {
+        return res.status(422).json({ message: 'billing and shipping are required' });
+      }
+
+      const result = await this.addressService.upsertAddresses(userId, billing, shipping);
+      return res.status(200).json(result);
+    } catch (error: unknown) {
+      return this.handleError(res, error, 'Error upserting addresses');
+    }
+  }
+
+  private getUserId(req: Request, res: Response): string | null {
+    const userIdHeader = req.headers['x-user-id'];
+    const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
+    if (!isValidUuid(userId)) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return null;
+    }
+    return userId;
+  }
+
+  private handleError(res: Response, error: unknown, fallbackMessage: string) {
+    if (error instanceof HttpError) {
+      return res.status(error.statusCode).json({ message: error.message });
+    }
+    Logger.error(fallbackMessage, { message: error instanceof Error ? error.message : String(error) });
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }

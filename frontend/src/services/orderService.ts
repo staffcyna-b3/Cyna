@@ -2,6 +2,8 @@ import type { CreateOrderPayload } from "@/types/interfaces/Order/CreateOrderPay
 import type { CreateOrderResponse } from "@/types/interfaces/Order/CreateOrderResponse"
 import type { GetOrderResponse } from "@/types/interfaces/Order/GetOrderResponse"
 import type { CheckoutContext } from "@/types/interfaces/Checkout/CheckoutContext"
+import type { UserAddresses } from "@/types/interfaces/UserAddresses"
+import type { AddressPayload } from "@/types/interfaces/AddressPayload"
 
 const withAuthHeaders = (token: string): Record<string, string> => ({
   "Content-Type": "application/json",
@@ -28,9 +30,22 @@ const parseJsonResponse = async <T>(res: Response): Promise<T> => {
   throw new Error(`Expected JSON response but received '${contentType || "unknown"}': ${bodyPreview}`)
 }
 
-export interface UserAddresses {
-  billing: { id: string; addressLine1: string; city: string; postcode: string; country: string } | null
-  shipping: { id: string; addressLine1: string; city: string; postcode: string; country: string } | null
+export async function saveAddresses(
+  billing: AddressPayload,
+  shipping: AddressPayload,
+  token: string
+): Promise<UserAddresses> {
+  const res = await fetch("/api/front-office/addresses", {
+    method: "PUT",
+    headers: withAuthHeaders(token),
+    body: JSON.stringify({ billing, shipping }),
+  })
+
+  if (!res.ok) {
+    throw await parseError(res)
+  }
+
+  return parseJsonResponse<UserAddresses>(res)
 }
 
 export async function getUserAddresses(token: string): Promise<UserAddresses> {
