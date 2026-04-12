@@ -14,6 +14,14 @@ export function useAuthCart() {
     const [error, setError] = useState<string | null>(null);
     const [cartId, setCartId] = useState<string | null>(null);
 
+    const handleExpiredToken = useCallback(() => {
+        localStorage.removeItem('accessToken');
+        window.dispatchEvent(new Event('cart:auth-change'));
+    }, []);
+
+    const is401 = (err: unknown) =>
+        err instanceof Error && (err as Error & { status?: number }).status === 401;
+
     const fetchCart = useCallback(async () => {
         setIsLoading(true);
         setError(null);
@@ -23,10 +31,8 @@ export function useAuthCart() {
             setTotalAmount(data.totalAmount || 0);
             setCartId(data.id || null);
         } catch (err) {
-            if (err instanceof Error && (err as Error & { status?: number }).status === 401) {
-                // Token expiré ou invalide — nettoyer et repasser en mode guest
-                localStorage.removeItem('accessToken');
-                window.dispatchEvent(new Event('cart:auth-change'));
+            if (is401(err)) {
+                handleExpiredToken();
                 return;
             }
             console.error(err);
@@ -34,7 +40,7 @@ export function useAuthCart() {
         } finally {
             setIsLoading(false);
         }
-    }, [service]);
+    }, [service, handleExpiredToken]);
 
     const addToCart = useCallback(async (productId: string, options: AddToCartOptions) => {
         const qty = options.quantity || 1;
@@ -44,20 +50,22 @@ export function useAuthCart() {
             await fetchCart();
             toast.success('Produit ajouté au panier');
         } catch (err) {
+            if (is401(err)) { handleExpiredToken(); return; }
             toast.error("Erreur lors de l'ajout");
             throw err;
         }
-    }, [service, fetchCart]);
+    }, [service, fetchCart, handleExpiredToken]);
 
     const updateQuantity = useCallback(async (itemId: string, quantity: number) => {
         try {
             await service.updateItem(itemId, quantity);
             await fetchCart();
         } catch (err) {
+            if (is401(err)) { handleExpiredToken(); return; }
             toast.error('Erreur de mise à jour');
             throw err;
         }
-    }, [service, fetchCart]);
+    }, [service, fetchCart, handleExpiredToken]);
 
     const removeFromCart = useCallback(async (itemId: string) => {
         try {
@@ -65,10 +73,11 @@ export function useAuthCart() {
             await fetchCart();
             toast.success('Produit retiré');
         } catch (err) {
+            if (is401(err)) { handleExpiredToken(); return; }
             toast.error('Erreur de suppression');
             throw err;
         }
-    }, [service, fetchCart]);
+    }, [service, fetchCart, handleExpiredToken]);
 
     const clearCart = useCallback(async () => {
         try {
