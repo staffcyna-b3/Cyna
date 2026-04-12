@@ -8,8 +8,10 @@ import { CartService } from '../services/CartService';
 const hasValidToken = () => !!localStorage.getItem('accessToken');
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(hasValidToken);
-    const prevIsLoggedIn = useRef(isLoggedIn);
+    // Toujours démarrer à false — AuthProvider dispatche 'cart:auth-change'
+    // après avoir validé la session, ce qui évite les fetch avec un token expiré.
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const prevIsLoggedIn = useRef(false);
     const guestCart = useGuestCart();
     const authCart = useAuthCart();
 

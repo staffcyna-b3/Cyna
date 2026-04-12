@@ -25,7 +25,11 @@ export class CartService {
 
     public async getCart() {
         const response = await fetch(`${GATEWAY_URL}/api/front-office/cart`, this.getOptions('GET'));
-        if (!response.ok) throw new Error('Erreur récupération panier');
+        if (!response.ok) {
+            const err = new Error('Erreur récupération panier') as Error & { status: number };
+            err.status = response.status;
+            throw err;
+        }
         return await response.json();
     }
 

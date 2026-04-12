@@ -18,8 +18,12 @@ export const Checkout: React.FC = () => {
   const { stripePromise, isConfigured } = useStripeConfig();
   const location = useLocation();
 
-  const cartItems = (location.state as LocationState)?.cartItems ?? [];
-  const billingAddress = (location.state as LocationState)?.billingAddress ?? null;
+  const locationState = location.state as LocationState ?? {};
+  const cartItems = locationState.cartItems ?? [];
+  const billingAddress = locationState.billingAddress ?? null;
+  const cartId = locationState.cartId ?? null;
+  const billingAddressId = locationState.billingAddressId ?? null;
+  const shippingAddressId = locationState.shippingAddressId ?? null;
 
   const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isRecurring), [cartItems]);
   const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isRecurring), [cartItems]);
@@ -183,6 +187,9 @@ export const Checkout: React.FC = () => {
                   amountCents={totalCents}
                   description={cartItems.map((i) => i.name).join(', ')}
                   paymentIntentId={paymentIntentId}
+                  cartId={cartId}
+                  billingAddressId={billingAddressId}
+                  shippingAddressId={shippingAddressId}
                 />
               </Elements>
             )}

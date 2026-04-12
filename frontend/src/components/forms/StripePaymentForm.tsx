@@ -6,54 +6,55 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { StripePaymentFormProps } from '@/types/interfaces/StripePaymentFormProps.interface';
 import { useAuth } from '@/hooks/useAuth';
-import { useCheckout } from '@/hooks/useCheckout';
 import useCart from '@/hooks/useCart';
 import { createOrder, updateOrderStatus } from '@/services/orderService';
 
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   paymentIntentId,
+  cartId,
+  billingAddressId,
+  shippingAddressId,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { accessToken } = useAuth();
-  const { checkoutIds } = useCheckout();
-  const { clearCart } = useCart();
-
-  const cartId = checkoutIds?.cartId ?? null;
-  const billingAddressId = checkoutIds?.billingAddressId ?? null;
-  const shippingAddressId = checkoutIds?.shippingAddressId ?? null;
+  const { fetchCart } = useCart();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [cgvAccepted, setCgvAccepted] = useState(false);
 
   const handlePaymentSuccess = async () => {
+    let order = null;
+
     if (cartId && billingAddressId && shippingAddressId && accessToken) {
       try {
-        const order = await createOrder(
+        console.log('[Payment] Creating order with:', { cartId, billingAddressId, shippingAddressId });
+        order = await createOrder(
           { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId: paymentIntentId },
           accessToken
         );
+        console.log('[Payment] Order created:', order?.id);
         await updateOrderStatus(order.id, 'PAID', accessToken);
-        await clearCart();
-        navigate('/checkout/confirmation', { state: { order, paymentIntentId } });
-        return;
+        console.log('[Payment] Order status updated to PAID');
       } catch (err) {
         // Payment succeeded — don't block the user, log and fall through to confirmation
-        console.error('Order creation failed after payment', err);
+        console.error('[Payment] Order creation/update failed after payment:', err);
       }
     } else {
-      console.error('Missing required data for createOrder:', {
+      console.error('[Payment] Missing required data for createOrder:', {
         cartId,
         billingAddressId,
         shippingAddressId,
         hasToken: !!accessToken,
       });
     }
-    // Fallback : naviguer quand même avec la référence Stripe
-    navigate('/checkout/confirmation', { state: { paymentIntentId } });
+
+    // Toujours resynchroniser le panier après paiement (qu'il ait été vidé en DB ou non)
+    await fetchCart();
+    navigate('/checkout/confirmation', { state: { order, paymentIntentId } });
   };
 
   const handleSubmit = async (event: React.FormEvent) => {

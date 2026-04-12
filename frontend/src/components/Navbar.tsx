@@ -1,18 +1,21 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ChevronDown, Search, ShoppingCart, User } from 'lucide-react';
+import { ChevronDown, LogOut, Search, ShoppingCart, User } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 import { CatalogService } from '@/services/CatalogService';
 import { ProductSuggestion } from '@/types/interfaces/catalog/ProductSuggestion';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '@/utils/currencyFormatter';
+import { Button } from '@/components/ui/button';
 import placeholder from '@/assets/pictures/placeholder.svg';
 
 export default function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentLanguage, availableLanguages, setLanguage } = useLanguage();
+    const { logout, isAuthenticated } = useAuth();
     const { items } = useCart();
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
     const service = useMemo(() => CatalogService.getInstance(), []);
@@ -23,6 +26,11 @@ export default function Navbar() {
     const [suggestions, setSuggestions] = useState<ProductSuggestion[]>([]);
     const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+
+    const handleLogout = async () => {
+        await logout();
+        navigate("/login");
+    };
 
     useEffect(() => {
         const trimmedSearch = search.trim();
@@ -171,6 +179,12 @@ export default function Navbar() {
                         <button type="button" className="flex items-center justify-center" aria-label={t('account')}>
                             <User className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />
                         </button>
+
+                        {isAuthenticated && (
+                            <Button variant="ghost" onClick={handleLogout} aria-label={t('logout')}>
+                                <LogOut className="h-6 w-6 sm:h-7 sm:w-7" strokeWidth={2.1} />
+                            </Button>
+                        )}
                     </div>
                 </div>
 

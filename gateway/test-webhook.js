@@ -104,11 +104,11 @@ const MOCK_USER_ID         = 'cc24542d-784f-4588-a65d-6e86b54e3e49';
 const MOCK_USER_EMAIL      = process.env.TEST_USER_EMAIL || 'marie.richir35@gmail.com';
 const MOCK_CUSTOMER_ID     = 'cus_test_aabbcc112233';
 // const MOCK_PAYMENT_INTENT  = 'pi_test_3TGG7e2eZvKYlo2C0000001';
-const MOCK_PAYMENT_INTENT  = 'pi_3TLL1D1AdBsYOB9D0W2isTBK'; // Test avec un PaymentIntent existant dans la base de données
+const MOCK_PAYMENT_INTENT  = 'pi_3TLOhx1AdBsYOB9D0MkFc1QU'; // Test avec un PaymentIntent existant dans la base de données
 const MOCK_INVOICE_ID      = 'in_test_1NjVin2eZvKYlo2CzGRuJ9A6';
-const MOCK_SUBSCRIPTION_ID = 'sub_1TLL1C1AdBsYOB9D6r4XVK2b';
+const MOCK_SUBSCRIPTION_ID = 'sub_1TLOK81AdBsYOB9DDkZ1jTxb';
 // const MOCK_PRICE_ID        = 'price_test_cynapro_monthly';
-const MOCK_PRICE_ID        = '299998';
+const MOCK_PRICE_ID        = '149999';
 
 const EVENTS = [
   // ── 1. payment_intent.succeeded ─────────────────────────────────────────────

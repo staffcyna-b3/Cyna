@@ -129,12 +129,15 @@ export const Cart = () => {
         )
         resolvedBillingId = saved.billing!.id
         resolvedShippingId = saved.shipping!.id
-        setCheckoutIds({ cartId: cartId ?? null, billingAddressId: resolvedBillingId, shippingAddressId: resolvedShippingId })
       } catch {
         setSubmitError(t("missingCartOrAddress"))
         return
       }
     }
+
+    // Toujours mettre à jour checkoutIds avec le cartId courant,
+    // que les adresses viennent de la DB ou d'une nouvelle saisie.
+    setCheckoutIds({ cartId: cartId ?? null, billingAddressId: resolvedBillingId!, shippingAddressId: resolvedShippingId! })
 
     navigate("/checkout/payment", {
       state: {

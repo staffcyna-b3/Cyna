@@ -23,6 +23,12 @@ export function useAuthCart() {
             setTotalAmount(data.totalAmount || 0);
             setCartId(data.id || null);
         } catch (err) {
+            if (err instanceof Error && (err as Error & { status?: number }).status === 401) {
+                // Token expiré ou invalide — nettoyer et repasser en mode guest
+                localStorage.removeItem('accessToken');
+                window.dispatchEvent(new Event('cart:auth-change'));
+                return;
+            }
             console.error(err);
             setError('Impossible de charger le panier');
         } finally {
