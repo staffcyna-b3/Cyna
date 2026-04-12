@@ -9,7 +9,7 @@ echo Installation des dépendances...
 
 echo → Frontend...
 cd frontend
-npm install
+call npm install
 cd ..
 
 
