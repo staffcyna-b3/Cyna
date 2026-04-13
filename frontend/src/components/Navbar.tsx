@@ -191,12 +191,19 @@ export default function Navbar() {
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="px-4 py-3 flex justify-center">
-                                            <Link to="/login" className="flex items-center gap-2 text-sm text-[#3d49f5]">
-                                                <User className="h-4 w-4" strokeWidth={2} />
-                                                {t('login')}
-                                            </Link>
-                                        </div>
+                                        <>
+                                            <div className="px-4 py-3 flex justify-center">
+                                                <Link to="/login" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <User className="h-4 w-4" strokeWidth={2} />
+                                                    {t('login')}
+                                                </Link>
+                                            </div>
+                                            <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
+                                                <Link to="/register" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    {t('register')}
+                                                </Link>
+                                            </div>
+                                        </>
                                     )}
                                 </div>
                             </div>
