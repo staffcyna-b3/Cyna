@@ -6,7 +6,10 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "${workspaceFolder}/gateway",
       "console": "integratedTerminal"
     },
@@ -15,7 +18,10 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "${workspaceFolder}/micro-services/product-service",
       "console": "integratedTerminal"
     },
@@ -24,7 +30,10 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "${workspaceFolder}/micro-services/front-office-service",
       "console": "integratedTerminal"
     },
@@ -33,7 +42,10 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "${workspaceFolder}/micro-services/back-office-service",
       "console": "integratedTerminal"
     },
@@ -42,9 +54,24 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
       "cwd": "${workspaceFolder}/frontend",
       "console": "integratedTerminal"
-    },
+    }
+  ],
+  "compounds": [
+    {
+      "name": "FullStack",
+      "configurations": [
+        "Gateway",
+        "Product Service",
+        "Front Office Service",
+        "Back Office Service",
+        "Frontend"
+      ]
+    }
   ]
 }
