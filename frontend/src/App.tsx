@@ -5,7 +5,7 @@ import { CheckoutProvider } from './providers/CheckoutProvider'
 import CustomRoutes from './routes/CustomRoutes';
 import { AuthProvider } from './providers/AuthProvider';
 import { CartProvider } from './providers/CartProvider';
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from '@/components/ui/sonner';
 import { StripeProvider } from './context/StripeContext'
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
           <AuthProvider>
             <CheckoutProvider>
               <CartProvider>
-                <Toaster position="top-right" />
+                <Toaster position="top-center" richColors />
                 <CustomRoutes />
               </CartProvider>
             </CheckoutProvider>

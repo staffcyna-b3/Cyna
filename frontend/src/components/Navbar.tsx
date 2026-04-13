@@ -173,19 +173,38 @@ export default function Navbar() {
                             </div>
                         </div>
 
-                        <Button variant="ghost" size="icon" className="flex items-center justify-center" aria-label={t('account')}>
-                            <User strokeWidth={3} />
-                        </Button>
-
-                        {isAuthenticated && (
-                            <Button variant="ghost" size="icon" onClick={handleLogout} aria-label={t('logout')}>
-                                <LogOut strokeWidth={3} />
+                        <div className="relative group">
+                            <Button variant="ghost" size="icon" className="flex items-center justify-center" aria-label={t('account')}>
+                                <User strokeWidth={3} />
                             </Button>
-                        )}
+
+                            <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
+                                <div className="w-56 rounded-2xl border border-[#e0e4f8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.18)] overflow-hidden">
+                                    {isAuthenticated ? (
+                                        <div className="px-4 py-3 flex justify-center">
+                                            <button
+                                                onClick={handleLogout}
+                                                className="flex items-center gap-2 text-sm text-[#3d49f5]"
+                                            >
+                                                <LogOut className="h-4 w-4" strokeWidth={2} />
+                                                {t('logout')}
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="px-4 py-3 flex justify-center">
+                                            <Link to="/login" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                <User className="h-4 w-4" strokeWidth={2} />
+                                                {t('login')}
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div className="lg:absolute lg:left-1/2 lg:top-1/2 lg:w-full lg:max-w-[720px] lg:-translate-x-1/2 lg:-translate-y-1/2 lg:px-8">
+                <div className="lg:absolute lg:left-1/2 lg:top-1/2 lg:w-full lg:max-w-[600px] h-50px lg:-translate-x-1/2 lg:-translate-y-1/2 lg:px-8">
                     <div ref={searchContainerRef} className="relative mx-auto w-full max-w-[720px]">
                         <form onSubmit={handleSubmit} className="relative">
                             <input

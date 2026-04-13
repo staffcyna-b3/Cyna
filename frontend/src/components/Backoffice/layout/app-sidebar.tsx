@@ -69,7 +69,7 @@ function SidebarFooterContent() {
   }
 
   return (
-    <div className="flex items-center gap-2 bg-primary rounded-full p-1.5 mx-2 mb-2">
+    <div className="flex items-center justify-center gap-2 bg-primary rounded-full p-1.5 mx-2 mb-2">
       <button
         onClick={() => navigate("/settings")}
         className="flex h-8 w-8 items-center justify-center rounded-full text-primary-foreground hover:bg-white/10 transition-colors"

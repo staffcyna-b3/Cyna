@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
 import { CartService } from '../services/CartService';
 import { CartItem } from '../types/interfaces/cart/CartItem';
 import { AddToCartOptions } from '../types/interfaces/cart/AddToCartOptions';
