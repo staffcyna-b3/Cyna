@@ -220,8 +220,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } catch (err) {
         console.error('Erreur lors de la déconnexion:', err);
       } finally {
+        localStorage.removeItem('accessToken');
+        window.dispatchEvent(new Event('cart:auth-change'));
         setUser(null);
-        setAccessToken(null);
         setAccessToken(null);
       }
   }, []);

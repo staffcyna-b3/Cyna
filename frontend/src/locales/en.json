@@ -19,7 +19,7 @@
   "cart": {
     "empty": "Your cart is empty",
     "remove": "Remove",
-    "seeCart": "cart.seeCart",
+    "seeCart": "View cart",
     "subtotal": "Subtotal",
     "title": "Cart",
     "unavailable": "This product is no longer available"

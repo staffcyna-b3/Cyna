@@ -31,14 +31,11 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
 
     if (cartId && billingAddressId && shippingAddressId && accessToken) {
       try {
-        console.log('[Payment] Creating order with:', { cartId, billingAddressId, shippingAddressId });
         order = await createOrder(
           { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId: paymentIntentId },
           accessToken
         );
-        console.log('[Payment] Order created:', order?.id);
         await updateOrderStatus(order.id, 'PAID', accessToken);
-        console.log('[Payment] Order status updated to PAID');
       } catch (err) {
         // Payment succeeded — don't block the user, log and fall through to confirmation
         console.error('[Payment] Order creation/update failed after payment:', err);

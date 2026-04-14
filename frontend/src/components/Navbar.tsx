@@ -152,10 +152,12 @@ export default function Navbar() {
                                                             <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
                                                             <p className="text-xs text-gray-500">
                                                                 {item.quantity} × {formatCurrency(item.unitPrice)}
+                                                                {item.isService && item.period ? <> / mois</> : null}
                                                             </p>
                                                         </div>
                                                         <p className="text-sm font-bold text-[#3d49f5] shrink-0">
-                                                            {formatCurrency(item.subtotal)}
+                                                            {formatCurrency(item.unitPrice * item.quantity)}
+                                                            {item.isService && item.period ? <span className="text-xs font-normal text-gray-400"> / mois</span> : null}
                                                         </p>
                                                     </li>
                                                 ))}

@@ -47,9 +47,10 @@ export const CatalogProductCard = ({
         <article
             onClick={() => navigate(`/catalog/${product.id}`)}
             className={
-                    'cursor-pointer flex-none w-full sm:w-5/6 md:w-3/4 lg:w-3/5 max-w-full mx-auto h-[450px] relative bg-gradient-to-b from-[#0f0b1a] to-[#171026] shadow-lg rounded-xl overflow-hidden text-white transform-gpu transition-transform duration-200 ease-out hover:scale-[1.02] flex flex-col ' +
+                    'cursor-pointer flex-none w-full sm:w-5/6 md:w-3/4 lg:w-3/5 max-w-full mx-auto h-[450px] relative shadow-lg rounded-xl overflow-hidden text-white transform-gpu transition-transform duration-200 ease-out hover:scale-[1.02] flex flex-col ' +
                     (unavailable ? 'opacity-70 grayscale' : '')
                 }
+                style={{ background: 'radial-gradient(circle at 15% 15%, #1e1a48 0%, #080618 65%)' }}
             >
                 <div className="relative h-[180px] bg-gradient-to-r from-[#0d0a16] to-[#1b1630] flex items-center justify-center flex-shrink-0">
                     <ProductTypeBadge className="absolute left-3 top-3 px-2 py-1" isService={product.isService} />

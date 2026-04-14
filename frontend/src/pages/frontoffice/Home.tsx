@@ -125,6 +125,8 @@ export default function HomePage() {
                 </Carousel>
             </section>
 
+            <div className="h-18 w-full bg-white"></div>
+
             <div style={{ background: 'radial-gradient(circle, #1A164B 0%, #0E0B37 37%, #04021D 63%, #000005 100%)' }}>
 
                 {/* Services section */}

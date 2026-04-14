@@ -19,7 +19,7 @@
   "cart": {
     "empty": "Votre panier est vide",
     "remove": "Supprimer",
-    "seeCart": "",
+    "seeCart": "Voir le panier",
     "subtotal": "Sous-total",
     "title": "Panier",
     "unavailable": "Ce produit n'est plus disponible"
