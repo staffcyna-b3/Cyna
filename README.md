@@ -21,7 +21,12 @@ update gateway .env with given STRIPE_WEBHOOK_SECRET
 # STEP 3
 
 // MAC
-```./start.sh```
+```
+./start.sh       # defaults to dev mode
+./start.sh dev   # frontend: npm run dev
+./start.sh prod  # frontend: npm run build → vite preview --host
+```
+
 
 // WINDOWS
 ```./start.bat```
