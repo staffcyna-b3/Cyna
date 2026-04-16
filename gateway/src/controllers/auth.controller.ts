@@ -51,6 +51,7 @@ export class AuthController {
 
       res.status(200).json({
         requires2FA: false,
+        accessToken: jwtResult.accessToken,
         id: result.user.id,
         email: result.user.email,
         full_name: result.user.full_name,

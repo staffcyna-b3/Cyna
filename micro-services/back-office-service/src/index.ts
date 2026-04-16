@@ -3,6 +3,9 @@ import express from 'express'
 import cors from 'cors'
 import { initDb } from './models/index'
 import { Logger } from './common/logger'
+import productRoutes from './routes/product.routes'
+import promotionRoutes from './routes/promotion.routes'
+import categoryRoutes from './routes/category.routes'
 
 dotenv.config()
 
@@ -23,7 +26,11 @@ app.use(cors({
   },
   credentials: true,
 }))
-app.use(express.json())
+app.use(express.json({ limit: '10mb' }))
+
+app.use('/', productRoutes)
+app.use('/', promotionRoutes)
+app.use('/', categoryRoutes)
 
 initDb()
 

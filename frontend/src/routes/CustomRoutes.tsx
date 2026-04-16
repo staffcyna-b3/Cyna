@@ -12,6 +12,10 @@ import { Verify2FA } from "@/pages/auth/Verify2FA"
 import { UserRole } from "@/types/enums/UserRole.enum"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Users from "@/pages/backoffice/Users"
+import Products from "@/pages/backoffice/Products"
+import Orders from "@/pages/backoffice/Orders"
+import Transactions from "@/pages/backoffice/Transactions"
+import Discounts from "@/pages/backoffice/Discounts"
 import { CheckoutSuccess } from "@/pages/frontoffice/stripe/CheckoutSuccess"
 import { CheckoutCancel } from "@/pages/frontoffice/stripe/CheckoutCancel"
 import { Checkout as StripeCheckout } from "@/pages/frontoffice/stripe/Checkout"
@@ -20,7 +24,6 @@ import CatalogDetail from "../pages/catalog/Detail"
 import CatalogList from "../pages/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
 import { Cart } from "@/pages/frontoffice/Cart"
-import { User } from "lucide-react"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -46,6 +49,14 @@ export default function CustomRoutes() {
           }
         />
         <Route
+          path="/products"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Products />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/users"
           element={
             <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
@@ -53,8 +64,32 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Transactions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/discounts"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Discounts />
+            </ProtectedRoute>
+          }
+        />
       </Route>
-      
+
       {/* Frontoffice routes */}
       <Route element={<MainLayout />}>
         <Route element={<CatalogLayout />}>
