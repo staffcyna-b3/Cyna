@@ -1,11 +1,11 @@
 import React from 'react';
-import RangeSlider from './ui/RangeSliderRadix';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
 import { useTranslation } from 'react-i18next';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { cn } from '@/lib/utils';
 import { FilterPanelProps } from '@/types/interfaces/catalog/FilterPanelProps';
+import { Button } from '../ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Input } from '../ui/input';
+import RangeSliderRadix from '../RangeSliderRadix';
 
 export default function FilterPanel({
     open,
@@ -108,7 +108,7 @@ export default function FilterPanel({
                                 <label className="text-xs sm:text-sm font-semibold text-[#b7bdd9] block mb-3">
                                     {t('price')}
                                 </label>
-                                <RangeSlider
+                                <RangeSliderRadix
                                     min={Math.floor(sliderMin)}
                                     max={Math.ceil(sliderMax)}
                                     valueMin={localMin}

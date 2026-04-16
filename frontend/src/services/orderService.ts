@@ -1,7 +1,7 @@
-import type { CreateOrderPayload } from "@/types/interfaces/order/CreateOrderPayload"
-import type { CreateOrderResponse } from "@/types/interfaces/order/CreateOrderResponse"
+import type { CreateOrderPayload } from "@/types/interfaces/Order/CreateOrderPayload"
+import type { CreateOrderResponse } from "@/types/interfaces/Order/CreateOrderResponse"
 import type { GetOrderResponse } from "@/types/GetOrderResponse"
-import type { CheckoutContext } from "@/types/interfaces/checkout/CheckoutContext"
+import type { CheckoutContext } from "@/types/interfaces/Checkout/CheckoutContext"
 import type { UserAddresses } from "@/types/interfaces/address/UserAddresses"
 import type { AddressPayload } from "@/types/interfaces/address/AddressPayload"
 

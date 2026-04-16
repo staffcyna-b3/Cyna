@@ -1,5 +1,5 @@
 import { t } from "i18next"
-import { Button } from "./ui/button"
+import { Button } from "../ui/button"
 import { LucideTrash } from "lucide-react"
 import { formatCurrency } from "@/utils/currencyFormatter"
 import { CartItem as CheckoutCartItem } from "@/types/interfaces/cart/CartItem"

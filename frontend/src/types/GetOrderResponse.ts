@@ -1,3 +1,3 @@
-import type { CreateOrderResponse } from "@/types/interfaces/order/CreateOrderResponse"
+import type { CreateOrderResponse } from "@/types/interfaces/Order/CreateOrderResponse"
 
 export type GetOrderResponse = CreateOrderResponse

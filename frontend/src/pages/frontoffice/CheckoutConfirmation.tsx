@@ -1,8 +1,8 @@
 import { Link, Navigate, useLocation } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import type { CheckoutConfirmationState } from "@/types/interfaces/checkoutConfirmation/CheckoutConfirmationState"
-import type { ConfirmationItem } from "@/types/interfaces/checkoutConfirmation/ConfirmationItem"
+import type { CheckoutConfirmationState } from "@/types/interfaces/CheckoutConfirmation/CheckoutConfirmationState"
+import type { ConfirmationItem } from "@/types/interfaces/CheckoutConfirmation/ConfirmationItem"
 import { useCheckout } from "@/hooks/useCheckout"
 
 export const CheckoutConfirmation = () => {
