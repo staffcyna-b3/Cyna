@@ -1,6 +1,6 @@
 import { createContext } from "react"
-import type { AddressFormData } from "@/types/interfaces/checkout/AddressFormData"
-import type { CheckoutContextValue } from "@/types/interfaces/checkout/CheckoutContextValue"
+import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
+import type { CheckoutContextValue } from "@/types/interfaces/Checkout/CheckoutContextValue"
 
 export const emptyAddress: AddressFormData = {
   firstName: "",

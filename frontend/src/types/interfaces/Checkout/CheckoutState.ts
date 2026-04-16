@@ -1,5 +1,5 @@
-import type { AddressFormData } from "@/types/interfaces/checkout/AddressFormData"
-import type { ConfirmedOrder } from "@/types/interfaces/checkoutConfirmation/ConfirmedOrder"
+import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
+import type { ConfirmedOrder } from "@/types/interfaces/CheckoutConfirmation/ConfirmedOrder"
 
 export interface CheckoutState {
   billingAddress: AddressFormData

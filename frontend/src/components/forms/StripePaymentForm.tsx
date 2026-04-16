@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { StripePaymentFormProps } from '@/types/interfaces/stripe/StripePaymentFormProps.interface';
 import { useAuth } from '@/hooks/useAuth';
 import useCart from '@/hooks/useCart';
-import { createOrder, updateOrderStatus } from '@/services/OrderService';
+import { createOrder, updateOrderStatus } from '@/services/orderService';
 
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   paymentIntentId,
