@@ -6,7 +6,7 @@ import CustomRoutes from './routes/CustomRoutes';
 import { AuthProvider } from './providers/AuthProvider';
 import { CartProvider } from './providers/CartProvider';
 import { Toaster } from '@/components/ui/sonner';
-import { StripeProvider } from './context/StripeContext'
+import { StripeProvider } from './contexts/StripeContext'
 
 function App() {
   return (

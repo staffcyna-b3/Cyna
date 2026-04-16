@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
+import type { AddressFormData } from "@/types/interfaces/checkout/AddressFormData"
 import { useTranslation } from "react-i18next"
 
 interface AddressFormProps {

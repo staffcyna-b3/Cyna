@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { AuthProviderProps } from '../types/interfaces/AuthProviderProps.interface';
+import { AuthProviderProps } from '../types/interfaces/auth/AuthProviderProps.interface';
 import { AuthContext, AuthContextType } from '../contexts/AuthContext';
 import { User } from '@/types/interfaces/User.interface';
 

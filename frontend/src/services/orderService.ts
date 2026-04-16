@@ -1,9 +1,9 @@
-import type { CreateOrderPayload } from "@/types/interfaces/Order/CreateOrderPayload"
-import type { CreateOrderResponse } from "@/types/interfaces/Order/CreateOrderResponse"
-import type { GetOrderResponse } from "@/types/interfaces/Order/GetOrderResponse"
-import type { CheckoutContext } from "@/types/interfaces/Checkout/CheckoutContext"
-import type { UserAddresses } from "@/types/interfaces/UserAddresses"
-import type { AddressPayload } from "@/types/interfaces/AddressPayload"
+import type { CreateOrderPayload } from "@/types/interfaces/order/CreateOrderPayload"
+import type { CreateOrderResponse } from "@/types/interfaces/order/CreateOrderResponse"
+import type { GetOrderResponse } from "@/types/GetOrderResponse"
+import type { CheckoutContext } from "@/types/interfaces/checkout/CheckoutContext"
+import type { UserAddresses } from "@/types/interfaces/address/UserAddresses"
+import type { AddressPayload } from "@/types/interfaces/address/AddressPayload"
 
 const withAuthHeaders = (token: string): Record<string, string> => ({
   "Content-Type": "application/json",

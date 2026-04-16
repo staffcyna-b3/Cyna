@@ -1,5 +1,5 @@
 import type { OrderStatus } from "@/types/enums/OrderStatus"
-import type { OrderItem } from "@/types/interfaces/Order/OrderItem"
+import type { OrderItem } from "@/types/interfaces/order/OrderItem"
 
 export interface CreateOrderResponse {
   id: string

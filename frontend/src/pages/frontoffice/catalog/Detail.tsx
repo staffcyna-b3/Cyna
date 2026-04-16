@@ -1,18 +1,18 @@
 import React, { JSX, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import byteaToImage from '../../utils/byteaToImage';
-import LoadingSkeleton from '../../components/ui/LoadingSkeleton';
-import AddToCartButton from '../../components/ui/AddToCartButton';
+import byteaToImage from '@/utils/byteaToImage';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
+import AddToCartButton from '@/components/Frontoffice/AddToCartButton';
 import { useTranslation } from 'react-i18next';
-import GetOneProduct from '../../hooks/getOneProduct';
+import GetOneProduct from '@/hooks/getOneProduct';
 import { ProductPictureResponse } from '@/types/interfaces/catalog/ProductPictureResponse';
 import placeholder from '@/assets/pictures/placeholder.svg';
 import { formatCurrency } from '@/utils/currencyFormatter';
 import CanBeAddToCart from '@/hooks/canBeAddToCart';
-import SimilarProductsCarousel from '@/components/SimilarProductsCarousel';
+import SimilarProductsCarousel from '@/components/Frontoffice/SimilarProductsCarousel';
 import CatalogLayout from '@/layouts/CatalogLayout';
-import ProductTypeBadge from '@/components/ui/ProductTypeBadge';
-import ServiceDetailLayout from '@/components/ServiceDetailLayout';
+import ProductTypeBadge from '@/components/ProductTypeBadge';
+import ServiceDetailLayout from '@/components/Frontoffice/layout/ServiceDetailLayout';
 
 export default function CatalogDetail(): JSX.Element {
     const { id } = useParams<{ id: string }>();
