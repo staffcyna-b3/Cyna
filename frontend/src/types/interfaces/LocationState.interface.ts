@@ -1,5 +1,5 @@
-import { CartItem } from "./CartItem.interface";
-import { AddressFormData } from "./Checkout/AddressFormData";
+import { CartItem } from "./cart/CartItem";
+import { AddressFormData } from "./checkout/AddressFormData";
 
 export interface LocationState {
   cartItems?: CartItem[];

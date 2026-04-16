@@ -2,15 +2,15 @@ import { useEffect, useMemo, useState } from "react"
 import { Link, useNavigate, useSearchParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
-import { CartItem } from "@/components/CartItem"
-import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
-import type { CheckoutStep } from "@/types/interfaces/Checkout/CheckoutStep"
+import { CartItem } from "@/components/Frontoffice/CartItem"
+import type { AddressFormData } from "@/types/interfaces/checkout/AddressFormData"
+import type { CheckoutStep } from "@/types/CheckoutStep"
 import { AddressForm } from "@/components/forms/AddressForm"
-import { SameAddressToggle } from "@/components/forms/SameAddressToggle"
+import { SameAddressToggle } from "@/components/Frontoffice/SameAddressToggle"
 import { useCheckout } from "@/hooks/useCheckout"
 import { useAuth } from "@/hooks/useAuth"
 import useCart from "@/hooks/useCart"
-import { saveAddresses } from "@/services/orderService"
+import { saveAddresses } from "@/services/OrderService"
 import { formatCurrency } from "@/utils/currencyFormatter"
 
 function validateAddress(data: AddressFormData, t: (key: string) => string): Partial<Record<keyof AddressFormData, string>> {
@@ -45,7 +45,7 @@ export const Cart = () => {
   } = useCheckout()
   const { cartId, items, updateQuantity, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
 
-  const hasUnavailableItems = items.some((item) => item.unavailable);
+  const hasUnavailableItems = items.some((item) => item.unavailable); // ! ??
 
   const [billingErrors, setBillingErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
   const [shippingErrors, setShippingErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})

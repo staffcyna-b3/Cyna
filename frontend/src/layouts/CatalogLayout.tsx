@@ -3,7 +3,7 @@ import { useLocation, Outlet } from 'react-router-dom';
 import GetCategories from '../hooks/getCategories';
 import { CatalogLayoutProps } from '../types/interfaces/catalog/CatalogLayoutProps.interface';
 import { Category } from '../types/interfaces/category/Category';
-import CatalogNavigation from '../components/CatalogNavigation';
+import CatalogNavigation from '@/components/Frontoffice/CatalogNavigation';
 import CatalogProvider from '@/providers/CatalogProvider';
 
 const CatalogLayout = ({

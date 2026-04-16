@@ -4,10 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { StripePaymentFormProps } from '@/types/interfaces/StripePaymentFormProps.interface';
+import { StripePaymentFormProps } from '@/types/interfaces/stripe/StripePaymentFormProps.interface';
 import { useAuth } from '@/hooks/useAuth';
 import useCart from '@/hooks/useCart';
-import { createOrder, updateOrderStatus } from '@/services/orderService';
+import { createOrder, updateOrderStatus } from '@/services/OrderService';
 
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   paymentIntentId,

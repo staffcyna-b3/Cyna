@@ -1,4 +1,4 @@
-import { Button } from './button';
+import { Button } from '../ui/button';
 import { useCart } from '@/hooks/useCart';
 import { Period } from '@/types/Period';
 import { PeriodEnum } from '@/types/enums/Period';

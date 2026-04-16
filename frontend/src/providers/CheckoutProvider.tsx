@@ -4,10 +4,10 @@ import {
   emptyAddress,
 } from "@/contexts/CheckoutContext"
 import { useAuth } from "@/hooks/useAuth"
-import { getUserAddresses } from "@/services/orderService"
-import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
-import type { CheckoutContextValue, CheckoutIds } from "@/types/interfaces/Checkout/CheckoutContextValue"
-import type { ConfirmedOrder } from "@/types/interfaces/CheckoutConfirmation/ConfirmedOrder"
+import { getUserAddresses } from "@/services/OrderService"
+import type { AddressFormData } from "@/types/interfaces/checkout/AddressFormData"
+import type { CheckoutContextValue, CheckoutIds } from "@/types/interfaces/checkout/CheckoutContextValue"
+import type { ConfirmedOrder } from "@/types/interfaces/checkoutConfirmation/ConfirmedOrder"
 
 export function CheckoutProvider({ children }: { children: ReactNode }) {
   const { accessToken, user } = useAuth()

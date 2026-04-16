@@ -1,6 +1,6 @@
-import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
-import type { CheckoutState } from "@/types/interfaces/Checkout/CheckoutState"
-import type { ConfirmedOrder } from "@/types/interfaces/CheckoutConfirmation/ConfirmedOrder"
+import type { AddressFormData } from "@/types/interfaces/checkout/AddressFormData"
+import type { CheckoutState } from "@/types/interfaces/checkout/CheckoutState"
+import type { ConfirmedOrder } from "@/types/interfaces/checkoutConfirmation/ConfirmedOrder"
 
 export interface CheckoutIds {
   cartId: string | null
