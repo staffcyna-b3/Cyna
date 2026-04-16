@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import Order, { OrderStatus } from '../models/Payment';
 import { IOrderRepository, OrderCreationData } from '../interfaces/IOrderRepository';
 import { Logger } from '../common/logger';

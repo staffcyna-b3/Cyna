@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import { NextFunction, Request, Response } from 'express';
 import { PaymentService, SubscriptionItem } from '../services/payment.service';
 

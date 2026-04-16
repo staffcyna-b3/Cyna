@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import express, { Request, Response, Router } from 'express';
 import { stripe, stripeWebhookSecret } from '../config/stripe.config';
 import { createPaymentService } from '../factories/payment.factory';

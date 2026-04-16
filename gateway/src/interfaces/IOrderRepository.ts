@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import { OrderStatus, PaymentType } from '../models/Payment';
 
 export interface OrderCreationData {

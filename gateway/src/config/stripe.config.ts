@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import Stripe from 'stripe';
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;

@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import User from '../models/User';
 import UserRole from '../models/UserRole';
 import { UserRoleType } from '../enum/UserRoleType.enum';

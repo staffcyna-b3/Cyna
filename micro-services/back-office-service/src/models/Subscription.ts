@@ -6,6 +6,7 @@ interface SubscriptionAttributes {
   id: string;
   user_id: string;
   product_id: string;
+  stripe_subscription_id?: string | null;
   start_date: Date;
   end_date: Date;
   status: SubscriptionStatus;
@@ -14,12 +15,13 @@ interface SubscriptionAttributes {
   updated_at: Date;
 }
 
-export interface SubscriptionCreationAttributes extends Optional<SubscriptionAttributes, 'id' | 'created_at' | 'updated_at' | 'status'> {}
+export interface SubscriptionCreationAttributes extends Optional<SubscriptionAttributes, 'id' | 'created_at' | 'updated_at' | 'status' | 'stripe_subscription_id'> {}
 
 class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAttributes> implements SubscriptionAttributes {
   declare id: string;
   declare user_id: string;
   declare product_id: string;
+  declare stripe_subscription_id?: string | null;
   declare start_date: Date;
   declare end_date: Date;
   declare status: SubscriptionStatus;

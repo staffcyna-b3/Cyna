@@ -11,7 +11,8 @@ import { pendingAuth2FAStore } from './stores/pending-auth-2fa.store';
 import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import cookieParser from 'cookie-parser';
-import stripeWebhookRouter from './webhooks/stripe.webhook';
+import { paymentsApiProxy, paymentsWebhookProxy } from './proxies/payments.proxy';
+import { authMiddleware } from './middlewares/auth.middleware';
 
 export const createApp = (): Express => {
   const app = express();
@@ -37,15 +38,23 @@ export const createApp = (): Express => {
 
   app.use(corsMiddleware);
 
-  // Stripe signature verification requires the raw request body.
-  app.use('/webhooks', stripeWebhookRouter);
+  // Both payment proxies are mounted BEFORE express.json() so the request body
+  // stream is never consumed by the gateway — it reaches payments-service intact.
+  // express.json() parsing after this point only applies to non-proxied routes.
+  // Webhook: no auth — Stripe sends requests without Authorization header.
+  app.use('/webhooks', express.raw({ type: 'application/json' }), paymentsWebhookProxy);
+
+  // Payment API: gateway validates JWT and injects x-user-id / x-user-email headers
+  // before proxying. authMiddleware only reads the Authorization header (no body),
+  // so it runs safely before express.json().
+  app.use('/api/payments', authMiddleware, paymentsApiProxy);
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
   app.use(loggingMiddleware);
 
-  app.get('/health', (req, res) => {
+  app.get('/health', (_req, res) => {
     res.json({ status: 'OK', timestamp: new Date().toISOString() });
   });
 

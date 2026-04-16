@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import { OrderStatus } from "../enum/OrderStatus.enum";
 import { PaymentType } from "../enum/PaymentType.enum";
 

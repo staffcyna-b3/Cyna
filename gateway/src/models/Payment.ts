@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database.config';
 import { PaymentAttributes } from '../interfaces/PaymentAttributes.interface';
@@ -64,3 +65,4 @@ Payment.init(
 );
 
 export default Payment;
+export { OrderStatus, PaymentType };

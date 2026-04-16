@@ -1,3 +1,4 @@
+// TODO: migré vers payments-service — à supprimer après validation
 import axios from 'axios';
 import Stripe from 'stripe';
 import { OrderStatus } from '../enum/OrderStatus.enum';
@@ -8,6 +9,7 @@ import { IOrderRepository } from '../interfaces/IOrderRepository';
 import { IPaymentUserRepository } from '../interfaces/IPaymentUserRepository';
 import { IMailService } from '../interfaces/IMailService';
 import { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
+export type { SubscriptionItem };
 
 const toOrderStatus = (stripeStatus: string): OrderStatus => {
   if (stripeStatus === 'succeeded') return OrderStatus.SUCCESS;
