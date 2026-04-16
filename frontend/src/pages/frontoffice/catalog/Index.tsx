@@ -1,16 +1,16 @@
 import { useEffect, useContext, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SlidersHorizontal, ArrowDown, ArrowUpWideNarrow } from 'lucide-react';
-import { CatalogSortBy } from '../../types/enums/catalog/CatalogSortBy';
-import { SortOrder } from '../../types/enums/SortOrder';
-import useCatalogFetch from '../../hooks/useCatalogFetch';
-import CatalogProductCard from '../../components/CatalogProductCard';
-import { CatalogContext } from '../../contexts/CatalogContext';
-import Pagination from '../../components/ui/Pagination';
-import { Button } from '../../components/ui/button';
-import FilterPanel from '../../components/FilterPanel';
-import LoadingSkeleton from '../../components/LoadingSkeleton';
-import ServiceDetailLayout from '../../components/ServiceDetailLayout';
+import { CatalogSortBy } from '@/types/enums/catalog/CatalogSortBy';
+import { SortOrder } from '@/types/enums/SortOrder';
+import useCatalogFetch from '@/hooks/useCatalogFetch';
+import CatalogProductCard from '@/components/Frontoffice/CatalogProductCard';
+import { CatalogContext } from '@/contexts/CatalogContext';
+import Pagination from '@/components/Frontoffice/Pagination';
+import { Button } from '@/components/ui/button';
+import FilterPanel from '@/components/Frontoffice/FilterPanel';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
+import ServiceDetailLayout from '@/components/Frontoffice/layout/ServiceDetailLayout';
 import { useTranslation } from 'react-i18next';
 
 export default function CatalogList() {

@@ -1,5 +1,5 @@
 # STEP 1
-launch docker BDD
+Launch docker BDD
 
 # STEP 2
 To install Stripe CLI : use docker if not on MACOS and windows install doesn't work (https://docs.stripe.com/stripe-cli/install?install-method=docker)
@@ -8,7 +8,7 @@ To install Stripe CLI : use docker if not on MACOS and windows install doesn't w
 
 ```stripe listen --forward-to localhost:3000/webhooks/stripe```
 
-update gateway .env with given STRIPE_WEBHOOK_SECRET
+Update gateway .env with given STRIPE_WEBHOOK_SECRET
 
 # STEP 3
 
@@ -27,6 +27,9 @@ update gateway .env with given STRIPE_WEBHOOK_SECRET
 ./start.sh prod  # frontend: npm run build → vite preview --host
 ```
 
-
 // WINDOWS
-```./start.bat```
+```
+./start.bat       # defaults to dev mode
+./start.bat dev   # frontend: npm run dev
+./start.bat prod  # frontend: npm run build → vite preview --host
+```

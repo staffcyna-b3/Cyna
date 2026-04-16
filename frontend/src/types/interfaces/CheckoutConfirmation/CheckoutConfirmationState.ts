@@ -1,5 +1,5 @@
-import type { ConfirmationItem } from "@/types/interfaces/CheckoutConfirmation/ConfirmationItem"
-import type { ConfirmedOrder } from "@/types/interfaces/CheckoutConfirmation/ConfirmedOrder"
+import type { ConfirmationItem } from "@/types/interfaces/checkoutConfirmation/ConfirmationItem"
+import type { ConfirmedOrder } from "@/types/interfaces/checkoutConfirmation/ConfirmedOrder"
 
 export interface CheckoutConfirmationState {
   order?: ConfirmedOrder

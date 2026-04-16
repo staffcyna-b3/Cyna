@@ -15,11 +15,11 @@ import { CheckoutSuccess } from "@/pages/frontoffice/stripe/CheckoutSuccess"
 import { CheckoutCancel } from "@/pages/frontoffice/stripe/CheckoutCancel"
 import { Checkout as StripeCheckout } from "@/pages/frontoffice/stripe/Checkout"
 import { CheckoutConfirmation } from "@/pages/frontoffice/CheckoutConfirmation"
-import CatalogDetail from "../pages/catalog/Detail"
-import CatalogList from "../pages/catalog/Index"
+import CatalogDetail from "@/pages/frontoffice/catalog/Detail"
+import CatalogList from "@/pages/frontoffice/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
 import { Cart } from "@/pages/frontoffice/Cart"
-import { ProtectedRoute } from "@/components/protectedRoute"
+import { ProtectedRoute } from "@/components/ProtectedRoute"
 
 export default function CustomRoutes() {
   const location = useLocation()

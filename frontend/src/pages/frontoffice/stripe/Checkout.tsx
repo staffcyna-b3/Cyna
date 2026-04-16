@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
 import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
-import { CartItem } from '@/types/interfaces/CartItem.interface';
+import { CartItem } from '@/types/interfaces/cart/CartItem.interface';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
 
 const formatEuro = (amountCents: number) =>

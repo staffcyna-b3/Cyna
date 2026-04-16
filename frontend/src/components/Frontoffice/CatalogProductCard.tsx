@@ -1,11 +1,11 @@
-import { ProductStatus } from '../types/enums/product/ProductStatus';
-import { CatalogResponse } from '../types/interfaces/catalog/CatalogResponse';
-import byteaToImage from '../utils/byteaToImage';
+import { ProductStatus } from '../../types/enums/product/ProductStatus';
+import { CatalogResponse } from '../../types/interfaces/catalog/CatalogResponse';
+import byteaToImage from '../../utils/byteaToImage';
 import { useTranslation } from 'react-i18next';
 import AddToCartButton from './AddToCartButton';
-import ProductTypeBadge from './ProductTypeBadge';
-import { ProductPictureResponse } from '../types/interfaces/catalog/ProductPictureResponse';
-import { ExtPicture } from '../types/ExtPicture';
+import ProductTypeBadge from '../ProductTypeBadge';
+import { ProductPictureResponse } from '../../types/interfaces/catalog/ProductPictureResponse';
+import { ExtPicture } from '../../types/ExtPicture';
 import { formatCurrency } from '@/utils/currencyFormatter';
 import placeholder from '@/assets/pictures/placeholder.svg';
 import { useState } from 'react';

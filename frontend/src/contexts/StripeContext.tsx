@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { loadStripe, type Stripe } from '@stripe/stripe-js';
-import { StripeContextValue } from '@/types/interfaces/StripeContextValue.interface';
+import { StripeContextValue } from '@/types/interfaces/stripe/StripeContextValue.interface';
 
 const publishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string | undefined;
 

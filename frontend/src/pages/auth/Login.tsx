@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ValidationErrors, validateLogin } from '../../utils/validation';
-import { LoginFormData } from '../../types/interfaces/LoginFormData.interface';
+import { LoginFormData } from '../../types/interfaces/auth/LoginFormData.interface';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from "react-i18next"
 import { Typography } from '@/components/ui/typography';
