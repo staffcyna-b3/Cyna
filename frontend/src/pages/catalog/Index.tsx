@@ -9,7 +9,7 @@ import { CatalogContext } from '../../contexts/CatalogContext';
 import Pagination from '../../components/ui/Pagination';
 import { Button } from '../../components/ui/button';
 import FilterPanel from '../../components/FilterPanel';
-import LoadingSkeleton from '../../components/ui/LoadingSkeleton';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
 import ServiceDetailLayout from '../../components/ServiceDetailLayout';
 import { useTranslation } from 'react-i18next';
 

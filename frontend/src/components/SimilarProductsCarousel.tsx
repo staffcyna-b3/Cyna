@@ -1,7 +1,7 @@
 import { JSX, useEffect, useMemo } from 'react';
 import GetSimilarProducts from '@/hooks/getSimilarProducts';
 import CatalogProductCard from './CatalogProductCard';
-import LoadingSkeleton from './ui/LoadingSkeleton';
+import LoadingSkeleton from './LoadingSkeleton';
 import { useTranslation } from 'react-i18next';
 
 export default function SimilarProductsCarousel({

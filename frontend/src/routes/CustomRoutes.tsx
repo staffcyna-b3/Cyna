@@ -5,7 +5,6 @@ import { Register } from "../pages/auth/Register"
 import { Login } from "@/pages/auth/Login"
 import { ConfirmEmail } from "@/pages/auth/ConfirmEmail"
 import Dashboard from "@/pages/backoffice/Dashboard"
-import { ProtectedRoute } from "@/components/protectedRoute"
 import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
 import { Verify2FA } from "@/pages/auth/Verify2FA"
@@ -20,7 +19,7 @@ import CatalogDetail from "../pages/catalog/Detail"
 import CatalogList from "../pages/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
 import { Cart } from "@/pages/frontoffice/Cart"
-import { User } from "lucide-react"
+import { ProtectedRoute } from "@/components/protectedRoute"
 
 export default function CustomRoutes() {
   const location = useLocation()

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
-import { useStripeConfig } from '@/context/StripeContext';
+import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
 import { CartItem } from '@/types/interfaces/CartItem.interface';
 import { LocationState } from '@/types/interfaces/LocationState.interface';

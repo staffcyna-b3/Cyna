@@ -1,8 +1,8 @@
 import React, { JSX, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import byteaToImage from '../../utils/byteaToImage';
-import LoadingSkeleton from '../../components/ui/LoadingSkeleton';
-import AddToCartButton from '../../components/ui/AddToCartButton';
+import LoadingSkeleton from '../../components/LoadingSkeleton';
+import AddToCartButton from '../../components/AddToCartButton';
 import { useTranslation } from 'react-i18next';
 import GetOneProduct from '../../hooks/getOneProduct';
 import { ProductPictureResponse } from '@/types/interfaces/catalog/ProductPictureResponse';
@@ -11,7 +11,7 @@ import { formatCurrency } from '@/utils/currencyFormatter';
 import CanBeAddToCart from '@/hooks/canBeAddToCart';
 import SimilarProductsCarousel from '@/components/SimilarProductsCarousel';
 import CatalogLayout from '@/layouts/CatalogLayout';
-import ProductTypeBadge from '@/components/ui/ProductTypeBadge';
+import ProductTypeBadge from '@/components/ProductTypeBadge';
 import ServiceDetailLayout from '@/components/ServiceDetailLayout';
 
 export default function CatalogDetail(): JSX.Element {
