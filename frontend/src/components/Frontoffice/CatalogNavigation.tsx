@@ -1,8 +1,8 @@
 import { useState, JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Category } from '../types/interfaces/category/Category';
-import { CategoryType } from '../types/enums/category/CategoryType';
+import { Category } from '@/types/interfaces/category/Category';
+import { CategoryType } from '@/types/enums/category/CategoryType';
 import { CatalogSection } from '@/types/enums/navigation/CatalogSection';
 import { CatalogNavigationProps } from '@/types/interfaces/catalog/CatalogNavigationProps';
 

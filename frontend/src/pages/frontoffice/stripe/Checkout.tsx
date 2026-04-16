@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+﻿import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Elements } from '@stripe/react-stripe-js';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
 import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
-import { CartItem } from '@/types/interfaces/cart/CartItem.interface';
+import { CartItem } from '@/types/interfaces/cart/CartItem';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
 
 const formatEuro = (amountCents: number) =>
@@ -132,7 +132,7 @@ export const Checkout: React.FC = () => {
 
       {/* Two-column layout */}
       <div className="flex flex-col lg:flex-row flex-1">
-        {/* Left panel — form */}
+        {/* Left panel â€” form */}
         <div className="w-full lg:w-3/5 bg-white flex flex-col p-8 lg:p-12">
           {/* Contact */}
           <div className="mb-8">
@@ -196,7 +196,7 @@ export const Checkout: React.FC = () => {
           </div>
         </div>
 
-        {/* Right panel — order summary */}
+        {/* Right panel â€” order summary */}
         <div className="w-full lg:w-2/5 bg-gray-50 border-l border-gray-200 p-8 lg:p-12">
           <div className="space-y-5">
             {cartItems.map((item) => (

@@ -19,7 +19,7 @@ import CatalogDetail from "@/pages/frontoffice/catalog/Detail"
 import CatalogList from "@/pages/frontoffice/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
 import { Cart } from "@/pages/frontoffice/Cart"
-import { ProtectedRoute } from "@/components/ProtectedRoute"
+import { ProtectedRoute } from "@/components/protectedRoute"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -53,7 +53,7 @@ export default function CustomRoutes() {
           }
         />
       </Route>
-      
+
       {/* Frontoffice routes */}
       <Route element={<MainLayout />}>
         <Route element={<CatalogLayout />}>
