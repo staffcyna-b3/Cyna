@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   ArrowLeftRight,
   Boxes,
+  ListOrdered,
   LayoutDashboard,
   LogOut,
   Percent,
@@ -32,6 +33,7 @@ import { useNavigate } from "react-router-dom"
 const navItems = [
   { title: 'dashboard', url: "/dashboard", icon: LayoutDashboard },
   { title: 'products', url: "/products", icon: Boxes },
+  { title: 'categories', url: "/categories", icon: ListOrdered },
   { title: 'users', url: "/users", icon: Users },
   { title: 'orders', url: "/orders", icon: ShoppingCart },
   { title: 'transactions', url: "/transactions", icon: ArrowLeftRight },

@@ -2,6 +2,7 @@ import type {
     BackOfficeCategory,
     BackOfficeCategoryOption,
     BackOfficeCategoryQuery,
+    ReorderCategoryPriorityPayload,
 } from './category';
 import type {
     BackOfficeProductImage,
@@ -39,6 +40,7 @@ export interface IBackOfficeService {
     updateProductImage(productId: string, payload: UpdateProductImagePayload): Promise<BackOfficeProductImage>;
 
     listCategories(query?: BackOfficeCategoryQuery): Promise<BackOfficeCategory[]>;
+    reorderCategoryDisplayPriority(payload: ReorderCategoryPriorityPayload): Promise<BackOfficeCategory[]>;
     listCategoryOptions(query?: BackOfficeCategoryQuery): Promise<BackOfficeCategoryOption[]>;
     getCategoryById(categoryId: string): Promise<BackOfficeCategory>;
 

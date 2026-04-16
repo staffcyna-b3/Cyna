@@ -203,6 +203,7 @@
   "yearly": "yearly",
   "orders": "Orders",
   "transactions": "Transactions",
+  "categories": "Categories",
   "discounts": "Discounts",
   "backoffice.reference": "Reference",
   "backoffice.stockQuantity": "Stock quantity",
@@ -226,6 +227,10 @@
   "backoffice.promotionConfiguration": "Promotion configuration",
   "backoffice.productsSelection": "Selected products",
   "backoffice.noDiscounts": "No discount found",
+  "backoffice.reorderServiceCategories": "Reorder the service categories shown under Our solutions on the home page.",
+  "backoffice.saveOrder": "Save order",
+  "backoffice.moveUp": "Move up",
+  "backoffice.moveDown": "Move down",
   "backoffice.ordersComingSoon": "Orders module is ready: front structure is in place, data can be connected to endpoints.",
   "backoffice.transactionsComingSoon": "Transactions module is ready: front structure is in place, data can be connected to endpoints."
 }

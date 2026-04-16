@@ -13,6 +13,7 @@ import { UserRole } from "@/types/enums/UserRole.enum"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Users from "@/pages/backoffice/Users"
 import Products from "@/pages/backoffice/Products"
+import Categories from "@/pages/backoffice/Categories"
 import Orders from "@/pages/backoffice/Orders"
 import Transactions from "@/pages/backoffice/Transactions"
 import Discounts from "@/pages/backoffice/Discounts"
@@ -53,6 +54,14 @@ export default function CustomRoutes() {
           element={
             <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
               <Products />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/categories"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Categories />
             </ProtectedRoute>
           }
         />

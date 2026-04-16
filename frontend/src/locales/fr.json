@@ -205,6 +205,7 @@
   "yearly": "Par an",
   "orders": "Commandes",
   "transactions": "Transactions",
+  "categories": "Categories",
   "discounts": "Reductions",
   "backoffice.reference": "Reference",
   "backoffice.stockQuantity": "Quantite en stock",
@@ -228,6 +229,10 @@
   "backoffice.promotionConfiguration": "Configuration de la promotion",
   "backoffice.productsSelection": "Produits concernes",
   "backoffice.noDiscounts": "Aucune reduction trouvee",
+  "backoffice.reorderServiceCategories": "Reordonnez les categories de service affichees sous Nos solutions sur la page d'accueil.",
+  "backoffice.saveOrder": "Sauvegarder l'ordre",
+  "backoffice.moveUp": "Monter",
+  "backoffice.moveDown": "Descendre",
   "backoffice.ordersComingSoon": "Module commandes pret: structure front en place, data a connecter selon endpoints.",
   "backoffice.transactionsComingSoon": "Module transactions pret: structure front en place, data a connecter selon endpoints."
 }

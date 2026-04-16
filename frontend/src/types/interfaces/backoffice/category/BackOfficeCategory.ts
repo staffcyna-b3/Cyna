@@ -4,6 +4,7 @@ export interface BackOfficeCategory {
     description?: string | null;
     image?: string | null;
     type: 'service' | 'product';
+    priority: number;
     created_at: string;
     updated_at: string;
 }

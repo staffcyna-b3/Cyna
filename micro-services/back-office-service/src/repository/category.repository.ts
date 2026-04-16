@@ -1,6 +1,6 @@
 import { Op } from 'sequelize';
 import Category from '../models/Category';
-import { CategoryFiltersDto, CategorySelectOptionDto } from '../dto/category';
+import { CategoryFiltersDto, CategorySelectOptionDto, ReorderCategoryPriorityItemDto } from '../dto/category';
 import { ICategoryRepository } from '../interfaces/ICategoryRepository';
 
 export class CategoryRepository implements ICategoryRepository {
@@ -23,7 +23,10 @@ export class CategoryRepository implements ICategoryRepository {
 
         return Category.findAll({
             where,
-            order: [['name', 'ASC']],
+            order: [
+                ['priority', 'DESC'],
+                ['name', 'ASC'],
+            ],
         });
     }
 
@@ -46,7 +49,10 @@ export class CategoryRepository implements ICategoryRepository {
         const categories = await Category.findAll({
             attributes: ['id', 'name', 'type'],
             where,
-            order: [['name', 'ASC']],
+            order: [
+                ['priority', 'DESC'],
+                ['name', 'ASC'],
+            ],
         });
 
         return categories.map((category) => ({
@@ -58,6 +64,24 @@ export class CategoryRepository implements ICategoryRepository {
 
     async findById(id: string): Promise<Category | null> {
         return Category.findByPk(id);
+    }
+
+    async reorderDisplayPriority(items: ReorderCategoryPriorityItemDto[]): Promise<Category[]> {
+        for (const item of items) {
+            const category = await Category.findByPk(item.id);
+            if (!category) {
+                throw new Error(`CATEGORY_NOT_FOUND:${item.id}`);
+            }
+
+            await category.update({ priority: item.priority });
+        }
+
+        return Category.findAll({
+            order: [
+                ['priority', 'DESC'],
+                ['name', 'ASC'],
+            ],
+        });
     }
 }
 

@@ -3,6 +3,7 @@ import type {
     BackOfficeCategory,
     BackOfficeCategoryOption,
     BackOfficeCategoryQuery,
+    ReorderCategoryPriorityPayload,
 } from '@/types/interfaces/backoffice/category';
 import type { BackOfficeCategoriesStoreState } from '@/types/interfaces/backoffice/store/BackOfficeCategoriesStoreState';
 import { createStore, createStoreHook } from './createStore';
@@ -56,6 +57,23 @@ export async function fetchBackOfficeCategoryById(categoryId: string): Promise<B
         const current = await service.getCategoryById(categoryId);
         store.setState({ current });
         return current;
+    } catch (error: unknown) {
+        setStoreError(store, getErrorMessage(error));
+        throw error;
+    } finally {
+        setStoreLoading(store, false);
+    }
+}
+
+export async function reorderBackOfficeCategoriesPriority(
+    payload: ReorderCategoryPriorityPayload,
+): Promise<BackOfficeCategory[]> {
+    try {
+        setStoreLoading(store, true);
+        setStoreError(store, null);
+        const items = await service.reorderCategoryDisplayPriority(payload);
+        store.setState({ items });
+        return items;
     } catch (error: unknown) {
         setStoreError(store, getErrorMessage(error));
         throw error;

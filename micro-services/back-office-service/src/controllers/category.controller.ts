@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { ICategoryService } from '../interfaces/ICategoryService';
-import { CategoryFiltersDto } from '../dto/category';
+import { CategoryFiltersDto, ReorderCategoryPriorityItemDto } from '../dto/category';
 import { Schema } from '../schemas/schema.types';
 import { validate } from '../schemas/validator';
-import { categoryFiltersQuerySchema, categoryIdParamSchema } from '../schemas/category.schemas';
+import { categoryFiltersQuerySchema, categoryIdParamSchema, reorderCategoryDisplayPrioritySchema } from '../schemas/category.schemas';
 
 export class CategoryController {
     constructor(private readonly categoryService: ICategoryService) { }
@@ -56,6 +56,19 @@ export class CategoryController {
             return res.status(200).json(category);
         } catch (error: unknown) {
             return this.handleError(res, error, 'Erreur get category by id');
+        }
+    }
+
+    async reorderDisplayPriority(req: Request, res: Response) {
+        try {
+            const { items } = this.parseWithSchema<{ items: ReorderCategoryPriorityItemDto[] }>(
+                reorderCategoryDisplayPrioritySchema,
+                req.body as Record<string, unknown>,
+            );
+            const categories = await this.categoryService.reorderDisplayPriority(items);
+            return res.status(200).json(categories);
+        } catch (error: unknown) {
+            return this.handleError(res, error, 'Erreur reorder categories display priority');
         }
     }
 

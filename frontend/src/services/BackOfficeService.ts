@@ -3,6 +3,7 @@ import type {
     BackOfficeCategory,
     BackOfficeCategoryOption,
     BackOfficeCategoryQuery,
+    ReorderCategoryPriorityPayload,
 } from '@/types/interfaces/backoffice/category';
 import type {
     BackOfficeProduct,
@@ -94,6 +95,10 @@ export class BackOfficeService implements IBackOfficeService {
 
     async listCategories(query: BackOfficeCategoryQuery = {}): Promise<BackOfficeCategory[]> {
         return this.api.listCategories(query);
+    }
+
+    async reorderCategoryDisplayPriority(payload: ReorderCategoryPriorityPayload): Promise<BackOfficeCategory[]> {
+        return this.api.reorderCategoryDisplayPriority(payload);
     }
 
     async listCategoryOptions(query: BackOfficeCategoryQuery = {}): Promise<BackOfficeCategoryOption[]> {

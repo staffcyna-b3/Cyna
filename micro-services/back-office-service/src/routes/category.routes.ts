@@ -13,5 +13,6 @@ const categoryController = new CategoryController(categoryService);
 router.get('/categories', (req, res) => categoryController.list(req, res));
 router.get('/categories/select-options', (req, res) => categoryController.listForSelect(req, res));
 router.get('/categories/:id', (req, res) => categoryController.getById(req, res));
+router.patch('/categories/display-priority', (req, res) => categoryController.reorderDisplayPriority(req, res));
 
 export default router;
