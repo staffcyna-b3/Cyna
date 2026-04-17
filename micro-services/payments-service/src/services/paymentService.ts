@@ -8,6 +8,7 @@ import { IOrderRepository } from '../interfaces/IOrderRepository';
 import { IPaymentUserRepository } from '../interfaces/IPaymentUserRepository';
 import { IMailService } from '../interfaces/IMailService';
 import { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
+import { PaymentType } from '../enum/PaymentType.enum';
 
 export type { SubscriptionItem };
 
@@ -68,7 +69,7 @@ export class PaymentService {
       total_amount: intent.amount / 100,
       currency: normalizedCurrency,
       stripe_payment_intent_id: intent.id,
-      payment_type: 'one_time',
+      payment_type: PaymentType.ONE_TIME,
       status: toOrderStatus(intent.status),
     });
 
@@ -196,7 +197,7 @@ export class PaymentService {
       total_amount: totalAmountCents / 100,
       currency: subscriptionItems[0].currency,
       stripe_payment_intent_id: paymentIntentId,
-      payment_type: 'subscription',
+      payment_type: PaymentType.SUBSCRIPTION,
       status: OrderStatus.PENDING,
     });
 
@@ -450,8 +451,16 @@ export class PaymentService {
     periodEnd: number
   ) {
     const url = `${MICROSERVICES.FRONTOFFICE.url}/subscriptions`;
+    console.log('URL: ${url}'); // Debug log
 
     try {
+      console.log('Sending subscription creation to front-office', {
+        stripeSubscriptionId,
+        userId,
+        items,
+        periodStart,
+        periodEnd,
+      }); // Debug log
       await axios.post(
         url,
         {

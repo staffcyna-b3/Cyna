@@ -25,8 +25,8 @@ export const Checkout: React.FC = () => {
   const billingAddressId = locationState.billingAddressId ?? null;
   const shippingAddressId = locationState.shippingAddressId ?? null;
 
-  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isRecurring), [cartItems]);
-  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isRecurring), [cartItems]);
+  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isService), [cartItems]);
+  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isService), [cartItems]);
   const hasSubscription = subscriptionItems.length > 0;
 
   const totalCents = useMemo(
@@ -72,7 +72,7 @@ export const Checkout: React.FC = () => {
             credentials: 'include',
             body: JSON.stringify({
               subscriptionItems: subscriptionItems.map((i) => ({
-                productId: i.id,
+                productId: i.productId ?? i.id,
                 priceAmountCents: i.unitPriceCents,
                 currency: 'eur',
                 description: i.name,
@@ -216,7 +216,7 @@ export const Checkout: React.FC = () => {
 
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                  {item.isRecurring && (
+                  {item.isService && (
                     <p className="mt-0.5 text-xs text-gray-500">
                       {t('Billed')} {item.billingPeriod === 'yearly' ? t('yearly') : t('monthly')}
                     </p>

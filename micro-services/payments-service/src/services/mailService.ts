@@ -13,62 +13,6 @@ export class MailService implements IMailService {
     },
   });
 
-  async sendConfirmationEmail(email: string, token: string) {
-    try {
-      const confirmUrl = `${process.env.FRONTEND_URL}/confirm-email?token=${token}`;
-      const template = emailTemplates.fr.confirmEmail;
-
-      await this.transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: template.subject,
-        html: template.html(confirmUrl),
-      });
-
-      Logger.info(`Email de confirmation envoyé à ${email}`);
-    } catch (error) {
-      Logger.error('Erreur envoi email confirmation:', error);
-      throw error;
-    }
-  }
-
-  async sendPasswordResetEmail(email: string, token: string) {
-    try {
-      const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-      const template = emailTemplates.fr.resetPassword;
-
-      await this.transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: template.subject,
-        html: template.html(resetUrl),
-      });
-
-      Logger.info(`Email de reset envoyé à ${email}`);
-    } catch (error) {
-      Logger.error('Erreur envoi email reset:', error);
-      throw error;
-    }
-  }
-
-  async send2FACode(email: string, code: string) {
-    try {
-      const template = emailTemplates.fr.twoFactorCode;
-
-      await this.transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: template.subject,
-        html: template.html(code),
-      });
-
-      Logger.info(`Code 2FA envoyé à ${email}`);
-    } catch (error) {
-      Logger.error('Erreur envoi code 2FA:', error);
-      throw error;
-    }
-  }
-
   async sendOrderConfirmationEmail(email: string, details: IOrderConfirmationDetails) {
     try {
       const template = emailTemplates.fr.orderConfirmation;
