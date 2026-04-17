@@ -7,6 +7,7 @@ export interface CartItem {
   subtotal: number;
   isService: boolean;
   period?: number;
+  durationMonths?: number;
   unavailable?: boolean;
   imageUrl?: string;
   stock?: number;

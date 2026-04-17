@@ -4,5 +4,6 @@ export interface SubscriptionItem {
   currency: string;
   description: string;
   billingPeriod: 'monthly' | 'yearly';
+  durationMonths: number;
   quantity: number;
 }

@@ -12,23 +12,12 @@ export class PaymentController {
         description?: string;
       };
 
-      const authenticatedUserId = req.headers['x-user-id'] as string;
-      const authenticatedUserEmail = req.headers['x-user-email'] as string;
-
-      if (!authenticatedUserId || !authenticatedUserEmail) {
-        return res.status(401).json({
-          success: false,
-          error: 'UNAUTHORIZED',
-          message: 'Utilisateur non authentifié',
-        });
-      }
-
       const payload = await this.paymentService.createPaymentIntent(
         amount,
         currency,
-        authenticatedUserId,
+        req.user!.userId,
         description,
-        authenticatedUserEmail
+        req.user!.email
       );
 
       return res.status(201).json(payload);
@@ -45,31 +34,12 @@ export class PaymentController {
         oneTimeDescription?: string;
       };
 
-      const authenticatedUserId = req.headers['x-user-id'] as string;
-      const authenticatedUserEmail = req.headers['x-user-email'] as string;
-
-      if (!authenticatedUserId || !authenticatedUserEmail) {
-        return res.status(401).json({
-          success: false,
-          error: 'UNAUTHORIZED',
-          message: 'Utilisateur non authentifié',
-        });
-      }
-
-      if (!Array.isArray(subscriptionItems) || subscriptionItems.length === 0) {
-        return res.status(400).json({
-          success: false,
-          error: 'MISSING_SUBSCRIPTION_ITEMS',
-          message: 'Au moins un item d\'abonnement est requis',
-        });
-      }
-
       const payload = await this.paymentService.createSubscription(
         subscriptionItems,
         oneTimeAmountCents ?? 0,
         oneTimeDescription,
-        authenticatedUserId,
-        authenticatedUserEmail
+        req.user!.userId,
+        req.user!.email
       );
 
       return res.status(201).json(payload);
@@ -81,15 +51,6 @@ export class PaymentController {
   async getIntent(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const authenticatedUserId = req.headers['x-user-id'] as string;
-
-      if (!authenticatedUserId) {
-        return res.status(401).json({
-          success: false,
-          error: 'UNAUTHORIZED',
-          message: 'Utilisateur non authentifié',
-        });
-      }
 
       if (!id || Array.isArray(id)) {
         return res.status(400).json({
@@ -99,7 +60,7 @@ export class PaymentController {
         });
       }
 
-      const payload = await this.paymentService.retrievePaymentIntent(id, authenticatedUserId);
+      const payload = await this.paymentService.retrievePaymentIntent(id, req.user!.userId);
       return res.status(200).json(payload);
     } catch (error) {
       return next(error);

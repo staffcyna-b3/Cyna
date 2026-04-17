@@ -9,6 +9,7 @@ import { IPaymentUserRepository } from '../interfaces/IPaymentUserRepository';
 import { IMailService } from '../interfaces/IMailService';
 import { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
 import { PaymentType } from '../enum/PaymentType.enum';
+import { PAYMENT_ERRORS } from '../constants/paymentErrors';
 
 export type { SubscriptionItem };
 
@@ -47,21 +48,11 @@ export class PaymentService {
         automatic_payment_methods: { enabled: true },
       });
     } catch (stripeError) {
-      if (stripeError instanceof Stripe.errors.StripeCardError) {
-        throw { status: 402, code: 'CARD_ERROR', message: stripeError.message };
-      }
-      if (stripeError instanceof Stripe.errors.StripeInvalidRequestError) {
-        throw { status: 400, code: 'STRIPE_INVALID_REQUEST', message: stripeError.message };
-      }
-      throw stripeError;
+      this.handleStripeError(stripeError);
     }
 
     if (!intent.client_secret) {
-      throw {
-        status: 500,
-        code: 'STRIPE_CLIENT_SECRET_MISSING',
-        message: 'Stripe n\'a pas retourné de clientSecret',
-      };
+      throw PAYMENT_ERRORS.CLIENT_SECRET_MISSING;
     }
 
     await this.orderRepository.create({
@@ -90,11 +81,7 @@ export class PaymentService {
     const intent = await stripe.paymentIntents.retrieve(paymentIntentId);
 
     if (intent.metadata?.userId !== requestingUserId) {
-      throw {
-        status: 403,
-        code: 'FORBIDDEN',
-        message: 'Vous n\'êtes pas autorisé à consulter ce paiement',
-      };
+      throw PAYMENT_ERRORS.FORBIDDEN;
     }
 
     await this.orderRepository.updateStatusByPaymentIntentId(
@@ -121,90 +108,40 @@ export class PaymentService {
     const customer = await this.createOrGetStripeCustomer(userId, userEmail);
 
     if (oneTimeAmountCents > 0) {
-      await stripe.invoiceItems.create({
-        customer: customer.id,
-        amount: oneTimeAmountCents,
-        currency: 'eur',
-        description: oneTimeDescription || 'Achat unique',
-      });
+      await this.addOneTimeInvoiceItem(customer.id, oneTimeAmountCents, 'eur', oneTimeDescription);
     }
 
-    const stripeProducts = await Promise.all(
-      subscriptionItems.map((item) => stripe.products.create({ name: item.description }))
-    );
-
-    let subscription: Stripe.Subscription;
-    try {
-      subscription = await stripe.subscriptions.create({
-        customer: customer.id,
-        items: subscriptionItems.map((item, i) => ({
-          price_data: {
-            currency: item.currency,
-            unit_amount: item.priceAmountCents,
-            product: stripeProducts[i].id,
-            recurring: {
-              interval: item.billingPeriod === 'yearly' ? 'year' : 'month',
-            },
-          },
-          quantity: item.quantity,
-        })),
-        payment_behavior: 'default_incomplete',
-        payment_settings: { save_default_payment_method: 'on_subscription' },
-        expand: ['latest_invoice'],
-      });
-    } catch (stripeError) {
-      if (stripeError instanceof Stripe.errors.StripeCardError) {
-        throw { status: 402, code: 'CARD_ERROR', message: (stripeError as Stripe.errors.StripeCardError).message };
-      }
-      if (stripeError instanceof Stripe.errors.StripeInvalidRequestError) {
-        throw { status: 400, code: 'STRIPE_INVALID_REQUEST', message: (stripeError as Stripe.errors.StripeInvalidRequestError).message };
-      }
-      throw stripeError;
-    }
+    const durationMonths = subscriptionItems[0]?.durationMonths ?? 1;
+    const cancelAt = this.computeCancelAt(durationMonths);
+    const stripeProducts = await this.createStripeProducts(subscriptionItems);
+    const subscription = await this.createStripeSubscription(customer.id, subscriptionItems, stripeProducts, cancelAt);
 
     const invoice = subscription.latest_invoice as Stripe.Invoice;
-
     const totalAmountCents =
       subscriptionItems.reduce((sum, item) => sum + item.priceAmountCents * item.quantity, 0) +
       oneTimeAmountCents;
 
-    let pi: Stripe.PaymentIntent;
-    try {
-      pi = await stripe.paymentIntents.create({
-        amount: totalAmountCents,
-        currency: subscriptionItems[0].currency,
-        customer: customer.id,
-        metadata: {
-          userId,
-          userEmail,
-          subscriptionId: subscription.id,
-          invoiceId: invoice.id,
-        },
-        automatic_payment_methods: { enabled: true },
-      });
-    } catch (stripeError) {
-      if (stripeError instanceof Stripe.errors.StripeInvalidRequestError) {
-        throw { status: 400, code: 'STRIPE_INVALID_REQUEST', message: (stripeError as Stripe.errors.StripeInvalidRequestError).message };
-      }
-      throw stripeError;
-    }
-
-    const clientSecret = pi.client_secret!;
-    const paymentIntentId = pi.id;
+    const pi = await this.createSubscriptionPaymentIntent(
+      totalAmountCents,
+      subscriptionItems[0].currency,
+      customer.id,
+      userId,
+      userEmail,
+      subscription.id,
+      invoice.id
+    );
 
     await this.orderRepository.create({
       user_id: userId,
       total_amount: totalAmountCents / 100,
       currency: subscriptionItems[0].currency,
-      stripe_payment_intent_id: paymentIntentId,
+      stripe_payment_intent_id: pi.id,
       payment_type: PaymentType.SUBSCRIPTION,
       status: OrderStatus.PENDING,
     });
 
-    const firstItem = subscription.items.data[0];
-    const periodStart = firstItem?.current_period_start ?? Math.floor(Date.now() / 1000);
-    const periodEnd =
-      firstItem?.current_period_end ?? Math.floor(Date.now() / 1000) + 30 * 24 * 3600;
+    const periodEnd = this.computePeriodEnd(subscription, durationMonths);
+    const periodStart = subscription.items.data[0]?.current_period_start ?? Math.floor(Date.now() / 1000);
 
     await this.sendSubscriptionCreatedToFrontOffice(
       subscription.id,
@@ -216,15 +153,15 @@ export class PaymentService {
 
     Logger.info('[PAYMENT] Subscription created', {
       subscriptionId: subscription.id,
-      paymentIntentId,
+      paymentIntentId: pi.id,
       userId,
       totalAmountCents,
     });
 
     return {
-      clientSecret,
+      clientSecret: pi.client_secret!,
       subscriptionId: subscription.id,
-      paymentIntentId,
+      paymentIntentId: pi.id,
     };
   }
 
@@ -246,61 +183,13 @@ export class PaymentService {
 
         await this.updateOrderStatus(intent.id, OrderStatus.SUCCESS);
         await this.sendTransactionToProductService(intent, 'succeeded', event.id);
-
-        const userId = intent.metadata?.userId;
-        const emailFromMetadata = intent.metadata?.userEmail;
-        const recipientEmail = emailFromMetadata
-          ?? (userId ? await this.paymentUserRepository.findEmailById(userId) : null);
-
-        if (recipientEmail) {
-          try {
-            await this.mailService.sendOrderConfirmationEmail(recipientEmail, {
-              amountCents: intent.amount,
-              currency: intent.currency,
-              paymentIntentId: intent.id,
-              paymentType: intent.metadata?.subscriptionId ? 'subscription' : 'one_time',
-            });
-            Logger.info('[STRIPE WEBHOOK] Order confirmation email sent', { paymentIntentId: intent.id });
-          } catch (err) {
-            Logger.error('[STRIPE WEBHOOK] Failed to send order confirmation email', {
-              paymentIntentId: intent.id,
-              error: (err as any)?.message,
-            });
-          }
-        } else {
-          Logger.error('[STRIPE WEBHOOK] No email found for order confirmation', {
-            paymentIntentId: intent.id,
-            hasUserId: !!userId,
-            hasEmailInMetadata: !!emailFromMetadata,
-          });
-        }
-
-        const invoiceId = intent.metadata?.invoiceId;
-        const paymentMethod = typeof intent.payment_method === 'string'
-          ? intent.payment_method
-          : intent.payment_method?.id;
-
-        if (invoiceId) {
-          try {
-            if (paymentMethod && intent.metadata?.subscriptionId) {
-              await stripe.subscriptions.update(intent.metadata.subscriptionId, {
-                default_payment_method: paymentMethod,
-              });
-            }
-            await stripe.invoices.pay(invoiceId, { paid_out_of_band: true });
-          } catch (err) {
-            Logger.error('[STRIPE WEBHOOK] Failed to activate subscription invoice', {
-              invoiceId,
-              subscriptionId: intent.metadata?.subscriptionId,
-              error: (err as any)?.message,
-            });
-          }
-        }
+        await this.sendOrderConfirmationEmail(intent);
+        await this.activateSubscriptionInvoice(intent);
 
         Logger.info('[STRIPE WEBHOOK] payment_intent.succeeded processed', {
           eventId: event.id,
           paymentIntentId: intent.id,
-          invoiceId: invoiceId ?? null,
+          invoiceId: intent.metadata?.invoiceId ?? null,
         });
         break;
       }
@@ -371,11 +260,11 @@ export class PaymentService {
     }
   }
 
-  // ─── Private helpers ─────────────────────────────────────────────────────────
+  // ─── Private helpers — validation ───────────────────────────────────────────
 
   private normalizeAmount(amount: number): number {
     if (!Number.isFinite(amount) || amount <= 0) {
-      throw { status: 400, code: 'INVALID_AMOUNT', message: 'Le montant doit être un nombre strictement positif' };
+      throw PAYMENT_ERRORS.INVALID_AMOUNT;
     }
     if (!Number.isInteger(amount)) {
       return Math.round(amount * 100);
@@ -385,14 +274,24 @@ export class PaymentService {
 
   private normalizeCurrency(currency: string): string {
     if (!currency || typeof currency !== 'string') {
-      throw { status: 400, code: 'INVALID_CURRENCY', message: 'Devise invalide' };
+      throw PAYMENT_ERRORS.INVALID_CURRENCY;
     }
     return currency.toLowerCase();
   }
 
-  private async updateOrderStatus(paymentIntentId: string, status: OrderStatus): Promise<void> {
-    await this.orderRepository.updateStatusByPaymentIntentId(paymentIntentId, status);
+  // ─── Private helpers — Stripe error handling ────────────────────────────────
+
+  private handleStripeError(error: unknown): never {
+    if (error instanceof Stripe.errors.StripeCardError) {
+      throw PAYMENT_ERRORS.CARD_ERROR(error.message);
+    }
+    if (error instanceof Stripe.errors.StripeInvalidRequestError) {
+      throw PAYMENT_ERRORS.STRIPE_INVALID_REQUEST(error.message);
+    }
+    throw error;
   }
+
+  // ─── Private helpers — Stripe operations ────────────────────────────────────
 
   private async createOrGetStripeCustomer(userId: string, email: string): Promise<Stripe.Customer> {
     const stripeCustomerId = await this.paymentUserRepository.findStripeCustomerId(userId);
@@ -413,11 +312,155 @@ export class PaymentService {
     return customer;
   }
 
+  private async addOneTimeInvoiceItem(
+    customerId: string,
+    amountCents: number,
+    currency: string,
+    description?: string
+  ): Promise<void> {
+    await stripe.invoiceItems.create({
+      customer: customerId,
+      amount: amountCents,
+      currency,
+      description: description || 'Achat unique',
+    });
+  }
+
+  private async createStripeProducts(items: SubscriptionItem[]): Promise<Stripe.Product[]> {
+    return Promise.all(items.map((item) => stripe.products.create({ name: item.description })));
+  }
+
+  private computeCancelAt(durationMonths: number): number {
+    const date = new Date();
+    date.setMonth(date.getMonth() + durationMonths);
+    return Math.floor(date.getTime() / 1000);
+  }
+
+  private computePeriodEnd(subscription: Stripe.Subscription, durationMonths: number): number {
+    const periodStart = subscription.items.data[0]?.current_period_start ?? Math.floor(Date.now() / 1000);
+    const endDate = new Date(periodStart * 1000);
+    endDate.setMonth(endDate.getMonth() + durationMonths);
+    return Math.floor(endDate.getTime() / 1000);
+  }
+
+  private async createStripeSubscription(
+    customerId: string,
+    items: SubscriptionItem[],
+    stripeProducts: Stripe.Product[],
+    cancelAt: number
+  ): Promise<Stripe.Subscription> {
+    try {
+      return await stripe.subscriptions.create({
+        customer: customerId,
+        items: items.map((item, i) => ({
+          price_data: {
+            currency: item.currency,
+            unit_amount: item.priceAmountCents,
+            product: stripeProducts[i].id,
+            recurring: { interval: 'month' },
+          },
+          quantity: item.quantity,
+        })),
+        cancel_at: cancelAt,
+        payment_behavior: 'default_incomplete',
+        payment_settings: { save_default_payment_method: 'on_subscription' },
+        expand: ['latest_invoice'],
+      });
+    } catch (stripeError) {
+      this.handleStripeError(stripeError);
+    }
+  }
+
+  private async createSubscriptionPaymentIntent(
+    totalAmountCents: number,
+    currency: string,
+    customerId: string,
+    userId: string,
+    userEmail: string,
+    subscriptionId: string,
+    invoiceId: string
+  ): Promise<Stripe.PaymentIntent> {
+    try {
+      return await stripe.paymentIntents.create({
+        amount: totalAmountCents,
+        currency,
+        customer: customerId,
+        metadata: { userId, userEmail, subscriptionId, invoiceId },
+        automatic_payment_methods: { enabled: true },
+      });
+    } catch (stripeError) {
+      this.handleStripeError(stripeError);
+    }
+  }
+
+  // ─── Private helpers — order & email ────────────────────────────────────────
+
+  private async updateOrderStatus(paymentIntentId: string, status: OrderStatus): Promise<void> {
+    await this.orderRepository.updateStatusByPaymentIntentId(paymentIntentId, status);
+  }
+
+  private async sendOrderConfirmationEmail(intent: Stripe.PaymentIntent): Promise<void> {
+    const userId = intent.metadata?.userId;
+    const emailFromMetadata = intent.metadata?.userEmail;
+    const recipientEmail = emailFromMetadata
+      ?? (userId ? await this.paymentUserRepository.findEmailById(userId) : null);
+
+    if (!recipientEmail) {
+      Logger.error('[STRIPE WEBHOOK] No email found for order confirmation', {
+        paymentIntentId: intent.id,
+        hasUserId: !!userId,
+        hasEmailInMetadata: !!emailFromMetadata,
+      });
+      return;
+    }
+
+    try {
+      await this.mailService.sendOrderConfirmationEmail(recipientEmail, {
+        amountCents: intent.amount,
+        currency: intent.currency,
+        paymentIntentId: intent.id,
+        paymentType: intent.metadata?.subscriptionId ? 'subscription' : 'one_time',
+      });
+      Logger.info('[STRIPE WEBHOOK] Order confirmation email sent', { paymentIntentId: intent.id });
+    } catch (err) {
+      Logger.error('[STRIPE WEBHOOK] Failed to send order confirmation email', {
+        paymentIntentId: intent.id,
+        error: (err as any)?.message,
+      });
+    }
+  }
+
+  private async activateSubscriptionInvoice(intent: Stripe.PaymentIntent): Promise<void> {
+    const invoiceId = intent.metadata?.invoiceId;
+    if (!invoiceId) return;
+
+    const paymentMethod = typeof intent.payment_method === 'string'
+      ? intent.payment_method
+      : intent.payment_method?.id;
+
+    try {
+      if (paymentMethod && intent.metadata?.subscriptionId) {
+        await stripe.subscriptions.update(intent.metadata.subscriptionId, {
+          default_payment_method: paymentMethod,
+        });
+      }
+      await stripe.invoices.pay(invoiceId, { paid_out_of_band: true });
+    } catch (err) {
+      Logger.error('[STRIPE WEBHOOK] Failed to activate subscription invoice', {
+        invoiceId,
+        subscriptionId: intent.metadata?.subscriptionId,
+        error: (err as any)?.message,
+      });
+    }
+  }
+
+  // ─── Private helpers — inter-service communication ──────────────────────────
+
   private async sendTransactionToProductService(
     intent: Stripe.PaymentIntent,
     status: 'succeeded' | 'failed',
     eventId: string
-  ) {
+  ): Promise<void> {
     const transactionPath = process.env.PRODUCTS_TRANSACTION_PATH || '/products/transactions';
     const url = `${MICROSERVICES.PRODUCT.url}${transactionPath}`;
 
@@ -449,18 +492,10 @@ export class PaymentService {
     items: SubscriptionItem[],
     periodStart: number,
     periodEnd: number
-  ) {
+  ): Promise<void> {
     const url = `${MICROSERVICES.FRONTOFFICE.url}/subscriptions`;
-    console.log('URL: ${url}'); // Debug log
 
     try {
-      console.log('Sending subscription creation to front-office', {
-        stripeSubscriptionId,
-        userId,
-        items,
-        periodStart,
-        periodEnd,
-      }); // Debug log
       await axios.post(
         url,
         {
@@ -488,7 +523,7 @@ export class PaymentService {
     stripeSubscriptionId: string,
     status: 'active' | 'inactive' | 'cancelled',
     eventId: string
-  ) {
+  ): Promise<void> {
     const url = `${MICROSERVICES.FRONTOFFICE.url}/subscriptions/status`;
 
     try {
