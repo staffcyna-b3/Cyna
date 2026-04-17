@@ -5,13 +5,21 @@ import { IMailService } from '../interfaces/IMailService';
 import { IOrderConfirmationDetails } from '../interfaces/IOrderConfirmationDetails';
 
 export class MailService implements IMailService {
-  private transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
-    },
-  });
+  private transporter: nodemailer.Transporter;
+
+  constructor() {
+    const user = process.env.EMAIL_USER;
+    const pass = process.env.EMAIL_PASSWORD;
+
+    if (!user || !pass) {
+      throw new Error('EMAIL_USER et EMAIL_PASSWORD doivent être définis');
+    }
+
+    this.transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+    });
+  }
 
   async sendOrderConfirmationEmail(email: string, details: IOrderConfirmationDetails) {
     try {

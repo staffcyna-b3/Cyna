@@ -1,8 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
-import { PaymentService, SubscriptionItem } from '../services/paymentService';
+import { PaymentIntentService } from '../services/paymentIntentService';
+import { StripeSubscriptionService } from '../services/stripeSubscriptionService';
+import { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
 
 export class PaymentController {
-  constructor(private readonly paymentService: PaymentService) {}
+  constructor(
+    private readonly paymentIntentService: PaymentIntentService,
+    private readonly subscriptionService: StripeSubscriptionService
+  ) {}
 
   async createIntent(req: Request, res: Response, next: NextFunction) {
     try {
@@ -12,7 +17,7 @@ export class PaymentController {
         description?: string;
       };
 
-      const payload = await this.paymentService.createPaymentIntent(
+      const payload = await this.paymentIntentService.createPaymentIntent(
         amount,
         currency,
         req.user!.userId,
@@ -34,7 +39,7 @@ export class PaymentController {
         oneTimeDescription?: string;
       };
 
-      const payload = await this.paymentService.createSubscription(
+      const payload = await this.subscriptionService.createSubscription(
         subscriptionItems,
         oneTimeAmountCents ?? 0,
         oneTimeDescription,
@@ -60,7 +65,7 @@ export class PaymentController {
         });
       }
 
-      const payload = await this.paymentService.retrievePaymentIntent(id, req.user!.userId);
+      const payload = await this.paymentIntentService.retrievePaymentIntent(id, req.user!.userId);
       return res.status(200).json(payload);
     } catch (error) {
       return next(error);

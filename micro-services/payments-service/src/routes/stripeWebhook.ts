@@ -1,11 +1,10 @@
-// Merged from gateway/src/webhooks/stripe.webhook.ts
 import express, { Request, Response, Router } from 'express';
 import { stripe, stripeWebhookSecret } from '../providers/stripe';
-import { createPaymentService } from '../factories/paymentFactory';
+import { createWebhookService } from '../factories/paymentFactory';
 import { Logger } from '../common/logger';
 
 const router: Router = Router();
-const paymentService = createPaymentService();
+const webhookService = createWebhookService();
 
 router.post('/stripe', express.raw({ type: 'application/json' }), async (req: Request, res: Response) => {
   try {
@@ -21,7 +20,7 @@ router.post('/stripe', express.raw({ type: 'application/json' }), async (req: Re
 
     const event = stripe.webhooks.constructEvent(req.body, signature, stripeWebhookSecret);
 
-    await paymentService.handleStripeEvent(event);
+    await webhookService.handleStripeEvent(event);
 
     return res.status(200).json({ received: true });
   } catch (error: any) {
