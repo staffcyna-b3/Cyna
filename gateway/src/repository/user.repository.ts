@@ -1,11 +1,9 @@
-// TODO: migré vers payments-service — à supprimer après validation
 import User from '../models/User';
 import UserRole from '../models/UserRole';
 import { UserRoleType } from '../enum/UserRoleType.enum';
 import { IUserRepository } from '../interfaces';
-import { IPaymentUserRepository } from '../interfaces/IPaymentUserRepository';
 
-export class UserRepository implements IUserRepository, IPaymentUserRepository {
+export class UserRepository implements IUserRepository {
   async findByEmail(email: string) {
     return await User.findOne({
       where: { email },
@@ -128,17 +126,4 @@ export class UserRepository implements IUserRepository, IPaymentUserRepository {
     );
   }
 
-  async findEmailById(userId: string): Promise<string | null> {
-    const user = await User.findOne({ where: { id: userId }, attributes: ['email'] });
-    return user?.email ?? null;
-  }
-
-  async findStripeCustomerId(userId: string): Promise<string | null> {
-    const user = await User.findOne({ where: { id: userId }, attributes: ['stripe_customer_id'] });
-    return user?.stripe_customer_id ?? null;
-  }
-
-  async updateStripeCustomerId(userId: string, customerId: string): Promise<void> {
-    await User.update({ stripe_customer_id: customerId }, { where: { id: userId } });
-  }
 }
