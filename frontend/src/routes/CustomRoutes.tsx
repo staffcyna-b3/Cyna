@@ -20,6 +20,7 @@ import CatalogList from "@/pages/frontoffice/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
 import { Cart } from "@/pages/frontoffice/Cart"
 import AccountPage from "@/pages/frontoffice/AccountPage"
+import OrdersPage from "@/pages/frontoffice/OrdersPage"
 import { ProtectedRoute } from "@/components/protectedRoute"
 
 export default function CustomRoutes() {
@@ -68,6 +69,14 @@ export default function CustomRoutes() {
           element={
             <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
               <AccountPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <OrdersPage />
             </ProtectedRoute>
           }
         />
