@@ -1,7 +1,9 @@
 // payments-service entry point
 import 'dotenv/config';
 import express from 'express';
-import webhookRouter from './routes/stripeWebhook';
+import { stripe, stripeWebhookSecret } from './providers/stripe';
+import { createStripeWebhookRouter } from './routes/stripeWebhook';
+import { createWebhookService } from './factories/paymentFactory';
 import paymentsRouter from './routes/payments';
 import { errorMiddleware } from './middlewares/error.middleware';
 
@@ -10,6 +12,8 @@ const PORT = process.env.PORT || 3004;
 
 // /webhook uses express.raw() internally (defined in stripeWebhook router)
 // It must be mounted BEFORE the global express.json() parser
+const webhookService = createWebhookService();
+const webhookRouter = createStripeWebhookRouter(stripe, webhookService, stripeWebhookSecret);
 app.use('/webhook', webhookRouter);
 
 app.use(express.json());

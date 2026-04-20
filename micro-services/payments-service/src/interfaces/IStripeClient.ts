@@ -22,4 +22,7 @@ export interface IStripeClient {
     create(params: Stripe.CustomerCreateParams): Promise<Stripe.Customer>;
     retrieve(id: string): Promise<Stripe.Customer | Stripe.DeletedCustomer>;
   };
+  webhooks: {
+    constructEvent(payload: string | Buffer, sig: string | string[], secret: string): Stripe.Event;
+  };
 }

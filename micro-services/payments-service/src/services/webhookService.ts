@@ -7,12 +7,7 @@ import { IMailService } from '../interfaces/IMailService';
 import { IStripeClient } from '../interfaces/IStripeClient';
 import { IHttpClient } from '../interfaces/IHttpClient';
 import { OrderStatus } from '../enum/OrderStatus.enum';
-import { toOrderStatus } from '../utils/paymentUtils';
-
-const HTTP_JSON_CONFIG = {
-  headers: { 'Content-Type': 'application/json' },
-  timeout: 10000,
-};
+import { HTTP_JSON_CONFIG } from '../constants/httpConfig';
 
 export class WebhookService {
   constructor(

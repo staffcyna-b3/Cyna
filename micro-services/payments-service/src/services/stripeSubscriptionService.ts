@@ -9,11 +9,7 @@ import { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
 import { PaymentType } from '../enum/PaymentType.enum';
 import { OrderStatus } from '../enum/OrderStatus.enum';
 import { handleStripeError } from '../utils/paymentUtils';
-
-const HTTP_JSON_CONFIG = {
-  headers: { 'Content-Type': 'application/json' },
-  timeout: 10000,
-};
+import { HTTP_JSON_CONFIG } from '../constants/httpConfig';
 
 export class StripeSubscriptionService {
   constructor(
@@ -148,8 +144,9 @@ export class StripeSubscriptionService {
     stripeProducts: Stripe.Product[],
     cancelAt: number
   ): Promise<Stripe.Subscription> {
+    let subscription!: Stripe.Subscription;
     try {
-      return await this.stripeClient.subscriptions.create({
+      subscription = await this.stripeClient.subscriptions.create({
         customer: customerId,
         items: items.map((item, i) => ({
           price_data: {
@@ -168,6 +165,7 @@ export class StripeSubscriptionService {
     } catch (stripeError) {
       handleStripeError(stripeError);
     }
+    return subscription;
   }
 
   private async createSubscriptionPaymentIntent(
@@ -179,8 +177,9 @@ export class StripeSubscriptionService {
     subscriptionId: string,
     invoiceId: string
   ): Promise<Stripe.PaymentIntent> {
+    let pi!: Stripe.PaymentIntent;
     try {
-      return await this.stripeClient.paymentIntents.create({
+      pi = await this.stripeClient.paymentIntents.create({
         amount: totalAmountCents,
         currency,
         customer: customerId,
@@ -190,6 +189,7 @@ export class StripeSubscriptionService {
     } catch (stripeError) {
       handleStripeError(stripeError);
     }
+    return pi;
   }
 
   // ─── Private helpers — inter-service communication ──────────────────────────
