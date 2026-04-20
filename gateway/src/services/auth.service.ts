@@ -3,8 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Logger } from '../common/logger';
 import { hashToken, verifyToken } from '../utils/token.utils';
-import { IAuthService, IMailService, IPendingAuthStore, IUserRepository } from '../interfaces';
-import { AuthRepository } from '../repository/auth.repository';
+import { IAuthRepository, IAuthService, IMailService, IPendingAuthStore, IUserRepository } from '../interfaces';
 import { JwtPayloadDto } from '../dto/JwtPayloadDto';
 
 export class AuthService implements IAuthService {
@@ -12,9 +11,8 @@ export class AuthService implements IAuthService {
     private readonly userRepository: IUserRepository,
     private readonly mailService: IMailService,
     private readonly pendingAuthStore: IPendingAuthStore,
+    private readonly jwtRepository: IAuthRepository,
   ) {}
-
-  private jwtRepository = new AuthRepository();
 
   private generate2FACode(): string {
     return Math.floor(100000 + Math.random() * 900000).toString(); // Code à 6 chiffres
@@ -315,6 +313,32 @@ export class AuthService implements IAuthService {
       Logger.error('Auth generate tokens error:', error);
       throw error;
     }
+  }
+
+  async getProfile(userId: string) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new Error('Utilisateur non trouvé');
+    return { id: user.id, email: user.email, full_name: user.full_name };
+  }
+
+  async updateProfile(userId: string, data: { full_name?: string; email?: string }) {
+    if (data.email) {
+      const existing = await this.userRepository.findByEmail(data.email);
+      if (existing && existing.id !== userId) {
+        throw new Error('Email déjà utilisé');
+      }
+    }
+    const user = await this.userRepository.updateProfile(userId, data);
+    return { id: user.id, email: user.email, full_name: user.full_name };
+  }
+
+  async changePassword(userId: string, currentPassword: string, newPassword: string) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) throw new Error('Utilisateur non trouvé');
+    const isValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isValid) throw new Error('Mot de passe actuel incorrect');
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await this.userRepository.updatePassword(userId, hashed);
   }
 
   async refresh(refreshToken: string) {

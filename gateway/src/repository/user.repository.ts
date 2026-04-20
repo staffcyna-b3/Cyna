@@ -12,6 +12,10 @@ export class UserRepository implements IUserRepository, IPaymentUserRepository {
     });
   }
 
+  async findById(userId: string) {
+    return await User.findByPk(userId);
+  }
+
   async findByIdWithRole(userId: string) {
     return await User.findByPk(userId, {
       include: [{ association: 'userRole', attributes: ['role'] }],
@@ -139,5 +143,12 @@ export class UserRepository implements IUserRepository, IPaymentUserRepository {
 
   async updateStripeCustomerId(userId: string, customerId: string): Promise<void> {
     await User.update({ stripe_customer_id: customerId }, { where: { id: userId } });
+  }
+
+  async updateProfile(userId: string, data: { full_name?: string; email?: string }) {
+    await User.update(data, { where: { id: userId } });
+    const user = await User.findByPk(userId);
+    if (!user) throw new Error('User not found');
+    return user;
   }
 }

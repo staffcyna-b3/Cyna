@@ -6,6 +6,7 @@ import { loggingMiddleware } from './middlewares/logging.middleware';
 import { errorMiddleware } from './middlewares/error.middleware';
 import { createAuthRoutes } from './routes/auth.routes';
 import { UserRepository } from './repository/user.repository';
+import { AuthRepository } from './repository/auth.repository';
 import { MailService } from './services/mail.service';
 import { pendingAuth2FAStore } from './stores/pending-auth-2fa.store';
 import { AuthService } from './services/auth.service';
@@ -19,6 +20,7 @@ export const createApp = (): Express => {
   // Injection manuelle des dépendances (DIP)
   const container = {
     userRepository: new UserRepository(),
+    authRepository: new AuthRepository(),
     mailService: new MailService(),
     pendingAuthStore: pendingAuth2FAStore,
   };
@@ -27,6 +29,7 @@ export const createApp = (): Express => {
     container.userRepository,
     container.mailService,
     container.pendingAuthStore,
+    container.authRepository,
   );
   const authController = new AuthController(authService);
   const authRoutes = createAuthRoutes(authController);

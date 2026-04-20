@@ -183,15 +183,23 @@ export default function Navbar() {
                             <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
                                 <div className="w-56 rounded-2xl border border-[#e0e4f8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.18)] overflow-hidden">
                                     {isAuthenticated ? (
-                                        <div className="px-4 py-3 flex justify-center">
-                                            <button
-                                                onClick={handleLogout}
-                                                className="flex items-center gap-2 text-sm text-[#3d49f5]"
-                                            >
-                                                <LogOut className="h-4 w-4" strokeWidth={2} />
-                                                {t('logout')}
-                                            </button>
-                                        </div>
+                                        <>
+                                            <div className="px-4 py-3 flex justify-center">
+                                                <Link to="/account" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <User className="h-4 w-4" strokeWidth={2} />
+                                                    {t('account.myAccount')}
+                                                </Link>
+                                            </div>
+                                            <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="flex items-center gap-2 text-sm text-[#3d49f5]"
+                                                >
+                                                    <LogOut className="h-4 w-4" strokeWidth={2} />
+                                                    {t('logout')}
+                                                </button>
+                                            </div>
+                                        </>
                                     ) : (
                                         <>
                                             <div className="px-4 py-3 flex justify-center">

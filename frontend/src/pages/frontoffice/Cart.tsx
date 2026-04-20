@@ -1,28 +1,24 @@
 import { useEffect, useMemo, useState } from "react"
-import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { CartItem } from "@/components/Frontoffice/CartItem"
-import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
 import type { CheckoutStep } from "@/types/CheckoutStep"
-import { AddressForm } from "@/components/forms/AddressForm"
-import { SameAddressToggle } from "@/components/Frontoffice/SameAddressToggle"
 import { useCheckout } from "@/hooks/useCheckout"
 import { useAuth } from "@/hooks/useAuth"
 import useCart from "@/hooks/useCart"
-import { saveAddresses } from "@/services/orderService"
 import { formatCurrency } from "@/utils/currencyFormatter"
-
-function validateAddress(data: AddressFormData, t: (key: string) => string): Partial<Record<keyof AddressFormData, string>> {
-  const errors: Partial<Record<keyof AddressFormData, string>> = {}
-  if (!data.firstName.trim()) errors.firstName = t("requiredField")
-  if (!data.lastName.trim()) errors.lastName = t("requiredField")
-  if (!data.addressLine1.trim()) errors.addressLine1 = t("requiredField")
-  if (!data.city.trim()) errors.city = t("requiredField")
-  if (!data.postcode.trim()) errors.postcode = t("requiredField")
-  if (!data.country.trim()) errors.country = t("requiredField")
-  return errors
-}
+import { getAddresses, type Address } from "@/services/addressService"
+import { useSearchParams } from "react-router-dom"
 
 export const Cart = () => {
   const { t } = useTranslation()
@@ -30,46 +26,34 @@ export const Cart = () => {
   const [searchParams] = useSearchParams()
   const { accessToken, isAuthenticated } = useAuth()
   const {
-    billingAddress,
-    shippingAddress,
-    sameAddress,
     loading: checkoutLoading,
-    error: checkoutError,
-    checkoutIds,
-    setBillingAddress,
-    setShippingAddress,
-    setSameAddress,
-    setLoading,
     setCheckoutIds,
-    fetchCheckoutContext,
   } = useCheckout()
   const { cartId, items, updateQuantity, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
 
-  const hasUnavailableItems = items.some((item) => item.unavailable); // ! ??
-
-  const [billingErrors, setBillingErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
-  const [shippingErrors, setShippingErrors] = useState<Partial<Record<keyof AddressFormData, string>>>({})
-  const [isEditingBillingAddress, setIsEditingBillingAddress] = useState(false)
-  const [isEditingShippingAddress, setIsEditingShippingAddress] = useState(false)
+  const [addresses, setAddresses] = useState<Address[]>([])
+  const [billingId, setBillingId] = useState('')
+  const [shippingId, setShippingId] = useState('')
   const [submitError, setSubmitError] = useState<string | null>(null)
 
   const currentStep: CheckoutStep = searchParams.get("step") === "address" ? "address" : "cart"
 
   useEffect(() => {
-    if (!isAuthenticated || !accessToken) return
-    setLoading(true)
-    fetchCheckoutContext().finally(() => setLoading(false))
-  }, [isAuthenticated, accessToken, fetchCheckoutContext, setLoading])
+    if (!accessToken) return
+    getAddresses(accessToken).then((list) => {
+      setAddresses(list)
+      const defB = list.find((a) => a.type === 'billing' && a.is_default)
+      const defS = list.find((a) => a.type === 'shipping' && a.is_default)
+      setBillingId(defB?.id ?? list.find((a) => a.type === 'billing')?.id ?? '')
+      setShippingId(defS?.id ?? list.find((a) => a.type === 'shipping')?.id ?? '')
+    }).catch(() => {})
+  }, [accessToken])
 
   const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items])
   const deliveryFee = useMemo(() => {
-    // TODO: delivery fee calculation — fixed rate for physical
-    // products, 0 for SaaS. To be confirmed with LUCAS for
-    // product type data shape.
     const hasPhysicalProduct = items.some((item) => item.isService === false)
     return hasPhysicalProduct ? 5.99 : 0
   }, [items])
-  // immediateTotal = ce qui est débité immédiatement (1 période pour les abonnements, pas le total du contrat)
   const immediateTotal = useMemo(
     () => items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
     [items]
@@ -77,67 +61,25 @@ export const Cart = () => {
   const finalTotal = useMemo(() => immediateTotal + deliveryFee, [immediateTotal, deliveryFee])
   const finalTotalWithoutDelivery = useMemo(() => immediateTotal, [immediateTotal])
 
-  const handleQuantityChange = (itemId: string, quantity: number) => {
-    updateQuantity(itemId, quantity)
-  }
-
-  const handleRemoveItem = (itemId: string) => {
-    removeFromCart(itemId)
-  }
-
   const handleContinue = () => {
-    // TODO: chek user is connecter if not ask user to login or register and redirect flow for unauthenticated users.
-    // console.log("User is authenticated:", isAuthenticated)
     if (!isAuthenticated) {
       navigate("/login", { state: { from: { pathname: "/cart?step=address" } } })
       return
     }
-    // console.log(billingAddress, shippingAddress, sameAddress)
     navigate("/cart?step=address")
   }
 
-  const handleValider = async () => {
+  const handleValider = () => {
     setSubmitError(null)
-
-    const nextBillingErrors = validateAddress(billingAddress, t)
-    const nextShippingErrors = sameAddress ? {} : validateAddress(shippingAddress, t)
-    setBillingErrors(nextBillingErrors)
-    setShippingErrors(nextShippingErrors)
-
-    if (Object.keys(nextBillingErrors).length > 0 || Object.keys(nextShippingErrors).length > 0) {
-      if (Object.keys(nextBillingErrors).length > 0) setIsEditingBillingAddress(true)
-      if (Object.keys(nextShippingErrors).length > 0) setIsEditingShippingAddress(true)
+    if (!billingId || !shippingId) {
+      toast.error(t('selectAddressRequired'))
       return
     }
     if (!cartId) {
       setSubmitError(t("missingCartOrAddress"))
       return
     }
-
-    // Si les adresses ne sont pas encore en DB (nouvel utilisateur),
-    // on les sauvegarde avant de naviguer vers le paiement.
-    let resolvedBillingId = checkoutIds?.billingAddressId
-    let resolvedShippingId = checkoutIds?.shippingAddressId
-
-    if (!resolvedBillingId || !resolvedShippingId) {
-      try {
-        const effectiveShipping = sameAddress ? billingAddress : shippingAddress
-        const saved = await saveAddresses(
-          { addressLine1: billingAddress.addressLine1, city: billingAddress.city, postcode: billingAddress.postcode, country: billingAddress.country },
-          { addressLine1: effectiveShipping.addressLine1, city: effectiveShipping.city, postcode: effectiveShipping.postcode, country: effectiveShipping.country },
-          accessToken!
-        )
-        resolvedBillingId = saved.billing!.id
-        resolvedShippingId = saved.shipping!.id
-      } catch {
-        setSubmitError(t("missingCartOrAddress"))
-        return
-      }
-    }
-
-    // Toujours mettre à jour checkoutIds avec le cartId courant,
-    // que les adresses viennent de la DB ou d'une nouvelle saisie.
-    setCheckoutIds({ cartId: cartId ?? null, billingAddressId: resolvedBillingId!, shippingAddressId: resolvedShippingId! })
+    setCheckoutIds({ cartId: cartId ?? null, billingAddressId: billingId, shippingAddressId: shippingId })
     navigate("/checkout/payment", {
       state: {
         cartItems: items.map((item) => ({
@@ -149,9 +91,8 @@ export const Cart = () => {
           billingPeriod: item.period === 12 ? 'yearly' : item.period != null ? 'monthly' : undefined,
         })),
         cartId,
-        billingAddressId: resolvedBillingId,
-        shippingAddressId: resolvedShippingId,
-        billingAddress,
+        billingAddressId: billingId,
+        shippingAddressId: shippingId,
       },
     })
   }
@@ -160,10 +101,10 @@ export const Cart = () => {
     return <div className="py-20 px-40">{t("loading")}</div>
   }
 
-  if (checkoutError || cartError) {
+  if (cartError) {
     return (
       <div className="p-8 text-center">
-        <p className="text-red-500 mb-4">{checkoutError || cartError}</p>
+        <p className="text-red-500 mb-4">{cartError}</p>
         <Button onClick={() => void fetchCart()}>{t('retry') || 'Réessayer'}</Button>
       </div>
     )
@@ -182,6 +123,9 @@ export const Cart = () => {
     )
   }
 
+  const billingAddresses = addresses.filter((a) => a.type === 'billing')
+  const shippingAddresses = addresses.filter((a) => a.type === 'shipping')
+
   return (
     <div className="py-20 px-40 min-h-screen bg-white">
       <div className="flex justify-between mb-10">
@@ -199,64 +143,68 @@ export const Cart = () => {
               <CartItem
                 item={item}
                 key={item.id}
-                onQuantityChange={handleQuantityChange}
-                onRemove={handleRemoveItem}
+                onQuantityChange={(id, qty) => updateQuantity(id, qty)}
+                onRemove={(id) => removeFromCart(id)}
               />
             ))}
           </div>
         ) : (
-          <div className="flex flex-col gap-4 flex-1">
-            <div className="bg-muted/30 rounded-lg p-4 flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <p className="text-lg font-medium">{t("billingAddress")}</p>
-                <Button variant="ghost" onClick={() => setIsEditingBillingAddress((prev) => !prev)}>{t("update")}</Button>
-              </div>
-
-              {isEditingBillingAddress ? (
-                <AddressForm
-                  title=""
-                  value={billingAddress}
-                  onChange={setBillingAddress}
-                  errors={billingErrors}
-                />
+          <div className="flex flex-col gap-6 flex-1">
+            <div className="flex flex-col gap-2">
+              <Label>{t('billingAddress')}</Label>
+              {billingAddresses.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  {t('account.noAddressesOfType')}{' '}
+                  <Link to="/account" className="underline text-primary">{t('manageAddresses')}</Link>
+                </p>
               ) : (
-                <>
-                  <p>{[billingAddress.firstName, billingAddress.lastName].filter(Boolean).join(" ") || "-"}</p>
-                  <p>{billingAddress.addressLine1 || "-"}</p>
-                  <p>{billingAddress.city || "-"}</p>
-                  <p>{billingAddress.postcode || "-"}</p>
-                  <p>{billingAddress.country || "-"}</p>
-                </>
+                <Select value={billingId} onValueChange={setBillingId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('selectAddress')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {billingAddresses.map((a) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.address_line1}
+                        {a.address_line2 ? `, ${a.address_line2}` : ''}
+                        {' — '}{a.city} {a.postcode}
+                        {a.is_default ? ' ★' : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               )}
             </div>
 
-            <SameAddressToggle checked={sameAddress} onChange={setSameAddress} />
+            <div className="flex flex-col gap-2">
+              <Label>{t('shippingAddress')}</Label>
+              {shippingAddresses.length === 0 ? (
+                <p className="text-sm text-muted-foreground">
+                  {t('account.noAddressesOfType')}{' '}
+                  <Link to="/account" className="underline text-primary">{t('manageAddresses')}</Link>
+                </p>
+              ) : (
+                <Select value={shippingId} onValueChange={setShippingId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder={t('selectAddress')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {shippingAddresses.map((a) => (
+                      <SelectItem key={a.id} value={a.id}>
+                        {a.address_line1}
+                        {a.address_line2 ? `, ${a.address_line2}` : ''}
+                        {' — '}{a.city} {a.postcode}
+                        {a.is_default ? ' ★' : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
 
-            {!sameAddress ? (
-              <div className="bg-muted/30 rounded-lg p-4 flex flex-col gap-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-lg font-medium">{t("shippingAddress")}</p>
-                  <Button variant="ghost" onClick={() => setIsEditingShippingAddress((prev) => !prev)}>{t("update")}</Button>
-                </div>
-
-                {isEditingShippingAddress ? (
-                  <AddressForm
-                    title=""
-                    value={shippingAddress}
-                    onChange={setShippingAddress}
-                    errors={shippingErrors}
-                  />
-                ) : (
-                  <>
-                    <p>{[shippingAddress.firstName, shippingAddress.lastName].filter(Boolean).join(" ") || "-"}</p>
-                    <p>{shippingAddress.addressLine1 || "-"}</p>
-                    <p>{shippingAddress.city || "-"}</p>
-                    <p>{shippingAddress.postcode || "-"}</p>
-                    <p>{shippingAddress.country || "-"}</p>
-                  </>
-                )}
-              </div>
-            ) : null}
+            <p className="text-sm text-muted-foreground">
+              <Link to="/account" className="underline text-primary">{t('manageAddresses')}</Link>
+            </p>
           </div>
         )}
 

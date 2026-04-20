@@ -1,12 +1,10 @@
-import { AddressUpsertData } from './AddressUpsertData';
-import { UpsertAddressesResult } from './UpsertAddressesResult';
-
-export interface GetAddressesResult {
-  billing: { id: string; addressLine1: string; city: string; postcode: string; country: string } | null;
-  shipping: { id: string; addressLine1: string; city: string; postcode: string; country: string } | null;
-}
+import Address from '../models/Address';
+import { CreateAddressPayload } from './CreateAddressPayload';
 
 export interface IAddressService {
-  getAddresses(userId: string): Promise<GetAddressesResult>;
-  upsertAddresses(userId: string, billing: AddressUpsertData, shipping: AddressUpsertData): Promise<UpsertAddressesResult>;
+  getAll(userId: string): Promise<Address[]>;
+  create(userId: string, data: CreateAddressPayload): Promise<Address>;
+  update(userId: string, addressId: string, data: Partial<CreateAddressPayload>): Promise<Address>;
+  setDefault(userId: string, addressId: string): Promise<Address>;
+  delete(userId: string, addressId: string): Promise<void>;
 }
