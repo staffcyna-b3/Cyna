@@ -10,6 +10,11 @@ import { OrderStatus } from '../enum/OrderStatus.enum';
 import { HTTP_JSON_CONFIG } from '../constants/httpConfig';
 
 export class WebhookService {
+  // In-memory deduplication for invoice/subscription events.
+  // Covers Stripe immediate retries (seconds–minutes). Cleared on restart — acceptable
+  // trade-off given the constraint of not adding a stripe_event_ids table.
+  private readonly seenEventIds = new Set<string>();
+
   constructor(
     private readonly orderRepository: IOrderRepository,
     private readonly paymentUserRepository: IPaymentUserRepository,
@@ -67,6 +72,12 @@ export class WebhookService {
       }
 
       case 'invoice.payment_succeeded': {
+        if (this.seenEventIds.has(event.id)) {
+          Logger.info('[STRIPE WEBHOOK] invoice.payment_succeeded already processed, skipping', { eventId: event.id });
+          break;
+        }
+        this.seenEventIds.add(event.id);
+
         const invoice = event.data.object as Stripe.Invoice;
         const subRef = (invoice as any).parent?.subscription_details?.subscription;
         if (!subRef) break;
@@ -82,6 +93,12 @@ export class WebhookService {
       }
 
       case 'invoice.payment_failed': {
+        if (this.seenEventIds.has(event.id)) {
+          Logger.info('[STRIPE WEBHOOK] invoice.payment_failed already processed, skipping', { eventId: event.id });
+          break;
+        }
+        this.seenEventIds.add(event.id);
+
         const invoice = event.data.object as Stripe.Invoice;
         const subRef = (invoice as any).parent?.subscription_details?.subscription;
         if (!subRef) break;
@@ -97,6 +114,12 @@ export class WebhookService {
       }
 
       case 'customer.subscription.deleted': {
+        if (this.seenEventIds.has(event.id)) {
+          Logger.info('[STRIPE WEBHOOK] customer.subscription.deleted already processed, skipping', { eventId: event.id });
+          break;
+        }
+        this.seenEventIds.add(event.id);
+
         const subscription = event.data.object as Stripe.Subscription;
         await this.sendSubscriptionStatusToFrontOffice(subscription.id, 'cancelled', event.id);
         Logger.info('[STRIPE WEBHOOK] customer.subscription.deleted processed', {

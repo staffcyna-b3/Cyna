@@ -24,6 +24,8 @@ export function createStripeWebhookRouter(
 
       const event = stripeClient.webhooks.constructEvent(req.body, signature, webhookSecret);
 
+      Logger.info('[STRIPE WEBHOOK] Event received', { type: event.type, eventId: event.id });
+
       await webhookService.handleStripeEvent(event);
 
       return res.status(200).json({ received: true });

@@ -13,6 +13,7 @@ import { AuthController } from './controllers/auth.controller';
 import cookieParser from 'cookie-parser';
 import { paymentsApiProxy, paymentsWebhookProxy } from './proxies/payments.proxy';
 import { authMiddleware } from './middlewares/auth.middleware';
+import { createPaymentIntentLimiter } from './middlewares/rate-limit.middleware';
 
 export const createApp = (): Express => {
   const app = express();
@@ -47,7 +48,7 @@ export const createApp = (): Express => {
   // Payment API: gateway validates JWT and injects x-user-id / x-user-email headers
   // before proxying. authMiddleware only reads the Authorization header (no body),
   // so it runs safely before express.json().
-  app.use('/api/payments', authMiddleware, paymentsApiProxy);
+  app.use('/api/payments', authMiddleware, createPaymentIntentLimiter, paymentsApiProxy);
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
