@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-import { PaymentIntentService } from '../services/paymentIntentService';
-import { StripeSubscriptionService } from '../services/stripeSubscriptionService';
+import { IPaymentIntentService } from '../interfaces/IPaymentIntentService';
+import { IStripeSubscriptionService } from '../interfaces/IStripeSubscriptionService';
 import { SubscriptionItem } from '../interfaces/SubscriptionItem.interface';
 
 export class PaymentController {
   constructor(
-    private readonly paymentIntentService: PaymentIntentService,
-    private readonly subscriptionService: StripeSubscriptionService
+    private readonly paymentIntentService: IPaymentIntentService,
+    private readonly subscriptionService: IStripeSubscriptionService
   ) {}
 
   async createIntent(req: Request, res: Response, next: NextFunction) {

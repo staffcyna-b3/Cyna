@@ -116,13 +116,6 @@ export const registerLimiter = rateLimit({
 });
 
 /**
- * Middleware de rate limiting pour les demandes de reset password
- * 
- * Configuration:
- * - 5 tentatives maximum par IP
- * - Fenêtre de temps: 1 heure
- */
-/**
  * Middleware de rate limiting pour la route POST /payments/create-intent
  *
  * Configuration:
@@ -130,11 +123,10 @@ export const registerLimiter = rateLimit({
  * - Fenêtre de temps: 1 heure
  */
 export const createPaymentIntentLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 heure
+  windowMs: 60 * 60 * 1000,
   max: 10,
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.method !== 'POST',
   keyGenerator: (req) => req.ip || 'unknown',
   handler: (req, res) => {
     Logger.warn(
@@ -143,6 +135,31 @@ export const createPaymentIntentLimiter = rateLimit({
     res.status(429).json({
       error: 'TOO_MANY_PAYMENT_ATTEMPTS',
       message: 'Trop de tentatives de paiement. Réessayez dans 1 heure.',
+      retryAfter: getRetryAfterSeconds(req.rateLimit?.resetTime, 3600),
+    });
+  },
+});
+
+/**
+ * Middleware de rate limiting pour la route POST /payments/create-subscription
+ *
+ * Configuration:
+ * - 5 tentatives maximum par IP (plus strict — création d'abonnement)
+ * - Fenêtre de temps: 1 heure
+ */
+export const createSubscriptionLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.ip || 'unknown',
+  handler: (req, res) => {
+    Logger.warn(
+      `[RATE_LIMIT] Subscription limiter atteint pour IP ${req.ip} à ${new Date().toISOString()}`
+    );
+    res.status(429).json({
+      error: 'TOO_MANY_SUBSCRIPTION_ATTEMPTS',
+      message: 'Trop de tentatives de création d\'abonnement. Réessayez dans 1 heure.',
       retryAfter: getRetryAfterSeconds(req.rateLimit?.resetTime, 3600),
     });
   },

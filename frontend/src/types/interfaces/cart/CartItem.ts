@@ -11,4 +11,7 @@ export interface CartItem {
   unavailable?: boolean;
   imageUrl?: string;
   stock?: number;
+  unitPriceCents?: number;
+  billingPeriod?: 'monthly' | 'yearly';
+  isRecurring?: boolean;
 }
