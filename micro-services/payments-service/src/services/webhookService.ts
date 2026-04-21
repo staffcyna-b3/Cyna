@@ -15,6 +15,14 @@ export class WebhookService {
   // trade-off given the constraint of not adding a stripe_event_ids table.
   private readonly seenEventIds = new Set<string>();
 
+  private readonly eventHandlers = new Map<string, (event: Stripe.Event) => Promise<void>>([
+    ['payment_intent.succeeded',      (e) => this.onPaymentIntentSucceeded(e)],
+    ['payment_intent.payment_failed', (e) => this.onPaymentIntentFailed(e)],
+    ['invoice.payment_succeeded',     (e) => this.onInvoicePaymentSucceeded(e)],
+    ['invoice.payment_failed',        (e) => this.onInvoicePaymentFailed(e)],
+    ['customer.subscription.deleted', (e) => this.onSubscriptionDeleted(e)],
+  ]);
+
   constructor(
     private readonly orderRepository: IOrderRepository,
     private readonly paymentUserRepository: IPaymentUserRepository,
@@ -23,115 +31,114 @@ export class WebhookService {
     private readonly httpClient: IHttpClient
   ) {}
 
-  async handleStripeEvent(event: Stripe.Event) {
-    switch (event.type) {
-      case 'payment_intent.succeeded': {
-        const intent = event.data.object as Stripe.PaymentIntent;
-
-        const existing = await this.orderRepository.findByPaymentIntentId(intent.id);
-        if (existing?.status === OrderStatus.SUCCESS) {
-          Logger.info('[STRIPE WEBHOOK] payment_intent.succeeded already processed, skipping', {
-            eventId: event.id,
-            paymentIntentId: intent.id,
-          });
-          break;
-        }
-
-        await this.updateOrderStatus(intent.id, OrderStatus.SUCCESS);
-        await this.sendTransactionToProductService(intent, 'succeeded', event.id);
-        await this.sendOrderConfirmationEmail(intent);
-        await this.activateSubscriptionInvoice(intent);
-
-        Logger.info('[STRIPE WEBHOOK] payment_intent.succeeded processed', {
-          eventId: event.id,
-          paymentIntentId: intent.id,
-          invoiceId: intent.metadata?.invoiceId ?? null,
-        });
-        break;
-      }
-
-      case 'payment_intent.payment_failed': {
-        const intent = event.data.object as Stripe.PaymentIntent;
-
-        const existing = await this.orderRepository.findByPaymentIntentId(intent.id);
-        if (existing?.status === OrderStatus.ERROR) {
-          Logger.info('[STRIPE WEBHOOK] payment_intent.payment_failed already processed, skipping', {
-            eventId: event.id,
-            paymentIntentId: intent.id,
-          });
-          break;
-        }
-
-        await this.updateOrderStatus(intent.id, OrderStatus.ERROR);
-        await this.sendTransactionToProductService(intent, 'failed', event.id);
-        Logger.info('[STRIPE WEBHOOK] payment_intent.payment_failed processed', {
-          eventId: event.id,
-          paymentIntentId: intent.id,
-        });
-        break;
-      }
-
-      case 'invoice.payment_succeeded': {
-        if (this.seenEventIds.has(event.id)) {
-          Logger.info('[STRIPE WEBHOOK] invoice.payment_succeeded already processed, skipping', { eventId: event.id });
-          break;
-        }
-        this.seenEventIds.add(event.id);
-
-        const invoice = event.data.object as Stripe.Invoice;
-        const subRef = (invoice as any).parent?.subscription_details?.subscription;
-        if (!subRef) break;
-
-        const subscriptionId = typeof subRef === 'string' ? subRef : subRef.id;
-        await this.sendSubscriptionStatusToFrontOffice(subscriptionId, 'active', event.id);
-        Logger.info('[STRIPE WEBHOOK] invoice.payment_succeeded processed', {
-          eventId: event.id,
-          subscriptionId,
-          invoiceId: invoice.id,
-        });
-        break;
-      }
-
-      case 'invoice.payment_failed': {
-        if (this.seenEventIds.has(event.id)) {
-          Logger.info('[STRIPE WEBHOOK] invoice.payment_failed already processed, skipping', { eventId: event.id });
-          break;
-        }
-        this.seenEventIds.add(event.id);
-
-        const invoice = event.data.object as Stripe.Invoice;
-        const subRef = (invoice as any).parent?.subscription_details?.subscription;
-        if (!subRef) break;
-
-        const subscriptionId = typeof subRef === 'string' ? subRef : subRef.id;
-        await this.sendSubscriptionStatusToFrontOffice(subscriptionId, 'inactive', event.id);
-        Logger.info('[STRIPE WEBHOOK] invoice.payment_failed processed', {
-          eventId: event.id,
-          subscriptionId,
-          invoiceId: invoice.id,
-        });
-        break;
-      }
-
-      case 'customer.subscription.deleted': {
-        if (this.seenEventIds.has(event.id)) {
-          Logger.info('[STRIPE WEBHOOK] customer.subscription.deleted already processed, skipping', { eventId: event.id });
-          break;
-        }
-        this.seenEventIds.add(event.id);
-
-        const subscription = event.data.object as Stripe.Subscription;
-        await this.sendSubscriptionStatusToFrontOffice(subscription.id, 'cancelled', event.id);
-        Logger.info('[STRIPE WEBHOOK] customer.subscription.deleted processed', {
-          eventId: event.id,
-          subscriptionId: subscription.id,
-        });
-        break;
-      }
-
-      default:
-        Logger.info(`[STRIPE WEBHOOK] Ignored event: ${event.type}`);
+  async handleStripeEvent(event: Stripe.Event): Promise<void> {
+    const handler = this.eventHandlers.get(event.type);
+    if (handler) {
+      await handler(event);
+    } else {
+      Logger.info(`[STRIPE WEBHOOK] Ignored event: ${event.type}`);
     }
+  }
+
+  // ─── Event handlers ──────────────────────────────────────────────────────────
+
+  private async onPaymentIntentSucceeded(event: Stripe.Event): Promise<void> {
+    const intent = event.data.object as Stripe.PaymentIntent;
+
+    const existing = await this.orderRepository.findByPaymentIntentId(intent.id);
+    if (existing?.status === OrderStatus.SUCCESS) {
+      Logger.info('[STRIPE WEBHOOK] payment_intent.succeeded already processed, skipping', {
+        eventId: event.id,
+        paymentIntentId: intent.id,
+      });
+      return;
+    }
+
+    await this.updateOrderStatus(intent.id, OrderStatus.SUCCESS);
+    await this.sendTransactionToProductService(intent, 'succeeded', event.id);
+    await this.sendOrderConfirmationEmail(intent);
+    await this.activateSubscriptionInvoice(intent);
+
+    Logger.info('[STRIPE WEBHOOK] payment_intent.succeeded processed', {
+      eventId: event.id,
+      paymentIntentId: intent.id,
+      invoiceId: intent.metadata?.invoiceId ?? null,
+    });
+  }
+
+  private async onPaymentIntentFailed(event: Stripe.Event): Promise<void> {
+    const intent = event.data.object as Stripe.PaymentIntent;
+
+    const existing = await this.orderRepository.findByPaymentIntentId(intent.id);
+    if (existing?.status === OrderStatus.ERROR) {
+      Logger.info('[STRIPE WEBHOOK] payment_intent.payment_failed already processed, skipping', {
+        eventId: event.id,
+        paymentIntentId: intent.id,
+      });
+      return;
+    }
+
+    await this.updateOrderStatus(intent.id, OrderStatus.ERROR);
+    await this.sendTransactionToProductService(intent, 'failed', event.id);
+    Logger.info('[STRIPE WEBHOOK] payment_intent.payment_failed processed', {
+      eventId: event.id,
+      paymentIntentId: intent.id,
+    });
+  }
+
+  private async onInvoicePaymentSucceeded(event: Stripe.Event): Promise<void> {
+    if (this.seenEventIds.has(event.id)) {
+      Logger.info('[STRIPE WEBHOOK] invoice.payment_succeeded already processed, skipping', { eventId: event.id });
+      return;
+    }
+    this.seenEventIds.add(event.id);
+
+    const invoice = event.data.object as Stripe.Invoice;
+    const subRef = (invoice as any).parent?.subscription_details?.subscription;
+    if (!subRef) return;
+
+    const subscriptionId = typeof subRef === 'string' ? subRef : subRef.id;
+    await this.sendSubscriptionStatusToFrontOffice(subscriptionId, 'active', event.id);
+    Logger.info('[STRIPE WEBHOOK] invoice.payment_succeeded processed', {
+      eventId: event.id,
+      subscriptionId,
+      invoiceId: invoice.id,
+    });
+  }
+
+  private async onInvoicePaymentFailed(event: Stripe.Event): Promise<void> {
+    if (this.seenEventIds.has(event.id)) {
+      Logger.info('[STRIPE WEBHOOK] invoice.payment_failed already processed, skipping', { eventId: event.id });
+      return;
+    }
+    this.seenEventIds.add(event.id);
+
+    const invoice = event.data.object as Stripe.Invoice;
+    const subRef = (invoice as any).parent?.subscription_details?.subscription;
+    if (!subRef) return;
+
+    const subscriptionId = typeof subRef === 'string' ? subRef : subRef.id;
+    await this.sendSubscriptionStatusToFrontOffice(subscriptionId, 'inactive', event.id);
+    Logger.info('[STRIPE WEBHOOK] invoice.payment_failed processed', {
+      eventId: event.id,
+      subscriptionId,
+      invoiceId: invoice.id,
+    });
+  }
+
+  private async onSubscriptionDeleted(event: Stripe.Event): Promise<void> {
+    if (this.seenEventIds.has(event.id)) {
+      Logger.info('[STRIPE WEBHOOK] customer.subscription.deleted already processed, skipping', { eventId: event.id });
+      return;
+    }
+    this.seenEventIds.add(event.id);
+
+    const subscription = event.data.object as Stripe.Subscription;
+    await this.sendSubscriptionStatusToFrontOffice(subscription.id, 'cancelled', event.id);
+    Logger.info('[STRIPE WEBHOOK] customer.subscription.deleted processed', {
+      eventId: event.id,
+      subscriptionId: subscription.id,
+    });
   }
 
   // ─── Private helpers — order ─────────────────────────────────────────────────
