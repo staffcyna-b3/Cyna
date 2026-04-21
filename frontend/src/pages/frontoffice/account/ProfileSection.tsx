@@ -4,13 +4,8 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { updateProfile, UserApiError, UserProfile } from '@/services/userService';
-
-interface Props {
-  profile: UserProfile;
-  token: string;
-  onUpdated: (updated: UserProfile) => void;
-}
+import { updateProfile, UserApiError } from '@/services/userService';
+import type { Props } from '@/types/interfaces/account/ProfileSectionProps';
 
 export function ProfileSection({ profile, token, onUpdated }: Props) {
   const { t } = useTranslation();

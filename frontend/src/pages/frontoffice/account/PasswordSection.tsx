@@ -5,10 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { changePassword, UserApiError } from '@/services/userService';
-
-interface Props {
-  token: string;
-}
+import type { Props } from '@/types/interfaces/account/PasswordSectionProps';
 
 export function PasswordSection({ token }: Props) {
   const { t } = useTranslation();

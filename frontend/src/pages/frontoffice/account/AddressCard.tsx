@@ -10,14 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import type { Address } from '@/services/addressService';
-
-interface Props {
-  address: Address;
-  onSetDefault: (address: Address) => void;
-  onEdit: (address: Address) => void;
-  onDelete: (id: string) => void;
-}
+import type { Props } from '@/types/interfaces/account/AddressCardProps';
 
 export function AddressCard({ address, onSetDefault, onEdit, onDelete }: Props) {
   const { t } = useTranslation();

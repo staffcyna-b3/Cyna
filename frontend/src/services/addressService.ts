@@ -1,28 +1,7 @@
-export interface Address {
-  id: string;
-  type: 'billing' | 'shipping';
-  address_line1: string;
-  address_line2?: string | null;
-  city: string;
-  postcode: string;
-  country: string;
-  is_default: boolean;
-}
+import type { Address } from '@/types/interfaces/address/Address';
+import type { CreateAddressPayload } from '@/types/interfaces/address/CreateAddressPayload';
 
-export interface CreateAddressPayload {
-  type: 'billing' | 'shipping';
-  address_line1: string;
-  address_line2?: string | null;
-  city: string;
-  postcode: string;
-  country: string;
-  is_default?: boolean;
-}
-
-const withAuth = (token: string): Record<string, string> => ({
-  'Content-Type': 'application/json',
-  Authorization: `Bearer ${token}`,
-});
+export type { Address, CreateAddressPayload };
 
 export class AddressApiError extends Error {
   constructor(public readonly status: number, message: string) {
@@ -30,14 +9,21 @@ export class AddressApiError extends Error {
   }
 }
 
-const parseError = async (res: Response): Promise<AddressApiError> => {
+function withAuth(token: string): Record<string, string> {
+  return {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`,
+  };
+}
+
+async function parseError(res: Response): Promise<AddressApiError> {
   try {
     const body = await res.json();
     return new AddressApiError(res.status, body.message ?? 'Request failed');
   } catch {
     return new AddressApiError(res.status, 'Request failed');
   }
-};
+}
 
 export async function getAddresses(token: string): Promise<Address[]> {
   const res = await fetch('/api/front-office/addresses', { headers: withAuth(token) });

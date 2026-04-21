@@ -17,20 +17,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  createAddress,
-  updateAddress,
-  type Address,
-  type CreateAddressPayload,
-} from '@/services/addressService';
-
-interface Props {
-  open: boolean;
-  onClose: () => void;
-  token: string;
-  editTarget: Address | null;
-  onSaved: (address: Address) => Promise<void>;
-}
+import { createAddress, updateAddress } from '@/services/addressService';
+import type { CreateAddressPayload } from '@/types/interfaces/address/CreateAddressPayload';
+import type { Props } from '@/types/interfaces/account/AddressDialogProps';
 
 const empty: CreateAddressPayload = {
   type: 'billing',
@@ -72,7 +61,7 @@ export function AddressDialog({ open, onClose, token, editTarget, onSaved }: Pro
         ...form,
         address_line2: form.address_line2 || null,
       };
-      let saved: Address;
+      let saved;
       if (editTarget) {
         saved = await updateAddress(token, editTarget.id, payload);
         toast.success(t('account.addressUpdated'));

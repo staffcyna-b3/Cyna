@@ -6,17 +6,12 @@ import {
   getAddresses,
   setDefaultAddress,
   AddressApiError,
-  type Address,
 } from '@/services/addressService';
+import type { Address } from '@/types/interfaces/address/Address';
+import type { Props } from '@/types/interfaces/account/AddressesSectionProps';
 import { AddressCard } from './AddressCard';
 import { AddressDialog } from './AddressDialog';
 import { useState } from 'react';
-
-interface Props {
-  token: string;
-  addresses: Address[];
-  onAddressesChange: (addresses: Address[]) => void;
-}
 
 export function AddressesSection({ token, addresses, onAddressesChange }: Props) {
   const { t } = useTranslation();
