@@ -1,13 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import {
-  getOrders,
-  getOrderById,
-  OrderApiError,
-  type OrderSummary,
-  type OrderDetail,
-} from '@/services/orderService';
+import type { OrderSummary } from '@/types/interfaces/Order/OrderSummary';
+import type { OrderDetail } from '@/types/interfaces/Order/OrderDetail';
+import { getOrders, getOrderById, OrderApiError } from '@/services/orderService';
 import OrdersFilters from '../orders/OrdersFilters';
 import OrdersByYear from '../orders/OrdersByYear';
 import OrderDetailModal from '../orders/OrderDetailModal';
@@ -40,7 +36,7 @@ export function OrdersSection({ token }: OrdersSectionProps) {
       .finally(() => setLoading(false));
   }, [token, t]);
 
-  const handleOrderClick = async (orderId: string) => {
+  async function handleOrderClick(orderId: string) {
     setDetailLoading(true);
     setDetailOpen(true);
     setSelectedOrder(null);
@@ -57,7 +53,7 @@ export function OrdersSection({ token }: OrdersSectionProps) {
     } finally {
       setDetailLoading(false);
     }
-  };
+  }
 
   const filteredOrders = orders.filter((order) => {
     const date = new Date(order.created_at);

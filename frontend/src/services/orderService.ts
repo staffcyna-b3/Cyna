@@ -3,6 +3,12 @@ import type { CreateOrderResponse } from "@/types/interfaces/Order/CreateOrderRe
 import type { CheckoutContext } from "@/types/interfaces/Checkout/CheckoutContext"
 import type { UserAddresses } from "@/types/interfaces/address/UserAddresses"
 import type { AddressPayload } from "@/types/interfaces/address/AddressPayload"
+import type { OrderItem } from "@/types/interfaces/Order/OrderItem"
+import type { OrderSummary } from "@/types/interfaces/Order/OrderSummary"
+import type { BillingAddressSnapshot } from "@/types/interfaces/Order/BillingAddressSnapshot"
+import type { OrderDetail } from "@/types/interfaces/Order/OrderDetail"
+
+export type { OrderItem, OrderSummary, BillingAddressSnapshot, OrderDetail }
 
 export class OrderApiError extends Error {
   constructor(
@@ -14,44 +20,14 @@ export class OrderApiError extends Error {
   }
 }
 
-export interface OrderItem {
-  id: string;
-  product_name: string | null;
-  unit_price: number;
-  quantity: number;
-  is_recurring: boolean;
+function withAuthHeaders(token: string): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`,
+  }
 }
 
-export interface OrderSummary {
-  id: string;
-  status: string;
-  total_amount: number;
-  created_at: string;
-  billing_period: 'monthly' | 'yearly' | null;
-  stripe_payment_intent_id: string | null;
-  items: OrderItem[];
-}
-
-export interface BillingAddressSnapshot {
-  address_line1: string;
-  address_line2?: string | null;
-  city: string;
-  postcode: string;
-  country: string;
-}
-
-export interface OrderDetail extends OrderSummary {
-  billing_address_snapshot: BillingAddressSnapshot | null;
-  payment_last4: string | null;
-  payment_brand: string | null;
-}
-
-const withAuthHeaders = (token: string): Record<string, string> => ({
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${token}`,
-})
-
-const parseOrderError = async (res: Response): Promise<OrderApiError> => {
+async function parseOrderError(res: Response): Promise<OrderApiError> {
   try {
     const body = await res.json();
     return new OrderApiError(res.status, body.error ?? body.message ?? 'Request failed');
@@ -60,7 +36,7 @@ const parseOrderError = async (res: Response): Promise<OrderApiError> => {
   }
 }
 
-const parseJsonResponse = async <T>(res: Response): Promise<T> => {
+async function parseJsonResponse<T>(res: Response): Promise<T> {
   const contentType = res.headers.get("content-type") ?? ""
   if (contentType.includes("application/json")) {
     return res.json() as Promise<T>

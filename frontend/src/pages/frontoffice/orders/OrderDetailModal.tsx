@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { OrderDetail } from '@/services/orderService';
+import type { OrderDetail } from '@/types/interfaces/Order/OrderDetail';
 import { useOrdersPDF } from './useOrdersPDF';
 
 interface Props {

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
-import type { OrderSummary } from '@/services/orderService';
+import type { OrderSummary } from '@/types/interfaces/Order/OrderSummary';
 
 interface Props {
   order: OrderSummary;

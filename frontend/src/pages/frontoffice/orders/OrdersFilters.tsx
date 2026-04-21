@@ -6,7 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import type { OrderSummary } from '@/services/orderService';
+import type { OrderSummary } from '@/types/interfaces/Order/OrderSummary';
 
 interface Props {
   orders: OrderSummary[];

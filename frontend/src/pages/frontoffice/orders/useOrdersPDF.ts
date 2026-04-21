@@ -1,8 +1,8 @@
 import jsPDF from 'jspdf';
-import type { OrderDetail } from '@/services/orderService';
+import type { OrderDetail } from '@/types/interfaces/Order/OrderDetail';
 
 export function useOrdersPDF() {
-  const downloadInvoicePDF = (order: OrderDetail) => {
+  function downloadInvoicePDF(order: OrderDetail): void {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     let y = 20;
@@ -106,7 +106,7 @@ export function useOrdersPDF() {
     );
 
     doc.save(`facture-cyna-${order.id.slice(0, 8)}.pdf`);
-  };
+  }
 
   return { downloadInvoicePDF };
 }

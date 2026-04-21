@@ -1,4 +1,4 @@
-import type { OrderSummary } from '@/services/orderService';
+import type { OrderSummary } from '@/types/interfaces/Order/OrderSummary';
 import OrderCard from './OrderCard';
 
 interface Props {
