@@ -2,33 +2,49 @@ import { DataTable } from "@/components/Backoffice/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Typography } from "@/components/ui/typography";
-import { ordersMockData, transactionsMockData } from "@/lib/mockData";
-import { Order } from "@/types/order.type";
-import { Transaction } from "@/types/transaction.type";
+import type { TransactionAdminDTO } from "@/types/interfaces/admin/TransactionAdminDTO.interface";
 import { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { getTransactions, BackOfficeApiError } from "@/services/BackOfficeService";
+import { toast } from "sonner";
 
 export default function Transactions() {
+    const { accessToken } = useAuth();
     const [selected, setSelected] = useState("active");
-    
+    const [data, setData] = useState<TransactionAdminDTO[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!accessToken) return;
+        setLoading(true);
+        getTransactions(accessToken)
+            .then(setData)
+            .catch((err: unknown) => {
+                if (err instanceof BackOfficeApiError && err.status === 401) {
+                    toast.error(t("sessionExpired"));
+                } else {
+                    toast.error(t("errorOccurred"));
+                }
+            })
+            .finally(() => setLoading(false));
+    }, [accessToken]);
+
     const topRightActions = (
         <div className="flex items-center gap-2 bg-primary rounded-full p-1">
             <Button variant={selected === "active" ? 'selected' : 'notSelected'} onClick={() => setSelected("active")}>{t("active")}</Button>
             <Button variant={selected === "inactive" ? 'selected' : 'notSelected'} onClick={() => setSelected("inactive")}>{t("inactive")}</Button>
         </div>
-    )
+    );
 
-    const columns: ColumnDef<Transaction>[] = [
+    const columns: ColumnDef<TransactionAdminDTO>[] = [
         {
             id: "select",
             header: ({ table }) => (
                 <Checkbox
-                    checked={
-                    table.getIsAllPageRowsSelected() ||
-                    (table.getIsSomePageRowsSelected() && "indeterminate")
-                    }
+                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
                     onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
                     aria-label="Select all"
                 />
@@ -43,31 +59,19 @@ export default function Transactions() {
             enableSorting: false,
             enableHiding: false,
         },
-        {
-            accessorKey: "id",
-            header: "ID",
-        },
-        {
-            accessorKey: "amount",
-            header: "Amount",
-        },
+        { accessorKey: "id", header: "ID" },
+        { accessorKey: "amount", header: "Amount" },
+        { accessorKey: "currency", header: "Currency" },
         {
             accessorKey: "status",
-            header: ({ column }) => {
-                return (
-                    <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                    >
-                        Status
-                        <LucideArrowUpDown className="ml-2 h-4 w-4" />
-                    </Button>
-                )
-            },
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                    Status
+                    <LucideArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
         },
     ];
-
-    const data: Transaction[] = transactionsMockData;
 
     return (
         <>
@@ -76,12 +80,12 @@ export default function Transactions() {
                 {topRightActions}
             </header>
             <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
-                <div className="mt-3 flex items-center justify-between gap-2">
-                    <Button>+ Add User</Button>
-                    <Button variant="destructive">Supprimer</Button>
-                </div>
-                <DataTable columns={columns} data={data} />
+                {loading ? (
+                    <p className="p-4 text-muted-foreground">{t("loading")}</p>
+                ) : (
+                    <DataTable columns={columns} data={data} />
+                )}
             </div>
         </>
-    )
+    );
 }

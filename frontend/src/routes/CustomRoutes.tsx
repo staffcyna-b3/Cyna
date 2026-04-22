@@ -55,11 +55,25 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/users" element={<Users />} />
-        <Route path="/orders" element={<Orders />} />
-        <Route path="/transactions" element={<Transactions />} />
-        <Route path="/refunds" element={<Refunds />} />
+        
+          <Route 
+            path="/orders" 
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}><Orders /></ProtectedRoute>
+            } 
+          />  
+          <Route 
+            path="/transactions" 
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}><Transactions /></ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/refunds" 
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}><Refunds /></ProtectedRoute>
+            } 
+          />
       </Route>
 
       {/* Frontoffice routes */}

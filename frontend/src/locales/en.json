@@ -1,5 +1,16 @@
 {
   "acceptCGV": "I accept ",
+  "admin": {
+    "refund": "Refund",
+    "confirmRefund": "Confirm refund?",
+    "refundSuccess": "Refund processed successfully",
+    "refundError": "Error processing refund",
+    "noData": "No data"
+  },
+  "orders": "Orders",
+  "refunds": "Refunds",
+  "sessionExpired": "Session expired, please log in again",
+  "transactions": "Transactions",
   "account": "Account",
   "active": "Active",
   "address": "address",

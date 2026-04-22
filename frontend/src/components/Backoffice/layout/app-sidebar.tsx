@@ -5,6 +5,7 @@ import {
   LayoutDashboard,
   LogOut,
   Percent,
+  RotateCcw,
   Settings,
   ShoppingCart,
   Users,
@@ -33,6 +34,7 @@ const navItems = [
   { title: 'users', url: "/users", icon: Users },
   { title: 'orders', url: "/orders", icon: ShoppingCart },
   { title: 'transactions', url: "/transactions", icon: ArrowLeftRight },
+  { title: 'refunds', url: "/refunds", icon: RotateCcw },
   { title: 'discounts', url: "/discounts", icon: Percent },
 ]
 

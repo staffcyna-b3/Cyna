@@ -1,5 +1,16 @@
 {
   "acceptCGV": "J'accepte ",
+  "admin": {
+    "refund": "Rembourser",
+    "confirmRefund": "Confirmer le remboursement ?",
+    "refundSuccess": "Remboursement effectué avec succès",
+    "refundError": "Erreur lors du remboursement",
+    "noData": "Aucune donnée"
+  },
+  "orders": "Commandes",
+  "refunds": "Remboursements",
+  "sessionExpired": "Session expirée, veuillez vous reconnecter",
+  "transactions": "Transactions",
   "account": "Compte",
   "active": "Actif",
   "address": "Adresse",
