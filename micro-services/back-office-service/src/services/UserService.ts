@@ -2,6 +2,7 @@ import { IUserRepository } from '../interfaces/IUserRepository';
 import { IUserService } from '../interfaces/IUserService';
 import { PaginatedResponse } from '../dto/PaginatedResponse';
 import { UserAdminDTO } from '../dto/UserAdminDTO';
+import { UserRoleType } from '../enum/UserRoleType';
 
 export class UserService implements IUserService {
   constructor(private readonly repo: IUserRepository) {}
@@ -13,7 +14,7 @@ export class UserService implements IUserService {
         id: u.id,
         full_name: u.full_name,
         email: u.email,
-        role: u.roles?.[0]?.role ?? 'user',
+        role: u.roles?.[0]?.role ?? UserRoleType.USER,
         created_at: u.created_at.toISOString(),
         updated_at: u.updated_at.toISOString(),
       })),
@@ -31,7 +32,7 @@ export class UserService implements IUserService {
       id: user.id,
       full_name: user.full_name,
       email: user.email,
-      role: user.roles?.[0]?.role ?? 'user',
+      role: user.roles?.[0]?.role ?? UserRoleType.USER,
       created_at: user.created_at.toISOString(),
       updated_at: user.updated_at.toISOString(),
     };

@@ -10,12 +10,16 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { getTransactions, BackOfficeApiError } from "@/services/BackOfficeService";
 import { toast } from "sonner";
+import { TransactionSheet } from "./components/TransactionSheet";
 
 export default function Transactions() {
     const { accessToken } = useAuth();
     const [selected, setSelected] = useState("active");
     const [data, setData] = useState<TransactionAdminDTO[]>([]);
     const [loading, setLoading] = useState(true);
+
+    const [selectedTransaction, setSelectedTransaction] = useState<TransactionAdminDTO | null>(null);
+    const [sheetOpen, setSheetOpen] = useState(false);
 
     useEffect(() => {
         if (!accessToken) return;
@@ -31,6 +35,11 @@ export default function Transactions() {
             })
             .finally(() => setLoading(false));
     }, [accessToken]);
+
+    const handleRowClick = (transaction: TransactionAdminDTO) => {
+        setSelectedTransaction(transaction);
+        setSheetOpen(true);
+    };
 
     const topRightActions = (
         <div className="flex items-center gap-2 bg-primary rounded-full p-1">
@@ -83,9 +92,31 @@ export default function Transactions() {
                 {loading ? (
                     <p className="p-4 text-muted-foreground">{t("loading")}</p>
                 ) : (
-                    <DataTable columns={columns} data={data} />
+                    <DataTable
+                        columns={columns}
+                        data={data}
+                        onRowClick={handleRowClick}
+                    />
                 )}
             </div>
+            {selectedTransaction && (
+                <TransactionSheet
+                    open={sheetOpen}
+                    transactionId={selectedTransaction.id}
+                    amount={selectedTransaction.amount}
+                    currency={selectedTransaction.currency}
+                    status={selectedTransaction.status}
+                    description={selectedTransaction.description}
+                    createdAt={selectedTransaction.created}
+                    title={t("admin.viewTransaction")}
+                    closeLabel={t("admin.close")}
+                    amountLabel={t("admin.amount")}
+                    statusLabel={t("admin.status")}
+                    descriptionLabel={t("admin.description")}
+                    dateLabel={t("admin.date")}
+                    onOpenChange={setSheetOpen}
+                />
+            )}
         </>
     );
 }

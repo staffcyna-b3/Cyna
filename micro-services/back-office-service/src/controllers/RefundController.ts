@@ -19,6 +19,15 @@ export class RefundController {
       return;
     }
 
+    if (amount !== undefined && amount <= 0) {
+      res.status(400).json({
+        success: false,
+        error: 'INVALID_AMOUNT',
+        message: 'Amount must be greater than 0',
+      });
+      return;
+    }
+
     const refund = await this.service.create(payment_intent_id, amount, reason);
     res.status(201).json({ success: true, data: refund });
   }

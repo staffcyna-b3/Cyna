@@ -17,16 +17,7 @@ const allowedOrigins = [
   process.env.GATEWAY_INTERNAL_URL || 'http://localhost:3000',
 ];
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    callback(new Error(`CORS policy: origin ${origin} not allowed`));
-  },
-  credentials: true,
-}));
+app.use(cors());
 app.use(express.json());
 
 app.use('/users', usersRouter);

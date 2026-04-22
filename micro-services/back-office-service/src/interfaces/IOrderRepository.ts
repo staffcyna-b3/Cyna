@@ -8,5 +8,4 @@ export type OrderWithItems = Order & { items?: OrderItemWithProduct[] };
 export interface IOrderRepository {
   findAll(page: number, limit: number): Promise<{ rows: OrderWithItems[]; count: number }>;
   findById(id: string): Promise<OrderWithItems | null>;
-  updateStatus(id: string, status: string): Promise<Order>;
 }

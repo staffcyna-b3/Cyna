@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { getAdminOrders, BackOfficeApiError } from "@/services/BackOfficeService";
 import { toast } from "sonner";
+import { OrderEditorSheet } from "./components/OrderEditorSheet";
 
 export default function Orders() {
     const { accessToken } = useAuth();
@@ -19,6 +20,11 @@ export default function Orders() {
     const [page, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const limit = 20;
+
+    const [selectedOrder, setSelectedOrder] = useState<OrderAdminDTO | null>(null);
+    const [sheetOpen, setSheetOpen] = useState(false);
+    const [editStatus, setEditStatus] = useState('');
+    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (!accessToken) return;
@@ -37,6 +43,19 @@ export default function Orders() {
             })
             .finally(() => setLoading(false));
     }, [accessToken, page]);
+
+    const handleRowClick = (order: OrderAdminDTO) => {
+        setSelectedOrder(order);
+        setEditStatus(order.status);
+        setSheetOpen(true);
+    };
+
+    const handleSave = () => {
+        // TODO: PATCH /api/back-office/orders/:id — endpoint not yet implemented
+        setSaving(true);
+        toast.info(t("admin.notImplemented"));
+        setSaving(false);
+    };
 
     const topRightActions = (
         <div className="flex items-center gap-2 bg-primary rounded-full p-1">
@@ -92,7 +111,11 @@ export default function Orders() {
                     <p className="p-4 text-muted-foreground">{t("loading")}</p>
                 ) : (
                     <>
-                        <DataTable columns={columns} data={data} />
+                        <DataTable
+                            columns={columns}
+                            data={data}
+                            onRowClick={handleRowClick}
+                        />
                         <div className="flex items-center justify-between gap-2 mt-2">
                             <span className="text-sm text-muted-foreground">{total} {t("orders")}</span>
                             <div className="flex gap-2">
@@ -103,6 +126,27 @@ export default function Orders() {
                     </>
                 )}
             </div>
+            {selectedOrder && (
+                <OrderEditorSheet
+                    open={sheetOpen}
+                    orderId={selectedOrder.id}
+                    userId={selectedOrder.user_id}
+                    status={editStatus}
+                    totalAmount={selectedOrder.total_amount}
+                    stripePaymentIntentId={selectedOrder.stripe_payment_intent_id}
+                    createdAt={selectedOrder.created_at}
+                    items={selectedOrder.items}
+                    title={t("admin.editOrder")}
+                    saveLabel={t("update")}
+                    statusLabel={t("admin.status")}
+                    itemsLabel={t("admin.items")}
+                    totalLabel={t("total")}
+                    saving={saving}
+                    onOpenChange={setSheetOpen}
+                    onStatusChange={setEditStatus}
+                    onSave={handleSave}
+                />
+            )}
         </>
     );
 }
