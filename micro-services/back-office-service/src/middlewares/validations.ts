@@ -4,6 +4,7 @@ import { Logger } from '../common/logger';
 import { Schema } from '../schemas/schema.types';
 import parseWithSchema from '../utils/parseWithSchema';
 import { RequestBodySchema } from '../types/RequestBodySchema';
+import { ValidatorSchemaInput } from '../types/ValidatorSchemaInput';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
     return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -119,13 +120,6 @@ export function validateBody(schema: unknown) {
         }
     };
 }
-
-type ValidatorSchemaInput = {
-    body?: Schema;
-    query?: Schema;
-    params?: Schema;
-};
-
 export function validatorSchema({ body, query, params }: ValidatorSchemaInput) {
     return (req: Request, res: Response, next: NextFunction) => {
         let failedAt: 'query' | 'params' | 'body' | 'unknown' = 'unknown';
