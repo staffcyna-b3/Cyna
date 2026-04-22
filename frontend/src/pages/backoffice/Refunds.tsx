@@ -1,27 +1,16 @@
-import { DataTable } from "@/components/Backoffice/data-table";
+import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Typography } from "@/components/ui/typography";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
 import type { RefundAdminDTO } from "@/types/interfaces/admin/RefundAdminDTO.interface";
-import type { CreateRefundRequest } from "@/types/interfaces/admin/CreateRefundRequest.interface";
 import { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getRefunds, createRefund, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getRefunds, BackOfficeApiError } from "@/services/BackOfficeService";
 import { toast } from "sonner";
-import { RefundSheet } from "./components/RefundSheet";
+import { RefundSheet } from "../../components/Backoffice/sheets/RefundSheet";
 
 export default function Refunds() {
     const { accessToken } = useAuth();
@@ -30,15 +19,9 @@ export default function Refunds() {
     const [loading, setLoading] = useState(true);
 
     const [selectedRefund, setSelectedRefund] = useState<RefundAdminDTO | null>(null);
-    const [viewSheetOpen, setViewSheetOpen] = useState(false);
-    const [createSheetOpen, setCreateSheetOpen] = useState(false);
-    const [createPaymentIntentId, setCreatePaymentIntentId] = useState('');
-    const [createAmount, setCreateAmount] = useState<number | undefined>(undefined);
-    const [createReason, setCreateReason] = useState('');
-    const [submitting, setSubmitting] = useState(false);
-    const [confirmOpen, setConfirmOpen] = useState(false);
+    const [sheetOpen, setSheetOpen] = useState(false);
 
-    const fetchData = () => {
+    useEffect(() => {
         if (!accessToken) return;
         setLoading(true);
         getRefunds(accessToken)
@@ -51,51 +34,11 @@ export default function Refunds() {
                 }
             })
             .finally(() => setLoading(false));
-    };
-
-    useEffect(() => { fetchData(); }, [accessToken]);
+    }, [accessToken]);
 
     const handleRowClick = (refund: RefundAdminDTO) => {
         setSelectedRefund(refund);
-        setViewSheetOpen(true);
-    };
-
-    const handleOpenCreate = (paymentIntentId: string) => {
-        setCreatePaymentIntentId(paymentIntentId);
-        setCreateAmount(undefined);
-        setCreateReason('');
-        setCreateSheetOpen(true);
-    };
-
-    const handleCreateRefund = () => {
-        if (!accessToken) return;
-        setSubmitting(true);
-        const payload: CreateRefundRequest = {
-            payment_intent_id: createPaymentIntentId,
-            ...(createAmount !== undefined && { amount: createAmount }),
-            ...(createReason && { reason: createReason }),
-        };
-        createRefund(accessToken, payload)
-            .then(() => {
-                toast.success(t("admin.refundSuccess"));
-                setCreateSheetOpen(false);
-                fetchData();
-            })
-            .catch((err: unknown) => {
-                if (err instanceof BackOfficeApiError && err.status === 401) {
-                    toast.error(t("sessionExpired"));
-                } else {
-                    toast.error(t("admin.refundError"));
-                }
-            })
-            .finally(() => setSubmitting(false));
-    };
-
-    const handleRefundRequest = () => setConfirmOpen(true);
-
-    const handleConfirmRefund = () => {
-        setConfirmOpen(false);
-        handleCreateRefund();
+        setSheetOpen(true);
     };
 
     const topRightActions = (
@@ -138,22 +81,6 @@ export default function Refunds() {
         },
         { accessorKey: "reason", header: "Reason" },
         { accessorKey: "payment_intent", header: "Payment Intent" },
-        {
-            id: "actions",
-            header: "Actions",
-            cell: ({ row }) => (
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleOpenCreate(row.original.payment_intent);
-                    }}
-                >
-                    {t("admin.refund")}
-                </Button>
-            ),
-        },
     ];
 
     return (
@@ -173,57 +100,22 @@ export default function Refunds() {
                     />
                 )}
             </div>
-
             {selectedRefund && (
                 <RefundSheet
-                    open={viewSheetOpen}
-                    mode="view"
+                    open={sheetOpen}
                     refundId={selectedRefund.id}
                     refundAmount={selectedRefund.amount}
                     refundStatus={selectedRefund.status}
                     refundReason={selectedRefund.reason}
+                    refundPaymentIntent={selectedRefund.payment_intent}
                     refundCreatedAt={selectedRefund.created}
                     title={t("admin.viewRefund")}
-                    confirmLabel={t("admin.confirm")}
-                    cancelLabel={t("cancel")}
                     amountLabel={t("admin.amount")}
                     reasonLabel={t("admin.reason")}
                     paymentIntentLabel="Payment Intent"
-                    submitting={false}
-                    onOpenChange={setViewSheetOpen}
+                    onOpenChange={setSheetOpen}
                 />
             )}
-
-            <RefundSheet
-                open={createSheetOpen}
-                mode="create"
-                paymentIntentId={createPaymentIntentId}
-                title={t("admin.createRefund")}
-                confirmLabel={t("admin.confirm")}
-                cancelLabel={t("cancel")}
-                amountLabel={t("admin.amount")}
-                reasonLabel={t("admin.reason")}
-                paymentIntentLabel="Payment Intent"
-                submitting={submitting}
-                amount={createAmount}
-                reason={createReason}
-                onOpenChange={setCreateSheetOpen}
-                onAmountChange={setCreateAmount}
-                onReasonChange={setCreateReason}
-                onConfirm={handleRefundRequest}
-            />
-            <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t('admin.confirmRefund')}</AlertDialogTitle>
-                        <AlertDialogDescription>{t('admin.confirmRefundDescription')}</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleConfirmRefund}>{t('admin.refund')}</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </>
     );
 }

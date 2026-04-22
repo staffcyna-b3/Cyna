@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/Backoffice/data-table";
+import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Typography } from "@/components/ui/typography";
@@ -8,9 +8,9 @@ import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getAdminOrders, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getAdminOrders, updateOrderStatus, BackOfficeApiError } from "@/services/BackOfficeService";
 import { toast } from "sonner";
-import { OrderEditorSheet } from "./components/OrderEditorSheet";
+import { OrderEditorSheet } from "../../components/Backoffice/sheets/OrderEditorSheet";
 
 export default function Orders() {
     const { accessToken } = useAuth();
@@ -50,11 +50,23 @@ export default function Orders() {
         setSheetOpen(true);
     };
 
-    const handleSave = () => {
-        // TODO: PATCH /api/back-office/orders/:id — endpoint not yet implemented
+    const handleSave = async () => {
+        if (!selectedOrder || !accessToken) return;
         setSaving(true);
-        toast.info(t("admin.notImplemented"));
-        setSaving(false);
+        try {
+            const updated = await updateOrderStatus(accessToken, selectedOrder.id, editStatus);
+            setData((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
+            setSheetOpen(false);
+            toast.success(t("admin.orderUpdated"));
+        } catch (err: unknown) {
+            if (err instanceof BackOfficeApiError && err.status === 401) {
+                toast.error(t("sessionExpired"));
+            } else {
+                toast.error(t("errorOccurred"));
+            }
+        } finally {
+            setSaving(false);
+        }
     };
 
     const topRightActions = (

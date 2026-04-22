@@ -18,9 +18,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useState } from "react"
-import { Input } from "../ui/input"
-import { DataTablePagination } from "./data-table-pagintation"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group"
+import { DataTablePagination } from "@/components/Backoffice/data-table/data-table-pagination"
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { LucideSearch } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {

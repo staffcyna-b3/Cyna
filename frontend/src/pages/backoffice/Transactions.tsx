@@ -1,16 +1,27 @@
-import { DataTable } from "@/components/Backoffice/data-table";
+import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Typography } from "@/components/ui/typography";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import type { TransactionAdminDTO } from "@/types/interfaces/admin/TransactionAdminDTO.interface";
+import type { CreateRefundRequest } from "@/types/interfaces/admin/CreateRefundRequest.interface";
 import { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getTransactions, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getTransactions, createRefund, BackOfficeApiError } from "@/services/BackOfficeService";
 import { toast } from "sonner";
-import { TransactionSheet } from "./components/TransactionSheet";
+import { TransactionSheet } from "../../components/Backoffice/sheets/TransactionSheet";
 
 export default function Transactions() {
     const { accessToken } = useAuth();
@@ -20,6 +31,9 @@ export default function Transactions() {
 
     const [selectedTransaction, setSelectedTransaction] = useState<TransactionAdminDTO | null>(null);
     const [sheetOpen, setSheetOpen] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
+    const pendingRefund = useRef<{ paymentIntentId: string; amount: number | undefined; reason: string } | null>(null);
 
     useEffect(() => {
         if (!accessToken) return;
@@ -39,6 +53,38 @@ export default function Transactions() {
     const handleRowClick = (transaction: TransactionAdminDTO) => {
         setSelectedTransaction(transaction);
         setSheetOpen(true);
+    };
+
+    const handleConfirmRefund = (paymentIntentId: string, amount: number | undefined, reason: string) => {
+        pendingRefund.current = { paymentIntentId, amount, reason };
+        setConfirmOpen(true);
+    };
+
+    const handleSubmitRefund = () => {
+        if (!accessToken || !pendingRefund.current) return;
+        setSubmitting(true);
+        const { paymentIntentId, amount, reason } = pendingRefund.current;
+        const payload: CreateRefundRequest = {
+            payment_intent_id: paymentIntentId,
+            ...(amount !== undefined && { amount }),
+            ...(reason && { reason }),
+        };
+        createRefund(accessToken, payload)
+            .then(() => {
+                toast.success(t("admin.refundSuccess"));
+                setSheetOpen(false);
+            })
+            .catch((err: unknown) => {
+                if (err instanceof BackOfficeApiError && err.status === 401) {
+                    toast.error(t("sessionExpired"));
+                } else {
+                    toast.error(t("admin.refundError"));
+                }
+            })
+            .finally(() => {
+                setSubmitting(false);
+                pendingRefund.current = null;
+            });
     };
 
     const topRightActions = (
@@ -109,14 +155,29 @@ export default function Transactions() {
                     description={selectedTransaction.description}
                     createdAt={selectedTransaction.created}
                     title={t("admin.viewTransaction")}
-                    closeLabel={t("admin.close")}
                     amountLabel={t("admin.amount")}
                     statusLabel={t("admin.status")}
                     descriptionLabel={t("admin.description")}
                     dateLabel={t("admin.date")}
+                    submitting={submitting}
                     onOpenChange={setSheetOpen}
+                    onConfirmRefund={handleConfirmRefund}
                 />
             )}
+            <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t('admin.confirmRefund')}</AlertDialogTitle>
+                        <AlertDialogDescription>{t('admin.confirmRefundDescription')}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => { setConfirmOpen(false); handleSubmitRefund(); }}>
+                            {t('admin.refund')}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 }

@@ -6,6 +6,7 @@ const makeRepositoryMock = () => {
   const repo = {
     findAll: vi.fn(),
     findById: vi.fn(),
+    updateStatus: vi.fn(),
   };
   return repo as unknown as IOrderRepository & {
     [K in keyof IOrderRepository]: ReturnType<typeof vi.fn>;
@@ -88,6 +89,37 @@ describe('OrderService', () => {
       const result = await service.getById('order-1');
 
       expect(result.stripe_payment_intent_id).toBeNull();
+    });
+  });
+
+  describe('updateStatus', () => {
+    it('met à jour le statut avec une valeur valide', async () => {
+      repo.updateStatus.mockResolvedValue(makeOrder({ status: 'PAID' as any }));
+
+      const result = await service.updateStatus('order-1', 'PAID');
+
+      expect(repo.updateStatus).toHaveBeenCalledWith('order-1', 'PAID');
+      expect(result.status).toBe('PAID');
+    });
+
+    it('throw 400 si statut invalide', async () => {
+      await expect(service.updateStatus('order-1', 'INVALID')).rejects.toMatchObject({ status: 400, error: 'INVALID_STATUS' });
+      expect(repo.updateStatus).not.toHaveBeenCalled();
+    });
+
+    it('propage throw 404 si order inexistant', async () => {
+      repo.updateStatus.mockRejectedValue({ status: 404, error: 'ORDER_NOT_FOUND' });
+
+      await expect(service.updateStatus('missing', 'PAID')).rejects.toMatchObject({ status: 404 });
+    });
+
+    it('retourne OrderAdminDTO complet', async () => {
+      repo.updateStatus.mockResolvedValue(makeOrder({ status: 'CANCELLED' as any }));
+
+      const result = await service.updateStatus('order-1', 'CANCELLED');
+
+      expect(result).toMatchObject({ id: 'order-1', status: 'CANCELLED', user_id: 'user-1' });
+      expect(result.items).toHaveLength(1);
     });
   });
 });

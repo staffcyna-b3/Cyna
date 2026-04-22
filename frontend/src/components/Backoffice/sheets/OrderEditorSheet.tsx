@@ -11,6 +11,8 @@ import {
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
+  SheetFooter,
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
@@ -60,15 +62,12 @@ export function OrderEditorSheet({
 }: OrderEditorSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="flex flex-col gap-0 p-0">
-        <SheetHeader className="flex flex-row items-center justify-between border-b p-4">
-          <div className="flex flex-col gap-0.5">
+      <SheetContent>
+        <SheetHeader>
             <SheetTitle>{title}</SheetTitle>
-            <span className="text-xs text-muted-foreground font-mono">{orderId}</span>
-          </div>
-          <Button onClick={onSave} disabled={saving} size="sm">
-            {saveLabel}
-          </Button>
+            <SheetDescription>
+              {orderId}
+            </SheetDescription>
         </SheetHeader>
 
         <div className="flex flex-col gap-4 overflow-y-auto p-4">
@@ -132,6 +131,11 @@ export function OrderEditorSheet({
             </div>
           </div>
         </div>
+        <SheetFooter>
+          <Button onClick={onSave} disabled={saving} size="sm">
+            {saveLabel}
+          </Button>
+        </SheetFooter>
       </SheetContent>
     </Sheet>
   );

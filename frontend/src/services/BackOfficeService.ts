@@ -74,3 +74,41 @@ export async function createRefund(
   });
   return handleResponse<RefundAdminDTO>(res);
 }
+
+export async function updateUserRole(
+  token: string,
+  id: string,
+  role: string
+): Promise<UserAdminDTO> {
+  const res = await fetch(`/api/back-office/users/${id}/role`, {
+    method: 'PATCH',
+    headers: withAuth(token),
+    body: JSON.stringify({ role }),
+  });
+  return handleResponse<UserAdminDTO>(res);
+}
+
+export async function deleteUser(token: string, id: string): Promise<void> {
+  const res = await fetch(`/api/back-office/users/${id}`, {
+    method: 'DELETE',
+    headers: withAuth(token),
+  });
+  if (res.status === 401) throw new BackOfficeApiError(401, 'UNAUTHORIZED');
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new BackOfficeApiError(res.status, body?.error ?? 'REQUEST_FAILED');
+  }
+}
+
+export async function updateOrderStatus(
+  token: string,
+  id: string,
+  status: string
+): Promise<OrderAdminDTO> {
+  const res = await fetch(`/api/back-office/orders/${id}/status`, {
+    method: 'PATCH',
+    headers: withAuth(token),
+    body: JSON.stringify({ status }),
+  });
+  return handleResponse<OrderAdminDTO>(res);
+}

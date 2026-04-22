@@ -2,6 +2,7 @@ import Order from '../models/Order';
 import OrderItem from '../models/OrderItem';
 import Product from '../models/Product';
 import { IOrderRepository, OrderWithItems } from '../interfaces/IOrderRepository';
+import { OrderStatus } from '../enum/OrderStatus';
 
 export class OrderRepository implements IOrderRepository {
   async findAll(page: number, limit: number): Promise<{ rows: OrderWithItems[]; count: number }> {
@@ -38,6 +39,6 @@ export class OrderRepository implements IOrderRepository {
   async updateStatus(id: string, status: string): Promise<Order> {
     const order = await Order.findByPk(id);
     if (!order) throw { status: 404, error: 'ORDER_NOT_FOUND' };
-    return order.update({ status: status as import('../enum/OrderStatus').OrderStatus });
+    return order.update({ status: status as OrderStatus });
   }
 }

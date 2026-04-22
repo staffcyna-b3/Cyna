@@ -6,6 +6,8 @@ const makeRepositoryMock = () => {
   const repo = {
     findAll: vi.fn(),
     findById: vi.fn(),
+    updateRole: vi.fn(),
+    delete: vi.fn(),
   };
   return repo as unknown as IUserRepository & {
     [K in keyof IUserRepository]: ReturnType<typeof vi.fn>;
@@ -92,6 +94,53 @@ describe('UserService', () => {
 
       expect(result).not.toHaveProperty('password');
       expect(result.id).toBe('user-1');
+    });
+  });
+
+  describe('updateRole', () => {
+    it('met à jour le rôle avec une valeur valide', async () => {
+      repo.updateRole.mockResolvedValue(makeUser({ roles: [{ role: 'admin' } as any] }));
+
+      const result = await service.updateRole('user-1', 'admin');
+
+      expect(repo.updateRole).toHaveBeenCalledWith('user-1', 'admin');
+      expect(result.role).toBe('admin');
+    });
+
+    it('throw 400 si rôle invalide', async () => {
+      await expect(service.updateRole('user-1', 'superuser')).rejects.toMatchObject({ status: 400, error: 'INVALID_ROLE' });
+      expect(repo.updateRole).not.toHaveBeenCalled();
+    });
+
+    it('propage throw 404 si user inexistant', async () => {
+      repo.updateRole.mockRejectedValue({ status: 404, error: 'USER_NOT_FOUND' });
+
+      await expect(service.updateRole('missing', 'user')).rejects.toMatchObject({ status: 404 });
+    });
+
+    it('retourne UserAdminDTO sans password', async () => {
+      repo.updateRole.mockResolvedValue(makeUser({ roles: [{ role: 'commercial' } as any] }));
+
+      const result = await service.updateRole('user-1', 'commercial');
+
+      expect(result).not.toHaveProperty('password');
+      expect(result).toMatchObject({ id: 'user-1', role: 'commercial' });
+    });
+  });
+
+  describe('delete', () => {
+    it('supprime le user via le repo', async () => {
+      repo.delete.mockResolvedValue(undefined);
+
+      await service.delete('user-1');
+
+      expect(repo.delete).toHaveBeenCalledWith('user-1');
+    });
+
+    it('propage throw 404 si user inexistant', async () => {
+      repo.delete.mockRejectedValue({ status: 404, error: 'USER_NOT_FOUND' });
+
+      await expect(service.delete('missing')).rejects.toMatchObject({ status: 404 });
     });
   });
 });

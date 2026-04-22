@@ -1,4 +1,4 @@
-import { DataTable } from "@/components/Backoffice/data-table";
+import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Typography } from "@/components/ui/typography";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,9 +8,9 @@ import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getUsers, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getUsers, updateUserRole, deleteUser, BackOfficeApiError } from "@/services/BackOfficeService";
 import { toast } from "sonner";
-import { UserEditorSheet } from "./components/UserEditorSheet";
+import { UserEditorSheet } from "../../components/Backoffice/sheets/UserEditorSheet";
 
 export default function Users() {
     const { accessToken } = useAuth();
@@ -51,18 +51,42 @@ export default function Users() {
         setSheetOpen(true);
     };
 
-    const handleSave = () => {
-        // TODO: PATCH /api/back-office/users/:id — endpoint not yet implemented
+    const handleSave = async () => {
+        if (!selectedUser || !accessToken) return;
         setSaving(true);
-        toast.info(t("admin.notImplemented"));
-        setSaving(false);
+        try {
+            const updated = await updateUserRole(accessToken, selectedUser.id, editRole);
+            setData((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
+            setSheetOpen(false);
+            toast.success(t("admin.userUpdated"));
+        } catch (err: unknown) {
+            if (err instanceof BackOfficeApiError && err.status === 401) {
+                toast.error(t("sessionExpired"));
+            } else {
+                toast.error(t("errorOccurred"));
+            }
+        } finally {
+            setSaving(false);
+        }
     };
 
-    const handleDelete = () => {
-        // TODO: DELETE /api/back-office/users/:id — endpoint not yet implemented
+    const handleDelete = async () => {
+        if (!selectedUser || !accessToken) return;
         setDeleting(true);
-        toast.info(t("admin.notImplemented"));
-        setDeleting(false);
+        try {
+            await deleteUser(accessToken, selectedUser.id);
+            setData((prev) => prev.filter((u) => u.id !== selectedUser.id));
+            setSheetOpen(false);
+            toast.success(t("admin.userDeleted"));
+        } catch (err: unknown) {
+            if (err instanceof BackOfficeApiError && err.status === 401) {
+                toast.error(t("sessionExpired"));
+            } else {
+                toast.error(t("errorOccurred"));
+            }
+        } finally {
+            setDeleting(false);
+        }
     };
 
     const topRightActions = (
@@ -142,7 +166,7 @@ export default function Users() {
                     createdAt={selectedUser.created_at}
                     title={t("admin.editUser")}
                     saveLabel={t("update")}
-                    deleteLabel={t("admin.deleteUser")}
+                    deleteLabel={t("delete")}
                     roleLabel={t("admin.role")}
                     saving={saving}
                     deleting={deleting}

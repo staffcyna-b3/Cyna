@@ -37,4 +37,24 @@ export class UserService implements IUserService {
       updated_at: user.updated_at.toISOString(),
     };
   }
+
+  async updateRole(id: string, role: string): Promise<UserAdminDTO> {
+    const validRoles = Object.values(UserRoleType);
+    if (!validRoles.includes(role as UserRoleType)) {
+      throw { status: 400, error: 'INVALID_ROLE' };
+    }
+    const user = await this.repo.updateRole(id, role);
+    return {
+      id: user.id,
+      full_name: user.full_name,
+      email: user.email,
+      role: user.roles?.[0]?.role ?? UserRoleType.USER,
+      created_at: user.created_at.toISOString(),
+      updated_at: user.updated_at.toISOString(),
+    };
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.repo.delete(id);
+  }
 }

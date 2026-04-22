@@ -6,4 +6,6 @@ export type UserWithRoles = User & { roles?: UserRole[] };
 export interface IUserRepository {
   findAll(page: number, limit: number): Promise<{ rows: UserWithRoles[]; count: number }>;
   findById(id: string): Promise<UserWithRoles | null>;
+  updateRole(id: string, role: string): Promise<UserWithRoles>;
+  delete(id: string): Promise<void>;
 }
