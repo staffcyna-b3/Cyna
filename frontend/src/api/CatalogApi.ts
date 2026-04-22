@@ -1,6 +1,6 @@
 import { CatalogResponse } from '@/types/interfaces/catalog/CatalogResponse';
 import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResponse';
-import { CatalogFilters } from '../types/interfaces/catalog/CatelogFilters';
+import { CatalogFilters } from '../types/interfaces/catalog/CatalogFilters';
 import { AbstractApi } from './AbstractApi';
 import { Category } from '@/types/interfaces/category/Category';
 import { ProductSuggestion } from '@/types/interfaces/catalog/ProductSuggestion';

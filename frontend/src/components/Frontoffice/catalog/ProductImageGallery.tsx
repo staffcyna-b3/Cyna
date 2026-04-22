@@ -1,13 +1,6 @@
-import React, { JSX, useMemo, useState } from 'react';
-import { TFunction } from 'i18next';
-import { ProductPictureResponse } from '@/types/interfaces/catalog/ProductPictureResponse';
+import { JSX, useMemo, useState } from 'react';
+import { ProductImageGalleryProps } from '@/types/interfaces/catalog/ProductImageGalleryProps';
 import { getProductImageSrc, sortProductImages } from '@/helpers/frontoffice/catalog/detailHelpers';
-
-interface ProductImageGalleryProps {
-    productName: string;
-    images: ProductPictureResponse[] | undefined;
-    t: TFunction;
-}
 
 export default function ProductImageGallery({
     productName,
@@ -16,9 +9,7 @@ export default function ProductImageGallery({
 }: ProductImageGalleryProps): JSX.Element {
     const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-    const orderedImages = useMemo(() => {
-        return sortProductImages(images);
-    }, [images]);
+    const orderedImages = useMemo(() => sortProductImages(images), [images]);
 
     const hasMultiple = orderedImages.length > 1;
 
@@ -66,18 +57,8 @@ export default function ProductImageGallery({
                     }
                     className="absolute left-3 top-1/2 -translate-y-1/2 bg-linear-to-r from-[#7b61ff] to-[#2b6ef6] hover:shadow-lg hover:shadow-[#7b61ff]/50 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
                 >
-                    <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 19l-7-7 7-7"
-                        />
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                     </svg>
                 </button>
                 <button
@@ -87,18 +68,8 @@ export default function ProductImageGallery({
                     }
                     className="absolute right-3 top-1/2 -translate-y-1/2 bg-linear-to-r from-[#7b61ff] to-[#2b6ef6] hover:shadow-lg hover:shadow-[#7b61ff]/50 text-white p-3 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-200 hover:scale-110"
                 >
-                    <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                        />
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                 </button>
             </div>
@@ -108,10 +79,11 @@ export default function ProductImageGallery({
                     <button
                         key={image.id || index}
                         onClick={() => setCurrentIndex(index)}
-                        className={`shrink-0 rounded-lg transition-all duration-300 ${index === currentIndex
-                            ? 'ring-2 ring-[#7b61ff] scale-100 shadow-lg shadow-[#7b61ff]/40'
-                            : 'opacity-60 hover:opacity-90'
-                            }`}
+                        className={`shrink-0 rounded-lg transition-all duration-300 ${
+                            index === currentIndex
+                                ? 'ring-2 ring-[#7b61ff] scale-100 shadow-lg shadow-[#7b61ff]/40'
+                                : 'opacity-60 hover:opacity-90'
+                        }`}
                     >
                         <img
                             src={getProductImageSrc(image)}

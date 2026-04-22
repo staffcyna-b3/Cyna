@@ -1,25 +1,25 @@
 import { JSX, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import GetOneProduct from '@/hooks/getOneProduct';
+import useProductDetail from '@/hooks/useProductDetail';
 import CanBeAddToCart from '@/hooks/canBeAddToCart';
 import SimilarProductsCarousel from '@/components/Frontoffice/SimilarProductsCarousel';
 import {
     DetailEmptyState,
     DetailErrorState,
     DetailLoadingState,
-} from '@/components/Frontoffice/catlog/DetailFeedbackStates';
+} from '@/components/Frontoffice/catalog/DetailFeedbackStates';
 import {
     PhysicalProductDetailSection,
     ServiceDetailSection,
-} from '@/components/Frontoffice/catlog/DetailSections';
+} from '@/components/Frontoffice/catalog/DetailSections';
 
 export default function CatalogDetail(): JSX.Element {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
     const { t } = useTranslation();
 
-    const { data: product, loading, error, getOne } = GetOneProduct();
+    const { data: product, loading, error, getOne } = useProductDetail();
 
     useEffect(() => {
         if (!id) return;

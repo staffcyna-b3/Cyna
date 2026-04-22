@@ -1,13 +1,6 @@
 import { ArrowDown } from 'lucide-react';
 import ServiceDetailLayout from '@/components/Frontoffice/layout/ServiceDetailLayout';
-
-interface CatalogHeroProps {
-    categoryName: string;
-    categoryDescription: string;
-    categoryAbbreviation: string;
-    discoverLabel: string;
-    onDiscover: () => void;
-}
+import { CatalogHeroProps } from '@/types/interfaces/catalog/CatalogHeroProps';
 
 export default function CatalogHero({
     categoryName,

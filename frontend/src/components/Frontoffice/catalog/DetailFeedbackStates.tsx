@@ -1,18 +1,11 @@
-import React, { JSX } from 'react';
+import { JSX } from 'react';
 import CatalogLayout from '@/layouts/CatalogLayout';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
-import { TFunction } from 'i18next';
-
-interface DetailErrorStateProps {
-    error: string;
-    onRetry: () => void;
-    onBack: () => void;
-    t: TFunction;
-}
-
-interface DetailStateProps {
-    t: TFunction;
-}
+import { Button } from '@/components/ui/button';
+import {
+    DetailErrorStateProps,
+    DetailStateProps,
+} from '@/types/interfaces/catalog/DetailFeedbackStatesProps';
 
 export function DetailLoadingState(): JSX.Element {
     return (
@@ -41,12 +34,8 @@ export function DetailErrorState({
                         {error}
                     </div>
                     <div className="flex items-center justify-center gap-3">
-                        <button className="btn" onClick={onRetry}>
-                            {t('retry')}
-                        </button>
-                        <button className="btn" onClick={onBack}>
-                            {t('back')}
-                        </button>
+                        <Button onClick={onRetry}>{t('retry')}</Button>
+                        <Button variant="ghost" onClick={onBack}>{t('back')}</Button>
                     </div>
                 </div>
             </div>

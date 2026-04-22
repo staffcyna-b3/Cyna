@@ -1,26 +1,14 @@
-import React, { JSX } from 'react';
-import { TFunction } from 'i18next';
+import { JSX } from 'react';
 import AddToCartButton from '@/components/Frontoffice/AddToCartButton';
 import ProductTypeBadge from '@/components/ProductTypeBadge';
 import ServiceDetailLayout from '@/components/Frontoffice/layout/ServiceDetailLayout';
 import { formatCurrency } from '@/utils/currencyFormatter';
-import { CatalogResponse } from '@/types/interfaces/catalog/CatalogResponse';
+import {
+    DetailSectionProps,
+    AddToCartPanelProps,
+} from '@/types/interfaces/catalog/DetailSectionProps';
 import ProductImageGallery from './ProductImageGallery';
 import { getServiceAbbreviation } from '@/helpers/frontoffice/catalog/detailHelpers';
-
-interface DetailSectionProps {
-    product: CatalogResponse;
-    t: TFunction;
-    isAvailable: boolean;
-    unavailableLabel: string;
-}
-
-interface AddToCartPanelProps {
-    product: CatalogResponse;
-    isAvailable: boolean;
-    unavailableLabel: string;
-    t: TFunction;
-}
 
 function AddToCartPanel({
     product,
@@ -135,9 +123,7 @@ export function PhysicalProductDetailSection({
                     <div className="inline-flex items-center gap-2 px-4 py-3 bg-linear-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/40 rounded-lg hover:border-yellow-500/60 transition-colors">
                         <div className="w-2 h-2 bg-linear-to-r from-yellow-400 to-orange-400 rounded-full animate-pulse" />
                         <span className="text-sm text-yellow-300 font-medium">
-                            {t('onlyNLeft', {
-                                count: product.stock,
-                            })}
+                            {t('onlyNLeft', { count: product.stock })}
                         </span>
                     </div>
                 )}

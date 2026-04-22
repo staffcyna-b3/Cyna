@@ -6,10 +6,10 @@ import useCatalogFetch from '@/hooks/useCatalogFetch';
 import { CatalogContext } from '@/contexts/CatalogContext';
 import FilterPanel from '@/components/Frontoffice/FilterPanel';
 import { useTranslation } from 'react-i18next';
-import CatalogHero from '@/components/Frontoffice/catlog/CatalogHero';
-import CatalogActionsBar from '@/components/Frontoffice/catlog/CatalogActionsBar';
-import CatalogActiveFilters from '@/components/Frontoffice/catlog/CatalogActiveFilters';
-import CatalogResults from '@/components/Frontoffice/catlog/CatalogResults';
+import CatalogHero from '@/components/Frontoffice/catalog/CatalogHero';
+import CatalogActionsBar from '@/components/Frontoffice/catalog/CatalogActionsBar';
+import CatalogActiveFilters from '@/components/Frontoffice/catalog/CatalogActiveFilters';
+import CatalogResults from '@/components/Frontoffice/catalog/CatalogResults';
 import {
     buildSortValue,
     getActiveFilterCount,

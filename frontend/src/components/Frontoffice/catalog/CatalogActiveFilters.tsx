@@ -1,18 +1,5 @@
-import { TFunction } from 'i18next';
 import { Button } from '@/components/ui/button';
-import { CatalogSortBy } from '@/types/enums/catalog/CatalogSortBy';
-
-interface CatalogActiveFiltersProps {
-    minPrice: number | undefined;
-    maxPrice: number | undefined;
-    search: string | undefined;
-    isService: boolean | undefined;
-    inStock: boolean | undefined;
-    sortBy: CatalogSortBy | undefined;
-    currentSortLabel: string;
-    onResetFilters: () => void;
-    t: TFunction;
-}
+import { CatalogActiveFiltersProps } from '@/types/interfaces/catalog/CatalogActiveFiltersProps';
 
 export default function CatalogActiveFilters({
     minPrice,
