@@ -97,8 +97,13 @@ export class StripeSubscriptionService {
         if (!existing.deleted) {
           return existing as Stripe.Customer;
         }
-      } catch {
-        // Customer no longer exists in Stripe — create a new one below
+      } catch (error) {
+        Logger.warn('[PAYMENT] Failed to retrieve existing Stripe customer, creating a new one', {
+          userId,
+          stripeCustomerId,
+          error,
+        });
+        throw new Error('Failed to retrieve existing Stripe customer');
       }
     }
 
