@@ -1,10 +1,9 @@
 import { Request, Response } from "express";
-import { RoleService } from "../services/role.service";
+import { IRoleService } from "../interfaces/IRoleService";
 import { UserRoleType } from "../enum/UserRoleType.enum";
 
 export class RoleController {
-    // Injection du service via le constructeur
-    constructor(private roleService: RoleService) {}    
+    constructor(private roleService: IRoleService) {}    
     
     async assignRole(req: Request, res: Response) {
         try  {

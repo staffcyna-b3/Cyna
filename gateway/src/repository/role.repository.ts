@@ -1,8 +1,9 @@
 import UserRole from "../models/UserRole";
 import User from "../models/User";
 import { UserRoleType } from "../enum/UserRoleType.enum";
+import { IRoleRepository } from "../interfaces/IRoleRepository";
 
-export class RoleRepository {
+export class RoleRepository implements IRoleRepository {
 
     async assignRoleToUser(userId: string, role: UserRoleType) {
         // upsert : met à jour la ligne si elle existe, la crée sinon
