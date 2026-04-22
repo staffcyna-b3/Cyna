@@ -3,26 +3,14 @@ import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { ICategoryService } from '../interfaces/ICategoryService';
 import { CategoryFiltersDto, ReorderCategoryPriorityItemDto } from '../dto/category';
-import { Schema } from '../schemas/schema.types';
-import { validate } from '../schemas/validator';
 import { categoryFiltersQuerySchema, categoryIdParamSchema, reorderCategoryDisplayPrioritySchema } from '../schemas/category.schemas';
-
+import parseWithSchema from '../utils/parseWithSchema';
 export class CategoryController {
     constructor(private readonly categoryService: ICategoryService) { }
 
-    private parseWithSchema<T>(schema: Schema, data: Record<string, unknown>): T {
-        const result = validate<T>(schema, data);
-
-        if (!result.valid || !result.data) {
-            throw new HttpError(400, result.errors.join(', '));
-        }
-
-        return result.data;
-    }
-
     async list(req: Request, res: Response) {
         try {
-            const filters = this.parseWithSchema<CategoryFiltersDto>(
+            const filters = parseWithSchema<CategoryFiltersDto>(
                 categoryFiltersQuerySchema,
                 req.query as unknown as Record<string, unknown>,
             );
@@ -35,7 +23,7 @@ export class CategoryController {
 
     async listForSelect(req: Request, res: Response) {
         try {
-            const filters = this.parseWithSchema<CategoryFiltersDto>(
+            const filters = parseWithSchema<CategoryFiltersDto>(
                 categoryFiltersQuerySchema,
                 req.query as unknown as Record<string, unknown>,
             );
@@ -48,7 +36,7 @@ export class CategoryController {
 
     async getById(req: Request, res: Response) {
         try {
-            const { id: categoryId } = this.parseWithSchema<{ id: string }>(
+            const { id: categoryId } = parseWithSchema<{ id: string }>(
                 categoryIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
@@ -61,7 +49,7 @@ export class CategoryController {
 
     async reorderDisplayPriority(req: Request, res: Response) {
         try {
-            const { items } = this.parseWithSchema<{ items: ReorderCategoryPriorityItemDto[] }>(
+            const { items } = parseWithSchema<{ items: ReorderCategoryPriorityItemDto[] }>(
                 reorderCategoryDisplayPrioritySchema,
                 req.body as Record<string, unknown>,
             );

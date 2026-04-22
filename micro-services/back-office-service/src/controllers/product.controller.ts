@@ -10,8 +10,6 @@ import {
     UpdateProductDto,
     UpdateStockDto,
 } from '../dto/product';
-import { Schema } from '../schemas/schema.types';
-import { validate } from '../schemas/validator';
 import {
     createPhysicalSchema,
     createSaasSchema,
@@ -24,23 +22,14 @@ import {
     updateProductSchema,
     updateStockSchema,
 } from '../schemas/product.schemas';
+import parseWithSchema from '../utils/parseWithSchema';
 
 export class ProductController {
     constructor(private readonly productService: IProductService) { }
 
-    private parseWithSchema<T>(schema: Schema, data: Record<string, unknown>): T {
-        const result = validate<T>(schema, data);
-
-        if (!result.valid || !result.data) {
-            throw new HttpError(400, result.errors.join(', '));
-        }
-
-        return result.data;
-    }
-
     async list(req: Request, res: Response) {
         try {
-            const filters = this.parseWithSchema<ProductFiltersDto>(
+            const filters = parseWithSchema<ProductFiltersDto>(
                 productListQuerySchema,
                 req.query as unknown as Record<string, unknown>,
             );
@@ -55,7 +44,7 @@ export class ProductController {
 
     async getById(req: Request, res: Response) {
         try {
-            const { id: productId } = this.parseWithSchema<{ id: string }>(
+            const { id: productId } = parseWithSchema<{ id: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
@@ -68,7 +57,7 @@ export class ProductController {
 
     async createSaas(req: Request, res: Response) {
         try {
-            const payload = this.parseWithSchema<CreateProductDto>(
+            const payload = parseWithSchema<CreateProductDto>(
                 createSaasSchema,
                 req.body as Record<string, unknown>,
             );
@@ -84,7 +73,7 @@ export class ProductController {
 
     async createPhysical(req: Request, res: Response) {
         try {
-            const payload = this.parseWithSchema<CreateProductDto>(
+            const payload = parseWithSchema<CreateProductDto>(
                 createPhysicalSchema,
                 req.body as Record<string, unknown>,
             );
@@ -100,11 +89,11 @@ export class ProductController {
 
     async update(req: Request, res: Response) {
         try {
-            const { id: productId } = this.parseWithSchema<{ id: string }>(
+            const { id: productId } = parseWithSchema<{ id: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const payload = this.parseWithSchema<UpdateProductDto>(
+            const payload = parseWithSchema<UpdateProductDto>(
                 updateProductSchema,
                 req.body as Record<string, unknown>,
             );
@@ -119,7 +108,7 @@ export class ProductController {
 
     async remove(req: Request, res: Response) {
         try {
-            const { id: productId } = this.parseWithSchema<{ id: string }>(
+            const { id: productId } = parseWithSchema<{ id: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
@@ -132,11 +121,11 @@ export class ProductController {
 
     async updateStock(req: Request, res: Response) {
         try {
-            const { id: productId } = this.parseWithSchema<{ id: string }>(
+            const { id: productId } = parseWithSchema<{ id: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const payload = this.parseWithSchema<UpdateStockDto>(
+            const payload = parseWithSchema<UpdateStockDto>(
                 updateStockSchema,
                 req.body as Record<string, unknown>,
             );
@@ -151,7 +140,7 @@ export class ProductController {
 
     async getImage(req: Request, res: Response) {
         try {
-            const { id: productId } = this.parseWithSchema<{ id: string }>(
+            const { id: productId } = parseWithSchema<{ id: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
@@ -165,11 +154,11 @@ export class ProductController {
 
     async updateImage(req: Request, res: Response) {
         try {
-            const { id: productId } = this.parseWithSchema<{ id: string }>(
+            const { id: productId } = parseWithSchema<{ id: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const payload = this.parseWithSchema<UpdateProductImageDto>(
+            const payload = parseWithSchema<UpdateProductImageDto>(
                 updateProductImageSchema,
                 req.body as Record<string, unknown>,
             );
@@ -183,11 +172,11 @@ export class ProductController {
 
     async setMaintenance(req: Request, res: Response) {
         try {
-            const { id: productId } = this.parseWithSchema<{ id: string }>(
+            const { id: productId } = parseWithSchema<{ id: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const { maintenance } = this.parseWithSchema<{ maintenance: boolean }>(
+            const { maintenance } = parseWithSchema<{ maintenance: boolean }>(
                 maintenanceSchema,
                 req.body as Record<string, unknown>,
             );
@@ -200,11 +189,11 @@ export class ProductController {
 
     async updatePriority(req: Request, res: Response) {
         try {
-            const { id: productId } = this.parseWithSchema<{ id: string }>(
+            const { id: productId } = parseWithSchema<{ id: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const { priority } = this.parseWithSchema<{ priority: number }>(
+            const { priority } = parseWithSchema<{ priority: number }>(
                 prioritySchema,
                 req.body as Record<string, unknown>,
             );
@@ -217,7 +206,7 @@ export class ProductController {
 
     async reorderDisplayPriority(req: Request, res: Response) {
         try {
-            const { items } = this.parseWithSchema<{ items: ReorderDisplayPriorityItemDto[] }>(
+            const { items } = parseWithSchema<{ items: ReorderDisplayPriorityItemDto[] }>(
                 reorderDisplayPrioritySchema,
                 req.body as Record<string, unknown>,
             );

@@ -3,8 +3,6 @@ import { Logger } from '../common/logger';
 import { HttpError } from '../common/httpError';
 import { CreatePromotionDto, UpdatePromotionDto } from '../dto/promotion';
 import { IPromotionService } from '../interfaces/IPromotionService';
-import { Schema } from '../schemas/schema.types';
-import { validate } from '../schemas/validator';
 import {
     createPromotionSchema,
     productIdParamSchema,
@@ -13,19 +11,10 @@ import {
     setActiveSchema,
     updatePromotionSchema,
 } from '../schemas/promotion.schemas';
+import parseWithSchema from '../utils/parseWithSchema';
 
 export class PromotionController {
     constructor(private readonly promotionService: IPromotionService) { }
-
-    private parseWithSchema<T>(schema: Schema, data: Record<string, unknown>): T {
-        const result = validate<T>(schema, data);
-
-        if (!result.valid || !result.data) {
-            throw new HttpError(400, result.errors.join(', '));
-        }
-
-        return result.data;
-    }
 
     async list(req: Request, res: Response) {
         try {
@@ -38,7 +27,7 @@ export class PromotionController {
 
     async getById(req: Request, res: Response) {
         try {
-            const { id: promotionId } = this.parseWithSchema<{ id: string }>(
+            const { id: promotionId } = parseWithSchema<{ id: string }>(
                 promotionIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
@@ -51,7 +40,7 @@ export class PromotionController {
 
     async create(req: Request, res: Response) {
         try {
-            const payload = this.parseWithSchema<CreatePromotionDto>(
+            const payload = parseWithSchema<CreatePromotionDto>(
                 createPromotionSchema,
                 req.body as Record<string, unknown>,
             );
@@ -66,11 +55,11 @@ export class PromotionController {
 
     async update(req: Request, res: Response) {
         try {
-            const { id: promotionId } = this.parseWithSchema<{ id: string }>(
+            const { id: promotionId } = parseWithSchema<{ id: string }>(
                 promotionIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const payload = this.parseWithSchema<UpdatePromotionDto>(
+            const payload = parseWithSchema<UpdatePromotionDto>(
                 updatePromotionSchema,
                 req.body as Record<string, unknown>,
             );
@@ -85,7 +74,7 @@ export class PromotionController {
 
     async remove(req: Request, res: Response) {
         try {
-            const { id: promotionId } = this.parseWithSchema<{ id: string }>(
+            const { id: promotionId } = parseWithSchema<{ id: string }>(
                 promotionIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
@@ -98,11 +87,11 @@ export class PromotionController {
 
     async setActive(req: Request, res: Response) {
         try {
-            const { id: promotionId } = this.parseWithSchema<{ id: string }>(
+            const { id: promotionId } = parseWithSchema<{ id: string }>(
                 promotionIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const { active } = this.parseWithSchema<{ active: boolean }>(
+            const { active } = parseWithSchema<{ active: boolean }>(
                 setActiveSchema,
                 req.body as Record<string, unknown>,
             );
@@ -115,11 +104,11 @@ export class PromotionController {
 
     async replaceProducts(req: Request, res: Response) {
         try {
-            const { id: promotionId } = this.parseWithSchema<{ id: string }>(
+            const { id: promotionId } = parseWithSchema<{ id: string }>(
                 promotionIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const { product_ids: productIds } = this.parseWithSchema<{ product_ids: string[] }>(
+            const { product_ids: productIds } = parseWithSchema<{ product_ids: string[] }>(
                 promotionProductIdsSchema,
                 req.body as Record<string, unknown>,
             );
@@ -132,11 +121,11 @@ export class PromotionController {
 
     async addProducts(req: Request, res: Response) {
         try {
-            const { id: promotionId } = this.parseWithSchema<{ id: string }>(
+            const { id: promotionId } = parseWithSchema<{ id: string }>(
                 promotionIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const { product_ids: productIds } = this.parseWithSchema<{ product_ids: string[] }>(
+            const { product_ids: productIds } = parseWithSchema<{ product_ids: string[] }>(
                 promotionProductIdsSchema,
                 req.body as Record<string, unknown>,
             );
@@ -149,11 +138,11 @@ export class PromotionController {
 
     async removeProduct(req: Request, res: Response) {
         try {
-            const { id: promotionId } = this.parseWithSchema<{ id: string }>(
+            const { id: promotionId } = parseWithSchema<{ id: string }>(
                 promotionIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
-            const { productId } = this.parseWithSchema<{ productId: string }>(
+            const { productId } = parseWithSchema<{ productId: string }>(
                 productIdParamSchema,
                 req.params as unknown as Record<string, unknown>,
             );
