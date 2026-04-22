@@ -63,7 +63,8 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
         }))
       }
     } catch (err: unknown) {
-      console.error("Failed to fetch user addresses", err)
+      const message = err instanceof Error ? err.message : "Erreur lors du chargement des adresses"
+      setErrorState(message)
     } finally {
       setIsLoadingContext(false)
     }
