@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pandoc --version)",
+      "Bash(node -e \"require\\('md-to-pdf'\\)\")",
+      "Bash(npx md-to-pdf *)",
+      "Bash(ls *.pdf)"
+    ]
+  }
+}
