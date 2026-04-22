@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
 import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
-import { CartItem } from '@/types/interfaces/cart/CartItem';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
 
 const formatEuro = (amountCents: number) =>
@@ -72,7 +71,7 @@ export const Checkout: React.FC = () => {
             credentials: 'include',
             body: JSON.stringify({
               subscriptionItems: subscriptionItems.map((i) => ({
-                productId: i.productId ?? i.id,
+                productId: i.productId,
                 priceAmountCents: i.unitPriceCents,
                 currency: 'eur',
                 description: i.name,

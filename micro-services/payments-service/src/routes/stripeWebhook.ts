@@ -3,7 +3,7 @@ import { IStripeClient } from '../interfaces/IStripeClient';
 import { WebhookService } from '../services/webhookService';
 import { Logger } from '../common/logger';
 
-//Il ne peut pas passer par GatewayController/axios car :
+// Il ne peut pas passer par GatewayController/axios car :
 // Stripe vérifie la signature sur les bytes bruts du body
 // axios reconstruirait la requête et casserait la vérification
 // Le header stripe-signature n'est pas forwarded par prepareHeaders()
