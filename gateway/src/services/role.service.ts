@@ -1,9 +1,9 @@
 import { UserRoleType } from "../enum/UserRoleType.enum";
-import { RoleRepository } from "../repository/role.repository";
+import { IRoleRepository } from "../interfaces/IRoleRepository";
+import { IRoleService } from "../interfaces/IRoleService";
 
-export class RoleService {
-    // Injection du repository via le constructeur
-    constructor(private roleRepository: RoleRepository) {}  
+export class RoleService implements IRoleService {
+    constructor(private roleRepository: IRoleRepository) {}  
 
     async assignRole(userId: string, role: UserRoleType) {
         if (!userId || !role) {
