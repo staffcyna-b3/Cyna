@@ -43,14 +43,16 @@ export const createApp = (): Express => {
   // stream is never consumed by the gateway — it reaches payments-service intact.
   // express.json() parsing after this point only applies to non-proxied routes.
   // Webhook: no auth — Stripe sends requests without Authorization header.
-  app.use('/webhooks', express.raw({ type: 'application/json' }), paymentsWebhookProxy);
+  app.use('/webhooks', paymentsWebhookProxy);
 
   // Payment API: gateway validates JWT and injects x-user-id / x-user-email headers
   // before proxying. authMiddleware only reads the Authorization header (no body),
   // so it runs safely before express.json().
-  app.use('/api/payments/create-intent', authMiddleware, createPaymentIntentLimiter, paymentsApiProxy);
-  app.use('/api/payments/create-subscription', authMiddleware, createSubscriptionLimiter, paymentsApiProxy);
-  app.use('/api/payments', authMiddleware, paymentsApiProxy);
+  app.use('/api/payments', authMiddleware, (req, res, next) => {
+    if (req.path === '/create-intent') return createPaymentIntentLimiter(req, res, next);
+    if (req.path === '/create-subscription') return createSubscriptionLimiter(req, res, next);
+    return next();
+  }, paymentsApiProxy);
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ limit: '10mb', extended: true }));
