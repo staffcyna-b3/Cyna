@@ -1,19 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import type { OrderSummary } from '@/types/interfaces/Order/OrderSummary';
+import { ORDER_STATUS_VARIANT } from '@/utils/orderStatus';
 
 interface Props {
   order: OrderSummary;
   onOrderClick: (id: string) => void;
 }
-
-const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-  PAID: 'default',
-  CONFIRMED: 'default',
-  PENDING: 'secondary',
-  CANCELLED: 'destructive',
-  FAILED: 'destructive',
-};
 
 export default function OrderCard({ order, onOrderClick }: Props) {
   const { t } = useTranslation();
@@ -24,7 +17,7 @@ export default function OrderCard({ order, onOrderClick }: Props) {
     style: 'currency',
     currency: 'EUR',
   });
-  const statusVariant = STATUS_VARIANT[order.status] ?? 'outline';
+  const statusVariant = ORDER_STATUS_VARIANT[order.status] ?? 'outline';
 
   return (
     <div
