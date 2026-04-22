@@ -8,7 +8,7 @@ import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getAdminOrders, updateOrderStatus, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getAdminOrders, BackOfficeApiError } from "@/services/BackOfficeService";
 import { toast } from "sonner";
 import { OrderEditorSheet } from "../../components/Backoffice/sheets/OrderEditorSheet";
 
@@ -24,7 +24,6 @@ export default function Orders() {
     const [selectedOrder, setSelectedOrder] = useState<OrderAdminDTO | null>(null);
     const [sheetOpen, setSheetOpen] = useState(false);
     const [editStatus, setEditStatus] = useState('');
-    const [saving, setSaving] = useState(false);
 
     useEffect(() => {
         if (!accessToken) return;
@@ -44,30 +43,11 @@ export default function Orders() {
             .finally(() => setLoading(false));
     }, [accessToken, page]);
 
-    const handleRowClick = (order: OrderAdminDTO) => {
+    function handleRowClick(order: OrderAdminDTO) {
         setSelectedOrder(order);
         setEditStatus(order.status);
         setSheetOpen(true);
-    };
-
-    const handleSave = async () => {
-        if (!selectedOrder || !accessToken) return;
-        setSaving(true);
-        try {
-            const updated = await updateOrderStatus(accessToken, selectedOrder.id, editStatus);
-            setData((prev) => prev.map((o) => (o.id === updated.id ? updated : o)));
-            setSheetOpen(false);
-            toast.success(t("admin.orderUpdated"));
-        } catch (err: unknown) {
-            if (err instanceof BackOfficeApiError && err.status === 401) {
-                toast.error(t("sessionExpired"));
-            } else {
-                toast.error(t("errorOccurred"));
-            }
-        } finally {
-            setSaving(false);
-        }
-    };
+    }
 
     const topRightActions = (
         <div className="flex items-center gap-2 bg-primary rounded-full p-1">
@@ -149,14 +129,10 @@ export default function Orders() {
                     createdAt={selectedOrder.created_at}
                     items={selectedOrder.items}
                     title={t("admin.editOrder")}
-                    saveLabel={t("update")}
                     statusLabel={t("admin.status")}
                     itemsLabel={t("admin.items")}
                     totalLabel={t("total")}
-                    saving={saving}
                     onOpenChange={setSheetOpen}
-                    onStatusChange={setEditStatus}
-                    onSave={handleSave}
                 />
             )}
         </>

@@ -36,10 +36,10 @@ export default function Refunds() {
             .finally(() => setLoading(false));
     }, [accessToken]);
 
-    const handleRowClick = (refund: RefundAdminDTO) => {
+    function handleRowClick(refund: RefundAdminDTO) {
         setSelectedRefund(refund);
         setSheetOpen(true);
-    };
+    }
 
     const topRightActions = (
         <div className="flex items-center gap-2 bg-primary rounded-full p-1">

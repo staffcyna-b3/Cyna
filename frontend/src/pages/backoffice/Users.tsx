@@ -45,13 +45,13 @@ export default function Users() {
             .finally(() => setLoading(false));
     }, [accessToken, page]);
 
-    const handleRowClick = (user: UserAdminDTO) => {
+    function handleRowClick(user: UserAdminDTO) {
         setSelectedUser(user);
         setEditRole(user.role);
         setSheetOpen(true);
-    };
+    }
 
-    const handleSave = async () => {
+    async function handleSave() {
         if (!selectedUser || !accessToken) return;
         setSaving(true);
         try {
@@ -68,9 +68,9 @@ export default function Users() {
         } finally {
             setSaving(false);
         }
-    };
+    }
 
-    const handleDelete = async () => {
+    async function handleDelete() {
         if (!selectedUser || !accessToken) return;
         setDeleting(true);
         try {
@@ -87,7 +87,7 @@ export default function Users() {
         } finally {
             setDeleting(false);
         }
-    };
+    }
 
     const topRightActions = (
         <div className="flex items-center gap-2 bg-primary rounded-full p-1">

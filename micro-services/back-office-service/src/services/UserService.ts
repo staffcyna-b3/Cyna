@@ -3,6 +3,7 @@ import { IUserService } from '../interfaces/IUserService';
 import { PaginatedResponse } from '../dto/PaginatedResponse';
 import { UserAdminDTO } from '../dto/UserAdminDTO';
 import { UserRoleType } from '../enum/UserRoleType';
+import { toUserAdminDTO } from '../dto/mapper/UserMapper';
 
 export class UserService implements IUserService {
   constructor(private readonly repo: IUserRepository) {}
@@ -10,14 +11,7 @@ export class UserService implements IUserService {
   async getAll(page: number, limit: number): Promise<PaginatedResponse<UserAdminDTO>> {
     const { rows, count } = await this.repo.findAll(page, limit);
     return {
-      data: rows.map((u) => ({
-        id: u.id,
-        full_name: u.full_name,
-        email: u.email,
-        role: u.roles?.[0]?.role ?? UserRoleType.USER,
-        created_at: u.created_at.toISOString(),
-        updated_at: u.updated_at.toISOString(),
-      })),
+      data: rows.map((u) => toUserAdminDTO(u)),
       total: count,
       page,
       limit,
@@ -28,14 +22,7 @@ export class UserService implements IUserService {
   async getById(id: string): Promise<UserAdminDTO> {
     const user = await this.repo.findById(id);
     if (!user) throw { status: 404, error: 'USER_NOT_FOUND' };
-    return {
-      id: user.id,
-      full_name: user.full_name,
-      email: user.email,
-      role: user.roles?.[0]?.role ?? UserRoleType.USER,
-      created_at: user.created_at.toISOString(),
-      updated_at: user.updated_at.toISOString(),
-    };
+    return toUserAdminDTO(user);
   }
 
   async updateRole(id: string, role: string): Promise<UserAdminDTO> {
@@ -44,14 +31,7 @@ export class UserService implements IUserService {
       throw { status: 400, error: 'INVALID_ROLE' };
     }
     const user = await this.repo.updateRole(id, role);
-    return {
-      id: user.id,
-      full_name: user.full_name,
-      email: user.email,
-      role: user.roles?.[0]?.role ?? UserRoleType.USER,
-      created_at: user.created_at.toISOString(),
-      updated_at: user.updated_at.toISOString(),
-    };
+    return toUserAdminDTO(user);
   }
 
   async delete(id: string): Promise<void> {

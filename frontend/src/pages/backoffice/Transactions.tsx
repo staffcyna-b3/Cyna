@@ -50,17 +50,17 @@ export default function Transactions() {
             .finally(() => setLoading(false));
     }, [accessToken]);
 
-    const handleRowClick = (transaction: TransactionAdminDTO) => {
+    function handleRowClick(transaction: TransactionAdminDTO) {
         setSelectedTransaction(transaction);
         setSheetOpen(true);
-    };
+    }
 
-    const handleConfirmRefund = (paymentIntentId: string, amount: number | undefined, reason: string) => {
+    function handleConfirmRefund(paymentIntentId: string, amount: number | undefined, reason: string) {
         pendingRefund.current = { paymentIntentId, amount, reason };
         setConfirmOpen(true);
-    };
+    }
 
-    const handleSubmitRefund = () => {
+    function handleSubmitRefund() {
         if (!accessToken || !pendingRefund.current) return;
         setSubmitting(true);
         const { paymentIntentId, amount, reason } = pendingRefund.current;
@@ -85,7 +85,7 @@ export default function Transactions() {
                 setSubmitting(false);
                 pendingRefund.current = null;
             });
-    };
+    }
 
     const topRightActions = (
         <div className="flex items-center gap-2 bg-primary rounded-full p-1">
