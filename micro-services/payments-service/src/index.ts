@@ -6,6 +6,7 @@ import { createStripeWebhookRouter } from './routes/stripeWebhook';
 import { createWebhookService } from './factories/paymentFactory';
 import paymentsRouter from './routes/payments';
 import { errorMiddleware } from './middlewares/error.middleware';
+import { requireAuth } from './middlewares/requireAuth.middleware';
 
 const app = express();
 const PORT = process.env.PORT || 3004;
@@ -18,7 +19,7 @@ app.use('/webhook', webhookRouter);
 
 app.use(express.json());
 
-app.use('/payments', paymentsRouter);
+app.use('/payments', requireAuth, paymentsRouter);
 
 app.use(errorMiddleware);
 
