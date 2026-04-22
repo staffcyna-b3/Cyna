@@ -8,7 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { OrderDetail } from '@/types/interfaces/Order/OrderDetail';
-import { useOrdersPDF } from './useOrdersPDF';
+import { downloadInvoicePDF } from '@/utils/orderPDF';
 
 interface Props {
   open: boolean;
@@ -19,7 +19,6 @@ interface Props {
 
 export default function OrderDetailModal({ open, loading, order, onClose }: Props) {
   const { t } = useTranslation();
-  const { downloadInvoicePDF } = useOrdersPDF();
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
