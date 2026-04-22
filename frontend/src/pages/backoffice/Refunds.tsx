@@ -1,15 +1,17 @@
 import { DataTable } from "@/components/Backoffice/data-table";
 import { Button } from "@/components/ui/button";
-import { Typography } from "@/components/ui/typography";
 import { Checkbox } from "@/components/ui/checkbox";
-import { usersMockData } from "@/lib/mockData";
-import { User } from "@/types/user.type";
+import { Typography } from "@/components/ui/typography";
+import { ordersMockData, refundsMockData } from "@/lib/mockData";
+import { Order } from "@/types/order.type";
+import { Refund } from "@/types/refund.type";
 import { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
+import { ref } from "process";
 import { useState } from "react";
 
-export default function Users() {
+export default function Refunds() {
     const [selected, setSelected] = useState("active");
     
     const topRightActions = (
@@ -19,7 +21,7 @@ export default function Users() {
         </div>
     )
 
-    const columns: ColumnDef<User>[] = [
+    const columns: ColumnDef<Refund>[] = [
         {
             id: "select",
             header: ({ table }) => (
@@ -47,39 +49,43 @@ export default function Users() {
             header: "ID",
         },
         {
-            accessorKey: "full_name",
-            header: "Full Name",
+            accessorKey: "amount",
+            header: "Amount",
         },
         {
-            accessorKey: "email",
-            header: "Email",
-        },
-        {
-            accessorKey: "role",
+            accessorKey: "status",
             header: ({ column }) => {
                 return (
                     <Button
-                        variant="ghost"
-                        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                     >
-                        Role
+                        Status
                         <LucideArrowUpDown className="ml-2 h-4 w-4" />
                     </Button>
                 )
             },
         },
+        {
+            accessorKey: "reason",
+            header: "Reason",
+        },
+        {
+            accessorKey: "destination_details.card.reference",
+            header: "User ID",
+        },
     ];
 
-    const data: User[] = usersMockData;
+    const data: Refund[] = refundsMockData;
 
     return (
         <>
             <header className="px-4 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                <Typography variant="h1">{t("users")}</Typography>
+                <Typography variant="h1">{t("refunds")}</Typography>
                 {topRightActions}
             </header>
-            <div className="flex flex-1 flex-col gap-4 p-4 pt-0 border m-4 rounded-lg">
-                <div className="p-2 flex items-center justify-between gap-2">
+            <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
+                <div className="mt-3 flex items-center justify-between gap-2">
                     <Button>+ Add User</Button>
                     <Button variant="destructive">Supprimer</Button>
                 </div>

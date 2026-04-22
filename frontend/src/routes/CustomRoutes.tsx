@@ -20,6 +20,9 @@ import CatalogList from "@/pages/frontoffice/catalog/Index"
 import CatalogLayout from "@/layouts/CatalogLayout"
 import { Cart } from "@/pages/frontoffice/Cart"
 import { ProtectedRoute } from "@/components/protectedRoute"
+import Orders from "@/pages/backoffice/Orders"
+import Transactions from "@/pages/backoffice/Transactions"
+import Refunds from "@/pages/backoffice/Refunds"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -52,6 +55,11 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/users" element={<Users />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/transactions" element={<Transactions />} />
+        <Route path="/refunds" element={<Refunds />} />
       </Route>
 
       {/* Frontoffice routes */}
