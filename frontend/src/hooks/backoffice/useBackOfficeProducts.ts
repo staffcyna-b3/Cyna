@@ -1,13 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   fetchBackOfficeProducts,
   useBackOfficeProductsStore,
 } from '@/stores/backoffice/backOfficeProductsStore';
 import type { BackOfficeProductQuery } from '@/types/interfaces/backoffice/product';
-
-type UseBackOfficeProductsOptions = {
-  autoFetch?: boolean;
-};
+import type { UseBackOfficeProductsOptions } from '@/types/interfaces/backoffice/hooks/UseBackOfficeProductsOptions';
 
 export function useBackOfficeProducts(
   query: BackOfficeProductQuery = {},
@@ -16,9 +13,9 @@ export function useBackOfficeProducts(
   const { autoFetch = true } = options;
   const state = useBackOfficeProductsStore();
 
-  const refresh = useCallback(async () => {
+  async function refresh() {
     return fetchBackOfficeProducts(query);
-  }, [query]);
+  }
 
   useEffect(() => {
     if (!autoFetch) {
@@ -26,7 +23,7 @@ export function useBackOfficeProducts(
     }
 
     void refresh();
-  }, [autoFetch, refresh]);
+  }, [autoFetch, query]);
 
   return {
     items: state.items,

@@ -1,21 +1,58 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { TFunction } from 'i18next';
-import { SortHeader } from '@/components/Backoffice/data-table/SortHeader';
+import { ArrowUpDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import type { BackOfficePromotion } from '@/types/interfaces/backoffice/promotion';
 import { formatDate } from '@/utils/formatDate';
 
-export function buildPromotionColumns(t: TFunction): Array<ColumnDef<BackOfficePromotion>> {
+function SortableHeader({
+    label,
+    sorted,
+    onToggle,
+}: {
+    label: string;
+    sorted: false | 'asc' | 'desc';
+    onToggle: () => void;
+}) {
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            className="h-auto p-0 font-semibold text-gray-900 hover:bg-transparent"
+            onClick={onToggle}
+        >
+            <span>{label}</span>
+            <ArrowUpDown
+                className={sorted ? 'ml-1.5 size-3.5 text-indigo-600' : 'ml-1.5 size-3.5 text-gray-400'}
+            />
+        </Button>
+    );
+}
+
+export function buildPromotionColumns(
+    t: TFunction,
+    onOpenPromotionEditor?: (promotionId: string) => void,
+): Array<ColumnDef<BackOfficePromotion>> {
     return [
         {
             accessorKey: 'code',
             header: ({ column }) => (
-                <SortHeader
+                <SortableHeader
                     label={t('backoffice.code')}
                     sorted={column.getIsSorted()}
                     onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                 />
             ),
-            cell: ({ row }) => <span className="font-medium text-gray-800">{row.original.code}</span>,
+            cell: ({ row }) => (
+                <Button
+                    type="button"
+                    variant="link"
+                    className="h-auto p-0 font-medium text-gray-800"
+                    onClick={() => onOpenPromotionEditor?.(row.original.id)}
+                >
+                    {row.original.code}
+                </Button>
+            ),
         },
         {
             accessorKey: 'discount_type',
@@ -25,7 +62,7 @@ export function buildPromotionColumns(t: TFunction): Array<ColumnDef<BackOfficeP
         {
             accessorKey: 'discount_value',
             header: ({ column }) => (
-                <SortHeader
+                <SortableHeader
                     label={t('backoffice.discountValue')}
                     sorted={column.getIsSorted()}
                     onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')}

@@ -1,4 +1,4 @@
-import type { PromotionType } from '@/types/interfaces/backoffice/promotion';
+import type { PromotionType } from './PromotionType';
 
 export type PromotionFormState = {
     code: string;

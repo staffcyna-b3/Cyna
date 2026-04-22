@@ -1,4 +1,4 @@
-import type { BackOfficePromotion } from '@/types/interfaces/backoffice/promotion';
+import type { BackOfficePromotion } from './BackOfficePromotion';
 
 export type UsePromotionEditorParams = {
     promotion: BackOfficePromotion | null;

@@ -1,6 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { TFunction } from 'i18next';
-import { SortHeader } from '@/components/Backoffice/data-table/SortHeader';
+import { ArrowUpDown } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { ProductStatus } from '@/types/enums/product/ProductStatus';
 import type { BackOfficeProduct } from '@/types/interfaces/backoffice/product';
 
@@ -12,7 +13,34 @@ function formatPrice(value: number): string {
     return new Intl.NumberFormat('fr-FR').format(value);
 }
 
-export function buildProductColumns(t: TFunction): Array<ColumnDef<BackOfficeProduct>> {
+function SortableHeader({
+    label,
+    sorted,
+    onToggle,
+}: {
+    label: string;
+    sorted: false | 'asc' | 'desc';
+    onToggle: () => void;
+}) {
+    return (
+        <Button
+            type="button"
+            variant="ghost"
+            className="h-auto p-0 font-semibold text-gray-900 hover:bg-transparent"
+            onClick={onToggle}
+        >
+            <span>{label}</span>
+            <ArrowUpDown
+                className={sorted ? 'ml-1.5 size-3.5 text-indigo-600' : 'ml-1.5 size-3.5 text-gray-400'}
+            />
+        </Button>
+    );
+}
+
+export function buildProductColumns(
+    t: TFunction,
+    onOpenProductEditor?: (productId: string) => void,
+): Array<ColumnDef<BackOfficeProduct>> {
     return [
         {
             id: 'reference',
@@ -25,18 +53,27 @@ export function buildProductColumns(t: TFunction): Array<ColumnDef<BackOfficePro
         {
             accessorKey: 'name',
             header: ({ column }) => (
-                <SortHeader
+                <SortableHeader
                     label={t('product')}
                     sorted={column.getIsSorted()}
                     onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')}
                 />
             ),
-            cell: ({ row }) => <span className="text-gray-700">{row.original.name}</span>,
+            cell: ({ row }) => (
+                <Button
+                    type="button"
+                    variant="link"
+                    className="h-auto p-0 text-gray-700"
+                    onClick={() => onOpenProductEditor?.(row.original.id)}
+                >
+                    {row.original.name}
+                </Button>
+            ),
         },
         {
             accessorKey: 'stock',
             header: ({ column }) => (
-                <SortHeader
+                <SortableHeader
                     label={t('backoffice.stockQuantity')}
                     sorted={column.getIsSorted()}
                     onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')}
@@ -53,7 +90,7 @@ export function buildProductColumns(t: TFunction): Array<ColumnDef<BackOfficePro
         {
             accessorKey: 'price',
             header: ({ column }) => (
-                <SortHeader
+                <SortableHeader
                     label={t('price')}
                     sorted={column.getIsSorted()}
                     onToggle={() => column.toggleSorting(column.getIsSorted() === 'asc')}

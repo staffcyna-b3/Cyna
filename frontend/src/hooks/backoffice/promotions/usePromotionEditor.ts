@@ -13,8 +13,8 @@ import type {
     PromotionType,
 } from '@/types/interfaces/backoffice/promotion';
 import type { BackOfficeProduct } from '@/types/interfaces/backoffice/product';
-import type { PromotionFormState } from './types/PromotionFormState';
-import type { UsePromotionEditorParams } from './types/UsePromotionEditorParams';
+import type { PromotionFormState } from '@/types/interfaces/backoffice/promotion/PromotionFormState';
+import type { UsePromotionEditorParams } from '@/types/interfaces/backoffice/promotion/UsePromotionEditorParams';
 
 function toFormState(promotion: BackOfficePromotion | null): PromotionFormState {
     if (!promotion) {
@@ -70,7 +70,7 @@ export function usePromotionEditor({
             return;
         }
 
-        const loadPromotionDetails = async () => {
+        async function loadPromotionDetails() {
             setLoadingDetails(true);
             try {
                 const fullPromotion = await service.getPromotionById(promotion.id);
@@ -78,7 +78,7 @@ export function usePromotionEditor({
             } finally {
                 setLoadingDetails(false);
             }
-        };
+        }
 
         void loadPromotionDetails();
     }, [open, promotion, service]);
@@ -88,7 +88,7 @@ export function usePromotionEditor({
             return;
         }
 
-        const loadProducts = async () => {
+        async function loadProducts() {
             setLoadingProducts(true);
             try {
                 const products = await service.listProducts({
@@ -105,30 +105,30 @@ export function usePromotionEditor({
             } finally {
                 setLoadingProducts(false);
             }
-        };
+        }
 
         void loadProducts();
     }, [open, form.discountType, service]);
 
     const mode: 'create' | 'edit' = promotion ? 'edit' : 'create';
 
-    const setCode = (value: string) => {
+    function setCode(value: string) {
         setForm((prev) => ({ ...prev, code: value.toUpperCase() }));
-    };
+    }
 
-    const setDiscountType = (value: PromotionType) => {
+    function setDiscountType(value: PromotionType) {
         setForm((prev) => ({ ...prev, discountType: value }));
-    };
+    }
 
-    const setDiscountValue = (value: number) => {
+    function setDiscountValue(value: number) {
         setForm((prev) => ({ ...prev, discountValue: value }));
-    };
+    }
 
-    const setActive = (value: boolean) => {
+    function setActive(value: boolean) {
         setForm((prev) => ({ ...prev, active: value }));
-    };
+    }
 
-    const toggleProduct = (productId: string, checked: boolean) => {
+    function toggleProduct(productId: string, checked: boolean) {
         setForm((prev) => {
             if (checked) {
                 if (prev.productIds.includes(productId)) {
@@ -146,9 +146,9 @@ export function usePromotionEditor({
                 productIds: prev.productIds.filter((id) => id !== productId),
             };
         });
-    };
+    }
 
-    const save = async () => {
+    async function save() {
         setSaving(true);
         try {
             if (mode === 'create') {
@@ -197,9 +197,9 @@ export function usePromotionEditor({
         } finally {
             setSaving(false);
         }
-    };
+    }
 
-    const remove = async () => {
+    async function remove() {
         if (!promotion) {
             return;
         }
@@ -211,7 +211,7 @@ export function usePromotionEditor({
         } finally {
             setDeleting(false);
         }
-    };
+    }
 
     const selectedProducts = useMemo(() => {
         const selectedIds = new Set(form.productIds);

@@ -17,44 +17,7 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import type { PromotionType } from '@/types/interfaces/backoffice/promotion';
-import type { BackOfficeProduct } from '@/types/interfaces/backoffice/product';
-
-type PromotionEditorSheetProps = {
-    open: boolean;
-    mode: 'create' | 'edit';
-    title: string;
-    subtitle: string;
-    saveLabel: string;
-    deleteLabel: string;
-    cancelLabel: string;
-    codeLabel: string;
-    typeLabel: string;
-    valueLabel: string;
-    activeLabel: string;
-    productSelectionLabel: string;
-    productTypeServiceLabel: string;
-    productTypePhysicalLabel: string;
-    noProductsLabel: string;
-    loadingLabel: string;
-    code: string;
-    discountType: PromotionType;
-    discountValue: number;
-    active: boolean;
-    selectedProductIds: string[];
-    availableProducts: BackOfficeProduct[];
-    loadingDetails: boolean;
-    loadingProducts: boolean;
-    saving: boolean;
-    deleting: boolean;
-    onOpenChange: (open: boolean) => void;
-    onCodeChange: (value: string) => void;
-    onDiscountTypeChange: (value: PromotionType) => void;
-    onDiscountValueChange: (value: number) => void;
-    onActiveChange: (value: boolean) => void;
-    onToggleProduct: (productId: string, checked: boolean) => void;
-    onSave: () => void;
-    onDelete: () => void;
-};
+import type { PromotionEditorSheetProps } from '@/types/interfaces/backoffice/promotion/PromotionEditorSheetProps';
 
 export function PromotionEditorSheet({
     open,

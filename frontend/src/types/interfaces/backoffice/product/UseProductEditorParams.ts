@@ -1,4 +1,4 @@
-import type { BackOfficeProduct } from '@/types/interfaces/backoffice/product';
+import type { BackOfficeProduct } from './BackOfficeProduct';
 
 export type UseProductEditorParams = {
     product: BackOfficeProduct | null;

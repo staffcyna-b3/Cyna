@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import type { RowSelectionState } from '@tanstack/react-table';
 import { ProductStatus } from '@/types/enums/product/ProductStatus';
-import type { ProductStatusFilter } from './types/ProductStatusFilter';
-import type { ProductTypeFilter } from './types/ProductTypeFilter';
+import type { ProductStatusFilter } from '@/types/interfaces/backoffice/product/ProductStatusFilter';
+import type { ProductTypeFilter } from '@/types/interfaces/backoffice/product/ProductTypeFilter';
 
 export function useProductsPageState() {
     const [status, setStatus] = useState<ProductStatusFilter>('active');
@@ -26,21 +26,21 @@ export function useProductsPageState() {
 
     const selectedCount = Object.keys(rowSelection).length;
 
-    const openProductEditor = (productId: string) => {
+    function openProductEditor(productId: string) {
         setSelectedProductId(productId);
         setSheetOpen(true);
-    };
+    }
 
-    const closeProductEditor = () => {
+    function closeProductEditor() {
         setSheetOpen(false);
         setSelectedProductId(null);
-    };
+    }
 
-    const resetFilters = () => {
+    function resetFilters() {
         setSearch('');
         setCategoryId('');
         setType('all');
-    };
+    }
 
     return {
         status,

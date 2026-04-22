@@ -1,12 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   fetchBackOfficeProductById,
   useBackOfficeProductsStore,
 } from '@/stores/backoffice/backOfficeProductsStore';
-
-type UseBackOfficeProductByIdOptions = {
-  autoFetch?: boolean;
-};
+import type { UseBackOfficeProductByIdOptions } from '@/types/interfaces/backoffice/hooks/UseBackOfficeProductByIdOptions';
 
 export function useBackOfficeProductById(
   productId: string | undefined,
@@ -15,13 +12,13 @@ export function useBackOfficeProductById(
   const { autoFetch = true } = options;
   const state = useBackOfficeProductsStore();
 
-  const refresh = useCallback(async () => {
+  async function refresh() {
     if (!productId) {
       return null;
     }
 
     return fetchBackOfficeProductById(productId);
-  }, [productId]);
+  }
 
   useEffect(() => {
     if (!autoFetch || !productId) {
@@ -29,7 +26,7 @@ export function useBackOfficeProductById(
     }
 
     void refresh();
-  }, [autoFetch, productId, refresh]);
+  }, [autoFetch, productId]);
 
   return {
     item: state.current,

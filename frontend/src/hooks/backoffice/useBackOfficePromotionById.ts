@@ -1,12 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   fetchBackOfficePromotionById,
   useBackOfficePromotionsStore,
 } from '@/stores/backoffice/backOfficePromotionsStore';
-
-type UseBackOfficePromotionByIdOptions = {
-  autoFetch?: boolean;
-};
+import type { UseBackOfficePromotionByIdOptions } from '@/types/interfaces/backoffice/hooks/UseBackOfficePromotionByIdOptions';
 
 export function useBackOfficePromotionById(
   promotionId: string | undefined,
@@ -15,13 +12,13 @@ export function useBackOfficePromotionById(
   const { autoFetch = true } = options;
   const state = useBackOfficePromotionsStore();
 
-  const refresh = useCallback(async () => {
+  async function refresh() {
     if (!promotionId) {
       return null;
     }
 
     return fetchBackOfficePromotionById(promotionId);
-  }, [promotionId]);
+  }
 
   useEffect(() => {
     if (!autoFetch || !promotionId) {
@@ -29,7 +26,7 @@ export function useBackOfficePromotionById(
     }
 
     void refresh();
-  }, [autoFetch, promotionId, refresh]);
+  }, [autoFetch, promotionId]);
 
   return {
     item: state.current,

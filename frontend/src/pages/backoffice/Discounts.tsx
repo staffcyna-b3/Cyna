@@ -3,7 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { BackOfficeDataTable } from '@/components/Backoffice/data-table/BackOfficeDataTable';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { DataTable } from '@/components/Backoffice/data-table';
 import { PromotionEditorSheet } from '@/components/Backoffice/promotions/PromotionEditorSheet';
 import { buildPromotionColumns } from '@/components/Backoffice/promotions/promotionTableColumns';
 import { BackOfficeListToolbar } from '@/components/Backoffice/shared/BackOfficeListToolbar';
@@ -11,6 +18,7 @@ import { BackOfficePageHeader } from '@/components/Backoffice/shared/BackOfficeP
 import { BackOfficeStatusToggle } from '@/components/Backoffice/shared/BackOfficeStatusToggle';
 import { useBackOfficePromotions } from '@/hooks/backoffice';
 import { usePromotionEditor } from '@/hooks/backoffice/promotions/usePromotionEditor';
+import { getBackOfficeErrorMessage } from '@/utils/backoffice/getBackOfficeErrorMessage';
 
 export default function Discounts() {
     const { t } = useTranslation();
@@ -23,6 +31,7 @@ export default function Discounts() {
     const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(null);
 
     const { items, loading, error, refresh } = useBackOfficePromotions();
+    const discountsErrorMessage = getBackOfficeErrorMessage(t, error);
 
     const selectedPromotion = useMemo(
         () => items.find((promotion) => promotion.id === selectedPromotionId) ?? null,
@@ -40,7 +49,17 @@ export default function Discounts() {
         });
     }, [items, search, status, typeFilter]);
 
-    const columns = useMemo(() => buildPromotionColumns(t), [t]);
+    function openCreate() {
+        setSelectedPromotionId(null);
+        setSheetOpen(true);
+    }
+
+    function openEdit(promotionId: string) {
+        setSelectedPromotionId(promotionId);
+        setSheetOpen(true);
+    }
+
+    const columns = useMemo(() => buildPromotionColumns(t, openEdit), [t, openEdit]);
 
     const editor = usePromotionEditor({
         promotion: selectedPromotion,
@@ -57,16 +76,6 @@ export default function Discounts() {
         },
     });
 
-    const openCreate = () => {
-        setSelectedPromotionId(null);
-        setSheetOpen(true);
-    };
-
-    const openEdit = (promotionId: string) => {
-        setSelectedPromotionId(promotionId);
-        setSheetOpen(true);
-    };
-
     useEffect(() => {
         if (searchParams.get('create') !== '1') {
             return;
@@ -80,10 +89,10 @@ export default function Discounts() {
         setSearchParams(nextParams, { replace: true });
     }, [searchParams, setSearchParams]);
 
-    const resetFilters = () => {
+    function resetFilters() {
         setTypeFilter('all');
         setSearch('');
-    };
+    }
 
     return (
         <>
@@ -116,15 +125,19 @@ export default function Discounts() {
                                         <Label className="mb-1.5 block text-sm text-gray-600">
                                             {t('backoffice.discountType')}
                                         </Label>
-                                        <select
+                                        <Select
                                             value={typeFilter}
-                                            onChange={(event) => setTypeFilter(event.target.value as 'all' | 'service' | 'product')}
-                                            className="h-9 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                                            onValueChange={(value) => setTypeFilter(value as 'all' | 'service' | 'product')}
                                         >
-                                            <option value="all">{t('allProducts')}</option>
-                                            <option value="service">{t('service')}</option>
-                                            <option value="product">{t('product')}</option>
-                                        </select>
+                                            <SelectTrigger className="h-9 w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">{t('allProducts')}</SelectItem>
+                                                <SelectItem value="service">{t('service')}</SelectItem>
+                                                <SelectItem value="product">{t('product')}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
 
                                     <Button
@@ -146,14 +159,14 @@ export default function Discounts() {
                     }
                 />
 
-                <BackOfficeDataTable
-                    data={filtered}
-                    columns={columns}
-                    loading={loading}
-                    emptyLabel={error || t('backoffice.noDiscounts')}
-                    getRowId={(row) => row.id}
-                    onRowClick={(row) => openEdit(row.id)}
-                />
+                {loading ? (
+                    <div className="rounded-md border p-6 text-sm text-muted-foreground">{t('loading')}</div>
+                ) : (
+                    <DataTable data={filtered} columns={columns} />
+                )}
+                {!loading && discountsErrorMessage ? (
+                    <p className="text-sm text-destructive">{discountsErrorMessage}</p>
+                ) : null}
             </div>
 
             <PromotionEditorSheet

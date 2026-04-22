@@ -3,7 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { BackOfficeDataTable } from '@/components/Backoffice/data-table/BackOfficeDataTable';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { DataTable } from '@/components/Backoffice/data-table';
 import { ProductEditorSheet } from '@/components/Backoffice/products/ProductEditorSheet';
 import {
     buildProductColumns,
@@ -15,6 +22,7 @@ import { BackOfficeListToolbar } from '@/components/Backoffice/shared/BackOffice
 import { useBackOfficeCategoryOptions, useBackOfficeProducts } from '@/hooks/backoffice';
 import { useProductEditor } from '@/hooks/backoffice/products/useProductEditor';
 import { useProductsPageState } from '@/hooks/backoffice/products/useProductsPageState';
+import { getBackOfficeErrorMessage } from '@/utils/backoffice/getBackOfficeErrorMessage';
 
 export default function Products() {
     const { t } = useTranslation();
@@ -39,13 +47,14 @@ export default function Products() {
     const { items, loading, error, refresh } = useBackOfficeProducts(state.query, {
         autoFetch: true,
     });
+    const productsErrorMessage = getBackOfficeErrorMessage(t, error);
 
     const selectedProduct = useMemo(
         () => items.find((item) => item.id === state.selectedProductId) ?? null,
         [items, state.selectedProductId],
     );
 
-    const columns = useMemo(() => buildProductColumns(t), [t]);
+    const columns = useMemo(() => buildProductColumns(t, state.openProductEditor), [t, state.openProductEditor]);
 
     const editor = useProductEditor({
         product: selectedProduct,
@@ -87,37 +96,45 @@ export default function Products() {
                                         <Label className="mb-1.5 block text-sm text-gray-600">
                                             {t('backoffice.type')}
                                         </Label>
-                                        <select
+                                        <Select
                                             value={state.type}
-                                            onChange={(event) => {
-                                                const nextType = event.target.value as 'all' | 'product' | 'service';
+                                            onValueChange={(value) => {
+                                                const nextType = value as 'all' | 'product' | 'service';
                                                 state.setType(nextType);
                                                 state.setCategoryId('');
                                             }}
-                                            className="h-9 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
                                         >
-                                            <option value="all">{t('allProducts')}</option>
-                                            <option value="product">{t('product')}</option>
-                                            <option value="service">{t('service')}</option>
-                                        </select>
+                                            <SelectTrigger className="h-9 w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="all">{t('allProducts')}</SelectItem>
+                                                <SelectItem value="product">{t('product')}</SelectItem>
+                                                <SelectItem value="service">{t('service')}</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
 
                                     <div>
                                         <Label className="mb-1.5 block text-sm text-gray-600">
                                             {t('backoffice.category')}
                                         </Label>
-                                        <select
-                                            value={state.categoryId}
-                                            onChange={(event) => state.setCategoryId(event.target.value)}
-                                            className="h-9 w-full rounded-md border border-gray-200 bg-white px-3 text-sm text-gray-700 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                                        <Select
+                                            value={state.categoryId || '__all__'}
+                                            onValueChange={(value) => state.setCategoryId(value === '__all__' ? '' : value)}
                                         >
-                                            <option value="">{t('allProducts')}</option>
-                                            {filteredCategoryOptions.map((option) => (
-                                                <option key={option.id} value={option.id}>
-                                                    {option.name}
-                                                </option>
-                                            ))}
-                                        </select>
+                                            <SelectTrigger className="h-9 w-full">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="__all__">{t('allProducts')}</SelectItem>
+                                                {filteredCategoryOptions.map((option) => (
+                                                    <SelectItem key={option.id} value={option.id}>
+                                                        {option.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
 
                                     <Button
@@ -153,17 +170,14 @@ export default function Products() {
                     }
                 />
 
-                <BackOfficeDataTable
-                    data={items}
-                    columns={columns}
-                    loading={loading}
-                    emptyLabel={error || t('noProducts')}
-                    enableRowSelection
-                    getRowId={(row) => row.id}
-                    rowSelection={state.rowSelection}
-                    onRowSelectionChange={state.setRowSelection}
-                    onRowClick={(row) => state.openProductEditor(row.id)}
-                />
+                {loading ? (
+                    <div className="rounded-md border p-6 text-sm text-muted-foreground">{t('loading')}</div>
+                ) : (
+                    <DataTable data={items} columns={columns} />
+                )}
+                {!loading && productsErrorMessage ? (
+                    <p className="text-sm text-destructive">{productsErrorMessage}</p>
+                ) : null}
             </div>
 
             <ProductEditorSheet

@@ -5,12 +5,14 @@ import { BackOfficePageHeader } from '@/components/Backoffice/shared/BackOfficeP
 import { Button } from '@/components/ui/button';
 import { useBackOfficeCategories } from '@/hooks/backoffice';
 import { useCategoryOrderEditor } from '@/hooks/backoffice/categories/useCategoryOrderEditor';
+import { getBackOfficeErrorMessage } from '@/utils/backoffice/getBackOfficeErrorMessage';
 
 export default function Categories() {
     const { t } = useTranslation();
     const query = useMemo(() => ({ type: 'service' as const }), []);
     const { items, loading, error } = useBackOfficeCategories(query, { autoFetch: true });
     const editor = useCategoryOrderEditor(items);
+    const categoriesErrorMessage = getBackOfficeErrorMessage(t, error);
 
     return (
         <>
@@ -33,11 +35,15 @@ export default function Categories() {
                     {t('backoffice.reorderServiceCategories')}
                 </div>
 
+                {!loading && categoriesErrorMessage ? (
+                    <p className="text-sm text-destructive">{categoriesErrorMessage}</p>
+                ) : null}
+
                 <div className="rounded-xl border border-gray-200 bg-white overflow-hidden">
                     {loading ? (
                         <div className="px-4 py-10 text-sm text-center text-gray-500">{t('loading')}</div>
                     ) : editor.orderedItems.length === 0 ? (
-                        <div className="px-4 py-10 text-sm text-center text-gray-500">{error || t('noCategory')}</div>
+                        <div className="px-4 py-10 text-sm text-center text-gray-500">{t('noCategory')}</div>
                     ) : (
                         <ul>
                             {editor.orderedItems.map((category, index) => (

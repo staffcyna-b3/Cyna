@@ -1,13 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   fetchBackOfficeCategoryOptions,
   useBackOfficeCategoriesStore,
 } from '@/stores/backoffice/backOfficeCategoriesStore';
 import type { BackOfficeCategoryQuery } from '@/types/interfaces/backoffice/category';
-
-type UseBackOfficeCategoryOptionsOptions = {
-  autoFetch?: boolean;
-};
+import type { UseBackOfficeCategoryOptionsOptions } from '@/types/interfaces/backoffice/hooks/UseBackOfficeCategoryOptionsOptions';
 
 export function useBackOfficeCategoryOptions(
   query: BackOfficeCategoryQuery = {},
@@ -16,9 +13,9 @@ export function useBackOfficeCategoryOptions(
   const { autoFetch = true } = options;
   const state = useBackOfficeCategoriesStore();
 
-  const refresh = useCallback(async () => {
+  async function refresh() {
     return fetchBackOfficeCategoryOptions(query);
-  }, [query]);
+  }
 
   useEffect(() => {
     if (!autoFetch) {
@@ -26,7 +23,7 @@ export function useBackOfficeCategoryOptions(
     }
 
     void refresh();
-  }, [autoFetch, refresh]);
+  }, [autoFetch, query]);
 
   return {
     options: state.options,

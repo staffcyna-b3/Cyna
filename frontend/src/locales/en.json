@@ -227,6 +227,7 @@
   "backoffice.promotionConfiguration": "Promotion configuration",
   "backoffice.productsSelection": "Selected products",
   "backoffice.noDiscounts": "No discount found",
+  "backoffice.errors.generic": "Unable to load data for now.",
   "backoffice.reorderServiceCategories": "Reorder the service categories shown under Our solutions on the home page.",
   "backoffice.saveOrder": "Save order",
   "backoffice.moveUp": "Move up",

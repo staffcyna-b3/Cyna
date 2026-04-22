@@ -11,44 +11,8 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-
-type ProductEditorSheetProps = {
-    open: boolean;
-    reference: string;
-    title: string;
-    saveLabel: string;
-    deleteLabel: string;
-    nameLabel: string;
-    priceLabel: string;
-    stockLabel: string;
-    maintenanceLabel: string;
-    descriptionLabel: string;
-    imageLabel: string;
-    imageActionLabel: string;
-    imageLoadingLabel: string;
-    imageEmptyLabel: string;
-    name: string;
-    price: number;
-    stock: number;
-    stockDisabled?: boolean;
-    isService?: boolean;
-    maintenance: boolean;
-    description: string;
-    imagePreview: string | null;
-    imageLoading: boolean;
-    imageUpdating: boolean;
-    saving: boolean;
-    deleting: boolean;
-    onOpenChange: (open: boolean) => void;
-    onNameChange: (value: string) => void;
-    onPriceChange: (value: number) => void;
-    onStockChange: (value: number) => void;
-    onMaintenanceChange: (value: boolean) => void;
-    onDescriptionChange: (value: string) => void;
-    onImageFileChange: (file: File) => Promise<void> | void;
-    onSave: () => void;
-    onDelete: () => void;
-};
+import { Textarea } from '@/components/ui/textarea';
+import type { ProductEditorSheetProps } from '@/types/interfaces/backoffice/product/ProductEditorSheetProps';
 
 export function ProductEditorSheet({
     open,
@@ -145,10 +109,10 @@ export function ProductEditorSheet({
 
                         <div>
                             <Label className="mb-1.5 block text-sm text-gray-500">{descriptionLabel}</Label>
-                            <textarea
+                            <Textarea
                                 value={description}
                                 onChange={(event) => onDescriptionChange(event.target.value)}
-                                className="h-28 w-full rounded-md border border-gray-200 bg-white p-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                                className="h-28"
                             />
                         </div>
 

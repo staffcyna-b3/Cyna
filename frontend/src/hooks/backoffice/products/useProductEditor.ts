@@ -8,8 +8,8 @@ import {
 } from '@/stores/backoffice/backOfficeProductsStore';
 import { ProductStatus } from '@/types/enums/product/ProductStatus';
 import type { BackOfficeProduct } from '@/types/interfaces/backoffice/product';
-import type { ProductFormState } from './types/ProductFormState';
-import type { UseProductEditorParams } from './types/UseProductEditorParams';
+import type { ProductFormState } from '@/types/interfaces/backoffice/product/ProductFormState';
+import type { UseProductEditorParams } from '@/types/interfaces/backoffice/product/UseProductEditorParams';
 
 function toFormState(product: BackOfficeProduct | null): ProductFormState {
     if (!product) {
@@ -53,7 +53,7 @@ export function useProductEditor({
             return;
         }
 
-        const loadImage = async () => {
+        async function loadImage() {
             setImageLoading(true);
             try {
                 const image = await fetchBackOfficeProductImage(product.id);
@@ -69,32 +69,32 @@ export function useProductEditor({
             } finally {
                 setImageLoading(false);
             }
-        };
+        }
 
         void loadImage();
     }, [product]);
 
-    const setName = (value: string) => {
+    function setName(value: string) {
         setForm((prev) => ({ ...prev, name: value }));
-    };
+    }
 
-    const setPrice = (value: number) => {
+    function setPrice(value: number) {
         setForm((prev) => ({ ...prev, price: value }));
-    };
+    }
 
-    const setStock = (value: number) => {
+    function setStock(value: number) {
         setForm((prev) => ({ ...prev, stock: value }));
-    };
+    }
 
-    const setDescription = (value: string) => {
+    function setDescription(value: string) {
         setForm((prev) => ({ ...prev, description: value }));
-    };
+    }
 
-    const setMaintenance = (value: boolean) => {
+    function setMaintenance(value: boolean) {
         setForm((prev) => ({ ...prev, maintenance: value }));
-    };
+    }
 
-    const save = async () => {
+    async function save() {
         if (!product) {
             return;
         }
@@ -118,9 +118,9 @@ export function useProductEditor({
         } finally {
             setSaving(false);
         }
-    };
+    }
 
-    const remove = async () => {
+    async function remove() {
         if (!product) {
             return;
         }
@@ -132,9 +132,9 @@ export function useProductEditor({
         } finally {
             setDeleting(false);
         }
-    };
+    }
 
-    const changeImage = async (file: File) => {
+    async function changeImage(file: File) {
         if (!product || !file.type.startsWith('image/')) {
             return;
         }
@@ -157,7 +157,7 @@ export function useProductEditor({
         } finally {
             setImageUpdating(false);
         }
-    };
+    }
 
     return {
         form,

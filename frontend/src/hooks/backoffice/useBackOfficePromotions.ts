@@ -1,20 +1,17 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import {
   fetchBackOfficePromotions,
   useBackOfficePromotionsStore,
 } from '@/stores/backoffice/backOfficePromotionsStore';
-
-type UseBackOfficePromotionsOptions = {
-  autoFetch?: boolean;
-};
+import type { UseBackOfficePromotionsOptions } from '@/types/interfaces/backoffice/hooks/UseBackOfficePromotionsOptions';
 
 export function useBackOfficePromotions(options: UseBackOfficePromotionsOptions = {}) {
   const { autoFetch = true } = options;
   const state = useBackOfficePromotionsStore();
 
-  const refresh = useCallback(async () => {
+  async function refresh() {
     return fetchBackOfficePromotions();
-  }, []);
+  }
 
   useEffect(() => {
     if (!autoFetch) {
@@ -22,7 +19,7 @@ export function useBackOfficePromotions(options: UseBackOfficePromotionsOptions 
     }
 
     void refresh();
-  }, [autoFetch, refresh]);
+  }, [autoFetch]);
 
   return {
     items: state.items,
