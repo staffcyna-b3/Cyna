@@ -10,29 +10,13 @@ import {
     UpdateProductDto,
     UpdateStockDto,
 } from '../dto/product';
-import {
-    createPhysicalSchema,
-    createSaasSchema,
-    maintenanceSchema,
-    prioritySchema,
-    productIdParamSchema,
-    productListQuerySchema,
-    reorderDisplayPrioritySchema,
-    updateProductImageSchema,
-    updateProductSchema,
-    updateStockSchema,
-} from '../schemas/product.schemas';
-import parseWithSchema from '../utils/parseWithSchema';
 
 export class ProductController {
     constructor(private readonly productService: IProductService) { }
 
     async list(req: Request, res: Response) {
         try {
-            const filters = parseWithSchema<ProductFiltersDto>(
-                productListQuerySchema,
-                req.query as unknown as Record<string, unknown>,
-            );
+            const filters = req.query as unknown as ProductFiltersDto;
 
             const products = await this.productService.list(filters);
 
@@ -44,10 +28,7 @@ export class ProductController {
 
     async getById(req: Request, res: Response) {
         try {
-            const { id: productId } = parseWithSchema<{ id: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
+            const { id: productId } = req.params as { id: string };
             const product = await this.productService.getById(productId);
             return res.status(200).json(product);
         } catch (error: unknown) {
@@ -57,10 +38,7 @@ export class ProductController {
 
     async createSaas(req: Request, res: Response) {
         try {
-            const payload = parseWithSchema<CreateProductDto>(
-                createSaasSchema,
-                req.body as Record<string, unknown>,
-            );
+            const payload = req.body as CreateProductDto;
             payload.is_service = true;
 
             const product = await this.productService.create(payload);
@@ -73,10 +51,7 @@ export class ProductController {
 
     async createPhysical(req: Request, res: Response) {
         try {
-            const payload = parseWithSchema<CreateProductDto>(
-                createPhysicalSchema,
-                req.body as Record<string, unknown>,
-            );
+            const payload = req.body as CreateProductDto;
             payload.is_service = false;
 
             const product = await this.productService.create(payload);
@@ -89,14 +64,8 @@ export class ProductController {
 
     async update(req: Request, res: Response) {
         try {
-            const { id: productId } = parseWithSchema<{ id: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const payload = parseWithSchema<UpdateProductDto>(
-                updateProductSchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: productId } = req.params as { id: string };
+            const payload = req.body as UpdateProductDto;
 
             const product = await this.productService.update(productId, payload);
 
@@ -108,10 +77,7 @@ export class ProductController {
 
     async remove(req: Request, res: Response) {
         try {
-            const { id: productId } = parseWithSchema<{ id: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
+            const { id: productId } = req.params as { id: string };
             const result = await this.productService.remove(productId);
             return res.status(200).json(result);
         } catch (error: unknown) {
@@ -121,14 +87,8 @@ export class ProductController {
 
     async updateStock(req: Request, res: Response) {
         try {
-            const { id: productId } = parseWithSchema<{ id: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const payload = parseWithSchema<UpdateStockDto>(
-                updateStockSchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: productId } = req.params as { id: string };
+            const payload = req.body as UpdateStockDto;
 
             const product = await this.productService.updateStock(productId, payload);
 
@@ -140,10 +100,7 @@ export class ProductController {
 
     async getImage(req: Request, res: Response) {
         try {
-            const { id: productId } = parseWithSchema<{ id: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
+            const { id: productId } = req.params as { id: string };
 
             const image = await this.productService.getImage(productId);
             return res.status(200).json(image);
@@ -154,14 +111,8 @@ export class ProductController {
 
     async updateImage(req: Request, res: Response) {
         try {
-            const { id: productId } = parseWithSchema<{ id: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const payload = parseWithSchema<UpdateProductImageDto>(
-                updateProductImageSchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: productId } = req.params as { id: string };
+            const payload = req.body as UpdateProductImageDto;
 
             const image = await this.productService.updateImage(productId, payload);
             return res.status(200).json(image);
@@ -172,14 +123,8 @@ export class ProductController {
 
     async setMaintenance(req: Request, res: Response) {
         try {
-            const { id: productId } = parseWithSchema<{ id: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const { maintenance } = parseWithSchema<{ maintenance: boolean }>(
-                maintenanceSchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: productId } = req.params as { id: string };
+            const { maintenance } = req.body as { maintenance: boolean };
             const product = await this.productService.setMaintenance(productId, maintenance);
             return res.status(200).json(product);
         } catch (error: unknown) {
@@ -189,14 +134,8 @@ export class ProductController {
 
     async updatePriority(req: Request, res: Response) {
         try {
-            const { id: productId } = parseWithSchema<{ id: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const { priority } = parseWithSchema<{ priority: number }>(
-                prioritySchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: productId } = req.params as { id: string };
+            const { priority } = req.body as { priority: number };
             const product = await this.productService.updatePriority(productId, priority);
             return res.status(200).json(product);
         } catch (error: unknown) {
@@ -206,10 +145,7 @@ export class ProductController {
 
     async reorderDisplayPriority(req: Request, res: Response) {
         try {
-            const { items } = parseWithSchema<{ items: ReorderDisplayPriorityItemDto[] }>(
-                reorderDisplayPrioritySchema,
-                req.body as Record<string, unknown>,
-            );
+            const { items } = req.body as { items: ReorderDisplayPriorityItemDto[] };
             const products = await this.productService.reorderDisplayPriority(items);
             return res.status(200).json(products);
         } catch (error: unknown) {

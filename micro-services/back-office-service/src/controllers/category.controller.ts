@@ -3,17 +3,12 @@ import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { ICategoryService } from '../interfaces/ICategoryService';
 import { CategoryFiltersDto, ReorderCategoryPriorityItemDto } from '../dto/category';
-import { categoryFiltersQuerySchema, categoryIdParamSchema, reorderCategoryDisplayPrioritySchema } from '../schemas/category.schemas';
-import parseWithSchema from '../utils/parseWithSchema';
 export class CategoryController {
     constructor(private readonly categoryService: ICategoryService) { }
 
     async list(req: Request, res: Response) {
         try {
-            const filters = parseWithSchema<CategoryFiltersDto>(
-                categoryFiltersQuerySchema,
-                req.query as unknown as Record<string, unknown>,
-            );
+            const filters = req.query as unknown as CategoryFiltersDto;
             const categories = await this.categoryService.list(filters);
             return res.status(200).json(categories);
         } catch (error: unknown) {
@@ -23,10 +18,7 @@ export class CategoryController {
 
     async listForSelect(req: Request, res: Response) {
         try {
-            const filters = parseWithSchema<CategoryFiltersDto>(
-                categoryFiltersQuerySchema,
-                req.query as unknown as Record<string, unknown>,
-            );
+            const filters = req.query as unknown as CategoryFiltersDto;
             const categories = await this.categoryService.listForSelect(filters);
             return res.status(200).json(categories);
         } catch (error: unknown) {
@@ -36,10 +28,7 @@ export class CategoryController {
 
     async getById(req: Request, res: Response) {
         try {
-            const { id: categoryId } = parseWithSchema<{ id: string }>(
-                categoryIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
+            const { id: categoryId } = req.params as { id: string };
             const category = await this.categoryService.getById(categoryId);
             return res.status(200).json(category);
         } catch (error: unknown) {
@@ -49,10 +38,7 @@ export class CategoryController {
 
     async reorderDisplayPriority(req: Request, res: Response) {
         try {
-            const { items } = parseWithSchema<{ items: ReorderCategoryPriorityItemDto[] }>(
-                reorderCategoryDisplayPrioritySchema,
-                req.body as Record<string, unknown>,
-            );
+            const { items } = req.body as { items: ReorderCategoryPriorityItemDto[] };
             const categories = await this.categoryService.reorderDisplayPriority(items);
             return res.status(200).json(categories);
         } catch (error: unknown) {

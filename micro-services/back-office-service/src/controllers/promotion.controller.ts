@@ -3,15 +3,6 @@ import { Logger } from '../common/logger';
 import { HttpError } from '../common/httpError';
 import { CreatePromotionDto, UpdatePromotionDto } from '../dto/promotion';
 import { IPromotionService } from '../interfaces/IPromotionService';
-import {
-    createPromotionSchema,
-    productIdParamSchema,
-    promotionIdParamSchema,
-    promotionProductIdsSchema,
-    setActiveSchema,
-    updatePromotionSchema,
-} from '../schemas/promotion.schemas';
-import parseWithSchema from '../utils/parseWithSchema';
 
 export class PromotionController {
     constructor(private readonly promotionService: IPromotionService) { }
@@ -27,10 +18,7 @@ export class PromotionController {
 
     async getById(req: Request, res: Response) {
         try {
-            const { id: promotionId } = parseWithSchema<{ id: string }>(
-                promotionIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
+            const { id: promotionId } = req.params as { id: string };
             const promotion = await this.promotionService.getById(promotionId);
             return res.status(200).json(promotion);
         } catch (error: unknown) {
@@ -40,10 +28,7 @@ export class PromotionController {
 
     async create(req: Request, res: Response) {
         try {
-            const payload = parseWithSchema<CreatePromotionDto>(
-                createPromotionSchema,
-                req.body as Record<string, unknown>,
-            );
+            const payload = req.body as CreatePromotionDto;
 
             const promotion = await this.promotionService.create(payload);
 
@@ -55,14 +40,8 @@ export class PromotionController {
 
     async update(req: Request, res: Response) {
         try {
-            const { id: promotionId } = parseWithSchema<{ id: string }>(
-                promotionIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const payload = parseWithSchema<UpdatePromotionDto>(
-                updatePromotionSchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: promotionId } = req.params as { id: string };
+            const payload = req.body as UpdatePromotionDto;
 
             const promotion = await this.promotionService.update(promotionId, payload);
 
@@ -74,10 +53,7 @@ export class PromotionController {
 
     async remove(req: Request, res: Response) {
         try {
-            const { id: promotionId } = parseWithSchema<{ id: string }>(
-                promotionIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
+            const { id: promotionId } = req.params as { id: string };
             const result = await this.promotionService.remove(promotionId);
             return res.status(200).json(result);
         } catch (error: unknown) {
@@ -87,14 +63,8 @@ export class PromotionController {
 
     async setActive(req: Request, res: Response) {
         try {
-            const { id: promotionId } = parseWithSchema<{ id: string }>(
-                promotionIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const { active } = parseWithSchema<{ active: boolean }>(
-                setActiveSchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: promotionId } = req.params as { id: string };
+            const { active } = req.body as { active: boolean };
             const promotion = await this.promotionService.setActive(promotionId, active);
             return res.status(200).json(promotion);
         } catch (error: unknown) {
@@ -104,14 +74,8 @@ export class PromotionController {
 
     async replaceProducts(req: Request, res: Response) {
         try {
-            const { id: promotionId } = parseWithSchema<{ id: string }>(
-                promotionIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const { product_ids: productIds } = parseWithSchema<{ product_ids: string[] }>(
-                promotionProductIdsSchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: promotionId } = req.params as { id: string };
+            const { product_ids: productIds } = req.body as { product_ids: string[] };
             const promotion = await this.promotionService.replaceProducts(promotionId, productIds);
             return res.status(200).json(promotion);
         } catch (error: unknown) {
@@ -121,14 +85,8 @@ export class PromotionController {
 
     async addProducts(req: Request, res: Response) {
         try {
-            const { id: promotionId } = parseWithSchema<{ id: string }>(
-                promotionIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const { product_ids: productIds } = parseWithSchema<{ product_ids: string[] }>(
-                promotionProductIdsSchema,
-                req.body as Record<string, unknown>,
-            );
+            const { id: promotionId } = req.params as { id: string };
+            const { product_ids: productIds } = req.body as { product_ids: string[] };
             const promotion = await this.promotionService.addProducts(promotionId, productIds);
             return res.status(200).json(promotion);
         } catch (error: unknown) {
@@ -138,14 +96,7 @@ export class PromotionController {
 
     async removeProduct(req: Request, res: Response) {
         try {
-            const { id: promotionId } = parseWithSchema<{ id: string }>(
-                promotionIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
-            const { productId } = parseWithSchema<{ productId: string }>(
-                productIdParamSchema,
-                req.params as unknown as Record<string, unknown>,
-            );
+            const { id: promotionId, productId } = req.params as { id: string; productId: string };
             const promotion = await this.promotionService.removeProduct(promotionId, productId);
             return res.status(200).json(promotion);
         } catch (error: unknown) {
