@@ -13,7 +13,7 @@ import { AuthController } from './controllers/auth.controller';
 import cookieParser from 'cookie-parser';
 import { paymentsApiProxy, paymentsWebhookProxy } from './proxies/payments.proxy';
 import { authMiddleware } from './middlewares/auth.middleware';
-import { createPaymentIntentLimiter, createSubscriptionLimiter } from './middlewares/rate-limit.middleware';
+import { globalLimiter } from './middlewares/rate-limit.middleware';
 
 export const createApp = (): Express => {
   const app = express();
@@ -36,6 +36,7 @@ export const createApp = (): Express => {
   app.use(cookieParser())
 
   app.use(helmet());
+  app.use(globalLimiter);
 
   app.use(corsMiddleware);
 
@@ -48,11 +49,7 @@ export const createApp = (): Express => {
   // Payment API: gateway validates JWT and injects x-user-id / x-user-email headers
   // before proxying. authMiddleware only reads the Authorization header (no body),
   // so it runs safely before express.json().
-  app.use('/api/payments', authMiddleware, (req, res, next) => {
-    if (req.path === '/create-intent') return createPaymentIntentLimiter(req, res, next);
-    if (req.path === '/create-subscription') return createSubscriptionLimiter(req, res, next);
-    return next();
-  }, paymentsApiProxy);
+  app.use('/api/payments', authMiddleware, paymentsApiProxy);
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ limit: '10mb', extended: true }));

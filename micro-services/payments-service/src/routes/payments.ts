@@ -4,6 +4,7 @@ import { validatorSchema } from '../middlewares/validateMiddleware';
 import { createIntentSchema } from '../schemas/createIntentSchema';
 import { createSubscriptionSchema } from '../schemas/createSubscriptionSchema';
 import { getIntentParamsSchema } from '../schemas/getIntentParamsSchema';
+import { createPaymentIntentLimiter, createSubscriptionLimiter } from '../middlewares/rate-limit.middleware';
 
 const router = Router();
 const paymentController = createPaymentController();
@@ -11,6 +12,7 @@ const paymentController = createPaymentController();
 // POST /payments/create-intent
 router.post(
     '/create-intent',
+    createPaymentIntentLimiter,
     validatorSchema({ body: createIntentSchema }),
     (req, res) => paymentController.createIntent(req, res),
 );
@@ -18,6 +20,7 @@ router.post(
 // POST /payments/create-subscription
 router.post(
     '/create-subscription',
+    createSubscriptionLimiter,
     validatorSchema({ body: createSubscriptionSchema }),
     (req, res) => paymentController.createSubscription(req, res),
 );
