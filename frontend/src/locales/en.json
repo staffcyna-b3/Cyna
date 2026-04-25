@@ -29,7 +29,8 @@
     "addressUpdated": "Address updated",
     "noAddresses": "No addresses saved.",
     "noAddressesOfType": "No address available.",
-    "myAccount": "My account"
+    "myAccount": "My account",
+    "tabOrders": "My orders"
   },
   "sessionExpired": "Session expired, please log in again.",
   "manageAddresses": "Manage addresses",
@@ -230,6 +231,31 @@
   "VerificationInProgress": "Verification in progress",
   "verify2FA": "Verify 2FA",
   "verifying2FA": "Verifying 2FA",
+  "orders": {
+    "pageTitle": "Order history",
+    "myOrders": "My orders",
+    "allYears": "All years",
+    "allMonths": "All months",
+    "noOrders": "No orders found.",
+    "downloadInvoice": "Download invoice PDF",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "detailTitle": "Order detail",
+    "billingAddress": "Billing address",
+    "paymentMethod": "Payment method",
+    "paymentNotAvailable": "Not available",
+    "service": "Service",
+    "duration": "Duration",
+    "amount": "Amount",
+    "unknownProduct": "Product",
+    "status": {
+      "PAID": "Paid",
+      "CONFIRMED": "Confirmed",
+      "PENDING": "Pending",
+      "CANCELLED": "Cancelled",
+      "FAILED": "Failed"
+    }
+  },
   "viewMyOrders": "viewMyOrders",
   "viewProducts": "viewProducts",
   "welcome": "Welcome to Cyna.",

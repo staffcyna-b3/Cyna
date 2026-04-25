@@ -11,6 +11,7 @@ import type { Address } from '@/types/interfaces/address/Address';
 import { ProfileSection } from './account/ProfileSection';
 import { PasswordSection } from './account/PasswordSection';
 import { AddressesSection } from './account/AddressesSection';
+import { OrdersSection } from './account/OrdersSection';
 
 export default function AccountPage() {
   const { t } = useTranslation();
@@ -56,10 +57,11 @@ export default function AccountPage() {
     <div className="py-12 px-8 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-8">{t('account.pageTitle')}</h1>
       <Tabs defaultValue="profile">
-        <TabsList className="mb-6">
-          <TabsTrigger value="profile">{t('account.tabProfile')}</TabsTrigger>
-          <TabsTrigger value="password">{t('account.tabPassword')}</TabsTrigger>
-          <TabsTrigger value="addresses">{t('account.tabAddresses')}</TabsTrigger>
+        <TabsList className="mb-6 w-full">
+          <TabsTrigger value="profile" className="flex-1">{t('account.tabProfile')}</TabsTrigger>
+          <TabsTrigger value="password" className="flex-1">{t('account.tabPassword')}</TabsTrigger>
+          <TabsTrigger value="addresses" className="flex-1">{t('account.tabAddresses')}</TabsTrigger>
+          <TabsTrigger value="orders" className="flex-1">{t('account.tabOrders')}</TabsTrigger>
         </TabsList>
         <TabsContent value="profile">
           <ProfileSection
@@ -77,6 +79,9 @@ export default function AccountPage() {
             addresses={addresses}
             onAddressesChange={setAddresses}
           />
+        </TabsContent>
+        <TabsContent value="orders">
+          <OrdersSection token={accessToken} />
         </TabsContent>
       </Tabs>
     </div>

@@ -12,6 +12,7 @@ const SHIPPING_ADDRESS_ID = '00000000-0000-0000-0000-000000009002';
 
 const TEST_HEADER_USER_ID = CHECKOUT_USER_ID;
 const WRONG_TEST_HEADER_USER_ID = '00000000-0000-0000-0000-000000000000';
+const INTERNAL_TEST_SECRET = 'test-internal-secret';
 
 describe('Orders routes integration', () => {
   const app = express();
@@ -56,6 +57,8 @@ describe('Orders routes integration', () => {
   };
 
   beforeAll(async () => {
+    process.env.INTERNAL_SECRET = INTERNAL_TEST_SECRET;
+
     app.use(express.json());
     app.use('/', ordersRoutes);
 
@@ -111,6 +114,7 @@ describe('Orders routes integration', () => {
 
     await ensureCheckoutCartItems();
 
+    delete process.env.INTERNAL_SECRET;
     await sequelize.close();
   });
 
@@ -161,6 +165,21 @@ describe('Orders routes integration', () => {
     expect(response.status).toBe(422);
   });
 
+  it('GET /orders returns 200 with user orders list', async () => {
+    const response = await request(app)
+      .get('/orders')
+      .set('x-user-id', TEST_HEADER_USER_ID);
+
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+  });
+
+  it('GET /orders returns 401 when x-user-id header is missing', async () => {
+    const response = await request(app).get('/orders');
+
+    expect(response.status).toBe(401);
+  });
+
   it('GET /orders/:id returns 200 with order details', async () => {
     expect(createdOrderId).toBeTruthy();
 
@@ -206,6 +225,7 @@ describe('Orders routes integration', () => {
 
     const response = await request(app)
       .patch(`/orders/${createdOrderId}/status`)
+      .set('x-internal-secret', INTERNAL_TEST_SECRET)
       .send({ status: 'PAID' });
 
     expect(response.status).toBe(200);
@@ -217,6 +237,7 @@ describe('Orders routes integration', () => {
 
     const response = await request(app)
       .patch(`/orders/${createdOrderId}/status`)
+      .set('x-internal-secret', INTERNAL_TEST_SECRET)
       .send({ status: 'CANCELLED' });
 
     expect(response.status).toBe(200);
@@ -228,14 +249,37 @@ describe('Orders routes integration', () => {
 
     const response = await request(app)
       .patch(`/orders/${createdOrderId}/status`)
+      .set('x-internal-secret', INTERNAL_TEST_SECRET)
       .send({ status: 'REFUNDED' });
 
     expect(response.status).toBe(422);
   });
 
+  it('PATCH /orders/:id/status returns 403 when internal secret is missing', async () => {
+    expect(createdOrderId).toBeTruthy();
+
+    const response = await request(app)
+      .patch(`/orders/${createdOrderId}/status`)
+      .send({ status: 'PAID' });
+
+    expect(response.status).toBe(403);
+  });
+
+  it('PATCH /orders/:id/status returns 403 when internal secret is wrong', async () => {
+    expect(createdOrderId).toBeTruthy();
+
+    const response = await request(app)
+      .patch(`/orders/${createdOrderId}/status`)
+      .set('x-internal-secret', 'wrong-secret')
+      .send({ status: 'PAID' });
+
+    expect(response.status).toBe(403);
+  });
+
   it('PATCH /orders/:id/status returns 404 for unknown order id', async () => {
     const response = await request(app)
       .patch('/orders/non-existent-id/status')
+      .set('x-internal-secret', INTERNAL_TEST_SECRET)
       .send({ status: 'PAID' });
 
     expect(response.status).toBe(404);

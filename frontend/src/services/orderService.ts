@@ -1,33 +1,66 @@
 import type { CreateOrderPayload } from "@/types/interfaces/Order/CreateOrderPayload"
 import type { CreateOrderResponse } from "@/types/interfaces/Order/CreateOrderResponse"
-import type { GetOrderResponse } from "@/types/GetOrderResponse"
 import type { CheckoutContext } from "@/types/interfaces/Checkout/CheckoutContext"
 import type { UserAddresses } from "@/types/interfaces/address/UserAddresses"
 import type { AddressPayload } from "@/types/interfaces/address/AddressPayload"
+import type { OrderItem } from "@/types/interfaces/Order/OrderItem"
+import type { OrderSummary } from "@/types/interfaces/Order/OrderSummary"
+import type { BillingAddressSnapshot } from "@/types/interfaces/Order/BillingAddressSnapshot"
+import type { OrderDetail } from "@/types/interfaces/Order/OrderDetail"
 
-const withAuthHeaders = (token: string): Record<string, string> => ({
-  "Content-Type": "application/json",
-  "Authorization": `Bearer ${token}`,
-})
+export type { OrderItem, OrderSummary, BillingAddressSnapshot, OrderDetail }
 
-const parseError = async (res: Response) => {
-  try {
-    const payload = await res.json()
-    return { ...payload, status: res.status }
-  } catch {
-    return { message: "Request failed", status: res.status }
+export class OrderApiError extends Error {
+  constructor(
+    public readonly status: number,
+    message: string
+  ) {
+    super(message);
+    this.name = 'OrderApiError';
   }
 }
 
-const parseJsonResponse = async <T>(res: Response): Promise<T> => {
-  const contentType = res.headers.get("content-type") ?? ""
+function withAuthHeaders(token: string): Record<string, string> {
+  return {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${token}`,
+  }
+}
 
+async function parseOrderError(res: Response): Promise<OrderApiError> {
+  try {
+    const body = await res.json();
+    return new OrderApiError(res.status, body.error ?? body.message ?? 'Request failed');
+  } catch {
+    return new OrderApiError(res.status, 'Request failed');
+  }
+}
+
+async function parseJsonResponse<T>(res: Response): Promise<T> {
+  const contentType = res.headers.get("content-type") ?? ""
   if (contentType.includes("application/json")) {
     return res.json() as Promise<T>
   }
-
   const bodyPreview = (await res.text()).slice(0, 120)
-  throw new Error(`Expected JSON response but received '${contentType || "unknown"}': ${bodyPreview}`)
+  throw new OrderApiError(res.status, `Expected JSON but got '${contentType}': ${bodyPreview}`)
+}
+
+export async function getOrders(token: string): Promise<OrderSummary[]> {
+  const res = await fetch("/api/front-office/orders", {
+    headers: withAuthHeaders(token),
+  });
+  if (res.status === 401) throw new OrderApiError(401, 'UNAUTHORIZED');
+  if (!res.ok) throw await parseOrderError(res);
+  return parseJsonResponse<OrderSummary[]>(res);
+}
+
+export async function getOrderById(token: string, id: string): Promise<OrderDetail> {
+  const res = await fetch(`/api/front-office/orders/${id}`, {
+    headers: withAuthHeaders(token),
+  });
+  if (res.status === 401) throw new OrderApiError(401, 'UNAUTHORIZED');
+  if (!res.ok) throw await parseOrderError(res);
+  return parseJsonResponse<OrderDetail>(res);
 }
 
 export async function saveAddresses(
@@ -40,11 +73,7 @@ export async function saveAddresses(
     headers: withAuthHeaders(token),
     body: JSON.stringify({ billing, shipping }),
   })
-
-  if (!res.ok) {
-    throw await parseError(res)
-  }
-
+  if (!res.ok) throw await parseOrderError(res)
   return parseJsonResponse<UserAddresses>(res)
 }
 
@@ -52,11 +81,7 @@ export async function getUserAddresses(token: string): Promise<UserAddresses> {
   const res = await fetch("/api/front-office/addresses", {
     headers: withAuthHeaders(token),
   })
-
-  if (!res.ok) {
-    throw await parseError(res)
-  }
-
+  if (!res.ok) throw await parseOrderError(res)
   return parseJsonResponse<UserAddresses>(res)
 }
 
@@ -64,11 +89,7 @@ export async function getCheckoutContext(token: string): Promise<CheckoutContext
   const res = await fetch("/api/front-office/checkout/context", {
     headers: withAuthHeaders(token),
   })
-
-  if (!res.ok) {
-    throw await parseError(res)
-  }
-
+  if (!res.ok) throw await parseOrderError(res)
   return parseJsonResponse<CheckoutContext>(res)
 }
 
@@ -78,24 +99,12 @@ export async function createOrder(payload: CreateOrderPayload, token: string): P
     headers: withAuthHeaders(token),
     body: JSON.stringify(payload),
   })
-
-  if (!res.ok) {
-    throw await parseError(res)
-  }
-
+  if (!res.ok) throw await parseOrderError(res)
   return parseJsonResponse<CreateOrderResponse>(res)
 }
 
-export async function getOrder(orderId: string, token: string): Promise<GetOrderResponse> {
-  const res = await fetch(`/api/front-office/orders/${orderId}`, {
-    headers: withAuthHeaders(token),
-  })
-
-  if (!res.ok) {
-    throw await parseError(res)
-  }
-
-  return parseJsonResponse<GetOrderResponse>(res)
+export async function getOrder(orderId: string, token: string): Promise<OrderDetail> {
+  return getOrderById(token, orderId);
 }
 
 export async function updateOrderStatus(
@@ -108,8 +117,5 @@ export async function updateOrderStatus(
     headers: withAuthHeaders(token),
     body: JSON.stringify({ status }),
   })
-
-  if (!res.ok) {
-    throw await parseError(res)
-  }
+  if (!res.ok) throw await parseOrderError(res)
 }
