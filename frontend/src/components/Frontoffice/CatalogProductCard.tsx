@@ -101,7 +101,20 @@ export const CatalogProductCard = ({
                     </div>
                     <div className="mt-auto flex items-center justify-between pt-2">
                         <div className="text-xl font-extrabold">
-                            {formatCurrency(product.price)}
+                            {product.discountedPrice ? (
+                                <div className="flex items-center gap-2">
+                                    <span className="font-semibold text-[#7b61ff]">
+                                        {formatCurrency(product.discountedPrice)}
+                                    </span>
+                                    <span className="text-sm text-gray-400 line-through">
+                                        {formatCurrency(product.price)}
+                                    </span>
+                                </div>
+                            ) : (
+                                <span className="font-semibold">
+                                    {formatCurrency(product.price)}
+                                </span>
+                            )}
                         </div>
                         <div className="flex items-center gap-3">
                             {product.isService ? (
