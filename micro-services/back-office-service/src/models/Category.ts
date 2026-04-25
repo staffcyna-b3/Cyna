@@ -8,11 +8,12 @@ interface CategoryAttributes {
   description?: string | null;
   image?: Buffer | null;
   type: CategoryType;
+  priority: number;
   created_at: Date;
   updated_at: Date;
 }
 
-export interface CategoryCreationAttributes extends Optional<CategoryAttributes, 'id' | 'created_at' | 'updated_at' | 'description' | 'image'> {}
+export interface CategoryCreationAttributes extends Optional<CategoryAttributes, 'id' | 'created_at' | 'updated_at' | 'description' | 'image' | 'priority'> { }
 
 class Category extends Model<CategoryAttributes, CategoryCreationAttributes> implements CategoryAttributes {
   declare id: string;
@@ -20,6 +21,7 @@ class Category extends Model<CategoryAttributes, CategoryCreationAttributes> imp
   declare description?: string | null;
   declare image?: Buffer | null;
   declare type: CategoryType;
+  declare priority: number;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
 }
@@ -47,6 +49,11 @@ Category.init(
     type: {
       type: DataTypes.ENUM(...Object.values(CategoryType)),
       allowNull: false,
+    },
+    priority: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
     },
     created_at: {
       type: DataTypes.DATE,

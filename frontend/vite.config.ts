@@ -5,6 +5,9 @@ import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 export default defineConfig({
+  optimizeDeps: {
+    include: ['next-themes', 'sonner'],
+  },
   plugins: [
     react(),
     tailwindcss(),

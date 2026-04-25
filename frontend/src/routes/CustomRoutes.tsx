@@ -11,6 +11,12 @@ import { Verify2FA } from "@/pages/auth/Verify2FA"
 import { UserRole } from "@/types/enums/UserRole.enum"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Users from "@/pages/backoffice/Users"
+import Products from "@/pages/backoffice/Products"
+import Categories from "@/pages/backoffice/Categories"
+import Orders from "@/pages/backoffice/Orders"
+import Transactions from "@/pages/backoffice/Transactions"
+import Refunds from "@/pages/backoffice/Refunds"
+import Discounts from "@/pages/backoffice/Discounts"
 import { CheckoutSuccess } from "@/pages/frontoffice/stripe/CheckoutSuccess"
 import { CheckoutCancel } from "@/pages/frontoffice/stripe/CheckoutCancel"
 import { Checkout as StripeCheckout } from "@/pages/frontoffice/stripe/Checkout"
@@ -47,6 +53,22 @@ export default function CustomRoutes() {
           }
         />
         <Route
+          path="/products"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Products />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/categories"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+              <Categories />
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/users"
           element={
             <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
@@ -54,6 +76,31 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
+        
+          <Route 
+            path="/orders" 
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+                <Orders />
+              </ProtectedRoute>
+            } 
+          />  
+          <Route 
+            path="/transactions" 
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+                <Transactions />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/refunds" 
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+                <Refunds />
+              </ProtectedRoute>
+            } 
+          />
       </Route>
 
       {/* Frontoffice routes */}
