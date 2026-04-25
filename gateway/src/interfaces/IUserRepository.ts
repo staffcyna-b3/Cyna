@@ -16,6 +16,7 @@ export interface AuthUserEntity {
 
 export interface IUserRepository {
   findByEmail(email: string): Promise<AuthUserEntity | null>;
+  findById(userId: string): Promise<AuthUserEntity | null>;
   findByIdWithRole(userId: string): Promise<AuthUserEntity | null>;
   findByRememberToken(tokenHash: string): Promise<AuthUserEntity | null>;
   create(email: string, password: string, full_name: string): Promise<AuthUserEntity>;
@@ -28,4 +29,5 @@ export interface IUserRepository {
   updatePassword(userId: string, hashedPassword: string): Promise<void>;
   update2FACode(userId: string, code: string, expiresAt: Date): Promise<void>;
   clear2FACode(userId: string): Promise<void>;
+  updateProfile(userId: string, data: { full_name?: string; email?: string }): Promise<AuthUserEntity>;
 }

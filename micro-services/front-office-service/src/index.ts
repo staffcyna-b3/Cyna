@@ -6,6 +6,7 @@ import { Logger } from './common/logger'
 import ordersRoutes from './routes/orders.routes'
 import subscriptionRoutes from './routes/subscription.routes'
 import cartRoutes from './routes/cart.routes'
+import addressRoutes from './routes/address.routes'
 
 dotenv.config()
 
@@ -15,7 +16,7 @@ const allowedOrigins = [
   process.env.GATEWAY_INTERNAL_URL || 'http://localhost:3000',
 ];
 
-app.use(cors())
+app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
 app.use('/subscriptions', subscriptionRoutes)
@@ -23,6 +24,7 @@ app.use('/', ordersRoutes)
 
 app.use('/front-office/cart', cartRoutes) // TODO why ?
 app.use('/cart', cartRoutes)
+app.use('/addresses', addressRoutes)
 
 initDb()
 

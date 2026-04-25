@@ -52,6 +52,20 @@ export class OrderRepository implements IOrderRepository {
         return OrderItem.bulkCreate(items);
     }
 
+    async findAllByUserId(userId: string): Promise<Order[]> {
+        return Order.findAll({
+            where: { user_id: userId },
+            include: [
+                {
+                    model: OrderItem,
+                    as: 'items',
+                    include: [{ model: Product, as: 'product' }],
+                },
+            ],
+            order: [['created_at', 'DESC']],
+        });
+    }
+
     async findByIdWithItems(id: string): Promise<Order | null> {
         return Order.findByPk(id, {
             include: [
