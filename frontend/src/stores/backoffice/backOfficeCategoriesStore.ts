@@ -1,4 +1,4 @@
-import { BackOfficeService } from '@/services/BackOfficeService';
+import { BackOfficeService } from '@/services/BackOfficeCatalogService';
 import type {
     BackOfficeCategory,
     BackOfficeCategoryOption,

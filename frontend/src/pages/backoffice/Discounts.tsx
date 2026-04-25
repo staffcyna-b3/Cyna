@@ -10,7 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { DataTable } from '@/components/Backoffice/data-table';
+import { DataTable } from '@/components/Backoffice/data-table/data-table';
 import { PromotionEditorSheet } from '@/components/Backoffice/promotions/PromotionEditorSheet';
 import { buildPromotionColumns } from '@/components/Backoffice/promotions/promotionTableColumns';
 import { BackOfficeListToolbar } from '@/components/Backoffice/shared/BackOfficeListToolbar';

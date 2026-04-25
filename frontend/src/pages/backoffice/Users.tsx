@@ -8,7 +8,7 @@ import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getUsers, updateUserRole, deleteUser, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getUsers, updateUserRole, deleteUser, BackOfficeApiError } from "@/services/BackOfficeOrderService";
 import { toast } from "sonner";
 import { UserEditorSheet } from "../../components/Backoffice/sheets/UserEditorSheet";
 
