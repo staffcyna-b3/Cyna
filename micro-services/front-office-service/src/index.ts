@@ -5,6 +5,7 @@ import { initDb } from './models/index'
 import { Logger } from './common/logger'
 import ordersRoutes from './routes/orders.routes'
 import subscriptionRoutes from './routes/subscription.routes'
+import userSubscriptionRoutes from './routes/userSubscription.routes'
 import cartRoutes from './routes/cart.routes'
 import addressRoutes from './routes/address.routes'
 
@@ -20,6 +21,7 @@ app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
 app.use('/subscriptions', subscriptionRoutes)
+app.use('/my-subscriptions', userSubscriptionRoutes)
 app.use('/', ordersRoutes)
 
 app.use('/front-office/cart', cartRoutes) // TODO why ?

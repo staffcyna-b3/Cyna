@@ -4,6 +4,7 @@ import type { TransactionAdminDTO } from '@/types/interfaces/admin/TransactionAd
 import type { RefundAdminDTO } from '@/types/interfaces/admin/RefundAdminDTO.interface';
 import type { PaginatedResponse } from '@/types/interfaces/admin/PaginatedResponse.interface';
 import type { CreateRefundRequest } from '@/types/interfaces/admin/CreateRefundRequest.interface';
+import type { RefundRequestAdminDTO } from '@/types/interfaces/admin/RefundRequestAdminDTO.interface';
 
 export class BackOfficeApiError extends Error {
   constructor(public readonly status: number, message: string) {
@@ -111,4 +112,30 @@ export async function updateOrderStatus(
     body: JSON.stringify({ status }),
   });
   return handleResponse<OrderAdminDTO>(res);
+}
+
+export async function cancelSubscriptionAdmin(token: string, stripeSubscriptionId: string): Promise<void> {
+  const res = await fetch(`/api/back-office/subscriptions/${stripeSubscriptionId}/cancel`, {
+    method: 'POST',
+    headers: withAuth(token),
+  });
+  return handleResponse<void>(res);
+}
+
+export async function getRefundRequests(token: string): Promise<RefundRequestAdminDTO[]> {
+  const res = await fetch('/api/back-office/refund-requests', { headers: withAuth(token) });
+  return handleResponse<RefundRequestAdminDTO[]>(res);
+}
+
+export async function updateRefundRequestStatus(
+  token: string,
+  id: number,
+  status: 'approved' | 'rejected'
+): Promise<RefundRequestAdminDTO> {
+  const res = await fetch(`/api/back-office/refund-requests/${id}`, {
+    method: 'PATCH',
+    headers: withAuth(token),
+    body: JSON.stringify({ status }),
+  });
+  return handleResponse<RefundRequestAdminDTO>(res);
 }

@@ -7,5 +7,6 @@ const router = Router();
 const controller = new TransactionController(new TransactionService(new HttpClient()));
 
 router.get('/', (req, res) => controller.getAll(req, res));
+router.post('/:paymentIntentId/refund', (req, res) => controller.refund(req, res));
 
 export default router;

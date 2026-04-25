@@ -9,4 +9,17 @@ export class TransactionController {
     const result = await this.service.getAll(limit);
     res.status(200).json({ success: true, data: result });
   }
+
+  async refund(req: Request, res: Response): Promise<void> {
+    const { paymentIntentId } = req.params;
+    const { amount } = req.body as { amount?: number };
+
+    if (amount !== undefined && amount <= 0) {
+      res.status(400).json({ success: false, error: 'INVALID_AMOUNT' });
+      return;
+    }
+
+    const refund = await this.service.refund(paymentIntentId, amount);
+    res.status(201).json({ success: true, data: refund });
+  }
 }

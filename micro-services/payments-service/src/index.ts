@@ -5,6 +5,8 @@ import { stripe, stripeWebhookSecret } from './providers/stripe';
 import { createStripeWebhookRouter } from './routes/stripeWebhook';
 import { createWebhookService } from './factories/paymentFactory';
 import paymentsRouter from './routes/payments';
+import subscriptionsRouter from './routes/subscriptions';
+import refundsRouter from './routes/refunds';
 import { errorMiddleware } from './middlewares/error.middleware';
 import { requireAuth } from './middlewares/requireAuth.middleware';
 
@@ -20,6 +22,8 @@ app.use('/webhook', webhookRouter);
 app.use(express.json());
 
 app.use('/payments', requireAuth, paymentsRouter);
+app.use('/subscriptions', subscriptionsRouter);
+app.use('/refunds', refundsRouter);
 
 app.use(errorMiddleware);
 

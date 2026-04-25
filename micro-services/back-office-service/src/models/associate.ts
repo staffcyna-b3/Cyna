@@ -1,5 +1,6 @@
 import User from './User';
 import UserRole from './UserRole';
+import RefundRequest from './RefundRequest';
 import Address from './Address';
 import Category from './Category';
 import Product from './Product';
@@ -160,6 +161,16 @@ OrderItem.belongsTo(Order, {
   as: 'order',
 });
 
+User.hasMany(RefundRequest, {
+  foreignKey: 'user_id',
+  as: 'refundRequests',
+  onDelete: 'CASCADE',
+});
+RefundRequest.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+
 export {
   User,
   UserRole,
@@ -174,4 +185,5 @@ export {
   Order,
   OrderItem,
   Subscription,
+  RefundRequest,
 };

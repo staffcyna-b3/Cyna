@@ -2,6 +2,7 @@ import * as React from "react"
 import {
   ArrowLeftRight,
   Boxes,
+  ClipboardList,
   LayoutDashboard,
   LogOut,
   Percent,
@@ -35,6 +36,7 @@ const navItems = [
   { title: 'orders', url: "/orders", icon: ShoppingCart },
   { title: 'transactions', url: "/transactions", icon: ArrowLeftRight },
   { title: 'refunds', url: "/refunds", icon: RotateCcw },
+  { title: 'refundRequests', url: "/refund-requests", icon: ClipboardList },
   { title: 'discounts', url: "/discounts", icon: Percent },
 ]
 
