@@ -18,9 +18,10 @@ interface UserAttributes {
   twofa_code?: string | null;
   twofa_expires_at?: Date | null;
   twofa_attempts?: number;
+  stripe_customer_id?: string | null;
 }
 
-export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token' | 'remember_me_token' | 'email_confirmation_token' | 'email_confirmed_at' | 'password_reset_token' | 'twofa_code' | 'twofa_expires_at' | 'twofa_attempts'> {}
+export interface UserCreationAttributes extends Optional<UserAttributes, 'id' | 'created_at' | 'updated_at' | 'email_verified' | 'refresh_token' | 'remember_me_token' | 'email_confirmation_token' | 'email_confirmed_at' | 'password_reset_token' | 'twofa_code' | 'twofa_expires_at' | 'twofa_attempts' | 'stripe_customer_id'> {}
 
 class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   declare id: string;
@@ -39,6 +40,7 @@ class User extends Model<UserAttributes, UserCreationAttributes> implements User
   declare twofa_code?: string | null;
   declare twofa_expires_at?: Date | null;
   declare twofa_attempts?: number;
+  declare stripe_customer_id?: string | null;
 }
 
 User.init(
@@ -104,6 +106,10 @@ User.init(
     twofa_attempts: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+    stripe_customer_id: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
   },
   {

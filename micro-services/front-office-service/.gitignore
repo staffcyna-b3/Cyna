@@ -5,6 +5,9 @@ dist/
 # Logs
 logs/
 
+# Test coverage
+coverage/
+
 # Env
 .env
 
@@ -24,3 +27,6 @@ Thumbs.db
 
 # Sequelize
 *.sqlite
+
+# Lock files
+package-lock.json

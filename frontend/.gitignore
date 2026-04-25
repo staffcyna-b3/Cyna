@@ -9,8 +9,16 @@ lerna-debug.log*
 
 node_modules
 dist
+
+# Test coverage
+coverage/
+
+# Lock files
+package-lock.json
 dist-ssr
 *.local
+*.tsbuildinfo
+.env
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +30,5 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+frontend/package-lock.json

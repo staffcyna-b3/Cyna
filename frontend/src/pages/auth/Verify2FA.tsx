@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
@@ -7,6 +7,8 @@ import { Typography } from '@/components/ui/typography';
 
 export const Verify2FA: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = (location.state as { from?: { pathname: string } })?.from?.pathname;
   const { user, verify2FA, isLoading: isAuthLoading } = useAuth();
   const { t } = useTranslation();
 
@@ -22,7 +24,7 @@ export const Verify2FA: React.FC = () => {
 
     // Si la 2FA est validée et qu'il n'y a plus de session pending, rediriger selon le rôle.
     if (user && !sessionId) {
-      if(user.role === 'ADMIN' || user.role === 'COMMERCIAL') {
+      if(user.role === 'admin' || user.role === 'commercial') {
         navigate('/dashboard');
       } else {
         navigate('/');

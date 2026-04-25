@@ -1,0 +1,5 @@
+# AI tools
+.claude/
+.junie/
+.agents/
+skills-lock.json

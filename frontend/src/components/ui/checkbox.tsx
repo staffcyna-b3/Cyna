@@ -1,22 +1,30 @@
-import { InputHTMLAttributes } from 'react';
+import * as React from "react"
+import { CheckIcon } from "lucide-react"
+import { Checkbox as CheckboxPrimitive } from "radix-ui"
 
-interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-}
+import { cn } from "@/lib/utils"
 
-export function Checkbox({ label, ...props }: CheckboxProps) {
+function Checkbox({
+  className,
+  ...props
+}: React.ComponentProps<typeof CheckboxPrimitive.Root>) {
   return (
-    <div className="flex items-center gap-3">
-      <input
-        type="checkbox"
-        className="w-5 h-5 rounded-2xl  text-[#3632F5] bg-white cursor-pointer accent-[#3632F5] focus:ring-[#3632F5]"
-        {...props}
-      />
-      {label && (
-        <label htmlFor={props.id} className="text-sm font-medium cursor-pointer">
-          {label}
-        </label>
+    <CheckboxPrimitive.Root
+      data-slot="checkbox"
+      className={cn(
+        "peer size-4 shrink-0 rounded-[4px] border border-input shadow-xs transition-shadow outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 data-[state=checked]:border-primary data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:bg-input/30 dark:aria-invalid:ring-destructive/40 dark:data-[state=checked]:bg-primary",
+        className
       )}
-    </div>
-  );
+      {...props}
+    >
+      <CheckboxPrimitive.Indicator
+        data-slot="checkbox-indicator"
+        className="grid place-content-center text-current transition-none"
+      >
+        <CheckIcon className="size-3.5" />
+      </CheckboxPrimitive.Indicator>
+    </CheckboxPrimitive.Root>
+  )
 }
+
+export { Checkbox }

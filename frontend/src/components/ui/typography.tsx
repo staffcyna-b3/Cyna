@@ -8,7 +8,7 @@ interface TypographyProps {
 
 const variantStyles: Record<string, string> = {
   h1: 'scroll-m-20 text-center text-2xl font-bold tracking-tight text-balance font-space-grotesk',
-  h2: 'scroll-m-20 pb-4 text-3xl font-semibold tracking-tight first:mt-0 font-space-grotesk text-center',
+  h2: 'scroll-m-20 pb-4 text-3xl font-semibold tracking-tight first:mt-0 font-space-grotesk text-left',
   h3: 'scroll-m-20 text-lg font-semibold tracking-tight font-space-grotesk',
   body: 'scroll-m-20 text-base font-normal tracking-tight',
 };

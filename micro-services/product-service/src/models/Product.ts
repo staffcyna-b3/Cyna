@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from '../config/database';
 import { ProductStatus } from '../enum/ProductStatus';
+import Category from './Category';
 
 interface ProductAttributes {
   id: string;
@@ -32,6 +33,7 @@ class Product extends Model<ProductAttributes, ProductCreationAttributes> implem
   declare priority: number;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
+  declare category: Category;
 }
 
 Product.init(

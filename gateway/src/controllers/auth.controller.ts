@@ -267,8 +267,17 @@ export class AuthController {
         return res.status(200).json({ authenticated: false });
       }
 
+      const jwtResult = await this.authService.generateTokensForUser(user.id);
+
+      res.cookie('refreshToken', jwtResult.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      });
+
       res.status(200).json({
         authenticated: true,
+        accessToken: jwtResult.accessToken,
         id: user.id,
         email: user.email,
         full_name: user.full_name,

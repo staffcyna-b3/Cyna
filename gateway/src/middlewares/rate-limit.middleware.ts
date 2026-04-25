@@ -122,6 +122,32 @@ export const registerLimiter = rateLimit({
  * - 5 tentatives maximum par IP
  * - Fenêtre de temps: 1 heure
  */
+/**
+ * Middleware de rate limiting pour la route POST /payments/create-intent
+ *
+ * Configuration:
+ * - 10 tentatives maximum par IP
+ * - Fenêtre de temps: 1 heure
+ */
+export const createPaymentIntentLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 heure
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method !== 'POST',
+  keyGenerator: (req) => req.ip || 'unknown',
+  handler: (req, res) => {
+    Logger.warn(
+      `[RATE_LIMIT] Payment intent limiter atteint pour IP ${req.ip} à ${new Date().toISOString()}`
+    );
+    res.status(429).json({
+      error: 'TOO_MANY_PAYMENT_ATTEMPTS',
+      message: 'Trop de tentatives de paiement. Réessayez dans 1 heure.',
+      retryAfter: getRetryAfterSeconds(req.rateLimit?.resetTime, 3600),
+    });
+  },
+});
+
 export const passwordResetLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 heure
   max: 5, // 5 tentatives

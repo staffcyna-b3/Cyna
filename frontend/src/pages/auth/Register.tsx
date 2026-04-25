@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ValidationErrors, validateRegistration } from '../../utils/validation';
-import { RegisterFormData } from '../../types/interfaces/RegisterFormData.interface';
+import { RegisterFormData } from '../../types/interfaces/auth/RegisterFormData.interface';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from "react-i18next"
 import { Typography } from '@/components/ui/typography';
@@ -67,7 +67,7 @@ export const Register: React.FC = () => {
             setTimeout(() => {
                 navigate('/confirm-email');
             }, 2000);
-        } catch (error: any) {
+        } catch (error: unknown) {
             const message = error instanceof Error ? error.message : t('RegistrationError');
             setErrors({ submit: message });
         } finally {
