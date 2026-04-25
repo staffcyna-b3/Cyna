@@ -1,13 +1,15 @@
 import { Router } from 'express';
 import { CartController } from '../controllers/cart.controller';
 import { CartService } from '../services/cart.service';
+import { ShippingService } from '../services/shipping.service';
 import { CartRepository } from '../repository/cart.repository';
 import { ProductRepository } from '../repository/ProductRepository';
 const router = Router();
 
 const cartRepository = new CartRepository();
 const productRepository = new ProductRepository();
-const cartService = new CartService(cartRepository, productRepository);
+const shippingService = new ShippingService();
+const cartService = new CartService(cartRepository, productRepository, shippingService);
 const cartController = new CartController(cartService);
 
 router.get('/', (req, res) => cartController.getCart(req, res));

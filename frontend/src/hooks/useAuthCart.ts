@@ -10,6 +10,7 @@ export function useAuthCart() {
 
     const [items, setItems] = useState<CartItem[]>([]);
     const [totalAmount, setTotalAmount] = useState<number>(0);
+    const [shippingFee, setShippingFee] = useState<number>(0);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
     const [cartId, setCartId] = useState<string | null>(null);
@@ -29,6 +30,7 @@ export function useAuthCart() {
             const data = await service.getCart();
             setItems(data.items || []);
             setTotalAmount(data.totalAmount || 0);
+            setShippingFee(data.shippingFee ?? 0);
             setCartId(data.id || null);
         } catch (err) {
             if (is401(err)) {
@@ -94,6 +96,7 @@ export function useAuthCart() {
         cartId,
         items,
         totalAmount,
+        shippingFee,
         isLoading,
         error,
         fetchCart,

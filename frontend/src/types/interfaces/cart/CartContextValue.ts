@@ -5,6 +5,7 @@ export interface CartContextValue {
     cartId: string | null;
     items: CartItem[];
     totalAmount: number;
+    shippingFee: number;
     isLoading: boolean;
     error: string | null;
     fetchCart: () => Promise<void>;

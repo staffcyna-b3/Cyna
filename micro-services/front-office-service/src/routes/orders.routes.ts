@@ -8,6 +8,7 @@ import { AddressRepository } from '../repository/address.repository';
 import { OrderService } from '../services/orders.service';
 import { CheckoutService } from '../services/checkout.service';
 import { AddressService } from '../services/address.service';
+import { ShippingService } from '../services/shipping.service';
 
 /*
 STRIPE INTEGRATION NOTE — for Marie
@@ -27,8 +28,9 @@ const router = Router();
 const orderRepository = new OrderRepository();
 const cartRepository = new CartRepository();
 const addressRepository = new AddressRepository();
+const shippingService = new ShippingService();
 
-const orderService = new OrderService(orderRepository);
+const orderService = new OrderService(orderRepository, shippingService);
 const checkoutService = new CheckoutService(cartRepository, addressRepository);
 const addressService = new AddressService(addressRepository);
 

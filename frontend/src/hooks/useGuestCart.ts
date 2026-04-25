@@ -9,22 +9,32 @@ import {
     PERIOD_TO_MONTHS,
 } from '../lib/cartStorage';
 
+const SHIPPING_FEE = 5.99;
+
+const computeShippingFee = (cartItems: CartItem[]): number =>
+    cartItems.some((item) => !item.isService) ? SHIPPING_FEE : 0;
+
 export function useGuestCart() {
     const [items, setItems] = useState<CartItem[]>(() => loadGuestCart());
     const [totalAmount, setTotalAmount] = useState<number>(() =>
         computeCartTotal(loadGuestCart())
+    );
+    const [shippingFee, setShippingFee] = useState<number>(() =>
+        computeShippingFee(loadGuestCart())
     );
 
     const persist = useCallback((updated: CartItem[]) => {
         saveGuestCart(updated);
         setItems(updated);
         setTotalAmount(computeCartTotal(updated));
+        setShippingFee(computeShippingFee(updated));
     }, []);
 
     const fetchCart = useCallback(async () => {
         const stored = loadGuestCart();
         setItems(stored);
         setTotalAmount(computeCartTotal(stored));
+        setShippingFee(computeShippingFee(stored));
     }, []);
 
     const addToCart = useCallback(async (productId: string, options: AddToCartOptions) => {
@@ -99,6 +109,7 @@ export function useGuestCart() {
         cartId: null as string | null,
         items,
         totalAmount,
+        shippingFee,
         isLoading: false,
         error: null as string | null,
         fetchCart,

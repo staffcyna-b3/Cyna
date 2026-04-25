@@ -7,12 +7,15 @@ import { CreateOrderResponse } from "../dto/response/CreateOrderResponse";
 import { GetOrderResponse } from "../dto/response/GetOrderResponse";
 import { IOrderRepository } from "../interfaces/OrderRepository";
 import { IOrderService } from "../interfaces/OrderService";
+import { IShippingService } from "../interfaces/IShippingService";
 
 export class OrderService implements IOrderService {
     private readonly orderRepository: IOrderRepository;
+    private readonly shippingService: IShippingService;
 
-    constructor(orderRepository: IOrderRepository) {
+    constructor(orderRepository: IOrderRepository, shippingService: IShippingService) {
         this.orderRepository = orderRepository;
+        this.shippingService = shippingService;
     }
 
     async createOrder(createOrderRequest: CreateOrderRequest): Promise<CreateOrderResponse> {
@@ -43,6 +46,7 @@ export class OrderService implements IOrderService {
                 quantity: number;
                 product?: {
                     price?: number | string;
+                    is_service?: boolean;
                 };
             }>;
         }).items ?? []).map((item) => {
@@ -52,6 +56,7 @@ export class OrderService implements IOrderService {
                 productId: item.product_id,
                 quantity: item.quantity,
                 unitPrice: Number(product?.price ?? 0),
+                isService: product?.is_service ?? false,
             };
         });
 
@@ -65,7 +70,9 @@ export class OrderService implements IOrderService {
             unit_price: Number(item.unitPrice ?? 0),
         }));
 
-        const totalAmount = orderItems.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+        const subtotal = orderItems.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+        const shippingFee = this.shippingService.calculateFee(cartItems);
+        const totalAmount = subtotal + shippingFee;
 
         const order = await this.orderRepository.create({
             user_id: userId,
@@ -74,6 +81,7 @@ export class OrderService implements IOrderService {
             billing_address_snapshot: billingAddress.toJSON(),
             shipping_address_snapshot: shippingAddress.toJSON(),
             total_amount: Number(totalAmount.toFixed(2)),
+            shipping_fee: shippingFee,
             status: OrderStatus.PENDING,
             stripe_payment_intent_id: stripePaymentIntentId ?? null,
         });

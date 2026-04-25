@@ -43,7 +43,7 @@ export const Cart = () => {
     setCheckoutIds,
     fetchCheckoutContext,
   } = useCheckout()
-  const { cartId, items, updateQuantity, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
+  const { cartId, items, shippingFee, updateQuantity, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
 
   const hasUnavailableItems = items.some((item) => item.unavailable); // ! ??
 
@@ -62,19 +62,12 @@ export const Cart = () => {
   }, [isAuthenticated, accessToken, fetchCheckoutContext, setLoading])
 
   const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items])
-  const deliveryFee = useMemo(() => {
-    // TODO: delivery fee calculation — fixed rate for physical
-    // products, 0 for SaaS. To be confirmed with LUCAS for
-    // product type data shape.
-    const hasPhysicalProduct = items.some((item) => item.isService === false)
-    return hasPhysicalProduct ? 5.99 : 0
-  }, [items])
   // immediateTotal = ce qui est débité immédiatement (1 période pour les abonnements, pas le total du contrat)
   const immediateTotal = useMemo(
     () => items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
     [items]
   )
-  const finalTotal = useMemo(() => immediateTotal + deliveryFee, [immediateTotal, deliveryFee])
+  const finalTotal = useMemo(() => immediateTotal + shippingFee, [immediateTotal, shippingFee])
   const finalTotalWithoutDelivery = useMemo(() => immediateTotal, [immediateTotal])
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
@@ -279,7 +272,7 @@ export const Cart = () => {
               </div>
               <div className="w-full text-white text-sm flex justify-between">
                 <span>{t("shipping")}</span>
-                <span>{formatCurrency(deliveryFee)}</span>
+                <span>{formatCurrency(shippingFee)}</span>
               </div>
               <div className="w-full text-white flex justify-between font-semibold">
                 <span>{t("total")}</span>

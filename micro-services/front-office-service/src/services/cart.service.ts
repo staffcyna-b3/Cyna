@@ -1,6 +1,7 @@
 import { HttpError } from '../common/HttpError';
 import { ICartRepository } from '../interfaces/CartRepository';
 import { ICartService } from '../interfaces/CartService';
+import { IShippingService } from '../interfaces/IShippingService';
 import { CartResponse } from '../dto/response/CartResponse';
 import { CartItemResponse } from '../dto/response/CartItemResponse';
 import { ProductStatus } from '../enum/ProductStatus';
@@ -13,7 +14,8 @@ import { IProductRepository } from '../interfaces/ProductRepository';
 export class CartService implements ICartService {
   constructor(
     private readonly cartRepository: ICartRepository,
-    private readonly productRepository: IProductRepository
+    private readonly productRepository: IProductRepository,
+    private readonly shippingService: IShippingService,
   ) { }
 
   async getCart(userId: string): Promise<CartResponse> {
@@ -21,7 +23,7 @@ export class CartService implements ICartService {
     const cart = await this.cartRepository.findByUserIdWithItems(userId);
 
     if (!cart) {
-      return { id: null, items: [], totalAmount: 0 };
+      return { id: null, items: [], totalAmount: 0, shippingFee: 0 };
     }
 
     //forcer typescript a comprendre que le cart contient les items, et que chaque item contient un product
@@ -60,11 +62,13 @@ export class CartService implements ICartService {
     });
 
     const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
+    const shippingFee = this.shippingService.calculateFee(items);
 
     return {
       id: cart.id,
       items,
-      totalAmount: Number(totalAmount.toFixed(2))
+      totalAmount: Number(totalAmount.toFixed(2)),
+      shippingFee,
     };
   }
 
