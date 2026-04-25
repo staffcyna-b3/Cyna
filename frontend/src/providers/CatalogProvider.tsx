@@ -2,7 +2,7 @@ import { useState, useCallback, type ReactNode } from "react";
 import { CatalogContext } from "../contexts/CatalogContext";
 import { CatalogSortBy } from "../types/enums/catalog/CatalogSortBy";
 import { Sort } from "../types/interfaces/Sort";
-import { CatalogFilters } from "../types/interfaces/catalog/CatelogFilters";
+import { CatalogFilters } from "../types/interfaces/catalog/CatalogFilters";
 
 export const CatalogProvider = ({ children }: { children: ReactNode }) => {
 	const [page, setPage] = useState<number>(1);
