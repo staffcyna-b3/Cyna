@@ -11,8 +11,7 @@ module.exports = {
     if (!orderItems.product_id) {
       await queryInterface.addColumn('order_items', 'product_id', {
         type: Sequelize.UUID,
-        allowNull: false,
-        defaultValue: '00000000-0000-0000-0000-000000000000',
+        allowNull: true,
         references: {
           model: 'products',
           key: 'id',

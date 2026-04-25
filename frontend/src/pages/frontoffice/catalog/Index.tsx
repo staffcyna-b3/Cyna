@@ -1,17 +1,23 @@
 import { useEffect, useContext, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SlidersHorizontal, ArrowDown, ArrowUpWideNarrow } from 'lucide-react';
 import { CatalogSortBy } from '@/types/enums/catalog/CatalogSortBy';
 import { SortOrder } from '@/types/enums/SortOrder';
 import useCatalogFetch from '@/hooks/useCatalogFetch';
-import CatalogProductCard from '@/components/Frontoffice/CatalogProductCard';
 import { CatalogContext } from '@/contexts/CatalogContext';
-import Pagination from '@/components/Frontoffice/Pagination';
-import { Button } from '@/components/ui/button';
 import FilterPanel from '@/components/Frontoffice/FilterPanel';
-import LoadingSkeleton from '@/components/LoadingSkeleton';
-import ServiceDetailLayout from '@/components/Frontoffice/layout/ServiceDetailLayout';
 import { useTranslation } from 'react-i18next';
+import CatalogHero from '@/components/Frontoffice/catalog/CatalogHero';
+import CatalogActionsBar from '@/components/Frontoffice/catalog/CatalogActionsBar';
+import CatalogActiveFilters from '@/components/Frontoffice/catalog/CatalogActiveFilters';
+import CatalogResults from '@/components/Frontoffice/catalog/CatalogResults';
+import {
+    buildSortValue,
+    getActiveFilterCount,
+    getCatalogHeaderContent,
+    getCurrentSortLabel,
+    getPriceBounds,
+    parseSortValue,
+} from '@/helpers/frontoffice/catalog/indexHelpers';
 
 export default function CatalogList() {
     const { data, loading, error, fetchCatalog } = useCatalogFetch();
@@ -26,23 +32,22 @@ export default function CatalogList() {
     const [localMax, setLocalMax] = useState<number | undefined>(ctx.maxPrice ?? undefined);
     const [localInStock, setLocalInStock] = useState<boolean | undefined>(ctx.inStock ?? undefined);
     const [localIsService, setLocalIsService] = useState<boolean | undefined>(ctx.isService ?? undefined);
-    const [localSort, setLocalSort] = useState<string | ''>(ctx.sortBy ? `${ctx.sortBy}:${ctx.sortOrder ?? SortOrder.ASC}` : '');
+    const [localSort, setLocalSort] = useState<string | ''>(
+        buildSortValue(
+            ctx.sortBy as CatalogSortBy | undefined,
+            ctx.sortOrder as SortOrder | undefined
+        )
+    );
     const [localSearch, setLocalSearch] = useState<string | undefined>(ctx.search ?? undefined);
     const catalogStartRef = useRef<HTMLDivElement | null>(null);
 
-    const getAbbreviation = (name: string): string => {
-        const match = name.match(/([A-Z]+)\s*\(/);
-        return match ? match[1] : name.substring(0, 3).toUpperCase();
-    };
+    const {
+        name: categoryName,
+        description: categoryDescription,
+        abbreviation: categoryAbbreviation,
+    } = getCatalogHeaderContent(data, t);
 
-    const firstProduct = data?.rows?.[0];
-    const category = firstProduct?.category;
-    const categoryName = category?.name?.trim() || t('allProducts');
-    const categoryDescription =
-        category?.description?.trim() || t('catalogBannerDefaultDescription');
-    const categoryAbbreviation = getAbbreviation(categoryName);
-
-    const scrollToCatalogControls = () => {
+    function scrollToCatalogControls(): void {
         if (!catalogStartRef.current) return;
         const targetTop =
             catalogStartRef.current.getBoundingClientRect().top +
@@ -52,7 +57,7 @@ export default function CatalogList() {
             top: Math.max(0, targetTop),
             behavior: 'smooth',
         });
-    };
+    }
 
     const categoryIdFromQuery = useMemo(
         () => searchParams.get('categoryId') ?? searchParams.get('category') ?? undefined,
@@ -76,65 +81,54 @@ export default function CatalogList() {
         void fetchCatalog();
     }, [fetchCatalog, isCategorySynced]);
 
-    const prices = (data?.rows ?? []).map((r) => r.price);
-    const dataMin = prices.length ? Math.min(...prices) : 0;
-    const dataMax = prices.length ? Math.max(...prices) : 1000;
+    const { dataMin, dataMax } = getPriceBounds(data);
+    const hasPriceData = (data?.rows?.length ?? 0) > 0;
 
-    const syncLocalStateFromContext = () => {
+    function syncLocalStateFromContext(): void {
         setLocalMin(ctx.minPrice ?? Math.floor(dataMin));
         setLocalMax(ctx.maxPrice ?? Math.ceil(dataMax));
         setLocalInStock(ctx.inStock ?? undefined);
         setLocalIsService(ctx.isService ?? undefined);
-        setLocalSort(ctx.sortBy ? `${ctx.sortBy}:${ctx.sortOrder ?? SortOrder.ASC}` : '');
+        setLocalSort(
+            buildSortValue(
+                ctx.sortBy as CatalogSortBy | undefined,
+                ctx.sortOrder as SortOrder | undefined
+            )
+        );
         setLocalSearch(ctx.search ?? undefined);
-    };
+    }
 
-    const openFilters = () => {
+    function openFilters(): void {
         syncLocalStateFromContext();
         setPanelMode('filters');
         setFiltersOpen(true);
-    };
+    }
 
-    const openSort = () => {
+    function openSort(): void {
         syncLocalStateFromContext();
         setPanelMode('sort');
         setFiltersOpen(true);
-    };
+    }
 
-    const applyFilters = async () => {
+    function applyFilters(): void {
         ctx.setMinPrice(localMin !== undefined ? localMin : dataMin);
         ctx.setMaxPrice(localMax !== undefined ? localMax : dataMax);
         ctx.setInStock(localInStock ?? undefined);
         ctx.setIsService(localIsService ?? undefined);
         ctx.setSearch(localSearch ?? undefined);
 
-        if (!localSort) {
-            ctx.setSortBy(undefined);
-            ctx.setSortOrder(undefined);
-        } else {
-            const [by, order] = localSort.split(':');
-            ctx.setSortBy(by as unknown as CatalogSortBy);
-            ctx.setSortOrder(order === 'desc' ? SortOrder.DESC : SortOrder.ASC);
-        }
+        const { sortBy, sortOrder } = parseSortValue(localSort);
+        ctx.setSortBy(sortBy);
+        ctx.setSortOrder(sortOrder);
 
         ctx.setPage(1);
         setFiltersOpen(false);
-    };
+    }
 
-    const applySort = (value: string | '') => {
-        let nextSortBy: CatalogSortBy | undefined;
-        let nextSortOrder: SortOrder | undefined;
-
-        if (!value) {
-            ctx.setSortBy(undefined);
-            ctx.setSortOrder(undefined);
-        } else {
-            const [by, order] = value.split(':');
-            nextSortBy = by as unknown as CatalogSortBy;
-            nextSortOrder = order === 'desc' ? SortOrder.DESC : SortOrder.ASC;
-            ctx.setSortBy(nextSortBy);
-            ctx.setSortOrder(nextSortOrder);
-        }
+    function applySort(value: string | ''): void {
+        const { sortBy: nextSortBy, sortOrder: nextSortOrder } = parseSortValue(value);
+        ctx.setSortBy(nextSortBy);
+        ctx.setSortOrder(nextSortOrder);
 
         ctx.setPage(1);
         void fetchCatalog({
@@ -143,60 +137,38 @@ export default function CatalogList() {
             sortOrder: nextSortOrder,
         });
         setFiltersOpen(false);
-    };
+    }
 
-    const cancelFilters = () => {
+    function cancelFilters(): void {
         setFiltersOpen(false);
-    };
+    }
 
-    const resetFilters = async () => {
+    function resetFilters(): void {
         ctx.resetFilters();
         if (categoryIdFromQuery !== undefined) {
             ctx.setCategoryId(categoryIdFromQuery);
         }
         setFiltersOpen(false);
-    };
+    }
 
     useEffect(() => {
-        if ((initialDataMin === undefined || initialDataMax === undefined) && prices.length) {
+        if ((initialDataMin === undefined || initialDataMax === undefined) && hasPriceData) {
             setInitialDataMin((prev) => (prev === undefined ? dataMin : prev));
             setInitialDataMax((prev) => (prev === undefined ? dataMax : prev));
         }
-    }, [data, dataMax, dataMin, initialDataMax, initialDataMin, prices.length]);
+    }, [data, dataMax, dataMin, hasPriceData, initialDataMax, initialDataMin]);
 
     const sliderMin = initialDataMin ?? dataMin;
     const sliderMax = initialDataMax ?? dataMax;
 
-    const activeFilterCount = (() => {
-        let count = 0;
-        if ((ctx.minPrice !== undefined && ctx.minPrice > sliderMin) || (ctx.maxPrice !== undefined && ctx.maxPrice < sliderMax)) count++;
-        if (ctx.inStock !== undefined) count++;
-        if (ctx.isService !== undefined) count++;
-        if (ctx.sortBy !== undefined) count++;
-        if (ctx.search && ctx.search.trim().length > 0) count++;
-        return count;
-    })();
+    const activeFilterCount = getActiveFilterCount(ctx, sliderMin, sliderMax);
 
     const hasActiveFilters = activeFilterCount > 0;
-    const currentSortLabel = (() => {
-        if (!ctx.sortBy) {
-            return t('sortBy');
-        }
-
-        if (ctx.sortBy === CatalogSortBy.PRICE && ctx.sortOrder === SortOrder.DESC) {
-            return t('priceDesc');
-        }
-
-        if (ctx.sortBy === CatalogSortBy.PRICE) {
-            return t('priceAsc');
-        }
-
-        if (ctx.sortBy === CatalogSortBy.PRIORITY) {
-            return t('priority');
-        }
-
-        return t('sortBy');
-    })();
+    const currentSortLabel = getCurrentSortLabel(
+        ctx.sortBy as CatalogSortBy | undefined,
+        ctx.sortOrder as SortOrder | undefined,
+        t
+    );
 
     useEffect(() => {
         if (filtersOpen) {
@@ -213,96 +185,42 @@ export default function CatalogList() {
         <div className="px-4 pb-32 pt-4 md:min-h-screen md:px-6 md:pb-20 lg:px-10 xl:px-16">
             <div className="mx-auto max-w-6xl">
                 <div className="mb-12">
-                    <ServiceDetailLayout
-                        title={categoryName}
-                        description={categoryDescription}
-                        abbreviation={categoryAbbreviation}
-                    >
-                        <button
-                            type="button"
-                            onClick={scrollToCatalogControls}
-                            className="group inline-flex w-full max-w-130 items-center justify-between rounded-full border border-[#4f5bff] bg-[linear-gradient(180deg,rgba(10,16,70,0.9)_0%,rgba(6,11,56,0.95)_100%)] pl-5 pr-2 py-2 text-sm font-semibold text-white shadow-[0_10px_36px_rgba(25,70,255,0.38)] transition-all duration-300 hover:border-[#7281ff] hover:shadow-[0_14px_42px_rgba(42,108,255,0.5)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7b61ff]/60"
-                        >
-                            <span className="truncate pr-3">
-                                {t('discoverSolutions', {
-                                    abbr: categoryAbbreviation,
-                                })}
-                            </span>
-                            <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-r from-[#7b61ff] to-[#2b6ef6] shadow-[0_4px_14px_rgba(91,107,255,0.75)] transition-transform duration-300 group-hover:translate-y-0.5">
-                                <ArrowDown className="h-4 w-4" />
-                            </span>
-                        </button>
-                    </ServiceDetailLayout>
+                    <CatalogHero
+                        categoryName={categoryName}
+                        categoryDescription={categoryDescription}
+                        categoryAbbreviation={categoryAbbreviation}
+                        discoverLabel={
+                            t('discoverSolutions', {
+                                abbr: categoryAbbreviation,
+                            })
+                        }
+                        onDiscover={scrollToCatalogControls}
+                    />
                 </div>
 
                 <div ref={catalogStartRef} className="mb-6 flex">
-                    <div className="inline-flex w-full max-w-max items-center rounded-[24px] border border-white/10 bg-[rgba(52,52,72,0.92)] p-1.5 shadow-[0_18px_40px_rgba(0,0,0,0.24)] backdrop-blur-md">
-                        <button
-                            type="button"
-                            onClick={openFilters}
-                            className="inline-flex min-w-[130px] items-center justify-center gap-2 rounded-[18px] bg-[#4a44df] px-4 py-3 text-sm font-semibold text-white transition hover:bg-[#5a55eb] sm:text-base"
-                        >
-                            <SlidersHorizontal className="h-4 w-4 sm:h-5 sm:w-5" />
-                            <span>{t('filters')}</span>
-                            {hasActiveFilters && (
-                                <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-white/18 px-1 text-[11px] font-bold text-white">
-                                    {activeFilterCount}
-                                </span>
-                            )}
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={openSort}
-                            className="inline-flex min-w-[120px] items-center justify-center gap-2 rounded-[18px] px-4 py-3 text-sm font-medium text-white/90 transition hover:bg-white/8 sm:text-base"
-                        >
-                            <ArrowUpWideNarrow className="h-4 w-4 sm:h-5 sm:w-5" />
-                            <span>{currentSortLabel}</span>
-                        </button>
-                    </div>
+                    <CatalogActionsBar
+                        filtersLabel={t('filters')}
+                        currentSortLabel={currentSortLabel}
+                        hasActiveFilters={hasActiveFilters}
+                        activeFilterCount={activeFilterCount}
+                        onOpenFilters={openFilters}
+                        onOpenSort={openSort}
+                    />
                 </div>
 
                 {hasActiveFilters && (
-                    <div className="mb-6 flex flex-wrap items-center gap-2 text-xs sm:text-sm">
-                        {(ctx.minPrice !== undefined || ctx.maxPrice !== undefined) && (
-                            <div className="rounded-full bg-[#2a2a3d] px-3 py-1.5 text-[#b7bdd9]">
-                                {ctx.minPrice ?? t('min')} - {ctx.maxPrice ?? t('max')}
-                            </div>
-                        )}
-
-                        {ctx.search && ctx.search.trim().length > 0 && (
-                            <div className="rounded-full bg-[#2a2a3d] px-3 py-1.5 text-[#b7bdd9]">
-                                {t('searchQuery', { query: ctx.search })}
-                            </div>
-                        )}
-
-                        {ctx.isService !== undefined && (
-                            <div className="rounded-full bg-[#2a2a3d] px-3 py-1.5 text-[#b7bdd9]">
-                                {ctx.isService ? t('services') : t('products')}
-                            </div>
-                        )}
-
-                        {ctx.inStock && (
-                            <div className="rounded-full bg-[#2a2a3d] px-3 py-1.5 text-[#b7bdd9]">
-                                {t('inStock')}
-                            </div>
-                        )}
-
-                        {ctx.sortBy && (
-                            <div className="rounded-full bg-[#2a2a3d] px-3 py-1.5 text-[#b7bdd9]">
-                                {currentSortLabel}
-                            </div>
-                        )}
-
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={resetFilters}
-                            className="h-auto rounded-full border border-white/10 px-3 py-1.5 text-[#b7bdd9] hover:bg-[#2a2a3d] hover:text-white"
-                        >
-                            {t('resetFilters')}
-                        </Button>
-                    </div>
+                    <CatalogActiveFilters
+                        minPrice={ctx.minPrice}
+                        maxPrice={ctx.maxPrice}
+                        search={ctx.search}
+                        isService={ctx.isService}
+                        inStock={ctx.inStock}
+                        sortBy={ctx.sortBy as CatalogSortBy | undefined}
+                        currentSortLabel={currentSortLabel}
+                        onResetFilters={resetFilters}
+                        t={t}
+                    />
                 )}
 
                 <FilterPanel
@@ -327,78 +245,22 @@ export default function CatalogList() {
                     sliderMax={sliderMax}
                 />
 
-                {loading && <LoadingSkeleton count={8} />}
-                {error && (
-                    <div className="flex items-center justify-center px-4 py-12">
-                        <div className="w-full max-w-xl rounded-lg border border-red-700 bg-[#0b0b12] p-6 text-center">
-                            <div className="mb-2 text-lg font-semibold text-red-400">
-                                {t('errorOccurred')}
-                            </div>
-                            <div className="mb-4 text-sm text-red-200 wrap-break-words">
-                                {String(error)}
-                            </div>
-                            <div className="flex items-center justify-center gap-3">
-                                <Button onClick={async () => { await fetchCatalog(); }}>
-                                    {t('retry')}
-                                </Button>
-                                <Button
-                                    variant="ghost"
-                                    onClick={async () => {
-                                        await resetFilters();
-                                    }}
-                                >
-                                    {t('resetFilters')}
-                                </Button>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {!loading && data && (
-                    <>
-                        {(data.rows ?? []).length === 0 ? (
-                            <div className="flex flex-col items-center justify-center py-24 text-center">
-                                <div className="mb-2 text-2xl text-[#b7bdd9]">
-                                    {t('noProducts')}
-                                </div>
-                                <div className="mb-6 text-sm text-[#9aa0c7]">
-                                    {t('tryAdjustFilters')}
-                                </div>
-                                <div className="flex gap-3">
-                                    <Button onClick={async () => { await resetFilters(); }}>
-                                        {t('resetFilters')}
-                                    </Button>
-                                    <Button
-                                        variant="ghost"
-                                        onClick={async () => {
-                                            ctx.setPage(1);
-                                        }}
-                                    >
-                                        {t('retry')}
-                                    </Button>
-                                </div>
-                            </div>
-                        ) : (
-                            <>
-                                <div className="grid auto-rows-fr grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
-                                    {(data.rows ?? []).map((p) => (
-                                        <CatalogProductCard key={p.id} product={p} />
-                                    ))}
-                                </div>
-
-                                <div className="mb-12 mt-8 md:mb-24">
-                                    <Pagination
-                                        page={data.page}
-                                        totalPages={data.totalPages}
-                                        onPageChange={(p) => {
-                                            ctx.setPage(p);
-                                        }}
-                                    />
-                                </div>
-                            </>
-                        )}
-                    </>
-                )}
+                <CatalogResults
+                    loading={loading}
+                    error={error}
+                    data={data}
+                    t={t}
+                    onRetryFetch={() => {
+                        void fetchCatalog();
+                    }}
+                    onResetFilters={resetFilters}
+                    onRetryPagination={() => {
+                        ctx.setPage(1);
+                    }}
+                    onPageChange={(page) => {
+                        ctx.setPage(page);
+                    }}
+                />
             </div>
         </div>
     );

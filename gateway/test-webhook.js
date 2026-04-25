@@ -189,11 +189,14 @@ const EVENTS = [
           amount_due:     4999,
           currency:       'eur',
           customer:       MOCK_CUSTOMER_ID,
-          subscription:   MOCK_SUBSCRIPTION_ID,
           payment_intent: MOCK_PAYMENT_INTENT,
           billing_reason: 'subscription_cycle',
           period_start:   NOW - 30 * 24 * 3600,
           period_end:     NOW,
+          parent: {
+            type:                 'subscription_details',
+            subscription_details: { subscription: MOCK_SUBSCRIPTION_ID },
+          },
           lines: {
             object: 'list',
             data: [
@@ -238,11 +241,14 @@ const EVENTS = [
           amount_paid:   0,
           currency:      'eur',
           customer:      MOCK_CUSTOMER_ID,
-          subscription:  MOCK_SUBSCRIPTION_ID,
           payment_intent:'pi_test_invoice_failed_0003',
           billing_reason:'subscription_cycle',
           attempt_count: 2,
           next_payment_attempt: NOW + 3 * 24 * 3600,
+          parent: {
+            type:                 'subscription_details',
+            subscription_details: { subscription: MOCK_SUBSCRIPTION_ID },
+          },
           created: NOW,
         },
       },

@@ -84,15 +84,20 @@ export const Cart = () => {
       state: {
         cartItems: items.map((item) => ({
           id: item.id,
+          productId: item.productId,
           name: item.name,
           quantity: item.quantity,
           unitPriceCents: Math.round(item.unitPrice * 100),
+          isService: item.isService === true && item.period != null,
           isRecurring: item.isService === true && item.period != null,
-          billingPeriod: item.period === 12 ? 'yearly' : item.period != null ? 'monthly' : undefined,
+          billingPeriod: item.period != null ? 'monthly' : undefined,
+          durationMonths: item.period ?? undefined,
         })),
         cartId,
-        billingAddressId: billingId,
-        shippingAddressId: shippingId,
+        billingAddressId: resolvedBillingId,
+        shippingAddressId: resolvedShippingId,
+        billingAddress,
+        deliveryFeeCents: Math.round(deliveryFee * 100),
       },
     })
   }

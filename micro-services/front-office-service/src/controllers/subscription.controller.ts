@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { SubscriptionService } from '../services/subscription.service';
 import { CreateSubscriptionBody } from '../interfaces/CreateSubscriptionBody';
 import { UpdateStatusBody } from '../interfaces/UpdateStatusBody';
+import { Logger } from '../common/logger';
 
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) {}
@@ -29,6 +30,11 @@ export class SubscriptionController {
       });
       return res.status(201).json({ created: count });
     } catch (error: any) {
+      Logger.error('[SUBSCRIPTION] Error creating subscription', {
+        message: error.message,
+        name: error.name,
+        original: error.original?.message,
+      });
       return res.status(error.status ?? 500).json({
         success: false,
         error: error.code ?? 'INTERNAL_ERROR',

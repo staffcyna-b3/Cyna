@@ -109,7 +109,7 @@ export async function getOrder(orderId: string, token: string): Promise<OrderDet
 
 export async function updateOrderStatus(
   orderId: string,
-  status: 'PAID' | 'CANCELLED',
+  status: OrderStatus,
   token: string
 ): Promise<void> {
   const res = await fetch(`/api/front-office/orders/${orderId}/status`, {
