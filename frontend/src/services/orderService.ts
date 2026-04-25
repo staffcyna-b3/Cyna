@@ -4,6 +4,7 @@ import type { GetOrderResponse } from "@/types/GetOrderResponse"
 import type { CheckoutContext } from "@/types/interfaces/Checkout/CheckoutContext"
 import type { UserAddresses } from "@/types/interfaces/address/UserAddresses"
 import type { AddressPayload } from "@/types/interfaces/address/AddressPayload"
+import { OrderStatus } from "@/types/enums/OrderStatus"
 
 const withAuthHeaders = (token: string): Record<string, string> => ({
   "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export async function getOrder(orderId: string, token: string): Promise<GetOrder
 
 export async function updateOrderStatus(
   orderId: string,
-  status: 'PAID' | 'CANCELLED',
+  status: OrderStatus,
   token: string
 ): Promise<void> {
   const res = await fetch(`/api/front-office/orders/${orderId}/status`, {
