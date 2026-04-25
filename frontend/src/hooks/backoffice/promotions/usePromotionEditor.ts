@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { BackOfficeService } from '@/services/BackOfficeService';
+import { BackOfficeService } from '@/services/BackOfficeCatalogService';
 import {
     createBackOfficePromotion,
     deleteBackOfficePromotion,
@@ -70,10 +70,12 @@ export function usePromotionEditor({
             return;
         }
 
+        const promotionId = promotion.id;
+
         async function loadPromotionDetails() {
             setLoadingDetails(true);
             try {
-                const fullPromotion = await service.getPromotionById(promotion.id);
+                const fullPromotion = await service.getPromotionById(promotionId);
                 setForm(toFormState(fullPromotion));
             } finally {
                 setLoadingDetails(false);
@@ -117,7 +119,7 @@ export function usePromotionEditor({
     }
 
     function setDiscountType(value: PromotionType) {
-        setForm((prev) => ({ ...prev, discountType: value }));
+        setForm((prev) => ({ ...prev, discountType: value, productIds: [] }));
     }
 
     function setDiscountValue(value: number) {

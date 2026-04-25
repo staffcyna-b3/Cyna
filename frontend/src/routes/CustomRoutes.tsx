@@ -101,6 +101,14 @@ export default function CustomRoutes() {
               </ProtectedRoute>
             } 
           />
+          <Route 
+            path="/discounts" 
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+                <Discounts />
+              </ProtectedRoute>
+            } 
+          />
       </Route>
 
       {/* Frontoffice routes */}
