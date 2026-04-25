@@ -8,7 +8,7 @@ import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getRefunds, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getRefunds, BackOfficeApiError } from "@/services/BackOfficeOrderService";
 import { toast } from "sonner";
 import { RefundSheet } from "../../components/Backoffice/sheets/RefundSheet";
 

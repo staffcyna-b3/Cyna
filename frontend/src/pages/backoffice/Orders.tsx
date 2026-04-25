@@ -8,7 +8,7 @@ import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getAdminOrders, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getAdminOrders, BackOfficeApiError } from "@/services/BackOfficeOrderService";
 import { toast } from "sonner";
 import { OrderEditorSheet } from "../../components/Backoffice/sheets/OrderEditorSheet";
 

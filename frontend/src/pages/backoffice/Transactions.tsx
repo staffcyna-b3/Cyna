@@ -19,7 +19,7 @@ import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getTransactions, createRefund, BackOfficeApiError } from "@/services/BackOfficeService";
+import { getTransactions, createRefund, BackOfficeApiError } from "@/services/BackOfficeOrderService";
 import { toast } from "sonner";
 import { TransactionSheet } from "../../components/Backoffice/sheets/TransactionSheet";
 
