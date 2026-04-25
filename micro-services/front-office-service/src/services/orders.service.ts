@@ -5,6 +5,7 @@ import { CreateOrderRequest } from "../dto/request/CreateOrderRequest";
 import { GetOrderRequest } from "../dto/request/GetOrderRequest";
 import { CreateOrderResponse } from "../dto/response/CreateOrderResponse";
 import { GetOrderResponse } from "../dto/response/GetOrderResponse";
+import { GetOrdersResponse } from "../dto/response/GetOrdersResponse";
 import { IOrderRepository } from "../interfaces/OrderRepository";
 import { IOrderService } from "../interfaces/OrderService";
 
@@ -107,18 +108,92 @@ export class OrderService implements IOrderService {
         return await this.orderRepository.findByIdWithItems(order.id) as unknown as CreateOrderResponse;
     }
 
-    async getOrderById({ orderId, userId }: GetOrderRequest): Promise<GetOrderResponse> {
-        const orderForUser = await this.orderRepository.findByIdAndUserId(orderId, userId);
+    async getOrdersByUserId(userId: string): Promise<GetOrdersResponse[]> {
+        const orders = await this.orderRepository.findAllByUserId(userId);
 
-        if (!orderForUser) {
-            const existingOrder = await this.orderRepository.findByIdWithItems(orderId);
-            if (existingOrder) {
-                throw new HttpError(403, "Forbidden");
-            }
+        return orders.map((order) => {
+            const raw = order as unknown as {
+                items?: Array<{
+                    id: string;
+                    unit_price: number;
+                    quantity: number;
+                    product?: { name?: string; is_service?: boolean; duration?: number | null };
+                }>;
+                billing_period?: never;
+            };
+
+            const items = (raw.items ?? []).map((item) => ({
+                id: item.id,
+                product_name: item.product?.name ?? null,
+                unit_price: Number(item.unit_price),
+                quantity: item.quantity,
+                is_recurring: item.product?.is_service ?? false,
+            }));
+
+            return {
+                id: order.id,
+                status: order.status,
+                total_amount: Number(order.total_amount),
+                created_at: order.created_at.toISOString(),
+                billing_period: this.resolveBillingPeriod(raw.items ?? []),
+                stripe_payment_intent_id: order.stripe_payment_intent_id ?? null,
+                items,
+            };
+        });
+    }
+
+    async getOrderById({ orderId, userId }: GetOrderRequest): Promise<GetOrderResponse> {
+        const order = await this.orderRepository.findByIdWithItems(orderId);
+
+        if (!order) {
             throw new HttpError(404, "Order not found");
         }
 
-        return await this.orderRepository.findByIdWithItems(orderId) as unknown as GetOrderResponse;
+        if (order.user_id !== userId) {
+            throw new HttpError(403, "Forbidden");
+        }
+
+        const raw = order as unknown as {
+            items?: Array<{
+                id: string;
+                unit_price: number;
+                quantity: number;
+                product?: { name?: string; is_service?: boolean; duration?: number | null };
+            }>;
+            billingAddress?: object;
+            shippingAddress?: object;
+        };
+
+        return {
+            id: order.id,
+            user_id: order.user_id,
+            status: order.status,
+            total_amount: Number(order.total_amount),
+            billing_period: this.resolveBillingPeriod(raw.items ?? []),
+            stripe_payment_intent_id: order.stripe_payment_intent_id ?? null,
+            items: (raw.items ?? []).map((item) => ({
+                id: item.id,
+                product_name: item.product?.name ?? '',
+                unit_price: Number(item.unit_price),
+                quantity: item.quantity,
+            })),
+            billing_address_snapshot: order.billing_address_snapshot as GetOrderResponse['billing_address_snapshot'],
+            billingAddress: raw.billingAddress as GetOrderResponse['billingAddress'],
+            shippingAddress: raw.shippingAddress as GetOrderResponse['shippingAddress'],
+            // TODO: populate from GET /api/payments/:paymentIntentId once Marie's endpoint is available
+            payment_last4: null,
+            payment_brand: null,
+            created_at: order.created_at.toISOString(),
+        };
+    }
+
+    private resolveBillingPeriod(
+        items: Array<{ product?: { is_service?: boolean; duration?: number | null } }>
+    ): 'monthly' | 'yearly' | null {
+        const firstService = items.find((i) => i.product?.is_service);
+        if (firstService?.product?.duration === 30) return 'monthly';
+        if (firstService?.product?.duration === 365) return 'yearly';
+        return null;
     }
 
     async updateOrderStatus(orderId: string, status: OrderStatus): Promise<void> {

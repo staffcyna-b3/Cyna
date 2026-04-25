@@ -1,0 +1,13 @@
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_test_abc123"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_succeeded","paymentIntentId":"pi_test_abc123","invoiceId":null}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded already processed, skipping | {"eventId":"evt_duplicate","paymentIntentId":"pi_test_abc123"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_sub_001"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_sub_succeeded","paymentIntentId":"pi_sub_001","invoiceId":"in_test_001"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_test_abc123"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_email","paymentIntentId":"pi_test_abc123","invoiceId":null}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] payment_intent.payment_failed processed | {"eventId":"evt_failed","paymentIntentId":"pi_test_def456"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] payment_intent.payment_failed already processed, skipping | {"eventId":"evt_duplicate_failed","paymentIntentId":"pi_test_def456"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] invoice.payment_succeeded processed | {"eventId":"evt_inv_ok","subscriptionId":"sub_test_001","invoiceId":"in_test_001"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] invoice.payment_failed processed | {"eventId":"evt_inv_failed","subscriptionId":"sub_test_001","invoiceId":"in_test_002"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] customer.subscription.deleted processed | {"eventId":"evt_sub_deleted","subscriptionId":"sub_test_001"}
+[21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] Ignored event: customer.created

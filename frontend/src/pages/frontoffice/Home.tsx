@@ -18,6 +18,7 @@ import { Typography } from "@/components/ui/typography"
 import { useTranslation } from "react-i18next"
 import { formatCurrency } from "@/utils/currencyFormatter"
 import placeholder from "@/assets/pictures/placeholder.svg"
+import byteaToImage from "@/utils/byteaToImage"
 
 const SLIDE_PALETTE = [
     { icon: ShieldCheck, accent: "#372CCA" },
@@ -181,7 +182,8 @@ export default function HomePage() {
                             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                                 {topProducts.map((product) => {
                                     const isAvailable = product.status === ProductStatus.AVAILABLE
-                                    const image = product.images?.[0]?.base64 ?? placeholder
+                                    const raw = product.images?.[0]?.base64
+                                    const image = raw ? byteaToImage(raw) : placeholder
                                     return (
                                         <Link
                                             key={product.id}

@@ -12,6 +12,7 @@ export interface IOrderRepository {
   clearCartItems(cartId: string): Promise<number>;
   create(data: OrderCreationAttributes): Promise<Order>;
   createItems(items: OrderItemCreationAttributes[]): Promise<OrderItem[]>;
+  findAllByUserId(userId: string): Promise<Order[]>;
   findByIdWithItems(id: string): Promise<Order | null>;
   findByIdAndUserId(id: string, userId: string): Promise<Order | null>;
   updateStatus(id: string, status: OrderStatus): Promise<Order | null>;

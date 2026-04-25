@@ -314,10 +314,47 @@ export class AuthController {
   }
 
   async me(req: Request, res: Response) {
-    res.status(200).json({
-      success: true,
-      data: { user: req.user },
-      timestamp: new Date().toISOString()
-    })
+    try {
+      const profile = await this.authService.getProfile(req.user!.userId);
+      res.status(200).json({
+        success: true,
+        data: { user: profile },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      Logger.error('Me error:', error);
+      res.status(404).json({ error: 'Utilisateur non trouvé' });
+    }
+  }
+
+  async updateMe(req: Request, res: Response) {
+    try {
+      const { full_name, email } = req.body;
+      const updated = await this.authService.updateProfile(req.user!.userId, { full_name, email });
+      res.status(200).json({
+        success: true,
+        data: { user: updated },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      Logger.error('Update me error:', error);
+      const message = error instanceof Error ? error.message : 'Erreur mise à jour';
+      res.status(400).json({ error: message });
+    }
+  }
+
+  async changePassword(req: Request, res: Response) {
+    try {
+      const { current_password, new_password } = req.body;
+      if (!current_password || !new_password) {
+        return res.status(400).json({ error: 'Données manquantes' });
+      }
+      await this.authService.changePassword(req.user!.userId, current_password, new_password);
+      res.status(204).send();
+    } catch (error) {
+      Logger.error('Change password error:', error);
+      const message = error instanceof Error ? error.message : 'Erreur changement mot de passe';
+      res.status(400).json({ error: message });
+    }
   }
 }

@@ -31,6 +31,11 @@ cd micro-services/product-service
 npm install
 cd ../..
 
+echo "→ Payments Service..."
+cd micro-services/payments-service
+npm install
+cd ../..
+
 # ==================== MIGRATIONS ====================
 echo "Exécution des migrations..."
 
@@ -47,6 +52,11 @@ cd ../..
 
 echo "→ Front-office Service migrations..."
 cd micro-services/front-office-service
+npx sequelize-cli db:migrate
+cd ../..
+
+echo "→ Payments Service migrations..."
+cd micro-services/payments-service
 npx sequelize-cli db:migrate
 cd ../..
 

@@ -1,8 +1,15 @@
 import { JSX, useEffect, useMemo } from 'react';
-import GetSimilarProducts from '@/hooks/getSimilarProducts';
+import useSimilarProducts from '@/hooks/useSimilarProducts';
 import CatalogProductCard from './CatalogProductCard';
 import LoadingSkeleton from '../LoadingSkeleton';
 import { useTranslation } from 'react-i18next';
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from '@/components/ui/carousel';
 
 export default function SimilarProductsCarousel({
     productId,
@@ -10,7 +17,7 @@ export default function SimilarProductsCarousel({
     productId: string;
 }): JSX.Element | null {
     const { t } = useTranslation();
-    const { data, loading, error, getSimilarProducts } = GetSimilarProducts();
+    const { data, loading, error, getSimilarProducts } = useSimilarProducts();
 
     useEffect(() => {
         if (!productId) return;
@@ -25,23 +32,21 @@ export default function SimilarProductsCarousel({
 
     return (
         <div className="w-full mt-12 pt-8 border-t border-white/5">
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <p className="text-sm text-[#9aa0c7]">
-                        {t('nProductsAvailable', { count: safeData.length })}
-                    </p>
-                </div>
-            </div>
+            <p className="text-sm text-[#9aa0c7] mb-6">
+                {t('nProductsAvailable', { count: safeData.length })}
+            </p>
 
-            <div className="overflow-x-auto pb-2 -mx-2 scrollbar-hide">
-                <div className="flex gap-4 px-2 snap-x snap-mandatory">
+            <Carousel opts={{ align: 'start', dragFree: true }} className="w-full px-10">
+                <CarouselContent>
                     {safeData.map((product) => (
-                        <div key={product.id} className="snap-start">
+                        <CarouselItem key={product.id} className="basis-auto">
                             <CatalogProductCard product={product} />
-                        </div>
+                        </CarouselItem>
                     ))}
-                </div>
-            </div>
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+            </Carousel>
         </div>
     );
 }

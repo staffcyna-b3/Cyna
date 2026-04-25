@@ -19,6 +19,7 @@ start "gateway"          cmd /k "cd /d %ROOT%gateway && npm run dev"
 start "back-office"      cmd /k "cd /d %ROOT%micro-services\back-office-service && npm run dev"
 start "front-office"     cmd /k "cd /d %ROOT%micro-services\front-office-service && npm run dev"
 start "product-service"  cmd /k "cd /d %ROOT%micro-services\product-service && npm run dev"
+start "payments-service" cmd /k "cd /d %ROOT%micro-services\payments-service && npm run dev"
 
 if "%MODE%"=="dev" (
   start "frontend" cmd /k "cd /d %ROOT%frontend && npm run dev"

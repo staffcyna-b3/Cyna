@@ -2,14 +2,17 @@ import User from '../models/User';
 import UserRole from '../models/UserRole';
 import { UserRoleType } from '../enum/UserRoleType.enum';
 import { IUserRepository } from '../interfaces';
-import { IPaymentUserRepository } from '../interfaces/IPaymentUserRepository';
 
-export class UserRepository implements IUserRepository, IPaymentUserRepository {
+export class UserRepository implements IUserRepository {
   async findByEmail(email: string) {
     return await User.findOne({
       where: { email },
       include: [{ association: 'userRole', attributes: ['role'] }],
     });
+  }
+
+  async findById(userId: string) {
+    return await User.findByPk(userId);
   }
 
   async findByIdWithRole(userId: string) {
@@ -139,5 +142,12 @@ export class UserRepository implements IUserRepository, IPaymentUserRepository {
 
   async updateStripeCustomerId(userId: string, customerId: string): Promise<void> {
     await User.update({ stripe_customer_id: customerId }, { where: { id: userId } });
+  }
+
+  async updateProfile(userId: string, data: { full_name?: string; email?: string }) {
+    await User.update(data, { where: { id: userId } });
+    const user = await User.findByPk(userId);
+    if (!user) throw new Error('User not found');
+    return user;
   }
 }

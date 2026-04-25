@@ -25,6 +25,7 @@ const mockRes = () => {
 const makeServiceMock = () => {
   const service = {
     createOrder: vi.fn(),
+    getOrdersByUserId: vi.fn(),
     getOrderById: vi.fn(),
     updateOrderStatus: vi.fn(),
   };
@@ -45,6 +46,42 @@ describe('OrderController', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  describe('getAll', () => {
+    it('returns 200 with orders list on happy path', async () => {
+      const req = mockReq() as any;
+      const res = mockRes();
+      const fakeOrders = [{ id: 'order-1', status: 'PENDING', total_amount: 50 }];
+
+      service.getOrdersByUserId.mockResolvedValue(fakeOrders as any);
+
+      await controller.getAll(req, res);
+
+      expect(service.getOrdersByUserId).toHaveBeenCalledWith(VALID_USER_UUID);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith(fakeOrders);
+    });
+
+    it('returns 401 when x-user-id header is missing', async () => {
+      const req = mockReq({ headers: {} }) as any;
+      const res = mockRes();
+
+      await controller.getAll(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(service.getOrdersByUserId).not.toHaveBeenCalled();
+    });
+
+    it('returns 401 when x-user-id is not a valid UUID', async () => {
+      const req = mockReq({ headers: { 'x-user-id': 'not-a-uuid' } }) as any;
+      const res = mockRes();
+
+      await controller.getAll(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(service.getOrdersByUserId).not.toHaveBeenCalled();
+    });
   });
 
   describe('create', () => {
