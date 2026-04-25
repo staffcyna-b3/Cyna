@@ -9,6 +9,10 @@ import transactionsRouter from './routes/transactions.routes';
 import refundsRouter from './routes/refunds.routes';
 import { errorHandler } from './middleware/errorHandler';
 
+import productRoutes from './routes/product.routes'
+import promotionRoutes from './routes/promotion.routes'
+import categoryRoutes from './routes/category.routes'
+
 dotenv.config();
 
 const app = express();
@@ -17,8 +21,22 @@ const allowedOrigins = [
   process.env.GATEWAY_INTERNAL_URL || 'http://localhost:3000',
 ];
 
-app.use(cors());
-app.use(express.json());
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (server-to-server, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS policy: origin ${origin} not allowed`));
+  },
+  credentials: true,
+}))
+app.use(express.json({ limit: '10mb' }))
+
+app.use('/', productRoutes)
+app.use('/', promotionRoutes)
+app.use('/', categoryRoutes)
 
 app.use('/users', usersRouter);
 app.use('/orders', ordersRouter);

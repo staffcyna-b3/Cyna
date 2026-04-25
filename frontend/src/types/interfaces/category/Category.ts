@@ -4,6 +4,7 @@ export interface Category {
     description: string,
     image: string | null,
     type: string,
+    priority?: number,
     created_at: string,
     updated_at: string,
 }
