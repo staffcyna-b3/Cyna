@@ -41,6 +41,32 @@ export class SubscriptionLifecycleService {
     return subscription;
   }
 
+  async listRefunds(limit: number = 100): Promise<Stripe.Refund[]> {
+    let result!: Stripe.ApiList<Stripe.Refund>;
+    try {
+      result = await this.stripeClient.refunds.list({ limit });
+    } catch (error) {
+      handleStripeError(error);
+    }
+    return result.data;
+  }
+
+  async resolvePaymentIntentForSubscription(subscriptionId: string): Promise<string | null> {
+    const invoices = await this.stripeClient.invoices.list({
+      subscription: subscriptionId,
+      limit: 1,
+    });
+    const invoice = invoices.data[0];
+    if (!invoice) return null;
+
+    const payments = await this.stripeClient.invoicePayments.list({ invoice: invoice.id });
+    const piPayment = payments.data.find((p) => p.payment.type === 'payment_intent');
+    if (!piPayment) return null;
+
+    const pi = piPayment.payment.payment_intent;
+    return typeof pi === 'string' ? pi : (pi?.id ?? null);
+  }
+
   async createRefund(paymentIntentId: string, amount?: number): Promise<Stripe.Refund> {
     let refund!: Stripe.Refund;
     try {

@@ -96,4 +96,12 @@ export class OrderRepository implements IOrderRepository {
         await order.save();
         return order;
     }
+
+    async updateStatusByPaymentIntentId(paymentIntentId: string, status: OrderStatus): Promise<boolean> {
+        const [affectedCount] = await Order.update(
+            { status },
+            { where: { stripe_payment_intent_id: paymentIntentId } }
+        );
+        return affectedCount > 0;
+    }
 }

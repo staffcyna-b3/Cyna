@@ -2,6 +2,9 @@ import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Typography } from "@/components/ui/typography";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -12,34 +15,67 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+} from "@/components/ui/sheet";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import type { TransactionAdminDTO } from "@/types/interfaces/admin/TransactionAdminDTO.interface";
+import type { SubscriptionAdminDTO } from "@/types/interfaces/admin/SubscriptionAdminDTO.interface";
 import type { CreateRefundRequest } from "@/types/interfaces/admin/CreateRefundRequest.interface";
 import { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
-import { getTransactions, createRefund, BackOfficeApiError } from "@/services/BackOfficeOrderService";
+import {
+    getTransactions,
+    getSubscriptions,
+    createRefund,
+    cancelSubscriptionAdmin,
+    BackOfficeApiError,
+} from "@/services/BackOfficeOrderService";
 import { toast } from "sonner";
 import { TransactionSheet } from "../../components/Backoffice/sheets/TransactionSheet";
+import { formatCurrency } from "@/utils/currencyFormatter";
 
 export default function Transactions() {
     const { accessToken } = useAuth();
-    const [selected, setSelected] = useState("active");
-    const [data, setData] = useState<TransactionAdminDTO[]>([]);
-    const [loading, setLoading] = useState(true);
 
+    // Transactions state
+    const [transactions, setTransactions] = useState<TransactionAdminDTO[]>([]);
+    const [txLoading, setTxLoading] = useState(true);
     const [selectedTransaction, setSelectedTransaction] = useState<TransactionAdminDTO | null>(null);
     const [sheetOpen, setSheetOpen] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [confirmOpen, setConfirmOpen] = useState(false);
     const pendingRefund = useRef<{ paymentIntentId: string; amount: number | undefined; reason: string } | null>(null);
 
+    // Subscriptions state
+    const [subscriptions, setSubscriptions] = useState<SubscriptionAdminDTO[]>([]);
+    const [subLoading, setSubLoading] = useState(true);
+    const [cancelTarget, setCancelTarget] = useState<SubscriptionAdminDTO | null>(null);
+    const [refundTarget, setRefundTarget] = useState<SubscriptionAdminDTO | null>(null);
+    const [refundPaymentIntentId, setRefundPaymentIntentId] = useState('');
+    const [refundAmount, setRefundAmount] = useState<number | undefined>(undefined);
+    const [refundReason, setRefundReason] = useState('');
+    const [subSubmitting, setSubSubmitting] = useState(false);
+
     useEffect(() => {
         if (!accessToken) return;
-        setLoading(true);
+        setTxLoading(true);
         getTransactions(accessToken)
-            .then(setData)
+            .then(setTransactions)
             .catch((err: unknown) => {
                 if (err instanceof BackOfficeApiError && err.status === 401) {
                     toast.error(t("sessionExpired"));
@@ -47,9 +83,25 @@ export default function Transactions() {
                     toast.error(t("errorOccurred"));
                 }
             })
-            .finally(() => setLoading(false));
+            .finally(() => setTxLoading(false));
     }, [accessToken]);
 
+    useEffect(() => {
+        if (!accessToken) return;
+        setSubLoading(true);
+        getSubscriptions(accessToken)
+            .then(setSubscriptions)
+            .catch((err: unknown) => {
+                if (err instanceof BackOfficeApiError && err.status === 401) {
+                    toast.error(t("sessionExpired"));
+                } else {
+                    toast.error(t("errorOccurred"));
+                }
+            })
+            .finally(() => setSubLoading(false));
+    }, [accessToken]);
+
+    // Transaction handlers
     function handleRowClick(transaction: TransactionAdminDTO) {
         setSelectedTransaction(transaction);
         setSheetOpen(true);
@@ -87,14 +139,59 @@ export default function Transactions() {
             });
     }
 
-    const topRightActions = (
-        <div className="flex items-center gap-2 bg-primary rounded-full p-1">
-            <Button variant={selected === "active" ? 'selected' : 'notSelected'} onClick={() => setSelected("active")}>{t("active")}</Button>
-            <Button variant={selected === "inactive" ? 'selected' : 'notSelected'} onClick={() => setSelected("inactive")}>{t("inactive")}</Button>
-        </div>
-    );
+    // Subscription handlers
+    function handleCancelSubscription() {
+        if (!accessToken || !cancelTarget) return;
+        setSubSubmitting(true);
+        cancelSubscriptionAdmin(accessToken, cancelTarget.id)
+            .then(() => {
+                toast.success(t("subscriptions.cancelSuccess"));
+                setSubscriptions((prev) =>
+                    prev.map((s) =>
+                        s.id === cancelTarget.id ? { ...s, status: "cancelled" } : s
+                    )
+                );
+            })
+            .catch((err: unknown) => {
+                if (err instanceof BackOfficeApiError && err.status === 401) {
+                    toast.error(t("sessionExpired"));
+                } else {
+                    toast.error(t("errorOccurred"));
+                }
+            })
+            .finally(() => {
+                setSubSubmitting(false);
+                setCancelTarget(null);
+            });
+    }
 
-    const columns: ColumnDef<TransactionAdminDTO>[] = [
+    function handleSubmitSubscriptionRefund() {
+        if (!accessToken || !refundPaymentIntentId.trim()) return;
+        setSubSubmitting(true);
+        const payload: CreateRefundRequest = {
+            payment_intent_id: refundPaymentIntentId.trim(),
+            ...(refundAmount !== undefined && { amount: refundAmount }),
+            ...(refundReason && { reason: refundReason }),
+        };
+        createRefund(accessToken, payload)
+            .then(() => {
+                toast.success(t("admin.refundSuccess"));
+                setRefundTarget(null);
+                setRefundPaymentIntentId('');
+                setRefundAmount(undefined);
+                setRefundReason('');
+            })
+            .catch((err: unknown) => {
+                if (err instanceof BackOfficeApiError && err.status === 401) {
+                    toast.error(t("sessionExpired"));
+                } else {
+                    toast.error(t("admin.refundError"));
+                }
+            })
+            .finally(() => setSubSubmitting(false));
+    }
+
+    const txColumns: ColumnDef<TransactionAdminDTO>[] = [
         {
             id: "select",
             header: ({ table }) => (
@@ -128,23 +225,128 @@ export default function Transactions() {
         },
     ];
 
+    const subColumns: ColumnDef<SubscriptionAdminDTO>[] = [
+        {
+            id: "select",
+            header: ({ table }) => (
+                <Checkbox
+                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
+        {
+            accessorKey: "product",
+            header: t("admin.subscription"),
+            cell: ({ row }) => row.original.product?.name ?? "—",
+        },
+        {
+            accessorKey: "user",
+            header: t("admin.client"),
+            cell: ({ row }) => row.original.user?.email ?? "—",
+        },
+        {
+            accessorKey: "status",
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                    {t("admin.status")}
+                    <LucideArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+        },
+        {
+            accessorKey: "price",
+            header: t("admin.amount"),
+            cell: ({ row }) => formatCurrency(row.original.price),
+        },
+        {
+            accessorKey: "end_date",
+            header: "Fin",
+            cell: ({ row }) => new Date(row.original.end_date).toLocaleDateString("fr-FR"),
+        },
+        {
+            id: "actions",
+            header: t("admin.actions"),
+            cell: ({ row }) => {
+                const sub = row.original;
+                const isCancelled = sub.status === "cancelled";
+                return (
+                    <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            disabled={isCancelled}
+                            onClick={() => setRefundTarget(sub)}
+                        >
+                            {t("admin.refund")}
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant="destructive"
+                            disabled={isCancelled}
+                            onClick={() => setCancelTarget(sub)}
+                        >
+                            {t("subscriptions.cancelButton")}
+                        </Button>
+                    </div>
+                );
+            },
+        },
+    ];
+
     return (
         <>
-            <header className="px-4 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+            <header className="px-4 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
                 <Typography variant="h1">{t("transactions")}</Typography>
-                {topRightActions}
             </header>
-            <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
-                {loading ? (
-                    <p className="p-4 text-muted-foreground">{t("loading")}</p>
-                ) : (
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                        onRowClick={handleRowClick}
-                    />
-                )}
+
+            <div className="flex flex-1 flex-col gap-2 p-4 pt-0">
+                <Tabs defaultValue="transactions">
+                    <TabsList>
+                        <TabsTrigger value="transactions">{t("transactions")}</TabsTrigger>
+                        <TabsTrigger value="subscriptions">{t("subscriptions.licenses")}</TabsTrigger>
+                    </TabsList>
+
+                    <TabsContent value="transactions">
+                        <div className="border rounded-lg">
+                            {txLoading ? (
+                                <p className="p-4 text-muted-foreground">{t("loading")}</p>
+                            ) : (
+                                <DataTable
+                                    columns={txColumns}
+                                    data={transactions}
+                                    onRowClick={handleRowClick}
+                                />
+                            )}
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="subscriptions">
+                        <div className="border rounded-lg">
+                            {subLoading ? (
+                                <p className="p-4 text-muted-foreground">{t("loading")}</p>
+                            ) : (
+                                <DataTable
+                                    columns={subColumns}
+                                    data={subscriptions}
+                                />
+                            )}
+                        </div>
+                    </TabsContent>
+                </Tabs>
             </div>
+
+            {/* Transaction refund sheet */}
             {selectedTransaction && (
                 <TransactionSheet
                     open={sheetOpen}
@@ -164,20 +366,106 @@ export default function Transactions() {
                     onConfirmRefund={handleConfirmRefund}
                 />
             )}
+
+            {/* Transaction refund confirm dialog */}
             <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>{t('admin.confirmRefund')}</AlertDialogTitle>
-                        <AlertDialogDescription>{t('admin.confirmRefundDescription')}</AlertDialogDescription>
+                        <AlertDialogTitle>{t("admin.confirmRefund")}</AlertDialogTitle>
+                        <AlertDialogDescription>{t("admin.confirmRefundDescription")}</AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>{t('cancel')}</AlertDialogCancel>
+                        <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                         <AlertDialogAction onClick={() => { setConfirmOpen(false); handleSubmitRefund(); }}>
-                            {t('admin.refund')}
+                            {t("admin.refund")}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            {/* Subscription cancel confirm dialog */}
+            <AlertDialog open={!!cancelTarget} onOpenChange={(open) => { if (!open) setCancelTarget(null); }}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t("subscriptions.cancelTitle")}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            {cancelTarget?.product?.name} — {cancelTarget?.user?.email}
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={subSubmitting}>{t("cancel")}</AlertDialogCancel>
+                        <AlertDialogAction disabled={subSubmitting} onClick={handleCancelSubscription}>
+                            {t("admin.confirm")}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Subscription refund sheet */}
+            <Sheet
+                open={!!refundTarget}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setRefundTarget(null);
+                        setRefundPaymentIntentId('');
+                        setRefundAmount(undefined);
+                        setRefundReason('');
+                    }
+                }}
+            >
+                <SheetContent>
+                    <SheetHeader>
+                        <SheetTitle>{t("admin.createRefund")}</SheetTitle>
+                        <SheetDescription>
+                            {refundTarget?.product?.name} — {refundTarget?.user?.email}
+                        </SheetDescription>
+                    </SheetHeader>
+                    <div className="flex flex-col gap-4 p-4">
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="pi-id">Payment Intent ID</Label>
+                            <Input
+                                id="pi-id"
+                                placeholder="pi_..."
+                                value={refundPaymentIntentId}
+                                onChange={(e) => setRefundPaymentIntentId(e.target.value)}
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="sub-refund-amount">{t("admin.amount")}</Label>
+                            <Input
+                                id="sub-refund-amount"
+                                type="number"
+                                placeholder={t("admin.refundAmountPlaceholder")}
+                                value={refundAmount ?? ''}
+                                onChange={(e) => setRefundAmount(e.target.value ? Number(e.target.value) : undefined)}
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1.5">
+                            <Label htmlFor="sub-refund-reason">{t("admin.reason")}</Label>
+                            <Select value={refundReason} onValueChange={setRefundReason}>
+                                <SelectTrigger id="sub-refund-reason" className="w-full">
+                                    <SelectValue placeholder={t("admin.refundSelectReason")} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="requested_by_customer">{t("admin.refundReasonCustomer")}</SelectItem>
+                                    <SelectItem value="duplicate">{t("admin.refundReasonDuplicate")}</SelectItem>
+                                    <SelectItem value="fraudulent">{t("admin.refundReasonFraudulent")}</SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    </div>
+                    <SheetFooter>
+                        <Button
+                            variant="destructive"
+                            className="w-full"
+                            disabled={subSubmitting || !refundPaymentIntentId.trim()}
+                            onClick={handleSubmitSubscriptionRefund}
+                        >
+                            {t("admin.confirmRefund")}
+                        </Button>
+                    </SheetFooter>
+                </SheetContent>
+            </Sheet>
         </>
     );
 }

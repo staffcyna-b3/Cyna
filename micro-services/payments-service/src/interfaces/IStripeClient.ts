@@ -19,9 +19,14 @@ export interface IStripeClient {
   };
   refunds: {
     create(params: Stripe.RefundCreateParams): Promise<Stripe.Refund>;
+    list(params?: Stripe.RefundListParams): Promise<Stripe.ApiList<Stripe.Refund>>;
   };
   invoices: {
     pay(id: string, params?: Stripe.InvoicePayParams): Promise<Stripe.Invoice>;
+    list(params: Stripe.InvoiceListParams): Promise<Stripe.ApiList<Stripe.Invoice>>;
+  };
+  invoicePayments: {
+    list(params: Stripe.InvoicePaymentListParams): Promise<Stripe.ApiList<Stripe.InvoicePayment>>;
   };
   customers: {
     create(params: Stripe.CustomerCreateParams): Promise<Stripe.Customer>;

@@ -23,13 +23,15 @@ export class RefundRequestAdminService {
       throw { status: 404, code: 'NOT_FOUND', message: 'Demande introuvable' };
     }
 
-    if (status === 'approved' && request.stripe_payment_intent_id) {
+    if (status === 'approved') {
       await this.httpClient.post(`${PAYMENTS_URL}/refunds`, {
-        paymentIntentId: request.stripe_payment_intent_id,
+        ...(request.stripe_payment_intent_id
+          ? { paymentIntentId: request.stripe_payment_intent_id }
+          : { subscriptionId: request.stripe_subscription_id }),
       });
     }
 
-    await request.update({ status });
+    await request.update({ status: status as RefundRequestStatus });
     return this.toDTO(request);
   }
 

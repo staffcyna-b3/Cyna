@@ -40,5 +40,7 @@ router.post('/orders', (req, res) => orderController.create(req, res));
 router.get('/orders/:id', (req, res) => orderController.getById(req, res));
 // Internal route — called by gateway Stripe webhook handler only, not exposed to frontend
 router.patch('/orders/:id/status', internalAuthMiddleware, (req, res) => orderController.updateStatus(req, res));
+// Internal route — called directly by payments-service webhook (no gateway)
+router.patch('/orders/by-payment-intent/:paymentIntentId/status', (req, res) => orderController.updateStatusByPaymentIntent(req, res));
 
 export default router;

@@ -94,9 +94,9 @@ export const Cart = () => {
           durationMonths: item.period ?? undefined,
         })),
         cartId,
-        billingAddressId: resolvedBillingId,
-        shippingAddressId: resolvedShippingId,
-        billingAddress,
+        billingAddressId: billingId,
+        shippingAddressId: shippingId,
+        billingAddresses,
         deliveryFeeCents: Math.round(deliveryFee * 100),
       },
     })

@@ -11,3 +11,77 @@
 [21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] invoice.payment_failed processed | {"eventId":"evt_inv_failed","subscriptionId":"sub_test_001","invoiceId":"in_test_002"}
 [21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] customer.subscription.deleted processed | {"eventId":"evt_sub_deleted","subscriptionId":"sub_test_001"}
 [21/04/2026 12:15:22] [INFO] [STRIPE WEBHOOK] Ignored event: customer.created
+[26/04/2026 11:19:27] [INFO] [STRIPE WEBHOOK] Event received | {"type":"product.created","eventId":"evt_1TQOqY1AdBsYOB9DcE83Jjdg"}
+[26/04/2026 11:19:27] [INFO] [STRIPE WEBHOOK] Ignored event: product.created
+[26/04/2026 11:19:30] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQOqZ1AdBsYOB9D1efUoTu6"}
+[26/04/2026 11:19:30] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 11:19:30] [INFO] [STRIPE WEBHOOK] Event received | {"type":"customer.subscription.created","eventId":"evt_1TQOqb1AdBsYOB9DjpxUMIOI"}
+[26/04/2026 11:19:30] [INFO] [STRIPE WEBHOOK] Ignored event: customer.subscription.created
+[26/04/2026 11:19:30] [INFO] [PAYMENT] Subscription created | {"subscriptionId":"sub_1TQOqY1AdBsYOB9DkJthFg99","paymentIntentId":"pi_3TQOqb1AdBsYOB9D1kTcH2IY","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","totalAmountCents":19999}
+[26/04/2026 11:19:30] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQOqb1AdBsYOB9D1ALy15zM"}
+[26/04/2026 11:19:30] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 11:19:30] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.created","eventId":"evt_1TQOqb1AdBsYOB9DidmXLHWi"}
+[26/04/2026 11:19:30] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.created
+[26/04/2026 11:19:34] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.finalized","eventId":"evt_1TQOqb1AdBsYOB9DgMgD8MFP"}
+[26/04/2026 11:19:34] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.finalized
+[26/04/2026 11:19:54] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQOqb1AdBsYOB9D17BlfOjj"}
+[26/04/2026 11:19:54] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TQOqb1AdBsYOB9D1kTcH2IY → success
+[26/04/2026 11:19:54] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQOqb1AdBsYOB9D1kTcH2IY","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 11:19:54] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQOqb1AdBsYOB9D15Bfs9c5"}
+[26/04/2026 11:19:54] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 11:19:55] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[26/04/2026 11:19:55] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQOqb1AdBsYOB9D1kTcH2IY"}
+[26/04/2026 11:19:55] [ERROR] [STRIPE WEBHOOK] Failed to activate subscription invoice | {"invoiceId":"in_1TQOqZ1AdBsYOB9Dv81ZGxuc","subscriptionId":"sub_1TQOqY1AdBsYOB9DkJthFg99","error":"The customer does not have a payment method with the ID pm_1TQOqy1AdBsYOB9DARcFPdry. The payment method must be attached to the customer."}
+[26/04/2026 11:19:55] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQOqb1AdBsYOB9D17BlfOjj","paymentIntentId":"pi_3TQOqb1AdBsYOB9D1kTcH2IY","invoiceId":"in_1TQOqZ1AdBsYOB9Dv81ZGxuc"}
+[26/04/2026 11:19:57] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQOqb1AdBsYOB9D1XwQ7XGF"}
+[26/04/2026 11:19:57] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 12:30:20] [ERROR] [ERROR] This PaymentIntent (pi_3TQ1rb1AdBsYOB9D0GIhZmi2) does not have a successful charge to refund. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/refunds"}
+[26/04/2026 12:48:39] [INFO] [STRIPE WEBHOOK] Event received | {"type":"product.created","eventId":"evt_1TQQEs1AdBsYOB9DBrUPNCWu"}
+[26/04/2026 12:48:39] [INFO] [STRIPE WEBHOOK] Ignored event: product.created
+[26/04/2026 12:48:41] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.created","eventId":"evt_1TQQEu1AdBsYOB9D4rclpRBA"}
+[26/04/2026 12:48:41] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.created
+[26/04/2026 12:48:41] [INFO] [PAYMENT] Subscription created | {"subscriptionId":"sub_1TQQEs1AdBsYOB9DEC3nSy86","paymentIntentId":"pi_3TQQEu1AdBsYOB9D1AtkJ4La","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","totalAmountCents":249999}
+[26/04/2026 12:48:41] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.finalized","eventId":"evt_1TQQEu1AdBsYOB9DWqRO8hp5"}
+[26/04/2026 12:48:41] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.finalized
+[26/04/2026 12:48:41] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQQEu1AdBsYOB9D14PcmTQt"}
+[26/04/2026 12:48:41] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 12:48:46] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQQEt1AdBsYOB9D0QSwnBvc"}
+[26/04/2026 12:48:46] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 12:48:50] [INFO] [STRIPE WEBHOOK] Event received | {"type":"customer.subscription.created","eventId":"evt_1TQQEu1AdBsYOB9DrnvgLE5l"}
+[26/04/2026 12:48:50] [INFO] [STRIPE WEBHOOK] Ignored event: customer.subscription.created
+[26/04/2026 12:49:06] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQQEu1AdBsYOB9D1U3dO2Bt"}
+[26/04/2026 12:49:06] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TQQEu1AdBsYOB9D1AtkJ4La → success
+[26/04/2026 12:49:06] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQQEu1AdBsYOB9D1AtkJ4La","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 12:49:06] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQQEu1AdBsYOB9D19ihGQO4"}
+[26/04/2026 12:49:06] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 12:49:07] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[26/04/2026 12:49:07] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQQEu1AdBsYOB9D1AtkJ4La"}
+[26/04/2026 12:49:07] [ERROR] [STRIPE WEBHOOK] Failed to activate subscription invoice | {"invoiceId":"in_1TQQEs1AdBsYOB9D0PaikXQT","subscriptionId":"sub_1TQQEs1AdBsYOB9DEC3nSy86","error":"The customer does not have a payment method with the ID pm_1TQQFH1AdBsYOB9Di7GLidIT. The payment method must be attached to the customer."}
+[26/04/2026 12:49:07] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQQEu1AdBsYOB9D1U3dO2Bt","paymentIntentId":"pi_3TQQEu1AdBsYOB9D1AtkJ4La","invoiceId":"in_1TQQEs1AdBsYOB9D0PaikXQT"}
+[26/04/2026 12:49:12] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQQEu1AdBsYOB9D19mPB5K4"}
+[26/04/2026 12:49:12] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 13:03:15] [INFO] [STRIPE WEBHOOK] Event received | {"type":"product.created","eventId":"evt_1TQQSz1AdBsYOB9DFlCI0RoZ"}
+[26/04/2026 13:03:15] [INFO] [STRIPE WEBHOOK] Ignored event: product.created
+[26/04/2026 13:03:17] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQQT01AdBsYOB9D1VL5yTxy"}
+[26/04/2026 13:03:17] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 13:03:17] [INFO] [PAYMENT] Subscription created | {"subscriptionId":"sub_1TQQT01AdBsYOB9DCP0xAxg1","paymentIntentId":"pi_3TQQT21AdBsYOB9D16eFP0Kd","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","totalAmountCents":199999}
+[26/04/2026 13:03:17] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.created","eventId":"evt_1TQQT21AdBsYOB9DduOyxQiQ"}
+[26/04/2026 13:03:17] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.created
+[26/04/2026 13:03:17] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.finalized","eventId":"evt_1TQQT21AdBsYOB9Dn2yUBj8e"}
+[26/04/2026 13:03:17] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.finalized
+[26/04/2026 13:03:17] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQQT21AdBsYOB9D1ukMwRSC"}
+[26/04/2026 13:03:17] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 13:03:19] [INFO] [STRIPE WEBHOOK] Event received | {"type":"customer.subscription.created","eventId":"evt_1TQQT11AdBsYOB9DaPsmTava"}
+[26/04/2026 13:03:19] [INFO] [STRIPE WEBHOOK] Ignored event: customer.subscription.created
+[26/04/2026 13:03:34] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQQT21AdBsYOB9D1KtP04Kr"}
+[26/04/2026 13:03:34] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TQQT21AdBsYOB9D16eFP0Kd → success
+[26/04/2026 13:03:34] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQQT21AdBsYOB9D16eFP0Kd","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 13:03:34] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQQT21AdBsYOB9D1yskYOsi"}
+[26/04/2026 13:03:34] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 13:03:35] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[26/04/2026 13:03:35] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQQT21AdBsYOB9D16eFP0Kd"}
+[26/04/2026 13:03:35] [ERROR] [STRIPE WEBHOOK] Failed to activate subscription invoice | {"invoiceId":"in_1TQQT01AdBsYOB9DQzM6ydQE","subscriptionId":"sub_1TQQT01AdBsYOB9DCP0xAxg1","error":"The customer does not have a payment method with the ID pm_1TQQTI1AdBsYOB9DCeDO6u26. The payment method must be attached to the customer."}
+[26/04/2026 13:03:35] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQQT21AdBsYOB9D1KtP04Kr","paymentIntentId":"pi_3TQQT21AdBsYOB9D16eFP0Kd","invoiceId":"in_1TQQT01AdBsYOB9DQzM6ydQE"}
+[26/04/2026 13:03:37] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQQT21AdBsYOB9D1NF2MOPd"}
+[26/04/2026 13:03:37] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 13:04:09] [ERROR] [ERROR] This PaymentIntent (pi_3TQQT01AdBsYOB9D1akFGuCQ) does not have a successful charge to refund. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/refunds"}

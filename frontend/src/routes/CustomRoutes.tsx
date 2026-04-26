@@ -16,7 +16,6 @@ import Categories from "@/pages/backoffice/Categories"
 import Orders from "@/pages/backoffice/Orders"
 import Transactions from "@/pages/backoffice/Transactions"
 import Refunds from "@/pages/backoffice/Refunds"
-import RefundRequests from "@/pages/backoffice/RefundRequests"
 import Discounts from "@/pages/backoffice/Discounts"
 import MySubscriptions from "@/pages/frontoffice/MySubscriptions"
 import { CheckoutSuccess } from "@/pages/frontoffice/stripe/CheckoutSuccess"
@@ -100,14 +99,6 @@ export default function CustomRoutes() {
             element={
               <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
                 <Refunds />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/refund-requests"
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <RefundRequests />
               </ProtectedRoute>
             }
           />

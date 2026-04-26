@@ -5,6 +5,7 @@ import type { RefundAdminDTO } from '@/types/interfaces/admin/RefundAdminDTO.int
 import type { PaginatedResponse } from '@/types/interfaces/admin/PaginatedResponse.interface';
 import type { CreateRefundRequest } from '@/types/interfaces/admin/CreateRefundRequest.interface';
 import type { RefundRequestAdminDTO } from '@/types/interfaces/admin/RefundRequestAdminDTO.interface';
+import type { SubscriptionAdminDTO } from '@/types/interfaces/admin/SubscriptionAdminDTO.interface';
 
 export class BackOfficeApiError extends Error {
   constructor(public readonly status: number, message: string) {
@@ -22,7 +23,7 @@ const handleResponse = async <T>(res: Response): Promise<T> => {
   if (res.status === 401) throw new BackOfficeApiError(401, 'UNAUTHORIZED');
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new BackOfficeApiError(res.status, body?.error ?? 'REQUEST_FAILED');
+    throw new BackOfficeApiError(res.status, body?.message ?? body?.error ?? 'REQUEST_FAILED');
   }
   const json = await res.json();
   return json.data as T;
@@ -114,8 +115,8 @@ export async function updateOrderStatus(
   return handleResponse<OrderAdminDTO>(res);
 }
 
-export async function cancelSubscriptionAdmin(token: string, stripeSubscriptionId: string): Promise<void> {
-  const res = await fetch(`/api/back-office/subscriptions/${stripeSubscriptionId}/cancel`, {
+export async function cancelSubscriptionAdmin(token: string, id: string): Promise<void> {
+  const res = await fetch(`/api/back-office/subscriptions/${id}/cancel`, {
     method: 'POST',
     headers: withAuth(token),
   });
@@ -125,6 +126,11 @@ export async function cancelSubscriptionAdmin(token: string, stripeSubscriptionI
 export async function getRefundRequests(token: string): Promise<RefundRequestAdminDTO[]> {
   const res = await fetch('/api/back-office/refund-requests', { headers: withAuth(token) });
   return handleResponse<RefundRequestAdminDTO[]>(res);
+}
+
+export async function getSubscriptions(token: string): Promise<SubscriptionAdminDTO[]> {
+  const res = await fetch('/api/back-office/subscriptions', { headers: withAuth(token) });
+  return handleResponse<SubscriptionAdminDTO[]>(res);
 }
 
 export async function updateRefundRequestStatus(

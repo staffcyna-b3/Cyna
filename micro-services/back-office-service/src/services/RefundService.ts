@@ -6,11 +6,10 @@ export class RefundService implements IRefundService {
   constructor(private readonly httpClient: IHttpClient) {}
 
   async getAll(_limit: number = 100): Promise<RefundAdminDTO[]> {
-    // TODO: replace with real call when payments-service exposes GET /api/payments/refunds
-    // return this.httpClient.get<RefundAdminDTO[]>(
-    //   `${process.env.MS_PAYMENTS_URL}/refunds?limit=${_limit}`
-    // );
-    return [];
+    const res = await this.httpClient.get<{ data: RefundAdminDTO[] }>(
+      `${process.env.MS_PAYMENTS_URL}/refunds?limit=${_limit}`
+    );
+    return res.data;
   }
 
   async create(paymentIntentId: string, amount?: number, reason?: string): Promise<RefundAdminDTO> {

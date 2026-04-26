@@ -55,6 +55,7 @@ export class WebhookService {
     }
 
     await this.updateOrderStatus(intent.id, OrderStatus.SUCCESS);
+    await this.updateFrontOfficeOrderStatus(intent.id, 'PAID');
     await this.sendTransactionToProductService(intent, 'succeeded', event.id);
     await this.sendOrderConfirmationEmail(intent);
     await this.activateSubscriptionInvoice(intent);
@@ -232,6 +233,19 @@ export class WebhookService {
     } catch (error) {
       Logger.error('[PAYMENT] Failed to notify product service', {
         paymentIntentId: intent.id,
+        status,
+        error: (error as any)?.message,
+      });
+    }
+  }
+
+  private async updateFrontOfficeOrderStatus(paymentIntentId: string, status: string): Promise<void> {
+    const url = `${MICROSERVICES.FRONTOFFICE.url}/orders/by-payment-intent/${paymentIntentId}/status`;
+    try {
+      await this.httpClient.patch(url, { status }, HTTP_JSON_CONFIG);
+    } catch (error) {
+      Logger.error('[PAYMENT] Failed to update front-office order status', {
+        paymentIntentId,
         status,
         error: (error as any)?.message,
       });
