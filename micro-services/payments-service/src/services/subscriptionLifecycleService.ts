@@ -52,19 +52,11 @@ export class SubscriptionLifecycleService {
   }
 
   async resolvePaymentIntentForSubscription(subscriptionId: string): Promise<string | null> {
-    const invoices = await this.stripeClient.invoices.list({
-      subscription: subscriptionId,
+    const results = await this.stripeClient.paymentIntents.search({
+      query: `metadata['subscriptionId']:'${subscriptionId}' AND status:'succeeded'`,
       limit: 1,
     });
-    const invoice = invoices.data[0];
-    if (!invoice) return null;
-
-    const payments = await this.stripeClient.invoicePayments.list({ invoice: invoice.id });
-    const piPayment = payments.data.find((p) => p.payment.type === 'payment_intent');
-    if (!piPayment) return null;
-
-    const pi = piPayment.payment.payment_intent;
-    return typeof pi === 'string' ? pi : (pi?.id ?? null);
+    return results.data[0]?.id ?? null;
   }
 
   async createRefund(paymentIntentId: string, amount?: number): Promise<Stripe.Refund> {

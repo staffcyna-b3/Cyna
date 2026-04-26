@@ -40,6 +40,10 @@ export class UserSubscriptionService {
     return subscription.reload();
   }
 
+  async getMyRefundRequests(userId: string) {
+    return this.refundRequestRepository.findActiveByUserId(userId);
+  }
+
   async createRefundRequest(
     stripeSubscriptionId: string,
     userId: string,

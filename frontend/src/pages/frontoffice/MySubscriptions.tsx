@@ -9,6 +9,7 @@ import { CancelSubscriptionModal } from '@/components/Frontoffice/CancelSubscrip
 import { RefundRequestModal } from '@/components/Frontoffice/RefundRequestModal';
 import {
   getMySubscriptions,
+  getMyRefundRequests,
   cancelSubscription,
   createRefundRequest,
   SubscriptionApiError,
@@ -41,6 +42,7 @@ export default function MySubscriptions() {
   const { t } = useTranslation();
   const { accessToken, isLoading } = useAuth();
   const [subscriptions, setSubscriptions] = useState<SubscriptionDTO[]>([]);
+  const [activeRefundIds, setActiveRefundIds] = useState<Set<string>>(new Set());
   const [pageLoading, setPageLoading] = useState(true);
 
   const [cancelTarget, setCancelTarget] = useState<SubscriptionDTO | null>(null);
@@ -49,8 +51,11 @@ export default function MySubscriptions() {
 
   useEffect(() => {
     if (!accessToken) return;
-    getMySubscriptions(accessToken)
-      .then(setSubscriptions)
+    Promise.all([getMySubscriptions(accessToken), getMyRefundRequests(accessToken)])
+      .then(([subs, requests]) => {
+        setSubscriptions(subs);
+        setActiveRefundIds(new Set(requests.map((r) => r.stripe_subscription_id)));
+      })
       .catch((err) => {
         if (err instanceof SubscriptionApiError && err.status === 401) {
           toast.error(t('sessionExpired'));
@@ -83,6 +88,7 @@ export default function MySubscriptions() {
     setSubmitting(true);
     try {
       await createRefundRequest(accessToken, refundTarget.stripe_subscription_id, reason);
+      setActiveRefundIds((prev) => new Set(prev).add(refundTarget.stripe_subscription_id));
       toast.success(t('subscriptions.refundRequestSuccess'));
       setRefundTarget(null);
     } catch {
@@ -144,6 +150,7 @@ export default function MySubscriptions() {
                       variant="outline"
                       size="sm"
                       onClick={() => setRefundTarget(sub)}
+                      disabled={activeRefundIds.has(sub.stripe_subscription_id)}
                     >
                       {t('subscriptions.refundButton')}
                     </Button>

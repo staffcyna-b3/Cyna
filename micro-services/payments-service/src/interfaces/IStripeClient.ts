@@ -4,6 +4,7 @@ export interface IStripeClient {
   paymentIntents: {
     create(params: Stripe.PaymentIntentCreateParams): Promise<Stripe.PaymentIntent>;
     retrieve(id: string): Promise<Stripe.PaymentIntent>;
+    search(params: Stripe.PaymentIntentSearchParams): Promise<Stripe.ApiSearchResult<Stripe.PaymentIntent>>;
   };
   invoiceItems: {
     create(params: Stripe.InvoiceItemCreateParams): Promise<Stripe.InvoiceItem>;
@@ -23,10 +24,6 @@ export interface IStripeClient {
   };
   invoices: {
     pay(id: string, params?: Stripe.InvoicePayParams): Promise<Stripe.Invoice>;
-    list(params: Stripe.InvoiceListParams): Promise<Stripe.ApiList<Stripe.Invoice>>;
-  };
-  invoicePayments: {
-    list(params: Stripe.InvoicePaymentListParams): Promise<Stripe.ApiList<Stripe.InvoicePayment>>;
   };
   customers: {
     create(params: Stripe.CustomerCreateParams): Promise<Stripe.Customer>;

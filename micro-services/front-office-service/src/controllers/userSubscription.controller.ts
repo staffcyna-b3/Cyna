@@ -13,6 +13,14 @@ export class UserSubscriptionController {
     return res.status(200).json(subscriptions);
   }
 
+  async getMyRefundRequests(req: Request, res: Response): Promise<Response> {
+    const userId = this.extractUserId(req);
+    if (!userId) return res.status(401).json({ message: 'Unauthorized' });
+
+    const requests = await this.service.getMyRefundRequests(userId);
+    return res.status(200).json(requests);
+  }
+
   async cancel(req: Request, res: Response): Promise<Response> {
     const userId = this.extractUserId(req);
     if (!userId) return res.status(401).json({ message: 'Unauthorized' });

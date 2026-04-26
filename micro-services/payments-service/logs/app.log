@@ -85,3 +85,5 @@
 [26/04/2026 13:03:37] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQQT21AdBsYOB9D1NF2MOPd"}
 [26/04/2026 13:03:37] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
 [26/04/2026 13:04:09] [ERROR] [ERROR] This PaymentIntent (pi_3TQQT01AdBsYOB9D1akFGuCQ) does not have a successful charge to refund. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/refunds"}
+[26/04/2026 18:38:49] [ERROR] [ERROR] This PaymentIntent (pi_3TQQT01AdBsYOB9D1akFGuCQ) does not have a successful charge to refund. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/refunds"}
+[26/04/2026 18:47:34] [INFO] [REFUND] Created refund | {"paymentIntentId":"pi_3TQQT21AdBsYOB9D16eFP0Kd"}

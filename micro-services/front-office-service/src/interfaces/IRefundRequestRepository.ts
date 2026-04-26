@@ -9,4 +9,5 @@ export interface IRefundRequestRepository {
     reason: string;
   }): Promise<RefundRequest>;
   findPendingByUserId(userId: string): Promise<RefundRequest[]>;
+  findActiveByUserId(userId: string): Promise<RefundRequest[]>;
 }

@@ -34,6 +34,11 @@ export async function cancelSubscription(token: string, stripeSubscriptionId: st
   return handleResponse<SubscriptionDTO>(res);
 }
 
+export async function getMyRefundRequests(token: string): Promise<{ stripe_subscription_id: string }[]> {
+  const res = await fetch('/api/front-office/my-subscriptions/refund-requests', { headers: withAuth(token) });
+  return handleResponse<{ stripe_subscription_id: string }[]>(res);
+}
+
 export async function createRefundRequest(
   token: string,
   stripeSubscriptionId: string,
