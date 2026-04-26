@@ -13,36 +13,28 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import type { TransactionAdminDTO } from "@/types/interfaces/admin/TransactionAdminDTO.interface";
+import type { SaleAdminDTO } from "@/types/interfaces/admin/SaleAdminDTO.interface";
 import type { SubscriptionAdminDTO } from "@/types/interfaces/admin/SubscriptionAdminDTO.interface";
-import type { CreateRefundRequest } from "@/types/interfaces/admin/CreateRefundRequest.interface";
 import { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
 import { LucideArrowUpDown } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import {
-    getTransactions,
+    getSales,
     getSubscriptions,
-    createRefund,
     cancelSubscriptionAdmin,
     BackOfficeApiError,
 } from "@/services/BackOfficeOrderService";
 import { toast } from "sonner";
-import { TransactionSheet } from "../../components/Backoffice/sheets/TransactionSheet";
 import { formatCurrency } from "@/utils/currencyFormatter";
 
 export default function Transactions() {
     const { accessToken } = useAuth();
 
-    // Transactions state
-    const [transactions, setTransactions] = useState<TransactionAdminDTO[]>([]);
-    const [txLoading, setTxLoading] = useState(true);
-    const [selectedTransaction, setSelectedTransaction] = useState<TransactionAdminDTO | null>(null);
-    const [sheetOpen, setSheetOpen] = useState(false);
-    const [submitting, setSubmitting] = useState(false);
-    const [confirmOpen, setConfirmOpen] = useState(false);
-    const pendingRefund = useRef<{ paymentIntentId: string; amount: number | undefined; reason: string } | null>(null);
+    // Sales state
+    const [sales, setSales] = useState<SaleAdminDTO[]>([]);
+    const [salesLoading, setSalesLoading] = useState(true);
 
     // Subscriptions state
     const [subscriptions, setSubscriptions] = useState<SubscriptionAdminDTO[]>([]);
@@ -52,9 +44,8 @@ export default function Transactions() {
 
     useEffect(() => {
         if (!accessToken) return;
-        setTxLoading(true);
-        getTransactions(accessToken)
-            .then(setTransactions)
+        getSales(accessToken)
+            .then(setSales)
             .catch((err: unknown) => {
                 if (err instanceof BackOfficeApiError && err.status === 401) {
                     toast.error(t("sessionExpired"));
@@ -62,7 +53,7 @@ export default function Transactions() {
                     toast.error(t("errorOccurred"));
                 }
             })
-            .finally(() => setTxLoading(false));
+            .finally(() => setSalesLoading(false));
     }, [accessToken]);
 
     useEffect(() => {
@@ -80,45 +71,6 @@ export default function Transactions() {
             .finally(() => setSubLoading(false));
     }, [accessToken]);
 
-    // Transaction handlers
-    function handleRowClick(transaction: TransactionAdminDTO) {
-        setSelectedTransaction(transaction);
-        setSheetOpen(true);
-    }
-
-    function handleConfirmRefund(paymentIntentId: string, amount: number | undefined, reason: string) {
-        pendingRefund.current = { paymentIntentId, amount, reason };
-        setConfirmOpen(true);
-    }
-
-    function handleSubmitRefund() {
-        if (!accessToken || !pendingRefund.current) return;
-        setSubmitting(true);
-        const { paymentIntentId, amount, reason } = pendingRefund.current;
-        const payload: CreateRefundRequest = {
-            payment_intent_id: paymentIntentId,
-            ...(amount !== undefined && { amount }),
-            ...(reason && { reason }),
-        };
-        createRefund(accessToken, payload)
-            .then(() => {
-                toast.success(t("admin.refundSuccess"));
-                setSheetOpen(false);
-            })
-            .catch((err: unknown) => {
-                if (err instanceof BackOfficeApiError && err.status === 401) {
-                    toast.error(t("sessionExpired"));
-                } else {
-                    toast.error(t("admin.refundError"));
-                }
-            })
-            .finally(() => {
-                setSubmitting(false);
-                pendingRefund.current = null;
-            });
-    }
-
-    // Subscription handlers
     function handleCancelSubscription() {
         if (!accessToken || !cancelTarget) return;
         setSubSubmitting(true);
@@ -144,7 +96,7 @@ export default function Transactions() {
             });
     }
 
-    const txColumns: ColumnDef<TransactionAdminDTO>[] = [
+    const salesColumns: ColumnDef<SaleAdminDTO>[] = [
         {
             id: "select",
             header: ({ table }) => (
@@ -164,14 +116,48 @@ export default function Transactions() {
             enableSorting: false,
             enableHiding: false,
         },
-        { accessorKey: "id", header: "ID" },
-        { accessorKey: "amount", header: "Amount" },
-        { accessorKey: "currency", header: "Currency" },
+        {
+            accessorKey: "date",
+            header: ({ column }) => (
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
+                    {t("admin.date")}
+                    <LucideArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            ),
+            cell: ({ row }) => new Date(row.original.date).toLocaleDateString("fr-FR"),
+        },
+        {
+            accessorKey: "userEmail",
+            header: t("admin.client"),
+            cell: ({ row }) => row.original.userEmail ?? "—",
+        },
+        {
+            accessorKey: "productName",
+            header: t("admin.product"),
+        },
+        {
+            accessorKey: "type",
+            header: t("admin.type"),
+            cell: ({ row }) => (
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                    row.original.type === "subscription"
+                        ? "bg-blue-100 text-blue-800"
+                        : "bg-gray-100 text-gray-800"
+                }`}>
+                    {row.original.type === "subscription" ? t("subscriptions.licenses") : t("admin.oneTime")}
+                </span>
+            ),
+        },
+        {
+            accessorKey: "amount",
+            header: t("admin.amount"),
+            cell: ({ row }) => formatCurrency(row.original.amount),
+        },
         {
             accessorKey: "status",
             header: ({ column }) => (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Status
+                    {t("admin.status")}
                     <LucideArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
@@ -264,13 +250,12 @@ export default function Transactions() {
 
                     <TabsContent value="transactions">
                         <div className="border rounded-lg">
-                            {txLoading ? (
+                            {salesLoading ? (
                                 <p className="p-4 text-muted-foreground">{t("loading")}</p>
                             ) : (
                                 <DataTable
-                                    columns={txColumns}
-                                    data={transactions}
-                                    onRowClick={handleRowClick}
+                                    columns={salesColumns}
+                                    data={sales}
                                 />
                             )}
                         </div>
@@ -290,43 +275,6 @@ export default function Transactions() {
                     </TabsContent>
                 </Tabs>
             </div>
-
-            {/* Transaction refund sheet */}
-            {selectedTransaction && (
-                <TransactionSheet
-                    open={sheetOpen}
-                    transactionId={selectedTransaction.id}
-                    amount={selectedTransaction.amount}
-                    currency={selectedTransaction.currency}
-                    status={selectedTransaction.status}
-                    description={selectedTransaction.description}
-                    createdAt={selectedTransaction.created}
-                    title={t("admin.viewTransaction")}
-                    amountLabel={t("admin.amount")}
-                    statusLabel={t("admin.status")}
-                    descriptionLabel={t("admin.description")}
-                    dateLabel={t("admin.date")}
-                    submitting={submitting}
-                    onOpenChange={setSheetOpen}
-                    onConfirmRefund={handleConfirmRefund}
-                />
-            )}
-
-            {/* Transaction refund confirm dialog */}
-            <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t("admin.confirmRefund")}</AlertDialogTitle>
-                        <AlertDialogDescription>{t("admin.confirmRefundDescription")}</AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => { setConfirmOpen(false); handleSubmitRefund(); }}>
-                            {t("admin.refund")}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
 
             {/* Subscription cancel confirm dialog */}
             <AlertDialog open={!!cancelTarget} onOpenChange={(open) => { if (!open) setCancelTarget(null); }}>

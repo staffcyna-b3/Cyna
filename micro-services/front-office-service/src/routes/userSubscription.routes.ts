@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { createUserSubscriptionController } from '../factories/subscription.factory';
 
+// Protégées par le gateway : authMiddleware + requireRole(USER) sur /api/front-office/**
+// Le gateway injecte x-user-id après validation JWT — le controller l'extrait depuis ce header.
 const router = Router();
 const controller = createUserSubscriptionController();
 

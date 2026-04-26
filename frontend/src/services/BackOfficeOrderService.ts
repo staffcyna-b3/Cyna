@@ -6,6 +6,7 @@ import type { PaginatedResponse } from '@/types/interfaces/admin/PaginatedRespon
 import type { CreateRefundRequest } from '@/types/interfaces/admin/CreateRefundRequest.interface';
 import type { RefundRequestAdminDTO } from '@/types/interfaces/admin/RefundRequestAdminDTO.interface';
 import type { SubscriptionAdminDTO } from '@/types/interfaces/admin/SubscriptionAdminDTO.interface';
+import type { SaleAdminDTO } from '@/types/interfaces/admin/SaleAdminDTO.interface';
 
 export class BackOfficeApiError extends Error {
   constructor(public readonly status: number, message: string) {
@@ -126,6 +127,11 @@ export async function cancelSubscriptionAdmin(token: string, id: string): Promis
 export async function getRefundRequests(token: string): Promise<RefundRequestAdminDTO[]> {
   const res = await fetch('/api/back-office/refund-requests', { headers: withAuth(token) });
   return handleResponse<RefundRequestAdminDTO[]>(res);
+}
+
+export async function getSales(token: string): Promise<SaleAdminDTO[]> {
+  const res = await fetch('/api/back-office/sales', { headers: withAuth(token) });
+  return handleResponse<SaleAdminDTO[]>(res);
 }
 
 export async function getSubscriptions(token: string): Promise<SubscriptionAdminDTO[]> {

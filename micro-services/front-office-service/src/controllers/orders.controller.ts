@@ -91,6 +91,12 @@ export class OrderController {
     }
   }
 
+  async getItemsByPaymentIntent(req: Request, res: Response): Promise<void> {
+    const paymentIntentId = req.params.paymentIntentId as string;
+    const items = await this.orderService.getOrderItemsByPaymentIntentId(paymentIntentId);
+    res.status(200).json(items);
+  }
+
   async updateStatusByPaymentIntent(req: Request, res: Response): Promise<void> {
     const paymentIntentId = req.params.paymentIntentId as string;
     const { status } = req.body;

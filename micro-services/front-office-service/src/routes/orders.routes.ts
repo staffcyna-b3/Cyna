@@ -42,5 +42,7 @@ router.get('/orders/:id', (req, res) => orderController.getById(req, res));
 router.patch('/orders/:id/status', internalAuthMiddleware, (req, res) => orderController.updateStatus(req, res));
 // Internal route — called directly by payments-service webhook (no gateway)
 router.patch('/orders/by-payment-intent/:paymentIntentId/status', (req, res) => orderController.updateStatusByPaymentIntent(req, res));
+// Internal route — called by product-service via payments-service to resolve order items
+router.get('/orders/by-payment-intent/:paymentIntentId/items', (req, res) => orderController.getItemsByPaymentIntent(req, res));
 
 export default router;

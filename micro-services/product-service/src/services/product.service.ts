@@ -107,6 +107,12 @@ export default class ProductService {
         }
     }
 
+    async handleTransaction(items: { productId: string; quantity: number }[], status: string): Promise<void> {
+        if (status !== 'succeeded' || items.length === 0) return;
+        await this.productRepository.decrementStockForPhysicalProducts(items);
+        Logger.info('Stock decremented after successful payment', { itemCount: items.length });
+    }
+
     async getProductSuggestions(search: string): Promise<ProductSuggestionDto[]> {
         this.validateSearch(search);
 

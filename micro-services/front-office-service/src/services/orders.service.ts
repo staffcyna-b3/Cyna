@@ -204,6 +204,10 @@ export class OrderService implements IOrderService {
         Logger.info("Order status updated", { orderId, status });
     }
 
+    async getOrderItemsByPaymentIntentId(paymentIntentId: string): Promise<{ product_id: string; quantity: number }[]> {
+        return this.orderRepository.findItemsByPaymentIntentId(paymentIntentId);
+    }
+
     async updateOrderStatusByPaymentIntentId(paymentIntentId: string, status: OrderStatus): Promise<void> {
         const updated = await this.orderRepository.updateStatusByPaymentIntentId(paymentIntentId, status);
         if (!updated) {

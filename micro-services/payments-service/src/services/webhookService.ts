@@ -214,8 +214,21 @@ export class WebhookService {
     status: 'succeeded' | 'failed',
     eventId: string
   ): Promise<void> {
-    const transactionPath = process.env.PRODUCTS_TRANSACTION_PATH || '/products/transactions';
+    const transactionPath = process.env.PRODUCTS_TRANSACTION_PATH || '/payment-notification';
     const url = `${MICROSERVICES.PRODUCT.url}${transactionPath}`;
+
+    let items: { product_id: string; quantity: number }[] = [];
+    if (status === 'succeeded') {
+      try {
+        const itemsUrl = `${MICROSERVICES.FRONTOFFICE.url}/orders/by-payment-intent/${intent.id}/items`;
+        items = await this.httpClient.get<{ product_id: string; quantity: number }[]>(itemsUrl);
+      } catch (error) {
+        Logger.error('[PAYMENT] Failed to fetch order items from front-office', {
+          paymentIntentId: intent.id,
+          error: (error as any)?.message,
+        });
+      }
+    }
 
     try {
       await this.httpClient.post(
@@ -227,6 +240,7 @@ export class WebhookService {
           amount: intent.amount,
           currency: intent.currency,
           status,
+          items,
         },
         HTTP_JSON_CONFIG
       );

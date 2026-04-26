@@ -87,3 +87,162 @@
 [26/04/2026 13:04:09] [ERROR] [ERROR] This PaymentIntent (pi_3TQQT01AdBsYOB9D1akFGuCQ) does not have a successful charge to refund. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/refunds"}
 [26/04/2026 18:38:49] [ERROR] [ERROR] This PaymentIntent (pi_3TQQT01AdBsYOB9D1akFGuCQ) does not have a successful charge to refund. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/refunds"}
 [26/04/2026 18:47:34] [INFO] [REFUND] Created refund | {"paymentIntentId":"pi_3TQQT21AdBsYOB9D16eFP0Kd"}
+[26/04/2026 19:20:09] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoiceitem.created","eventId":"evt_1TQWLj1AdBsYOB9DsVKwuCmc"}
+[26/04/2026 19:20:09] [INFO] [STRIPE WEBHOOK] Ignored event: invoiceitem.created
+[26/04/2026 19:20:09] [INFO] [STRIPE WEBHOOK] Event received | {"type":"product.created","eventId":"evt_1TQWLj1AdBsYOB9DWYFWqGNP"}
+[26/04/2026 19:20:09] [INFO] [STRIPE WEBHOOK] Ignored event: product.created
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQWLl1AdBsYOB9D1CepCb8d"}
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 19:20:12] [INFO] [PAYMENT] Subscription created | {"subscriptionId":"sub_1TQWLk1AdBsYOB9DcLHdCb8Y","paymentIntentId":"pi_3TQWLm1AdBsYOB9D1nypJSTP","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","totalAmountCents":380597}
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Event received | {"type":"customer.subscription.created","eventId":"evt_1TQWLm1AdBsYOB9D3VY5ONdC"}
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Ignored event: customer.subscription.created
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.created","eventId":"evt_1TQWLm1AdBsYOB9D27Aa5beh"}
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.created
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQWLm1AdBsYOB9D1CkHXAgU"}
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.finalized","eventId":"evt_1TQWLm1AdBsYOB9D31mCd335"}
+[26/04/2026 19:20:12] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.finalized
+[26/04/2026 19:20:39] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQWLm1AdBsYOB9D1biXPBQV"}
+[26/04/2026 19:20:39] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TQWLm1AdBsYOB9D1nypJSTP → success
+[26/04/2026 19:20:39] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQWLm1AdBsYOB9D1nypJSTP","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 19:20:39] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQWLm1AdBsYOB9D1Z7GZw9M"}
+[26/04/2026 19:20:39] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 19:20:40] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[26/04/2026 19:20:40] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQWLm1AdBsYOB9D1nypJSTP"}
+[26/04/2026 19:20:40] [ERROR] [STRIPE WEBHOOK] Failed to activate subscription invoice | {"invoiceId":"in_1TQWLk1AdBsYOB9DbwuPB7nY","subscriptionId":"sub_1TQWLk1AdBsYOB9DcLHdCb8Y","error":"The customer does not have a payment method with the ID pm_1TQWMC1AdBsYOB9DCChXhPXJ. The payment method must be attached to the customer."}
+[26/04/2026 19:20:40] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQWLm1AdBsYOB9D1biXPBQV","paymentIntentId":"pi_3TQWLm1AdBsYOB9D1nypJSTP","invoiceId":"in_1TQWLk1AdBsYOB9DbwuPB7nY"}
+[26/04/2026 19:20:42] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQWLm1AdBsYOB9D1BvbmgZE"}
+[26/04/2026 19:20:42] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 19:41:17] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQWg61AdBsYOB9D0Tm9cfgH"}
+[26/04/2026 19:41:17] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 19:41:22] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQWg61AdBsYOB9D0D1gbLng"}
+[26/04/2026 19:41:22] [WARN] [REPO] updateStatus: 0 rows affected for PI pi_3TQWg61AdBsYOB9D0dbklLJb → success
+[26/04/2026 19:41:22] [ERROR] [REPO] updateStatus: NO ROWS UPDATED for PI pi_3TQWg61AdBsYOB9D0dbklLJb — check stripe_payment_intent_id in payments table
+[26/04/2026 19:41:22] [INFO] [STRIPE WEBHOOK] Event received | {"type":"mandate.updated","eventId":"evt_1TQWgG1AdBsYOB9DLH5CRfMf"}
+[26/04/2026 19:41:22] [INFO] [STRIPE WEBHOOK] Ignored event: mandate.updated
+[26/04/2026 19:41:22] [ERROR] [PAYMENT] Failed to update front-office order status | {"paymentIntentId":"pi_3TQWg61AdBsYOB9D0dbklLJb","status":"PAID","error":"Request failed with status code 404"}
+[26/04/2026 19:41:22] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQWg61AdBsYOB9D0dbklLJb","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 19:41:22] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQWg61AdBsYOB9D0MuWogsp"}
+[26/04/2026 19:41:22] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 19:41:23] [INFO] Email de confirmation de commande envoyé à bnmarcdesir@gmail.com
+[26/04/2026 19:41:23] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQWg61AdBsYOB9D0dbklLJb"}
+[26/04/2026 19:41:23] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQWg61AdBsYOB9D0D1gbLng","paymentIntentId":"pi_3TQWg61AdBsYOB9D0dbklLJb","invoiceId":null}
+[26/04/2026 19:41:27] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQWg61AdBsYOB9D0cx6Rdk1"}
+[26/04/2026 19:41:27] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 20:09:56] [INFO] [PAYMENT] PaymentIntent created | {"paymentIntentId":"pi_3TQX7u1AdBsYOB9D0iwVv9SA","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","amount":350598,"currency":"eur"}
+[26/04/2026 20:09:56] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQX7u1AdBsYOB9D0hRg4rpO"}
+[26/04/2026 20:09:56] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:10:11] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQX7u1AdBsYOB9D0vFU1VSX"}
+[26/04/2026 20:10:11] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TQX7u1AdBsYOB9D0iwVv9SA → success
+[26/04/2026 20:10:11] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQX7u1AdBsYOB9D0iwVv9SA","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 20:10:11] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQX7u1AdBsYOB9D0NdMCkpt"}
+[26/04/2026 20:10:11] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 20:10:12] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[26/04/2026 20:10:12] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQX7u1AdBsYOB9D0iwVv9SA"}
+[26/04/2026 20:10:12] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQX7u1AdBsYOB9D0vFU1VSX","paymentIntentId":"pi_3TQX7u1AdBsYOB9D0iwVv9SA","invoiceId":null}
+[26/04/2026 20:10:14] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQX7u1AdBsYOB9D0UbIFDCX"}
+[26/04/2026 20:10:14] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 20:16:08] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQXDt1AdBsYOB9D0lv4g5w9"}
+[26/04/2026 20:16:08] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:16:18] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQXDt1AdBsYOB9D0YLIPsSz"}
+[26/04/2026 20:16:18] [INFO] [STRIPE WEBHOOK] Event received | {"type":"mandate.updated","eventId":"evt_1TQXE41AdBsYOB9Dt74Y6bpB"}
+[26/04/2026 20:16:18] [INFO] [STRIPE WEBHOOK] Ignored event: mandate.updated
+[26/04/2026 20:16:18] [WARN] [REPO] updateStatus: 0 rows affected for PI pi_3TQXDt1AdBsYOB9D0gp4fa2i → success
+[26/04/2026 20:16:18] [ERROR] [REPO] updateStatus: NO ROWS UPDATED for PI pi_3TQXDt1AdBsYOB9D0gp4fa2i — check stripe_payment_intent_id in payments table
+[26/04/2026 20:16:18] [ERROR] [PAYMENT] Failed to update front-office order status | {"paymentIntentId":"pi_3TQXDt1AdBsYOB9D0gp4fa2i","status":"PAID","error":"Request failed with status code 404"}
+[26/04/2026 20:16:18] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQXDt1AdBsYOB9D0D0gZuRM"}
+[26/04/2026 20:16:18] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 20:16:18] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQXDt1AdBsYOB9D0gp4fa2i","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 20:16:19] [INFO] Email de confirmation de commande envoyé à bnmarcdesir@gmail.com
+[26/04/2026 20:16:19] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQXDt1AdBsYOB9D0gp4fa2i"}
+[26/04/2026 20:16:19] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXDt1AdBsYOB9D0YLIPsSz","paymentIntentId":"pi_3TQXDt1AdBsYOB9D0gp4fa2i","invoiceId":null}
+[26/04/2026 20:16:23] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXDt1AdBsYOB9D08TxPwcn"}
+[26/04/2026 20:16:23] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 20:16:30] [INFO] [PAYMENT] PaymentIntent created | {"paymentIntentId":"pi_3TQXEG1AdBsYOB9D0c2l6TIZ","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","amount":600598,"currency":"eur"}
+[26/04/2026 20:16:30] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQXEG1AdBsYOB9D09VWUYlU"}
+[26/04/2026 20:16:30] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:16:40] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQXEG1AdBsYOB9D0MTT2jJ2"}
+[26/04/2026 20:16:40] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TQXEG1AdBsYOB9D0c2l6TIZ → success
+[26/04/2026 20:16:40] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQXEG1AdBsYOB9D0c2l6TIZ","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 20:16:41] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQXEG1AdBsYOB9D0jW0zyU3"}
+[26/04/2026 20:16:41] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 20:16:41] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[26/04/2026 20:16:41] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQXEG1AdBsYOB9D0c2l6TIZ"}
+[26/04/2026 20:16:41] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXEG1AdBsYOB9D0MTT2jJ2","paymentIntentId":"pi_3TQXEG1AdBsYOB9D0c2l6TIZ","invoiceId":null}
+[26/04/2026 20:16:43] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXEG1AdBsYOB9D0coy5WMc"}
+[26/04/2026 20:16:43] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 20:17:13] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQXEw1AdBsYOB9D0nkqyxLO"}
+[26/04/2026 20:17:13] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:17:34] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQXEw1AdBsYOB9D0TZgCZvz"}
+[26/04/2026 20:17:34] [WARN] [REPO] updateStatus: 0 rows affected for PI pi_3TQXEw1AdBsYOB9D0NtS0LDu → success
+[26/04/2026 20:17:34] [ERROR] [REPO] updateStatus: NO ROWS UPDATED for PI pi_3TQXEw1AdBsYOB9D0NtS0LDu — check stripe_payment_intent_id in payments table
+[26/04/2026 20:17:34] [ERROR] [PAYMENT] Failed to update front-office order status | {"paymentIntentId":"pi_3TQXEw1AdBsYOB9D0NtS0LDu","status":"PAID","error":"Request failed with status code 404"}
+[26/04/2026 20:17:34] [ERROR] [PAYMENT] Failed to notify product service | {"paymentIntentId":"pi_3TQXEw1AdBsYOB9D0NtS0LDu","status":"succeeded","error":"Request failed with status code 404"}
+[26/04/2026 20:17:34] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQXEw1AdBsYOB9D0igBizR9"}
+[26/04/2026 20:17:34] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 20:17:34] [INFO] Email de confirmation de commande envoyé à bnmarcdesir@gmail.com
+[26/04/2026 20:17:34] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQXEw1AdBsYOB9D0NtS0LDu"}
+[26/04/2026 20:17:34] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXEw1AdBsYOB9D0TZgCZvz","paymentIntentId":"pi_3TQXEw1AdBsYOB9D0NtS0LDu","invoiceId":null}
+[26/04/2026 20:17:37] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXEw1AdBsYOB9D0aAPu0XJ"}
+[26/04/2026 20:17:37] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 20:17:43] [INFO] [STRIPE WEBHOOK] Event received | {"type":"mandate.updated","eventId":"evt_1TQXFI1AdBsYOB9DBlLp9DNN"}
+[26/04/2026 20:17:43] [INFO] [STRIPE WEBHOOK] Ignored event: mandate.updated
+[26/04/2026 20:17:53] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQXFb1AdBsYOB9D1ZBDVJpe"}
+[26/04/2026 20:17:53] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:19:08] [INFO] [PAYMENT] PaymentIntent created | {"paymentIntentId":"pi_3TQXGo1AdBsYOB9D1nd91SXg","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","amount":600598,"currency":"eur"}
+[26/04/2026 20:19:09] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQXGo1AdBsYOB9D11fQX1wo"}
+[26/04/2026 20:19:09] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:19:21] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQXGo1AdBsYOB9D1NSB1vFr"}
+[26/04/2026 20:19:21] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TQXGo1AdBsYOB9D1nd91SXg → success
+[26/04/2026 20:19:21] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQXGo1AdBsYOB9D1TvVYUJC"}
+[26/04/2026 20:19:21] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 20:19:22] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[26/04/2026 20:19:22] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQXGo1AdBsYOB9D1nd91SXg"}
+[26/04/2026 20:19:22] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXGo1AdBsYOB9D1NSB1vFr","paymentIntentId":"pi_3TQXGo1AdBsYOB9D1nd91SXg","invoiceId":null}
+[26/04/2026 20:19:24] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXGo1AdBsYOB9D1e8z7RT6"}
+[26/04/2026 20:19:24] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 20:27:15] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQXOe1AdBsYOB9D1UfZmegx"}
+[26/04/2026 20:27:15] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:27:26] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQXOe1AdBsYOB9D1gw38c78"}
+[26/04/2026 20:27:26] [WARN] [REPO] updateStatus: 0 rows affected for PI pi_3TQXOe1AdBsYOB9D1L7jXqhz → success
+[26/04/2026 20:27:26] [ERROR] [REPO] updateStatus: NO ROWS UPDATED for PI pi_3TQXOe1AdBsYOB9D1L7jXqhz — check stripe_payment_intent_id in payments table
+[26/04/2026 20:27:26] [ERROR] [PAYMENT] Failed to update front-office order status | {"paymentIntentId":"pi_3TQXOe1AdBsYOB9D1L7jXqhz","status":"PAID","error":"Request failed with status code 404"}
+[26/04/2026 20:27:26] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQXOe1AdBsYOB9D17AKue31"}
+[26/04/2026 20:27:26] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 20:27:27] [INFO] Email de confirmation de commande envoyé à bnmarcdesir@gmail.com
+[26/04/2026 20:27:27] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQXOe1AdBsYOB9D1L7jXqhz"}
+[26/04/2026 20:27:27] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXOe1AdBsYOB9D1gw38c78","paymentIntentId":"pi_3TQXOe1AdBsYOB9D1L7jXqhz","invoiceId":null}
+[26/04/2026 20:27:29] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXOe1AdBsYOB9D1a8fK5Qj"}
+[26/04/2026 20:27:29] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 20:27:30] [INFO] [STRIPE WEBHOOK] Event received | {"type":"mandate.updated","eventId":"evt_1TQXOq1AdBsYOB9DUGaXiyLp"}
+[26/04/2026 20:27:30] [INFO] [STRIPE WEBHOOK] Ignored event: mandate.updated
+[26/04/2026 20:29:30] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQXQp1AdBsYOB9D1cXwWxU1"}
+[26/04/2026 20:29:30] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:29:38] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQXQp1AdBsYOB9D1y8VIh4L"}
+[26/04/2026 20:29:38] [WARN] [REPO] updateStatus: 0 rows affected for PI pi_3TQXQp1AdBsYOB9D1T71LB5m → success
+[26/04/2026 20:29:38] [ERROR] [REPO] updateStatus: NO ROWS UPDATED for PI pi_3TQXQp1AdBsYOB9D1T71LB5m — check stripe_payment_intent_id in payments table
+[26/04/2026 20:29:38] [ERROR] [PAYMENT] Failed to update front-office order status | {"paymentIntentId":"pi_3TQXQp1AdBsYOB9D1T71LB5m","status":"PAID","error":"Request failed with status code 404"}
+[26/04/2026 20:29:38] [INFO] [STRIPE WEBHOOK] Event received | {"type":"mandate.updated","eventId":"evt_1TQXQy1AdBsYOB9DOM0hpDaY"}
+[26/04/2026 20:29:38] [INFO] [STRIPE WEBHOOK] Ignored event: mandate.updated
+[26/04/2026 20:29:38] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQXQp1AdBsYOB9D1GaU6dnB"}
+[26/04/2026 20:29:38] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 20:29:39] [INFO] Email de confirmation de commande envoyé à bnmarcdesir@gmail.com
+[26/04/2026 20:29:39] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQXQp1AdBsYOB9D1T71LB5m"}
+[26/04/2026 20:29:39] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXQp1AdBsYOB9D1y8VIh4L","paymentIntentId":"pi_3TQXQp1AdBsYOB9D1T71LB5m","invoiceId":null}
+[26/04/2026 20:29:41] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXQp1AdBsYOB9D1l6eMD9t"}
+[26/04/2026 20:29:41] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[26/04/2026 20:30:32] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TQXRp1AdBsYOB9D1XXVYLZC"}
+[26/04/2026 20:30:32] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[26/04/2026 20:30:53] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TQXRp1AdBsYOB9D1khUUS8P"}
+[26/04/2026 20:30:53] [WARN] [REPO] updateStatus: 0 rows affected for PI pi_3TQXRp1AdBsYOB9D1AIjhIhh → success
+[26/04/2026 20:30:53] [ERROR] [REPO] updateStatus: NO ROWS UPDATED for PI pi_3TQXRp1AdBsYOB9D1AIjhIhh — check stripe_payment_intent_id in payments table
+[26/04/2026 20:30:53] [ERROR] [PAYMENT] Failed to update front-office order status | {"paymentIntentId":"pi_3TQXRp1AdBsYOB9D1AIjhIhh","status":"PAID","error":"Request failed with status code 404"}
+[26/04/2026 20:30:53] [INFO] [STRIPE WEBHOOK] Event received | {"type":"mandate.updated","eventId":"evt_1TQXSB1AdBsYOB9DmCpDE71x"}
+[26/04/2026 20:30:53] [INFO] [STRIPE WEBHOOK] Ignored event: mandate.updated
+[26/04/2026 20:30:53] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TQXRp1AdBsYOB9D13yRQWU4"}
+[26/04/2026 20:30:53] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[26/04/2026 20:30:54] [INFO] Email de confirmation de commande envoyé à bnmarcdesir@gmail.com
+[26/04/2026 20:30:54] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TQXRp1AdBsYOB9D1AIjhIhh"}
+[26/04/2026 20:30:54] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXRp1AdBsYOB9D1khUUS8P","paymentIntentId":"pi_3TQXRp1AdBsYOB9D1AIjhIhh","invoiceId":null}
+[26/04/2026 20:30:57] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXRp1AdBsYOB9D14c6RvUT"}
+[26/04/2026 20:30:57] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated

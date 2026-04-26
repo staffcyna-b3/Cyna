@@ -22,6 +22,7 @@ app.use('/webhook', webhookRouter);
 app.use(express.json());
 
 app.use('/payments', requireAuth, paymentsRouter);
+// Routes internes uniquement — non exposées via l'API Gateway (gateway ne proxie que /payments/**)
 app.use('/subscriptions', subscriptionsRouter);
 app.use('/refunds', refundsRouter);
 

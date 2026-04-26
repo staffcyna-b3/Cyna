@@ -17,4 +17,5 @@ export interface IOrderRepository {
   findByIdAndUserId(id: string, userId: string): Promise<Order | null>;
   updateStatus(id: string, status: OrderStatus): Promise<Order | null>;
   updateStatusByPaymentIntentId(paymentIntentId: string, status: OrderStatus): Promise<boolean>;
+  findItemsByPaymentIntentId(paymentIntentId: string): Promise<{ product_id: string; quantity: number }[]>;
 }

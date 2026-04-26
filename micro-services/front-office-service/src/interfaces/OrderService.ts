@@ -11,4 +11,5 @@ export interface IOrderService {
   getOrderById(getOrderRequest: GetOrderRequest): Promise<GetOrderResponse>;
   updateOrderStatus(orderId: string, status: OrderStatus): Promise<void>;
   updateOrderStatusByPaymentIntentId(paymentIntentId: string, status: OrderStatus): Promise<void>;
+  getOrderItemsByPaymentIntentId(paymentIntentId: string): Promise<{ product_id: string; quantity: number }[]>;
 }
