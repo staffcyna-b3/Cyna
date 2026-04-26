@@ -9,7 +9,11 @@ import { UserRoleType } from '../enum/UserRoleType.enum';
 const router = Router();
 const controller = new GatewayController();
 
+// Route publique — panier 
 router.use('/cart', optionalAuth, (req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
+
+// Route publique — formulaire de contact
+router.use('/support', (req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
 
 // Toutes les autres routes front-office nécessitent d'être connecté
 router.use(authMiddleware, requireRole(UserRoleType.USER));

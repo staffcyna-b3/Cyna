@@ -295,5 +295,17 @@
   "backoffice.moveUp": "Move up",
   "backoffice.moveDown": "Move down",
   "backoffice.ordersComingSoon": "Orders module is ready: front structure is in place, data can be connected to endpoints.",
-  "backoffice.transactionsComingSoon": "Transactions module is ready: front structure is in place, data can be connected to endpoints."
+  "backoffice.transactionsComingSoon": "Transactions module is ready: front structure is in place, data can be connected to endpoints.",
+  "contact.pageTitle": "Contact us",
+  "contact.email": "Your email address",
+  "contact.subject": "Subject",
+  "contact.message": "Message",
+  "contact.submit": "Send",
+  "contact.successTitle": "Message sent!",
+  "contact.successMessage": "We will get back to you as soon as possible.",
+  "contact.reply": "Reply by email",
+  "contact.markProcessed": "Mark as processed",
+  "contact.statusNew": "New",
+  "contact.statusProcessed": "Processed",
+  "contact.support": "Support"
 }

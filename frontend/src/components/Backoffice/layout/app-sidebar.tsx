@@ -4,6 +4,7 @@ import {
   Boxes,
   LayoutDashboard,
   LogOut,
+  Mail,
   Percent,
   RotateCcw,
   Settings,
@@ -36,6 +37,7 @@ const navItems = [
   { title: 'transactions', url: "/transactions", icon: ArrowLeftRight },
   { title: 'refunds', url: "/refunds", icon: RotateCcw },
   { title: 'discounts', url: "/discounts", icon: Percent },
+  { title: 'contact.support', url: "/support", icon: Mail },
 ]
 
 function SidebarFooterContent() {
