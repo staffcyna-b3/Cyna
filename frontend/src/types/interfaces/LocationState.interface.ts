@@ -7,4 +7,7 @@ export interface LocationState {
   billingAddressId?: string;
   shippingAddressId?: string;
   billingAddress?: AddressFormData;
+  promoCode?: string;
+  shippingFee?: number;
+  discountAmount?: number;
 }

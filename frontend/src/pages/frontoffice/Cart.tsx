@@ -68,7 +68,7 @@ export const Cart = () => {
     [items]
   )
   const finalTotal = useMemo(() => immediateTotal + shippingFee, [immediateTotal, shippingFee])
-  const finalTotalWithoutDelivery = useMemo(() => immediateTotal, [immediateTotal])
+
 
   const handleQuantityChange = (itemId: string, quantity: number) => {
     updateQuantity(itemId, quantity)
@@ -145,6 +145,7 @@ export const Cart = () => {
         billingAddressId: resolvedBillingId,
         shippingAddressId: resolvedShippingId,
         billingAddress,
+        shippingFee,
       },
     })
   }
@@ -282,7 +283,7 @@ export const Cart = () => {
           ) : (
             <>
               <p className="text-white">{t("total")}</p>
-              <p className="text-white">{formatCurrency(finalTotalWithoutDelivery)}</p>
+              <p className="text-white">{formatCurrency(immediateTotal)}</p>
             </>
           )}
           {currentStep === "cart" ? (

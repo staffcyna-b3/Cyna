@@ -5,4 +5,5 @@ export interface StripePaymentFormProps {
   cartId: string | null;
   billingAddressId: string | null;
   shippingAddressId: string | null;
+  promoCode?: string;
 }

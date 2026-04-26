@@ -14,6 +14,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   cartId,
   billingAddressId,
   shippingAddressId,
+  promoCode,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -32,7 +33,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
     if (cartId && billingAddressId && shippingAddressId && accessToken) {
       try {
         order = await createOrder(
-          { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId: paymentIntentId },
+          { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId: paymentIntentId, promoCode },
           accessToken
         );
         await updateOrderStatus(order.id, 'PAID', accessToken);

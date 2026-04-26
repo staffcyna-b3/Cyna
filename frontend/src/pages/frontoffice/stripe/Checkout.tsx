@@ -6,8 +6,10 @@ import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
 import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
+import { Button } from '@/components/ui/button';
 import { CartItem } from '@/types/interfaces/cart/CartItem';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
+import { CartService } from '@/services/CartService';
 
 const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
@@ -24,6 +26,37 @@ export const Checkout: React.FC = () => {
   const cartId = locationState.cartId ?? null;
   const billingAddressId = locationState.billingAddressId ?? null;
   const shippingAddressId = locationState.shippingAddressId ?? null;
+  const shippingFeeCents = Math.round((locationState.shippingFee ?? 0) * 100);
+
+  const [promoInput, setPromoInput] = useState('');
+  const [promoCode, setPromoCode] = useState<string | undefined>(undefined);
+  const [discountCents, setDiscountCents] = useState(0);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoLoading, setPromoLoading] = useState(false);
+
+  const handleApplyPromo = async () => {
+    if (!promoInput.trim()) return;
+    setPromoError(null);
+    setPromoLoading(true);
+    try {
+      const result = await CartService.getInstance().applyPromo(promoInput.trim());
+      setPromoCode(result.promoCode);
+      setDiscountCents(Math.round(result.discountAmount * 100));
+    } catch (err) {
+      setPromoError(err instanceof Error ? err.message : t('promoError'));
+      setPromoCode(undefined);
+      setDiscountCents(0);
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setPromoCode(undefined);
+    setDiscountCents(0);
+    setPromoInput('');
+    setPromoError(null);
+  };
 
   const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isRecurring), [cartItems]);
   const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isRecurring), [cartItems]);
@@ -190,6 +223,7 @@ export const Checkout: React.FC = () => {
                   cartId={cartId}
                   billingAddressId={billingAddressId}
                   shippingAddressId={shippingAddressId}
+                  promoCode={promoCode}
                 />
               </Elements>
             )}
@@ -233,11 +267,48 @@ export const Checkout: React.FC = () => {
           {cartItems.length > 0 && (
             <>
               <div className="my-6 border-t border-gray-200" />
+
+              {/* Promo code */}
+              <div className="mb-4">
+                {promoCode ? (
+                  <div className="flex items-center justify-between rounded-lg border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-700">
+                    <span>Code <strong>{promoCode}</strong> appliqué</span>
+                    <button onClick={handleRemovePromo} className="ml-3 text-green-600 underline text-xs">{t('remove')}</button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={promoInput}
+                      onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                      placeholder={t('promoPlaceholder')}
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#372CCA]"
+                    />
+                    <Button onClick={handleApplyPromo} disabled={promoLoading} variant="outline" size="sm">
+                      {promoLoading ? '...' : t('apply')}
+                    </Button>
+                  </div>
+                )}
+                {promoError && <p className="mt-1 text-xs text-red-500">{promoError}</p>}
+              </div>
+
               <div className="space-y-1">
                 <div className="flex justify-between">
-                  <span className="text-sm font-bold text-gray-900">{t('Total')}</span>
-                  <span className="text-sm font-bold text-gray-900">{formatEuro(totalCents)}</span>
+                  <span className="text-xs text-gray-500">{t('subtotal')}</span>
+                  <span className="text-xs text-gray-500">{formatEuro(totalCents)}</span>
                 </div>
+                {shippingFeeCents > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">{t('shipping')}</span>
+                    <span className="text-xs text-gray-500">{formatEuro(shippingFeeCents)}</span>
+                  </div>
+                )}
+                {discountCents > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span className="text-xs">{t('discount') || 'Réduction'} ({promoCode})</span>
+                    <span className="text-xs">-{formatEuro(discountCents)}</span>
+                  </div>
+                )}
                 {recurringCents > 0 && (
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-500">{t('Recurring')}</span>
@@ -246,6 +317,12 @@ export const Checkout: React.FC = () => {
                     </span>
                   </div>
                 )}
+                <div className="flex justify-between pt-1 border-t border-gray-200">
+                  <span className="text-sm font-bold text-gray-900">{t('Total')}</span>
+                  <span className="text-sm font-bold text-gray-900">
+                    {formatEuro(totalCents + shippingFeeCents - discountCents)}
+                  </span>
+                </div>
               </div>
             </>
           )}

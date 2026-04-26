@@ -72,9 +72,39 @@ export const CheckoutConfirmation = () => {
       ) : null}
 
       {total > 0 ? (
-        <div className="rounded-md border p-4 flex justify-between">
-          <span className="font-medium">{t("totalAmount")}</span>
-          <span className="font-medium">{t("currency")}{Number(total).toFixed(2)}</span>
+        <div className="rounded-md border p-4 space-y-2">
+          {(order?.shipping_fee != null || order?.discount_amount != null) && (
+            <>
+              <div className="flex justify-between text-sm text-muted-foreground">
+                <span>{t("subtotal")}</span>
+                <span>
+                  {t("currency")}
+                  {(
+                    Number(total) -
+                    Number(order?.shipping_fee ?? 0) +
+                    Number(order?.discount_amount ?? 0)
+                  ).toFixed(2)}
+                </span>
+              </div>
+              {Number(order?.shipping_fee) > 0 && (
+                <div className="flex justify-between text-sm text-muted-foreground">
+                  <span>{t("shipping")}</span>
+                  <span>{t("currency")}{Number(order.shipping_fee).toFixed(2)}</span>
+                </div>
+              )}
+              {Number(order?.discount_amount) > 0 && (
+                <div className="flex justify-between text-sm text-green-600">
+                  <span>{t("discount") || "Réduction"}{order?.promo_code ? ` (${order.promo_code})` : ""}</span>
+                  <span>-{t("currency")}{Number(order.discount_amount).toFixed(2)}</span>
+                </div>
+              )}
+              <div className="border-t pt-2" />
+            </>
+          )}
+          <div className="flex justify-between">
+            <span className="font-medium">{t("totalAmount")}</span>
+            <span className="font-medium">{t("currency")}{Number(total).toFixed(2)}</span>
+          </div>
         </div>
       ) : null}
 
