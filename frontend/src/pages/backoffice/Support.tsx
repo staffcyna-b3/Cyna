@@ -21,6 +21,7 @@ import type { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageD
 import {
   getContactMessages,
   markContactAsProcessed,
+  replyToContact,
   BackOfficeApiError,
 } from '@/services/BackOfficeOrderService';
 
@@ -46,6 +47,8 @@ function ContactMessageSheet({
   const { t } = useTranslation();
   const { accessToken } = useAuth();
   const [marking, setMarking] = useState(false);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [replying, setReplying] = useState(false);
 
   if (!message) return null;
 
@@ -60,6 +63,26 @@ function ContactMessageSheet({
       toast.error(t('errorOccurred'));
     } finally {
       setMarking(false);
+    }
+  }
+
+  async function handleReply() {
+    if (!message || !accessToken || !replyMessage.trim()) return;
+    setReplying(true);
+    try {
+      const updated = await replyToContact(accessToken, message.id, replyMessage);
+      onMarked(updated);
+      setReplyMessage('');
+      onOpenChange(false);
+      toast.success(t('contact.replySent'));
+    } catch (err: unknown) {
+      if (err instanceof BackOfficeApiError && err.status === 401) {
+        toast.error(t('sessionExpired'));
+      } else {
+        toast.error(t('errorOccurred'));
+      }
+    } finally {
+      setReplying(false);
     }
   }
 
@@ -104,22 +127,27 @@ function ContactMessageSheet({
             <StatusBadge status={message.status} />
           </div>
 
-          <div className="flex flex-col gap-2 mt-2">
-            {message.status === 'new' && (
-              <Button onClick={handleMark} disabled={marking}>
-                {t('contact.markProcessed')}
-              </Button>
-            )}
+          {message.status === 'new' && (
+            <Button onClick={handleMark} disabled={marking} variant="outline">
+              {t('contact.markProcessed')}
+            </Button>
+          )}
+
+          <div className="space-y-2 border-t pt-4">
+            <Label className="text-sm text-gray-500">{t('contact.replyLabel')}</Label>
+            <Textarea
+              value={replyMessage}
+              onChange={(e) => setReplyMessage(e.target.value)}
+              placeholder={t('contact.replyPlaceholder')}
+              className="h-28 resize-none"
+              disabled={replying}
+            />
             <Button
-              variant="outline"
-              onClick={() =>
-                window.open(
-                  `mailto:${message.email}?subject=Re: ${message.subject}`,
-                  '_blank'
-                )
-              }
+              onClick={handleReply}
+              disabled={replying || !replyMessage.trim()}
+              className="w-full"
             >
-              {t('contact.reply')}
+              {replying ? t('loading') : t('contact.reply')}
             </Button>
           </div>
         </div>

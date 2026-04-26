@@ -8,7 +8,7 @@ import ordersRouter from './routes/orders.routes';
 import transactionsRouter from './routes/transactions.routes';
 import refundsRouter from './routes/refunds.routes';
 import supportRouter from './routes/support.routes';
-import { errorHandler } from './middleware/errorHandler';
+import { errorHandler } from './middlewares/errorHandler';
 
 import productRoutes from './routes/product.routes'
 import promotionRoutes from './routes/promotion.routes'

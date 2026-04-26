@@ -129,3 +129,16 @@ export async function markContactAsProcessed(
   });
   return handleResponse<ContactMessageDTO>(res);
 }
+
+export async function replyToContact(
+  token: string,
+  id: string,
+  replyMessage: string
+): Promise<ContactMessageDTO> {
+  const res = await fetch(`/api/back-office/support/${id}/reply`, {
+    method: 'POST',
+    headers: withAuth(token),
+    body: JSON.stringify({ replyMessage }),
+  });
+  return handleResponse<ContactMessageDTO>(res);
+}
