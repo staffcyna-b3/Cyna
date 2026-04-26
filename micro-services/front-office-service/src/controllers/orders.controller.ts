@@ -23,7 +23,7 @@ export class OrderController {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
-      const { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId } = req.body as Partial<CreateOrderRequest>;
+      const { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId, promoCode } = req.body as Partial<CreateOrderRequest>;
       if (!cartId || !billingAddressId || !shippingAddressId) {
         return res.status(422).json({ message: 'Missing required fields' });
       }
@@ -36,6 +36,7 @@ export class OrderController {
         billingAddressId,
         shippingAddressId,
         stripePaymentIntentId,
+        promoCode,
       };
 
       const order = await this.orderService.createOrder(createOrderRequest);

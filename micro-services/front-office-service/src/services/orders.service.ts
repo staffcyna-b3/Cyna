@@ -8,18 +8,25 @@ import { GetOrderResponse } from "../dto/response/GetOrderResponse";
 import { IOrderRepository } from "../interfaces/OrderRepository";
 import { IOrderService } from "../interfaces/OrderService";
 import { IShippingService } from "../interfaces/IShippingService";
+import { IPromoService } from "../interfaces/IPromoService";
 
 export class OrderService implements IOrderService {
     private readonly orderRepository: IOrderRepository;
     private readonly shippingService: IShippingService;
+    private readonly promoService: IPromoService;
 
-    constructor(orderRepository: IOrderRepository, shippingService: IShippingService) {
+    constructor(
+        orderRepository: IOrderRepository,
+        shippingService: IShippingService,
+        promoService: IPromoService,
+    ) {
         this.orderRepository = orderRepository;
         this.shippingService = shippingService;
+        this.promoService = promoService;
     }
 
     async createOrder(createOrderRequest: CreateOrderRequest): Promise<CreateOrderResponse> {
-        const { userId, userEmail, cartId, billingAddressId, shippingAddressId, stripePaymentIntentId } = createOrderRequest;
+        const { userId, userEmail, cartId, billingAddressId, shippingAddressId, stripePaymentIntentId, promoCode } = createOrderRequest;
 
         const normalizedCartId = String(cartId);
         const normalizedBillingAddressId = String(billingAddressId);
@@ -72,7 +79,22 @@ export class OrderService implements IOrderService {
 
         const subtotal = orderItems.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
         const shippingFee = this.shippingService.calculateFee(cartItems);
-        const totalAmount = subtotal + shippingFee;
+
+        let discountAmount = 0;
+        let appliedPromoCode: string | null = null;
+
+        if (promoCode) {
+            const promoItems = cartItems.map((item) => ({
+                productId: item.productId,
+                isService: item.isService,
+                subtotal: item.quantity * item.unitPrice,
+            }));
+            const promoResult = await this.promoService.validate(promoCode, promoItems);
+            discountAmount = promoResult.discountAmount;
+            appliedPromoCode = promoResult.promoCode;
+        }
+
+        const totalAmount = subtotal + shippingFee - discountAmount;
 
         const order = await this.orderRepository.create({
             user_id: userId,
@@ -82,6 +104,8 @@ export class OrderService implements IOrderService {
             shipping_address_snapshot: shippingAddress.toJSON(),
             total_amount: Number(totalAmount.toFixed(2)),
             shipping_fee: shippingFee,
+            discount_amount: discountAmount,
+            promo_code: appliedPromoCode,
             status: OrderStatus.PENDING,
             stripe_payment_intent_id: stripePaymentIntentId ?? null,
         });
