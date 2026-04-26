@@ -303,9 +303,12 @@
   "contact.submit": "Send",
   "contact.successTitle": "Message sent!",
   "contact.successMessage": "We will get back to you as soon as possible.",
-  "contact.reply": "Reply by email",
+  "contact.reply": "Send reply",
   "contact.markProcessed": "Mark as processed",
   "contact.statusNew": "New",
   "contact.statusProcessed": "Processed",
-  "contact.support": "Support"
+  "contact.support": "Support",
+  "contact.replyLabel": "Your reply",
+  "contact.replyPlaceholder": "Write your reply...",
+  "contact.replySent": "Reply sent"
 }
