@@ -2,8 +2,6 @@ import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Typography } from "@/components/ui/typography";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     AlertDialog,
@@ -15,21 +13,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-} from "@/components/ui/sheet";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import type { TransactionAdminDTO } from "@/types/interfaces/admin/TransactionAdminDTO.interface";
 import type { SubscriptionAdminDTO } from "@/types/interfaces/admin/SubscriptionAdminDTO.interface";
 import type { CreateRefundRequest } from "@/types/interfaces/admin/CreateRefundRequest.interface";
@@ -65,10 +48,6 @@ export default function Transactions() {
     const [subscriptions, setSubscriptions] = useState<SubscriptionAdminDTO[]>([]);
     const [subLoading, setSubLoading] = useState(true);
     const [cancelTarget, setCancelTarget] = useState<SubscriptionAdminDTO | null>(null);
-    const [refundTarget, setRefundTarget] = useState<SubscriptionAdminDTO | null>(null);
-    const [refundPaymentIntentId, setRefundPaymentIntentId] = useState('');
-    const [refundAmount, setRefundAmount] = useState<number | undefined>(undefined);
-    const [refundReason, setRefundReason] = useState('');
     const [subSubmitting, setSubSubmitting] = useState(false);
 
     useEffect(() => {
@@ -165,32 +144,6 @@ export default function Transactions() {
             });
     }
 
-    function handleSubmitSubscriptionRefund() {
-        if (!accessToken || !refundPaymentIntentId.trim()) return;
-        setSubSubmitting(true);
-        const payload: CreateRefundRequest = {
-            payment_intent_id: refundPaymentIntentId.trim(),
-            ...(refundAmount !== undefined && { amount: refundAmount }),
-            ...(refundReason && { reason: refundReason }),
-        };
-        createRefund(accessToken, payload)
-            .then(() => {
-                toast.success(t("admin.refundSuccess"));
-                setRefundTarget(null);
-                setRefundPaymentIntentId('');
-                setRefundAmount(undefined);
-                setRefundReason('');
-            })
-            .catch((err: unknown) => {
-                if (err instanceof BackOfficeApiError && err.status === 401) {
-                    toast.error(t("sessionExpired"));
-                } else {
-                    toast.error(t("admin.refundError"));
-                }
-            })
-            .finally(() => setSubSubmitting(false));
-    }
-
     const txColumns: ColumnDef<TransactionAdminDTO>[] = [
         {
             id: "select",
@@ -282,14 +235,6 @@ export default function Transactions() {
                 const isCancelled = sub.status === "cancelled";
                 return (
                     <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={isCancelled}
-                            onClick={() => setRefundTarget(sub)}
-                        >
-                            {t("admin.refund")}
-                        </Button>
                         <Button
                             size="sm"
                             variant="destructive"
@@ -400,72 +345,6 @@ export default function Transactions() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-
-            {/* Subscription refund sheet */}
-            <Sheet
-                open={!!refundTarget}
-                onOpenChange={(open) => {
-                    if (!open) {
-                        setRefundTarget(null);
-                        setRefundPaymentIntentId('');
-                        setRefundAmount(undefined);
-                        setRefundReason('');
-                    }
-                }}
-            >
-                <SheetContent>
-                    <SheetHeader>
-                        <SheetTitle>{t("admin.createRefund")}</SheetTitle>
-                        <SheetDescription>
-                            {refundTarget?.product?.name} — {refundTarget?.user?.email}
-                        </SheetDescription>
-                    </SheetHeader>
-                    <div className="flex flex-col gap-4 p-4">
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="pi-id">Payment Intent ID</Label>
-                            <Input
-                                id="pi-id"
-                                placeholder="pi_..."
-                                value={refundPaymentIntentId}
-                                onChange={(e) => setRefundPaymentIntentId(e.target.value)}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="sub-refund-amount">{t("admin.amount")}</Label>
-                            <Input
-                                id="sub-refund-amount"
-                                type="number"
-                                placeholder={t("admin.refundAmountPlaceholder")}
-                                value={refundAmount ?? ''}
-                                onChange={(e) => setRefundAmount(e.target.value ? Number(e.target.value) : undefined)}
-                            />
-                        </div>
-                        <div className="flex flex-col gap-1.5">
-                            <Label htmlFor="sub-refund-reason">{t("admin.reason")}</Label>
-                            <Select value={refundReason} onValueChange={setRefundReason}>
-                                <SelectTrigger id="sub-refund-reason" className="w-full">
-                                    <SelectValue placeholder={t("admin.refundSelectReason")} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="requested_by_customer">{t("admin.refundReasonCustomer")}</SelectItem>
-                                    <SelectItem value="duplicate">{t("admin.refundReasonDuplicate")}</SelectItem>
-                                    <SelectItem value="fraudulent">{t("admin.refundReasonFraudulent")}</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                    <SheetFooter>
-                        <Button
-                            variant="destructive"
-                            className="w-full"
-                            disabled={subSubmitting || !refundPaymentIntentId.trim()}
-                            onClick={handleSubmitSubscriptionRefund}
-                        >
-                            {t("admin.confirmRefund")}
-                        </Button>
-                    </SheetFooter>
-                </SheetContent>
-            </Sheet>
         </>
     );
 }
