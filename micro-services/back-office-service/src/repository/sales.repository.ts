@@ -2,6 +2,7 @@ import Order from '../models/Order';
 import OrderItem from '../models/OrderItem';
 import Subscription from '../models/Subscription';
 import Product from '../models/Product';
+import Category from '../models/Category';
 import User from '../models/User';
 
 export interface SaleRow {
@@ -9,6 +10,7 @@ export interface SaleRow {
   date: Date;
   userEmail: string | null;
   productName: string;
+  categoryName: string | null;
   type: 'order' | 'subscription';
   amount: number;
   status: string;
@@ -22,7 +24,12 @@ export class SalesRepository {
         {
           model: OrderItem,
           as: 'items',
-          include: [{ model: Product, as: 'product', attributes: ['name'] }],
+          include: [{
+            model: Product,
+            as: 'product',
+            attributes: ['name'],
+            include: [{ model: Category, as: 'category', attributes: ['name'] }],
+          }],
         },
       ],
       order: [['created_at', 'DESC']],
@@ -32,11 +39,13 @@ export class SalesRepository {
       const items: any[] = o.items ?? [];
       const productName =
         items.map((i: any) => i.product?.name ?? '—').filter(Boolean).join(', ') || '—';
+      const categoryName = items[0]?.product?.category?.name ?? null;
       return {
         id: o.id,
         date: o.created_at,
         userEmail: o.user?.email ?? null,
         productName,
+        categoryName,
         type: 'order' as const,
         amount: Number(o.total_amount),
         status: o.status,
@@ -48,7 +57,12 @@ export class SalesRepository {
     const subscriptions = await Subscription.findAll({
       include: [
         { model: User, as: 'user', attributes: ['email'] },
-        { model: Product, as: 'product', attributes: ['name'] },
+        {
+          model: Product,
+          as: 'product',
+          attributes: ['name'],
+          include: [{ model: Category, as: 'category', attributes: ['name'] }],
+        },
       ],
       order: [['created_at', 'DESC']],
     });
@@ -58,6 +72,7 @@ export class SalesRepository {
       date: s.created_at,
       userEmail: s.user?.email ?? null,
       productName: s.product?.name ?? '—',
+      categoryName: s.product?.category?.name ?? null,
       type: 'subscription' as const,
       amount: Number(s.price),
       status: s.status,
