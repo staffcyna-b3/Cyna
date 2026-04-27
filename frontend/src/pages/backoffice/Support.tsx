@@ -137,6 +137,20 @@ function ContactMessageSheet({
             </Button>
           )}
 
+          {message.admin_reply && (
+            <div className="space-y-1 border-t pt-4">
+              <Label className="text-sm text-gray-500">{t('contact.previousReply')}</Label>
+              <p className="text-sm text-gray-700 bg-gray-50 rounded-md p-3 whitespace-pre-wrap">
+                {message.admin_reply}
+              </p>
+              {message.replied_at && (
+                <p className="text-xs text-gray-400">
+                  {t('contact.repliedAt')} {new Date(message.replied_at).toLocaleDateString()}
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="space-y-2 border-t pt-4">
             <Label className="text-sm text-gray-500">{t('contact.replyLabel')}</Label>
             <Textarea

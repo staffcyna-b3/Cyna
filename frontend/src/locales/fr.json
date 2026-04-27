@@ -312,5 +312,7 @@
   "contact.support": "Support",
   "contact.replyLabel": "Votre réponse",
   "contact.replyPlaceholder": "Écrivez votre réponse...",
-  "contact.replySent": "Réponse envoyée"
+  "contact.replySent": "Réponse envoyée",
+  "contact.previousReply": "Réponse envoyée",
+  "contact.repliedAt": "Répondu le"
 }

@@ -4,4 +4,5 @@ export interface ISupportRepository {
   findAll(): Promise<ContactMessage[]>;
   findById(id: string): Promise<ContactMessage | null>;
   updateStatus(id: string, status: 'new' | 'processed'): Promise<ContactMessage>;
+  markReplied(id: string, adminReply: string): Promise<ContactMessage>;
 }

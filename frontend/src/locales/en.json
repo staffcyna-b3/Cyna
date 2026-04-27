@@ -310,5 +310,7 @@
   "contact.support": "Support",
   "contact.replyLabel": "Your reply",
   "contact.replyPlaceholder": "Write your reply...",
-  "contact.replySent": "Reply sent"
+  "contact.replySent": "Reply sent",
+  "contact.previousReply": "Sent reply",
+  "contact.repliedAt": "Replied on"
 }

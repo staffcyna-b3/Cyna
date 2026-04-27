@@ -11,6 +11,8 @@ function toDTO(msg: ContactMessage): ContactMessageDTO {
     subject: msg.subject,
     message: msg.message,
     status: msg.status,
+    admin_reply: msg.admin_reply ?? null,
+    replied_at: msg.replied_at ? msg.replied_at.toISOString() : null,
     created_at: msg.created_at.toISOString(),
   };
 }
@@ -28,7 +30,7 @@ export class SupportService implements ISupportService {
 
   async getById(id: string): Promise<ContactMessageDTO> {
     const msg = await this.repo.findById(id);
-    if (!msg) throw { status: 404, error: 'CONTACT_MESSAGE_NOT_FOUND' };
+    if (!msg) throw Object.assign(new Error('CONTACT_MESSAGE_NOT_FOUND'), { status: 404 });
     return toDTO(msg);
   }
 
@@ -39,7 +41,7 @@ export class SupportService implements ISupportService {
 
   async reply(id: string, replyMessage: string): Promise<ContactMessageDTO> {
     const msg = await this.repo.findById(id);
-    if (!msg) throw { status: 404, error: 'CONTACT_MESSAGE_NOT_FOUND' };
+    if (!msg) throw Object.assign(new Error('CONTACT_MESSAGE_NOT_FOUND'), { status: 404 });
 
     await this.mailService.sendReply({
       to: msg.email,
@@ -48,7 +50,7 @@ export class SupportService implements ISupportService {
       originalMessage: msg.message,
     });
 
-    const updated = await this.repo.updateStatus(id, 'processed');
+    const updated = await this.repo.markReplied(id, replyMessage);
     return toDTO(updated);
   }
 }

@@ -11,8 +11,25 @@ export class SupportRepository implements ISupportRepository {
   }
 
   async updateStatus(id: string, status: 'new' | 'processed'): Promise<ContactMessage> {
-    const msg = await ContactMessage.findByPk(id);
-    if (!msg) throw { status: 404, error: 'CONTACT_MESSAGE_NOT_FOUND' };
-    return msg.update({ status });
+    const [count] = await ContactMessage.update({ status }, { where: { id } });
+    if (count === 0) {
+      throw Object.assign(new Error('CONTACT_MESSAGE_NOT_FOUND'), { status: 404 });
+    }
+    return ContactMessage.findByPk(id) as Promise<ContactMessage>;
+  }
+
+  async markReplied(id: string, adminReply: string): Promise<ContactMessage> {
+    const [count] = await ContactMessage.update(
+      {
+        status: 'processed',
+        admin_reply: adminReply,
+        replied_at: new Date(),
+      },
+      { where: { id } }
+    );
+    if (count === 0) {
+      throw Object.assign(new Error('CONTACT_MESSAGE_NOT_FOUND'), { status: 404 });
+    }
+    return ContactMessage.findByPk(id) as Promise<ContactMessage>;
   }
 }
