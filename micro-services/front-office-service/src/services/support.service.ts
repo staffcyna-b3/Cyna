@@ -10,10 +10,15 @@ export class SupportService implements ISupportService {
 
   async submit(data: { email: string; subject: string; message: string }): Promise<void> {
     await this.repo.create(data);
-    await this.mailService.sendContactNotification({
-      fromEmail: data.email,
-      subject: data.subject,
-      message: data.message,
-    });
+
+    try {
+      await this.mailService.sendContactNotification({
+        fromEmail: data.email,
+        subject: data.subject,
+        message: data.message,
+      });
+    } catch (error) {
+      console.warn('[SupportService] Email non envoyé :', error);
+    }
   }
 }

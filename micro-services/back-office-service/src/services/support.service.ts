@@ -1,7 +1,7 @@
 import { ISupportRepository } from '../interfaces/ISupportRepository';
 import { ISupportService } from '../interfaces/ISupportService';
 import { ContactMessageDTO } from '../dto/ContactMessageDTO';
-import { MailService } from './mail.service';
+import { IMailService } from '../interfaces/IMailService';
 import ContactMessage from '../models/ContactMessage';
 
 function toDTO(msg: ContactMessage): ContactMessageDTO {
@@ -18,7 +18,7 @@ function toDTO(msg: ContactMessage): ContactMessageDTO {
 export class SupportService implements ISupportService {
   constructor(
     private readonly repo: ISupportRepository,
-    private readonly mailService: MailService,
+    private readonly mailService: IMailService,
   ) {}
 
   async getAll(): Promise<ContactMessageDTO[]> {

@@ -59,8 +59,12 @@ function ContactMessageSheet({
       const updated = await markContactAsProcessed(accessToken, message.id);
       onMarked(updated);
       toast.success(t('contact.markProcessed'));
-    } catch {
-      toast.error(t('errorOccurred'));
+    } catch (err: unknown) {
+      if (err instanceof BackOfficeApiError && err.status === 401) {
+        toast.error(t('sessionExpired'));
+      } else {
+        toast.error(t('errorOccurred'));
+      }
     } finally {
       setMarking(false);
     }
