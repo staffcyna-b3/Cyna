@@ -27,7 +27,8 @@ export class SubscriptionLifecycleController {
   }
 
   async listRefunds(req: Request, res: Response): Promise<void> {
-    const limit = req.query.limit ? Number(req.query.limit) : 100;
+    const raw = parseInt(req.query.limit as string, 10);
+    const limit = isFinite(raw) ? Math.min(raw, 100) : 100;
     const refunds = await this.service.listRefunds(limit);
     res.status(200).json({ success: true, data: refunds });
   }

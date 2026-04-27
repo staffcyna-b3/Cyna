@@ -11,6 +11,7 @@ import subscriptionsAdminRouter from './routes/subscriptions.routes';
 import refundRequestsRouter from './routes/refundRequests.routes';
 import salesRouter from './routes/sales.routes';
 import { errorHandler } from './middleware/errorHandler';
+import { requireAdminHeader } from './middlewares/requireAdminHeader';
 
 import productRoutes from './routes/product.routes'
 import promotionRoutes from './routes/promotion.routes'
@@ -43,11 +44,10 @@ app.use('/', categoryRoutes)
 
 app.use('/users', usersRouter);
 app.use('/orders', ordersRouter);
-// Routes protégées par le gateway : authMiddleware + requireRole(ADMIN, COMMERCIAL) sur /api/back-office/**
-app.use('/transactions', transactionsRouter);
-app.use('/refunds', refundsRouter);
-app.use('/subscriptions', subscriptionsAdminRouter);
-app.use('/refund-requests', refundRequestsRouter);
+app.use('/transactions', requireAdminHeader, transactionsRouter);
+app.use('/refunds', requireAdminHeader, refundsRouter);
+app.use('/subscriptions', requireAdminHeader, subscriptionsAdminRouter);
+app.use('/refund-requests', requireAdminHeader, refundRequestsRouter);
 app.use('/sales', salesRouter);
 
 app.use(errorHandler);

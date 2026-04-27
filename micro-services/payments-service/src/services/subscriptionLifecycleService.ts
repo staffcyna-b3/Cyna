@@ -52,10 +52,15 @@ export class SubscriptionLifecycleService {
   }
 
   async resolvePaymentIntentForSubscription(subscriptionId: string): Promise<string | null> {
-    const results = await this.stripeClient.paymentIntents.search({
-      query: `metadata['subscriptionId']:'${subscriptionId}' AND status:'succeeded'`,
-      limit: 1,
-    });
+    let results!: Stripe.ApiSearchResult<Stripe.PaymentIntent>;
+    try {
+      results = await this.stripeClient.paymentIntents.search({
+        query: `metadata['subscriptionId']:'${subscriptionId}' AND status:'succeeded'`,
+        limit: 1,
+      });
+    } catch (error) {
+      handleStripeError(error);
+    }
     return results.data[0]?.id ?? null;
   }
 

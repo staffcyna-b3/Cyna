@@ -11,7 +11,15 @@ export class SubscriptionAdminController {
 
   async cancelById(req: Request, res: Response): Promise<void> {
     const id = req.params.id as string;
-    await this.service.cancelById(id);
+    const result = await this.service.cancelById(id);
+    if (!result.stripeNotified) {
+      res.status(207).json({
+        success: true,
+        warning: 'STRIPE_NOT_NOTIFIED',
+        message: "L'abonnement a été annulé localement mais Stripe n'a pas pu être notifié.",
+      });
+      return;
+    }
     res.status(200).json({ success: true });
   }
 }

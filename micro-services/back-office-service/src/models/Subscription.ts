@@ -11,11 +11,12 @@ interface SubscriptionAttributes {
   end_date: Date;
   status: SubscriptionStatus;
   price: number;
+  cancel_at_period_end: boolean;
   created_at: Date;
   updated_at: Date;
 }
 
-export interface SubscriptionCreationAttributes extends Optional<SubscriptionAttributes, 'id' | 'created_at' | 'updated_at' | 'status' | 'stripe_subscription_id'> {}
+export interface SubscriptionCreationAttributes extends Optional<SubscriptionAttributes, 'id' | 'created_at' | 'updated_at' | 'status' | 'stripe_subscription_id' | 'cancel_at_period_end'> {}
 
 class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAttributes> implements SubscriptionAttributes {
   declare id: string;
@@ -26,6 +27,7 @@ class Subscription extends Model<SubscriptionAttributes, SubscriptionCreationAtt
   declare end_date: Date;
   declare status: SubscriptionStatus;
   declare price: number;
+  declare cancel_at_period_end: boolean;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
 }
@@ -45,6 +47,10 @@ Subscription.init(
       type: DataTypes.UUID,
       allowNull: false,
     },
+    stripe_subscription_id: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+    },
     start_date: {
       type: DataTypes.DATE,
       allowNull: false,
@@ -60,6 +66,10 @@ Subscription.init(
     price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
+    },
+    cancel_at_period_end: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     created_at: {
       type: DataTypes.DATE,

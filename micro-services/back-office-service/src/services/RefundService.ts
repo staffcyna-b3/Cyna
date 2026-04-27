@@ -13,12 +13,12 @@ export class RefundService implements IRefundService {
   }
 
   async create(paymentIntentId: string, amount?: number, reason?: string): Promise<RefundAdminDTO> {
-    const body: Record<string, unknown> = { payment_intent_id: paymentIntentId };
+    const body: Record<string, unknown> = { paymentIntentId };
     if (amount !== undefined) body.amount = amount;
     if (reason !== undefined) body.reason = reason;
 
     return this.httpClient.post<RefundAdminDTO>(
-      `${process.env.MS_PAYMENTS_URL}/refund`,
+      `${process.env.MS_PAYMENTS_URL}/refunds`,
       body
     );
   }

@@ -1,38 +1,49 @@
-import RefundRequest, { RefundRequestStatus } from '../models/RefundRequest';
+import { IRefundRequestRepository } from '../interfaces/IRefundRequestRepository';
+import { RefundRequestStatus } from '../models/RefundRequest';
+import type RefundRequest from '../models/RefundRequest';
 import { IHttpClient } from '../interfaces/IHttpClient';
 import { RefundRequestAdminDTO } from '../dto/RefundRequestAdminDTO';
-import User from '../models/User';
+import { Logger } from '../common/logger';
 
 const PAYMENTS_URL = process.env.MS_PAYMENTS_URL || 'http://localhost:3004';
 
 export class RefundRequestAdminService {
-  constructor(private readonly httpClient: IHttpClient) {}
+  constructor(
+    private readonly httpClient: IHttpClient,
+    private readonly repository: IRefundRequestRepository,
+  ) {}
 
-  async getAll(): Promise<RefundRequestAdminDTO[]> {
-    const requests = await RefundRequest.findAll({
-      where: { status: RefundRequestStatus.PENDING },
-      include: [{ model: User, as: 'user', attributes: ['id', 'full_name', 'email'] }],
-      order: [['created_at', 'DESC']],
-    });
+  async getPending(): Promise<RefundRequestAdminDTO[]> {
+    const requests = await this.repository.findPending();
     return requests.map((r) => this.toDTO(r));
   }
 
   async updateStatus(id: number, status: 'approved' | 'rejected'): Promise<RefundRequestAdminDTO> {
-    const request = await RefundRequest.findByPk(id);
+    const request = await this.repository.findById(id);
     if (!request) {
       throw { status: 404, code: 'NOT_FOUND', message: 'Demande introuvable' };
     }
 
+    // Update DB first — prevents double-refund if the Stripe call fails later
+    await this.repository.updateStatus(id, status as RefundRequestStatus);
+
     if (status === 'approved') {
-      await this.httpClient.post(`${PAYMENTS_URL}/refunds`, {
-        ...(request.stripe_payment_intent_id
-          ? { paymentIntentId: request.stripe_payment_intent_id }
-          : { subscriptionId: request.stripe_subscription_id }),
-      });
+      try {
+        await this.httpClient.post(`${PAYMENTS_URL}/refunds`, {
+          ...(request.stripe_payment_intent_id
+            ? { paymentIntentId: request.stripe_payment_intent_id }
+            : { subscriptionId: request.stripe_subscription_id }),
+        });
+      } catch (err) {
+        // Stripe failed — revert to pending so the admin can retry
+        await this.repository.updateStatus(id, RefundRequestStatus.PENDING);
+        Logger.error('[REFUND-REQUEST] Stripe refund failed, status reverted to pending', { id, err });
+        throw { status: 502, code: 'STRIPE_ERROR', message: 'Échec du remboursement Stripe' };
+      }
     }
 
-    await request.update({ status: status as RefundRequestStatus });
-    return this.toDTO(request);
+    const updated = await this.repository.findById(id);
+    return this.toDTO(updated!);
   }
 
   private toDTO(r: RefundRequest): RefundRequestAdminDTO {

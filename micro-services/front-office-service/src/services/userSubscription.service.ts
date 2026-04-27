@@ -1,20 +1,18 @@
 import Subscription from '../models/Subscription';
-import { SubscriptionStatus } from '../enum/SubscriptionStatus';
+import { ISubscriptionRepository } from '../interfaces/ISubscriptionRepository';
 import { IRefundRequestRepository } from '../interfaces/IRefundRequestRepository';
 import { Logger } from '../common/logger';
-import Product from '../models/Product';
 
 const PAYMENTS_URL = process.env.MS_PAYMENTS_URL || 'http://localhost:3004';
 
 export class UserSubscriptionService {
-  constructor(private readonly refundRequestRepository: IRefundRequestRepository) {}
+  constructor(
+    private readonly subscriptionRepository: ISubscriptionRepository,
+    private readonly refundRequestRepository: IRefundRequestRepository,
+  ) {}
 
   async getByUserId(userId: string): Promise<Subscription[]> {
-    return Subscription.findAll({
-      where: { user_id: userId },
-      include: [{ model: Product, as: 'product', attributes: ['id', 'name'] }],
-      order: [['created_at', 'DESC']],
-    });
+    return this.subscriptionRepository.findByUserId(userId);
   }
 
   async cancelAtPeriodEnd(stripeSubscriptionId: string, userId: string): Promise<Subscription> {
@@ -62,9 +60,7 @@ export class UserSubscriptionService {
   }
 
   private async findAndVerifyOwnership(stripeSubscriptionId: string, userId: string): Promise<Subscription> {
-    const subscription = await Subscription.findOne({
-      where: { stripe_subscription_id: stripeSubscriptionId },
-    });
+    const subscription = await this.subscriptionRepository.findByStripeId(stripeSubscriptionId);
 
     if (!subscription) {
       throw { status: 404, code: 'SUBSCRIPTION_NOT_FOUND', message: 'Abonnement introuvable' };

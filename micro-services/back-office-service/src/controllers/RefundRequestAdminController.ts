@@ -5,7 +5,7 @@ export class RefundRequestAdminController {
   constructor(private readonly service: RefundRequestAdminService) {}
 
   async getAll(_req: Request, res: Response): Promise<void> {
-    const data = await this.service.getAll();
+    const data = await this.service.getPending();
     res.status(200).json({ success: true, data });
   }
 

@@ -12,7 +12,8 @@ export function createSubscriptionController(): SubscriptionController {
 }
 
 export function createUserSubscriptionController(): UserSubscriptionController {
+  const subscriptionRepository = new SubscriptionRepository();
   const refundRequestRepository = new RefundRequestRepository();
-  const service = new UserSubscriptionService(refundRequestRepository);
+  const service = new UserSubscriptionService(subscriptionRepository, refundRequestRepository);
   return new UserSubscriptionController(service);
 }
