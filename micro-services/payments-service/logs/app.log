@@ -246,3 +246,7 @@
 [26/04/2026 20:30:54] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXRp1AdBsYOB9D1khUUS8P","paymentIntentId":"pi_3TQXRp1AdBsYOB9D1AIjhIhh","invoiceId":null}
 [26/04/2026 20:30:57] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXRp1AdBsYOB9D14c6RvUT"}
 [26/04/2026 20:30:57] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[27/04/2026 21:19:48] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.updated","eventId":"evt_1TQuh51AdBsYOB9DNEZfl8GP"}
+[27/04/2026 21:19:48] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.updated
+[27/04/2026 21:19:48] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.voided","eventId":"evt_1TQuh51AdBsYOB9Dss6qL7rb"}
+[27/04/2026 21:19:48] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.voided
