@@ -295,5 +295,401 @@
   "backoffice.moveUp": "Move up",
   "backoffice.moveDown": "Move down",
   "backoffice.ordersComingSoon": "Orders module is ready: front structure is in place, data can be connected to endpoints.",
-  "backoffice.transactionsComingSoon": "Transactions module is ready: front structure is in place, data can be connected to endpoints."
+  "backoffice.transactionsComingSoon": "Transactions module is ready: front structure is in place, data can be connected to endpoints.",
+
+  "legal": {
+    "tag": "Legal",
+    "lastUpdate": "Last updated: {{date}}",
+    "updateDate": "April 28, 2026",
+    "contactFooter": "For any questions, contact us at",
+    "companyName": "Cyna SAS",
+    "contactEmail": "contact@cyna.fr",
+    "privacyEmail": "privacy@cyna.fr",
+
+    "cgu": {
+      "title": "Terms of Use",
+      "s1": {
+        "title": "1. Purpose",
+        "p1": "These Terms of Use (hereinafter \"ToU\") define the terms and conditions under which the company Cyna SAS makes its platform available to users at cyna.fr (hereinafter \"the Platform\"), as well as the rights and obligations of the parties.",
+        "p2": "Accessing and using the Platform implies full and unreserved acceptance of these ToU. Any person who accesses the Platform agrees to comply with these terms without reservation."
+      },
+      "s2": {
+        "title": "2. Company information",
+        "p1": "The Platform is published by Cyna SAS, a simplified joint-stock company with share capital of €10,000, registered with the Paris Trade and Companies Registry under number 123 456 789 00010 (RCS Paris B 123 456 789), with its registered office at 10 Rue de la Paix, 75001 Paris, France.",
+        "p2": "Publication Director: Jean Dupont — Contact: contact@cyna.fr"
+      },
+      "s3": {
+        "title": "3. Access to the Platform",
+        "p1": "The Platform is accessible to any user with Internet access. All costs related to access (hardware, software, Internet connection) are exclusively borne by the user.",
+        "p2": "Cyna SAS reserves the right, without notice or compensation, to temporarily or permanently close the Platform or access to one or more services, in particular for maintenance, updates, or improvements.",
+        "p3": "To access certain services, the user must create an account. The user is solely responsible for the confidentiality of their credentials and all activity carried out from their account."
+      },
+      "s4": {
+        "title": "4. Account creation",
+        "p1": "When creating an account, the user agrees to provide accurate, complete, and up-to-date information and to update it if it changes.",
+        "p2": "Cyna SAS reserves the right to suspend or delete any account whose information is inaccurate, incomplete, misleading, or in violation of these ToU.",
+        "p3": "The user agrees not to create multiple accounts, not to impersonate a third party, and not to use personal data belonging to another person."
+      },
+      "s5": {
+        "title": "5. Use of the Platform",
+        "intro": "The user agrees to use the Platform lawfully and in accordance with these ToU. In particular, it is prohibited to:",
+        "items": [
+          "Use the Platform for illegal, fraudulent purposes or contrary to these ToU",
+          "Infringe the intellectual property rights of Cyna SAS or third parties",
+          "Transmit unlawful, defamatory, offensive, obscene, or violent content",
+          "Introduce viruses, Trojan horses, or any other malicious program",
+          "Attempt to gain unauthorized access to Cyna SAS computer systems",
+          "Scrape or automatically collect data from the Platform",
+          "Use the Platform to send unsolicited messages (spam)"
+        ]
+      },
+      "s6": {
+        "title": "6. Intellectual property",
+        "p1": "All elements of the Platform (texts, images, graphics, logos, icons, sounds, software, etc.) are the exclusive property of Cyna SAS or its partners and are protected by French and international intellectual property laws.",
+        "p2": "Any reproduction, representation, modification, publication, or adaptation of any part of the Platform's content, by any means, without the prior written authorization of Cyna SAS, is prohibited."
+      },
+      "s7": {
+        "title": "7. Liability",
+        "p1": "Cyna SAS endeavors to ensure the availability and proper functioning of the Platform but cannot guarantee uninterrupted availability or the absence of errors.",
+        "p2": "Cyna SAS shall not be liable for direct or indirect damages resulting from the use or inability to use the Platform, service interruptions, fraudulent intrusions, or data alteration.",
+        "p3": "The user is solely responsible for their use of the Platform and services, as well as the content they publish or transmit."
+      },
+      "s8": {
+        "title": "8. Hyperlinks",
+        "p1": "The Platform may contain links to third-party websites. These links are provided for informational purposes and Cyna SAS shall not be liable for the content of these sites or their privacy policies."
+      },
+      "s9": {
+        "title": "9. Personal data protection",
+        "p1": "Cyna SAS processes users' personal data in accordance with its Privacy Policy, available on the Platform, and in compliance with the General Data Protection Regulation (GDPR) and the French Data Protection Act."
+      },
+      "s10": {
+        "title": "10. Modification of ToU",
+        "p1": "Cyna SAS reserves the right to modify these ToU at any time. Users will be informed of any substantial modification by email or through a Platform notification. Continued use of the Platform after notification constitutes acceptance of the new ToU."
+      },
+      "s11": {
+        "title": "11. Termination",
+        "p1": "The user may close their account at any time from their personal space settings or by contacting support. Cyna SAS reserves the right to terminate or suspend a user's access in case of violation of these ToU, without notice or compensation."
+      },
+      "s12": {
+        "title": "12. Applicable law and jurisdiction",
+        "p1": "These ToU are governed by French law. In the event of a dispute regarding their interpretation or execution, the parties agree to seek an amicable solution before any legal action. Failing amicable agreement, any dispute shall be submitted to the competent courts of Paris."
+      }
+    },
+
+    "cgv": {
+      "title": "General Terms and Conditions of Sale",
+      "s1": {
+        "title": "1. Scope",
+        "p1": "These General Terms and Conditions of Sale (hereinafter \"GTC\") apply to all sales of products and services made by Cyna SAS through the cyna.fr platform to any buyer, consumer, or professional.",
+        "p2": "Any order implies unreserved acceptance of these GTC. Cyna SAS reserves the right to modify these conditions at any time; the applicable GTC are those in force at the date of the order."
+      },
+      "s2": {
+        "title": "2. Products and services",
+        "p1": "Cyna SAS offers cybersecurity solutions for sale (software, subscriptions, managed services, training) as described on the Platform. The essential characteristics of each offer are presented on the corresponding product page.",
+        "p2": "Cyna SAS reserves the right to modify its product and service catalog at any time. Offers are valid as long as they are visible on the Platform."
+      },
+      "s3": {
+        "title": "3. Prices",
+        "p1": "Prices are indicated in euros (€) inclusive of all taxes. Cyna SAS reserves the right to modify its prices at any time; the prices charged are those in force at the time of order validation.",
+        "p2": "Promotional codes are single-use unless otherwise stated and cannot be combined."
+      },
+      "s4": {
+        "title": "4. Order",
+        "intro": "To place an order, the buyer must have an active account. The order is validated after:",
+        "items": [
+          "Selection of desired products/services",
+          "Review of the order summary",
+          "Entry of billing information",
+          "Choice of payment method",
+          "Acceptance of these GTC",
+          "Payment confirmation"
+        ],
+        "p1": "A confirmation email is sent to the address provided during the order. Cyna SAS reserves the right to refuse or cancel an order in the event of a payment dispute on a previous order or suspicion of fraud."
+      },
+      "s5": {
+        "title": "5. Payment",
+        "p1": "Payment is due immediately upon ordering. Payments are secured and processed by our payment provider Stripe. Accepted payment methods include credit cards (Visa, Mastercard, American Express) and any other method indicated on the Platform.",
+        "p2": "Cyna SAS does not store any banking data. In the event of payment failure, the order is automatically cancelled."
+      },
+      "s6": {
+        "title": "6. Delivery and access to services",
+        "p1": "For digital products and subscriptions, access is provided immediately after payment confirmation via the Platform or by email. For services requiring human intervention, an implementation timeframe is specified in the offer description.",
+        "p2": "In the event of force majeure making service delivery impossible, Cyna SAS will inform the buyer as soon as possible and propose an alternative solution or a refund."
+      },
+      "s7": {
+        "title": "7. Right of withdrawal",
+        "p1": "In accordance with Article L221-18 of the Consumer Code, the consumer has a 14-day period from the conclusion of the contract to exercise their right of withdrawal, without having to justify their reasons or pay penalties.",
+        "p2": "Exception: in accordance with Article L221-28, the right of withdrawal cannot be exercised for digital content whose execution has begun with the consumer's prior express agreement and waiver of their right of withdrawal. This waiver is collected at the time of the order.",
+        "p3": "To exercise this right, the buyer must notify their withdrawal decision by email to contact@cyna.fr before the deadline expires."
+      },
+      "s8": {
+        "title": "8. Warranties",
+        "p1": "In accordance with legal provisions, Cyna SAS is bound by the legal warranties of conformity (Articles L217-4 et seq. of the Consumer Code) and hidden defects (Articles 1641 et seq. of the Civil Code).",
+        "p2": "For digital products and services, Cyna SAS guarantees their compliance with the specifications described on the Platform for the duration of the subscription or as agreed."
+      },
+      "s9": {
+        "title": "9. Liability",
+        "p1": "Cyna SAS commits to deploying all necessary means for proper service execution. Its liability may only be engaged in the event of proven fault and shall be limited to the amount of the relevant order.",
+        "p2": "Cyna SAS shall not be liable for indirect damages, loss of business, or data loss suffered by the buyer."
+      },
+      "s10": {
+        "title": "10. Subscriptions and cancellation",
+        "p1": "Subscriptions renew automatically at expiry, unless cancelled by the buyer at least 48 hours before the renewal date from their personal space or by email to contact@cyna.fr.",
+        "p2": "Upon cancellation, access to the service remains available until the end of the current period. No pro-rata refund will be made unless otherwise specified."
+      },
+      "s11": {
+        "title": "11. Force majeure",
+        "p1": "Cyna SAS shall not be liable for non-performance or delay in performing its obligations in the event of force majeure within the meaning of Article 1218 of the Civil Code."
+      },
+      "s12": {
+        "title": "12. Mediation and dispute resolution",
+        "p1": "In the event of a dispute, the buyer should first contact customer service at contact@cyna.fr. Failing an amicable resolution within 60 days, the consumer may resort free of charge to a consumer mediator in accordance with Articles L611-1 et seq. of the Consumer Code.",
+        "p2": "The European online dispute resolution platform is accessible at: https://ec.europa.eu/consumers/odr"
+      },
+      "s13": {
+        "title": "13. Applicable law",
+        "p1": "These GTC are governed by French law. Any dispute regarding their interpretation or execution falls under the exclusive jurisdiction of the French courts."
+      },
+      "footerNote": "For any questions regarding an order, contact us at"
+    },
+
+    "privacy": {
+      "title": "Privacy Policy",
+      "s1": {
+        "title": "1. Introduction",
+        "p1": "Cyna SAS places the utmost importance on protecting your personal data. This Privacy Policy describes how we collect, use, store, and protect your data when using our platform cyna.fr.",
+        "p2": "We process your data in compliance with the General Data Protection Regulation (GDPR — EU Regulation 2016/679) and the French Data Protection Act (Loi Informatique et Libertés, as amended)."
+      },
+      "s2": {
+        "title": "2. Data controller",
+        "p1": "The data controller is Cyna SAS, with its registered office at 10 Rue de la Paix, 75001 Paris, France, registered under number 123 456 789 00010 (RCS Paris B 123 456 789).",
+        "p2": "For any questions about your personal data, you can contact us:",
+        "dpo": "DPO (Data Protection Officer): privacy@cyna.fr — Cyna SAS, 10 Rue de la Paix, 75001 Paris, France"
+      },
+      "s3": {
+        "title": "3. Data collected",
+        "intro": "We collect the following categories of data:",
+        "id": {
+          "title": "Identification data",
+          "content": "Full name, email address, password (hashed via bcrypt, unreadable), email verification status."
+        },
+        "address": {
+          "title": "Address data",
+          "content": "Billing and delivery addresses (address line, city, postal code, country). These addresses are also stored as snapshots in each order history to ensure traceability."
+        },
+        "order": {
+          "title": "Order and payment data",
+          "content": "Order history (items, quantities, amounts, status), Stripe transaction ID, amount, currency, payment type (one-time or subscription), Stripe customer ID (stripe_customer_id) linked to your account for recurring payments."
+        },
+        "auth": {
+          "title": "Authentication data",
+          "content": "Session tokens (refresh token, \"remember me\" token) stored in hashed form in the database. Temporary tokens for email confirmation and password reset (hashed, single-use). Two-factor authentication (2FA) codes — 6-digit codes, valid for 5 minutes, deleted after verification."
+        },
+        "logs": {
+          "title": "Technical logs",
+          "content": "HTTP method, request path, response code, processing duration and timestamp. These logs are stored in secure files on the server and used only for debugging and security purposes."
+        }
+      },
+      "s4": {
+        "title": "4. Purposes and legal bases for processing",
+        "rows": [
+          { "purpose": "User account management", "basis": "Contract performance" },
+          { "purpose": "Order and payment processing via Stripe", "basis": "Contract performance" },
+          { "purpose": "Sending transactional emails (confirmation, password reset, 2FA)", "basis": "Contract performance" },
+          { "purpose": "Platform security and fraud prevention", "basis": "Legitimate interest" },
+          { "purpose": "Technical logs (debugging, monitoring)", "basis": "Legitimate interest" },
+          { "purpose": "Compliance with legal and accounting obligations", "basis": "Legal obligation" }
+        ],
+        "colPurpose": "Purpose",
+        "colBasis": "Legal basis"
+      },
+      "s5": {
+        "title": "5. Retention periods",
+        "intro": "We retain your data for the period strictly necessary for the purposes for which it was collected:",
+        "items": [
+          "Account data: duration of contractual relationship + 3 years after termination",
+          "Orders and invoices: 10 years (legal accounting obligations)",
+          "Technical logs: 12 rolling months",
+          "Authentication tokens (refresh, remember-me): configured validity period (session or until logout)",
+          "Temporary tokens (email, reset, 2FA): deleted after use or expiration (5 minutes for 2FA codes)"
+        ]
+      },
+      "s6": {
+        "title": "6. Recipients of data",
+        "intro": "Your data may be transmitted to the following categories of recipients:",
+        "items": [
+          "Stripe Inc. (United States) — payment provider: transaction processing, subscription management and Stripe customer ID storage. Transfer governed by the European Commission's standard contractual clauses.",
+          "Google LLC via Gmail SMTP — transactional email provider (email confirmation, password reset, 2FA codes).",
+          "OVHcloud (hosting provider) — hosting of the Platform's technical infrastructure.",
+          "Competent authorities when legally required."
+        ],
+        "p1": "We do not sell your personal data to third parties for commercial purposes."
+      },
+      "s7": {
+        "title": "7. Your rights",
+        "intro": "Under the GDPR, you have the following rights regarding your personal data:",
+        "items": [
+          "Right of access: obtain a copy of the data we process about you",
+          "Right to rectification: correct inaccurate or incomplete data",
+          "Right to erasure: obtain the deletion of your data (\"right to be forgotten\")",
+          "Right to restriction: suspend the processing of your data in certain cases",
+          "Right to portability: receive your data in a structured, machine-readable format",
+          "Right to object: object to processing based on legitimate interest",
+          "Right to withdraw consent: at any time, without affecting the lawfulness of prior processing"
+        ],
+        "p1": "To exercise these rights, contact us at privacy@cyna.fr. We will respond within one month. You may also file a complaint with the relevant supervisory authority (CNIL in France: www.cnil.fr)."
+      },
+      "s8": {
+        "title": "8. Data security",
+        "p1": "Cyna SAS implements all appropriate technical and organizational measures to ensure the security and confidentiality of your data, including: encrypted communications (TLS/SSL), password and token hashing (bcrypt), two-factor authentication (2FA), rate limiting, access logging and strict access controls between microservices.",
+        "p2": "In the event of a data breach likely to result in a high risk to your rights and freedoms, we will inform you as soon as possible in accordance with Article 34 of the GDPR."
+      },
+      "s9": {
+        "title": "9. Cookies",
+        "p1": "Our Platform uses technical cookies necessary for its operation (session management, security). For more information, please see our Cookie Policy."
+      },
+      "s10": {
+        "title": "10. Changes",
+        "p1": "We reserve the right to modify this policy at any time. In the event of a substantial change, we will inform you by email or through a Platform notification."
+      },
+      "footerNote": "For any questions about your personal data, contact our DPO at"
+    },
+
+    "mentions": {
+      "title": "Legal Notice",
+      "s1": {
+        "title": "1. Publisher",
+        "fields": [
+          { "label": "Company name", "value": "Cyna SAS" },
+          { "label": "Legal form", "value": "Société par Actions Simplifiée (SAS)" },
+          { "label": "Share capital", "value": "€10,000" },
+          { "label": "SIRET", "value": "123 456 789 00010" },
+          { "label": "RCS", "value": "Paris B 123 456 789" },
+          { "label": "VAT number", "value": "FR 12 123456789" },
+          { "label": "Registered office", "value": "10 Rue de la Paix, 75001 Paris, France" },
+          { "label": "Phone", "value": "+33 1 23 45 67 89" },
+          { "label": "Email", "value": "contact@cyna.fr" },
+          { "label": "Publication Director", "value": "Jean Dupont" }
+        ]
+      },
+      "s2": {
+        "title": "2. Hosting",
+        "fields": [
+          { "label": "Hosting provider", "value": "OVHcloud SAS" },
+          { "label": "Address", "value": "2 Rue Kellermann, 59100 Roubaix, France" },
+          { "label": "Website", "value": "www.ovhcloud.com" }
+        ]
+      },
+      "s3": {
+        "title": "3. Intellectual property",
+        "p1": "All content on this site (texts, images, logos, graphics, sounds, software, databases, etc.) is the exclusive property of Cyna SAS or its partners and is protected by French and international copyright and intellectual property laws.",
+        "p2": "Any reproduction, representation, modification, publication, transmission, or distortion, in whole or in part, of the site or its content, by any means, without the prior express authorization of Cyna SAS, is prohibited and constitutes an infringement under Articles L335-2 et seq. of the Intellectual Property Code.",
+        "p3": "The Cyna name and logo are registered trademarks. Their use without prior written authorization from Cyna SAS is strictly prohibited."
+      },
+      "s4": {
+        "title": "4. Personal data protection",
+        "p1": "In accordance with the French Data Protection Act and the GDPR, personal information collected via this site is processed by Cyna SAS as data controller.",
+        "p2": "For more information on how we manage your personal data and how to exercise your rights, please see our Privacy Policy.",
+        "p3": "You have rights of access, rectification, erasure, restriction, portability, and objection that you can exercise by contacting: privacy@cyna.fr",
+        "p4": "For unresolved complaints, you may contact the CNIL: www.cnil.fr"
+      },
+      "s5": {
+        "title": "5. Cookies",
+        "p1": "This site uses cookies necessary for its proper operation. For more information and to manage your preferences, see our Cookie Policy."
+      },
+      "s6": {
+        "title": "6. Hyperlinks",
+        "p1": "The site may contain links to third-party websites. Cyna SAS has no control over these sites and disclaims all liability for their content. The creation of any hyperlink pointing to cyna.fr is subject to the prior written agreement of Cyna SAS."
+      },
+      "s7": {
+        "title": "7. Limitation of liability",
+        "p1": "Cyna SAS endeavors to ensure the accuracy and currency of information published on this site. However, Cyna SAS cannot guarantee the accuracy, completeness, or timeliness of information and disclaims all liability for any inaccuracy, error, or omission.",
+        "p2": "Cyna SAS shall not be liable for direct or indirect damages resulting from the use of this site or inability to access it, nor from the use of other sites to which it links."
+      },
+      "s8": {
+        "title": "8. Applicable law",
+        "p1": "This site and its legal notice are governed by French law. Any dispute relating to the use of this site falls under the exclusive jurisdiction of the French courts."
+      },
+      "s9": {
+        "title": "9. Contact",
+        "general": "General email:",
+        "privacy": "Personal data:",
+        "address": "Address:",
+        "addressValue": "10 Rue de la Paix, 75001 Paris, France"
+      },
+      "footerNote": "This legal notice was drafted in accordance with the provisions of the French Digital Economy Confidence Act (LCEN) of June 21, 2004."
+    },
+
+    "cookies": {
+      "title": "Cookie Policy",
+      "s1": {
+        "title": "1. What is a cookie?",
+        "p1": "A cookie is a small text file placed on your device (computer, tablet, smartphone) when you visit a website. It is read by the server on subsequent visits and helps improve your browsing experience by storing certain information.",
+        "p2": "Cookies cannot launch programs or transmit viruses. They are associated only with the browser you use and do not allow you to be personally identified without additional data."
+      },
+      "s2": {
+        "title": "2. Cookies used on cyna.fr",
+        "necessary": {
+          "title": "Strictly necessary cookies",
+          "badge": "Always active",
+          "p1": "These cookies are essential for the Platform to function and cannot be disabled. They include:",
+          "items": [
+            "User session management (JWT authentication)",
+            "Shopping cart",
+            "Language preferences",
+            "CSRF protection (form security)",
+            "Cookie consent storage"
+          ],
+          "duration": "Retention period: session duration or up to 12 months."
+        },
+        "functional": {
+          "title": "Functional cookies",
+          "badge": "Consent required",
+          "p1": "These cookies allow us to remember your preferences to personalize your user experience.",
+          "items": [
+            "Display preferences",
+            "Recently viewed products",
+            "Saved catalog filters"
+          ],
+          "duration": "Retention period: maximum 6 months."
+        }
+      },
+      "s3": {
+        "title": "3. Third-party cookies",
+        "p1": "Certain third-party services integrated into our Platform may place cookies on your device. These cookies are subject to the privacy policies of the companies that issue them.",
+        "colName": "Provider",
+        "colPurpose": "Purpose",
+        "colPolicy": "Policy",
+        "rows": [
+          { "name": "Stripe Inc.", "purpose": "Secure payment processing and fraud prevention", "policy": "stripe.com/privacy" },
+          { "name": "Google LLC (Gmail)", "purpose": "Transactional email delivery", "policy": "policies.google.com/privacy" }
+        ]
+      },
+      "s4": {
+        "title": "4. Managing your preferences",
+        "p1": "On your first visit to our site, a cookie management banner allows you to accept or refuse non-essential cookies. You can change your preferences at any time.",
+        "p2": "You can also configure your browser to refuse all or some cookies. Instructions vary by browser:",
+        "browsers": [
+          "Google Chrome: Settings → Privacy and security → Cookies",
+          "Mozilla Firefox: Settings → Privacy & Security → Cookies",
+          "Safari: Preferences → Privacy → Cookies",
+          "Microsoft Edge: Settings → Privacy → Cookies"
+        ],
+        "p3": "Note: disabling cookies necessary for the site's operation may impair your experience and prevent access to certain features."
+      },
+      "s5": {
+        "title": "5. Consent duration",
+        "p1": "Your consent (or refusal) is stored for 6 months. After this period, your agreement will be requested again."
+      },
+      "s6": {
+        "title": "6. Legal basis",
+        "p1": "In accordance with CNIL guidelines and the requirements of Article 82 of the French Data Protection Act, non-essential cookies are only placed after collecting your express, free, informed, and unambiguous consent."
+      },
+      "s7": {
+        "title": "7. Contact",
+        "p1": "For any questions about our use of cookies or to exercise your rights, contact us at"
+      },
+      "footerNote": "This cookie policy complies with CNIL guidelines on cookies and trackers (deliberation no. 2020-092 of September 17, 2020)."
+    }
+  }
 }

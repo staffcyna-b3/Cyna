@@ -28,6 +28,11 @@ import { Cart } from "@/pages/frontoffice/Cart"
 import AccountPage from "@/pages/frontoffice/AccountPage"
 import OrdersPage from "@/pages/frontoffice/OrdersPage"
 import { ProtectedRoute } from "@/components/protectedRoute"
+import CGU from "@/pages/frontoffice/legal/CGU"
+import CGV from "@/pages/frontoffice/legal/CGV"
+import PrivacyPolicy from "@/pages/frontoffice/legal/PrivacyPolicy"
+import MentionsLegales from "@/pages/frontoffice/legal/MentionsLegales"
+import CookiePolicy from "@/pages/frontoffice/legal/CookiePolicy"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -135,6 +140,11 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route path="/legal/cgu" element={<CGU />} />
+        <Route path="/legal/cgv" element={<CGV />} />
+        <Route path="/legal/confidentialite" element={<PrivacyPolicy />} />
+        <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
+        <Route path="/legal/cookies" element={<CookiePolicy />} />
         <Route path="/checkout/success" element={<CheckoutSuccess />} />
         <Route path="/checkout/cancel" element={<CheckoutCancel />} />
         <Route path="/checkout/confirmation" element={<CheckoutConfirmation />} />
