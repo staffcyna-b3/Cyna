@@ -154,12 +154,15 @@ function computeSalesSeries(
 function computeCategoryData(
   sales: SaleAdminDTO[],
 ): { category: string; sales: number; averageBasket: number }[] {
-  const paid = sales.filter((s) => PAID_STATUSES.includes(s.status) && s.categoryName);
+  const paid = sales.filter(
+    (s) => PAID_STATUSES.includes(s.status) && s.categoryNames.length > 0,
+  );
   const map = new Map<string, { total: number; count: number }>();
   paid.forEach((s) => {
-    const cat = s.categoryName!;
-    const existing = map.get(cat) ?? { total: 0, count: 0 };
-    map.set(cat, { total: existing.total + s.amount, count: existing.count + 1 });
+    s.categoryNames.forEach((cat) => {
+      const existing = map.get(cat) ?? { total: 0, count: 0 };
+      map.set(cat, { total: existing.total + s.amount, count: existing.count + 1 });
+    });
   });
   return Array.from(map.entries()).map(([category, { total, count }]) => ({
     category,
@@ -182,10 +185,10 @@ export function computeDashboardData(
   const prevRangedSales = filterByRange(allSales, prevFrom, prevTo);
 
   const currentSales = categoryFilter
-    ? rangedSales.filter((s) => s.categoryName === categoryFilter)
+    ? rangedSales.filter((s) => s.categoryNames.includes(categoryFilter))
     : rangedSales;
   const previousSales = categoryFilter
-    ? prevRangedSales.filter((s) => s.categoryName === categoryFilter)
+    ? prevRangedSales.filter((s) => s.categoryNames.includes(categoryFilter))
     : prevRangedSales;
 
   const kpis = computeKpis(currentSales, previousSales);
@@ -193,8 +196,8 @@ export function computeDashboardData(
   const categoryData = computeCategoryData(rangedSales);
 
   const categories = Array.from(
-    new Set(allSales.map((s) => s.categoryName).filter(Boolean)),
-  ) as string[];
+    new Set(allSales.flatMap((s) => s.categoryNames)),
+  );
 
   return { kpis, salesSeries, categoryData, categories };
 }
