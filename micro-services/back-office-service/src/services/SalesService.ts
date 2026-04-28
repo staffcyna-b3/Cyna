@@ -1,5 +1,6 @@
 import { SaleAdminDTO } from '../dto/SaleAdminDTO';
-import { ISalesRepository, SaleRow } from '../repository/ISalesRepository';
+import { ISalesRepository} from '../repository/ISalesRepository';
+import { SaleRow } from '../interfaces/SaleRow.interface';
 
 export interface DashboardStats {
   totalRevenue: number;

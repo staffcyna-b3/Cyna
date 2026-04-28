@@ -5,7 +5,8 @@ import Subscription from '../models/Subscription';
 import Product from '../models/Product';
 import Category from '../models/Category';
 import User from '../models/User';
-import { DateFilter, ISalesRepository, SaleRow } from './ISalesRepository';
+import { DateFilter, ISalesRepository } from './ISalesRepository';
+import { SaleRow } from '../interfaces/SaleRow.interface';
 
 export class SalesRepository implements ISalesRepository {
   async findAllOrders(filter?: DateFilter): Promise<SaleRow[]> {
