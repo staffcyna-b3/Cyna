@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import ReactApexChart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
@@ -11,9 +12,17 @@ import { getSales, BackOfficeApiError } from "@/services/BackOfficeOrderService"
 import { computeDashboardData, type TimePeriod } from "@/services/dashboardService";
 import type { SaleAdminDTO } from "@/types/interfaces/admin/SaleAdminDTO.interface";
 import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const CHART_COLOR = "#4F46E5";
 const DONUT_COLORS = ["#818CF8", "#4F46E5", "#1E3A8A", "#7C6FCD"];
+const ALL_CATEGORIES_VALUE = "__all_categories__";
 
 const baseBarOptions: ApexOptions = {
   chart: {
@@ -136,25 +145,29 @@ export default function Dashboard() {
   return (
     <>
       <header className="px-6 flex flex-col sm:flex-row sm:h-16 shrink-0 sm:items-center gap-3 py-3 sm:py-0 justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 flex-wrap">
           <SidebarTrigger className="md:hidden -ml-1" />
           <Typography variant="h1">{t("dashboard")}</Typography>
+          {categories.length > 0 && (
+            <Select
+              value={categoryFilter || ALL_CATEGORIES_VALUE}
+              onValueChange={(value) => setCategoryFilter(value === ALL_CATEGORIES_VALUE ? "" : value)}
+            >
+              <SelectTrigger className="min-w-52 bg-white">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={ALL_CATEGORIES_VALUE}>{t("allCategories") || "Toutes les catégories"}</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {categories.length > 0 && (
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-              className="h-9 rounded-lg border border-gray-200 px-3 text-sm text-gray-700 bg-white"
-            >
-              <option value="">{t("allCategories") || "Toutes les catégories"}</option>
-              {categories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
-          )}
           <div className="flex items-center gap-2 bg-primary rounded-full p-1">
             <Button
               variant={period === "7days" ? "selected" : "notSelected"}
@@ -180,18 +193,18 @@ export default function Dashboard() {
 
       {period === "custom" && (
         <div className="px-6 pb-2 flex items-center gap-3">
-          <input
+          <Input
             type="date"
             value={customFrom}
             onChange={(e) => setCustomFrom(e.target.value)}
-            className="h-9 rounded-lg border border-gray-200 px-3 text-sm text-gray-700"
+            className="w-auto"
           />
           <span className="text-gray-400 text-sm">→</span>
-          <input
+          <Input
             type="date"
             value={customTo}
             onChange={(e) => setCustomTo(e.target.value)}
-            className="h-9 rounded-lg border border-gray-200 px-3 text-sm text-gray-700"
+            className="w-auto"
           />
         </div>
       )}
