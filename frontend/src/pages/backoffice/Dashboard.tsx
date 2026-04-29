@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Typography } from "@/components/ui/typography";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import type { ApexOptions } from "apexcharts";
 import { TrendingUp, TrendingDown, Percent, Euro, ShoppingCart, ShoppingBag } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { getSales, BackOfficeApiError } from "@/services/BackOfficeOrderService";
-import { computeDashboardData, type TimePeriod } from "@/services/dashboardService";
+import { computeDashboardData, type TimePeriod, type DashboardData } from "@/services/dashboardService";
 import type { SaleAdminDTO } from "@/types/interfaces/admin/SaleAdminDTO.interface";
 import { toast } from "sonner";
 import {
@@ -80,6 +80,17 @@ export default function Dashboard() {
   const [categoryFilter, setCategoryFilter] = useState<string>("");
   const [allSales, setAllSales] = useState<SaleAdminDTO[]>([]);
   const [loading, setLoading] = useState(true);
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
+    kpis: {
+      conversionRate: { value: 0, trend: 0 },
+      averageBasket: { value: 0, trend: 0 },
+      totalSales: { value: 0, trend: 0 },
+      nbOrders: { value: 0, trend: 0 },
+    },
+    salesSeries: [],
+    categoryData: [],
+    categories: [],
+  });
 
   useEffect(() => {
     if (!accessToken) return;
@@ -96,17 +107,21 @@ export default function Dashboard() {
       .finally(() => setLoading(false));
   }, [accessToken]);
 
-  const { kpis, salesSeries, categoryData, categories } = useMemo(
-    () =>
-      computeDashboardData(
-        allSales,
-        period,
-        customFrom || undefined,
-        customTo || undefined,
-        categoryFilter || undefined,
-      ),
-    [allSales, period, customFrom, customTo, categoryFilter],
-  );
+  useEffect(() => {
+    if (!accessToken) return;
+    computeDashboardData(
+      accessToken,
+      allSales,
+      period,
+      customFrom || undefined,
+      customTo || undefined,
+      categoryFilter || undefined,
+    )
+      .then(setDashboardData)
+      .catch(() => toast.error(t("errorOccurred")));
+  }, [accessToken, allSales, period, customFrom, customTo, categoryFilter]);
+
+  const { kpis, salesSeries, categoryData, categories } = dashboardData;
 
   const salesBarOptions: ApexOptions = {
     ...baseBarOptions,

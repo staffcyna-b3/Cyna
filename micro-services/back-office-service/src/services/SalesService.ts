@@ -30,9 +30,13 @@ export class SalesService {
     ]);
     const rangedSales = [...orders, ...subscriptions];
 
-    const totalRevenue = rangedSales.reduce((sum, row) => sum + row.amount, 0);
-    const averageCart = rangedSales.length > 0 ? totalRevenue / rangedSales.length : 0;
-    const salesByPeriod = this.groupSalesByDay(rangedSales);
+    // Seules les ventes validées (PAID pour les commandes, active pour les abonnements)
+    const VALID_STATUSES = ['PAID', 'active'];
+    const paidSales = rangedSales.filter((row) => VALID_STATUSES.includes(row.status));
+
+    const totalRevenue = paidSales.reduce((sum, row) => sum + row.amount, 0);
+    const averageCart = paidSales.length > 0 ? totalRevenue / paidSales.length : 0;
+    const salesByPeriod = this.groupSalesByDay(paidSales);
 
     return { totalRevenue, averageCart, salesByPeriod };
   }
