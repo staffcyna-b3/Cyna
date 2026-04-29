@@ -38,6 +38,26 @@ export class UserSubscriptionService {
     return subscription.reload();
   }
 
+  async reactivate(stripeSubscriptionId: string, userId: string): Promise<Subscription> {
+    const subscription = await this.findAndVerifyOwnership(stripeSubscriptionId, userId);
+
+    const res = await fetch(`${PAYMENTS_URL}/subscriptions/${stripeSubscriptionId}/reactivate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({})) as Record<string, unknown>;
+      throw { status: res.status, code: 'STRIPE_ERROR', message: body?.message ?? 'Stripe error' };
+    }
+
+    await subscription.update({ cancel_at_period_end: false });
+
+    Logger.info('[USER-SUB] Subscription reactivated', { stripeSubscriptionId, userId });
+
+    return subscription.reload();
+  }
+
   async getMyRefundRequests(userId: string) {
     return this.refundRequestRepository.findActiveByUserId(userId);
   }

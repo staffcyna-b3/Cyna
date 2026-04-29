@@ -6,11 +6,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { CancelSubscriptionModal } from '@/components/Frontoffice/CancelSubscriptionModal';
+import { ReactivateSubscriptionModal } from '@/components/Frontoffice/ReactivateSubscriptionModal';
 import { RefundRequestModal } from '@/components/Frontoffice/RefundRequestModal';
 import {
   getMySubscriptions,
   getMyRefundRequests,
   cancelSubscription,
+  reactivateSubscription,
   createRefundRequest,
   SubscriptionApiError,
 } from '@/services/subscriptionService';
@@ -22,6 +24,12 @@ function formatDate(dateStr: string): string {
     month: 'long',
     year: 'numeric',
   });
+}
+
+function isExpiringSoon(dateStr: string): boolean {
+  const thirtyDaysFromNow = new Date();
+  thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
+  return new Date(dateStr) <= thirtyDaysFromNow;
 }
 
 function StatusBadge({ status }: { status: SubscriptionDTO['status'] }) {
@@ -46,6 +54,7 @@ export default function MySubscriptions() {
   const [pageLoading, setPageLoading] = useState(true);
 
   const [cancelTarget, setCancelTarget] = useState<SubscriptionDTO | null>(null);
+  const [reactivateTarget, setReactivateTarget] = useState<SubscriptionDTO | null>(null);
   const [refundTarget, setRefundTarget] = useState<SubscriptionDTO | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -76,6 +85,23 @@ export default function MySubscriptions() {
       );
       toast.success(t('subscriptions.cancelSuccess'));
       setCancelTarget(null);
+    } catch {
+      toast.error(t('errorOccurred'));
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  async function handleConfirmReactivate() {
+    if (!accessToken || !reactivateTarget) return;
+    setSubmitting(true);
+    try {
+      const updated = await reactivateSubscription(accessToken, reactivateTarget.stripe_subscription_id);
+      setSubscriptions((prev) =>
+        prev.map((s) => (s.id === updated.id ? updated : s))
+      );
+      toast.success(t('subscriptions.reactivateSuccess'));
+      setReactivateTarget(null);
     } catch {
       toast.error(t('errorOccurred'));
     } finally {
@@ -145,6 +171,15 @@ export default function MySubscriptions() {
                       {t('subscriptions.cancelButton')}
                     </Button>
                   )}
+                  {sub.status === 'active' && sub.cancel_at_period_end && isExpiringSoon(sub.end_date) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setReactivateTarget(sub)}
+                    >
+                      {t('subscriptions.reactivateButton')}
+                    </Button>
+                  )}
                   {sub.status === 'active' && (
                     <Button
                       variant="outline"
@@ -168,6 +203,14 @@ export default function MySubscriptions() {
         loading={submitting}
         onConfirm={handleConfirmCancel}
         onCancel={() => setCancelTarget(null)}
+      />
+
+      <ReactivateSubscriptionModal
+        open={!!reactivateTarget}
+        periodEndDate={reactivateTarget ? formatDate(reactivateTarget.end_date) : ''}
+        loading={submitting}
+        onConfirm={handleConfirmReactivate}
+        onCancel={() => setReactivateTarget(null)}
       />
 
       <RefundRequestModal

@@ -30,6 +30,19 @@ export class SubscriptionLifecycleService {
     return subscription;
   }
 
+  async reactivateSubscription(subscriptionId: string): Promise<Stripe.Subscription> {
+    let subscription!: Stripe.Subscription;
+    try {
+      subscription = await this.stripeClient.subscriptions.update(subscriptionId, {
+        cancel_at_period_end: false,
+      });
+    } catch (error) {
+      handleStripeError(error);
+    }
+    Logger.info('[SUBSCRIPTION] Reactivated subscription', { subscriptionId });
+    return subscription;
+  }
+
   async cancelNow(subscriptionId: string): Promise<Stripe.Subscription> {
     let subscription!: Stripe.Subscription;
     try {

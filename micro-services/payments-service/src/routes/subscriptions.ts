@@ -10,5 +10,6 @@ const controller = new SubscriptionLifecycleController(service);
 router.get('/:stripeCustomerId', (req, res) => controller.getByCustomerId(req, res));
 router.post('/:stripeSubscriptionId/cancel', (req, res) => controller.cancelAtPeriodEnd(req, res));
 router.post('/:stripeSubscriptionId/cancel-now', (req, res) => controller.cancelNow(req, res));
+router.post('/:stripeSubscriptionId/reactivate', (req, res) => controller.reactivate(req, res));
 
 export default router;

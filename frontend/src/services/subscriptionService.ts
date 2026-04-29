@@ -39,6 +39,14 @@ export async function getMyRefundRequests(token: string): Promise<{ stripe_subsc
   return handleResponse<{ stripe_subscription_id: string }[]>(res);
 }
 
+export async function reactivateSubscription(token: string, stripeSubscriptionId: string): Promise<SubscriptionDTO> {
+  const res = await fetch(`/api/front-office/my-subscriptions/${stripeSubscriptionId}/reactivate`, {
+    method: 'POST',
+    headers: withAuth(token),
+  });
+  return handleResponse<SubscriptionDTO>(res);
+}
+
 export async function createRefundRequest(
   token: string,
   stripeSubscriptionId: string,

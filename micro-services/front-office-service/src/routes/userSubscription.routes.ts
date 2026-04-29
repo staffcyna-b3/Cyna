@@ -10,6 +10,7 @@ const controller = createUserSubscriptionController();
 router.get('/', requireUserHeader, (req, res) => controller.getMySubscriptions(req, res));
 router.get('/refund-requests', requireUserHeader, (req, res) => controller.getMyRefundRequests(req, res));
 router.post('/:stripeSubscriptionId/cancel', requireUserHeader, (req, res) => controller.cancel(req, res));
+router.post('/:stripeSubscriptionId/reactivate', requireUserHeader, (req, res) => controller.reactivate(req, res));
 router.post('/:stripeSubscriptionId/refund-request', requireUserHeader, (req, res) => controller.createRefundRequest(req, res));
 
 export default router;

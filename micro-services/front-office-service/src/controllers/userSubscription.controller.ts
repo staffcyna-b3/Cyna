@@ -23,6 +23,13 @@ export class UserSubscriptionController {
     return res.status(200).json(subscription);
   }
 
+  async reactivate(req: Request, res: Response): Promise<Response> {
+    const userId = res.locals.userId as string;
+    const stripeSubscriptionId = req.params.stripeSubscriptionId as string;
+    const subscription = await this.service.reactivate(stripeSubscriptionId, userId);
+    return res.status(200).json(subscription);
+  }
+
   async createRefundRequest(req: Request, res: Response): Promise<Response> {
     const userId = res.locals.userId as string;
     const stripeSubscriptionId = req.params.stripeSubscriptionId as string;

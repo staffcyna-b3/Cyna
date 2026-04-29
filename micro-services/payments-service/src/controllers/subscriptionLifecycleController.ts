@@ -20,6 +20,12 @@ export class SubscriptionLifecycleController {
     res.status(200).json({ success: true, data: subscription });
   }
 
+  async reactivate(req: Request, res: Response): Promise<void> {
+    const stripeSubscriptionId = req.params.stripeSubscriptionId as string;
+    const subscription = await this.service.reactivateSubscription(stripeSubscriptionId);
+    res.status(200).json({ success: true, data: subscription });
+  }
+
   async cancelNow(req: Request, res: Response): Promise<void> {
     const stripeSubscriptionId = req.params.stripeSubscriptionId as string;
     const subscription = await this.service.cancelNow(stripeSubscriptionId);
