@@ -1,6 +1,7 @@
 import { ISupportRepository } from '../interfaces/ISupportRepository';
 import { ISupportService } from '../interfaces/ISupportService';
 import { IMailService } from '../interfaces/IMailService';
+import { Logger } from '../common/logger';
 
 export class SupportService implements ISupportService {
   constructor(
@@ -18,7 +19,7 @@ export class SupportService implements ISupportService {
         message: data.message,
       });
     } catch (error) {
-      console.warn('[SupportService] Email non envoyé :', error);
+      Logger.warn('[SupportService] Email non envoyé :', error);
     }
   }
 }
