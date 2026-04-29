@@ -246,3 +246,8 @@
 [26/04/2026 20:30:54] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXRp1AdBsYOB9D1khUUS8P","paymentIntentId":"pi_3TQXRp1AdBsYOB9D1AIjhIhh","invoiceId":null}
 [26/04/2026 20:30:57] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXRp1AdBsYOB9D14c6RvUT"}
 [26/04/2026 20:30:57] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[29/04/2026 14:22:55] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TObN61AdBsYOB9DH4pfjw4Y/cancel"}
+[29/04/2026 14:23:30] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TObN61AdBsYOB9DH4pfjw4Y/cancel"}
+[29/04/2026 14:24:15] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TObN61AdBsYOB9DH4pfjw4Y/cancel"}
+[29/04/2026 14:26:02] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TQQEs1AdBsYOB9DEC3nSy86/cancel"}
+[29/04/2026 14:26:07] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TQWLk1AdBsYOB9DcLHdCb8Y/cancel"}
