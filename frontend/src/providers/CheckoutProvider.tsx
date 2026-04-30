@@ -4,7 +4,7 @@ import {
   emptyAddress,
 } from "@/contexts/CheckoutContext"
 import { useAuth } from "@/hooks/useAuth"
-import { getUserAddresses } from "@/services/orderService"
+import { getAddresses } from "@/services/addressService"
 import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
 import type { CheckoutContextValue, CheckoutIds } from "@/types/interfaces/Checkout/CheckoutContextValue"
 import type { ConfirmedOrder } from "@/types/interfaces/CheckoutConfirmation/ConfirmedOrder"
@@ -27,44 +27,44 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     if (!accessToken || !user) return
     setIsLoadingContext(true)
     try {
-      const addresses = await getUserAddresses(accessToken)
+      const list = await getAddresses(accessToken)
       const nameParts = (user.full_name ?? "").trim().split(/\s+/)
       const firstName = nameParts[0] ?? ""
       const lastName = nameParts.slice(1).join(" ")
 
-      if (addresses.billing) {
+      const billing = list.find((a) => a.type === 'billing' && a.is_default) ?? list.find((a) => a.type === 'billing')
+      const shipping = list.find((a) => a.type === 'shipping' && a.is_default) ?? list.find((a) => a.type === 'shipping')
+
+      if (billing) {
         setBillingAddressState({
           firstName,
           lastName,
-          addressLine1: addresses.billing.addressLine1,
-          city: addresses.billing.city,
-          postcode: addresses.billing.postcode,
-          country: addresses.billing.country,
+          addressLine1: billing.address_line1,
+          city: billing.city,
+          postcode: billing.postcode,
+          country: billing.country,
         })
       }
-      if (addresses.shipping) {
+      if (shipping) {
         setShippingAddressState({
           firstName,
           lastName,
-          addressLine1: addresses.shipping.addressLine1,
-          city: addresses.shipping.city,
-          postcode: addresses.shipping.postcode,
-          country: addresses.shipping.country,
+          addressLine1: shipping.address_line1,
+          city: shipping.city,
+          postcode: shipping.postcode,
+          country: shipping.country,
         })
       }
-      if (addresses.billing && addresses.shipping) {
+      if (billing && shipping) {
         setCheckoutIds((prev) => ({
           cartId: prev?.cartId ?? null,
-          billingAddressId: addresses.billing!.id,
-          shippingAddressId: addresses.shipping!.id,
+          billingAddressId: billing.id,
+          shippingAddressId: shipping.id,
         }))
       }
     } catch (err: unknown) {
-      // 404 = pas encore d'adresses en DB — saisie manuelle autorisée
-      const status = (err as { status?: unknown })?.status
-      if (status !== 404) {
-        console.error("Failed to fetch user addresses", err)
-      }
+      const message = err instanceof Error ? err.message : "Erreur lors du chargement des adresses"
+      setErrorState(message)
     } finally {
       setIsLoadingContext(false)
     }

@@ -1,0 +1,11 @@
+export type { BackOfficeProduct } from './BackOfficeProduct';
+export type { BackOfficeProductImage } from './BackOfficeProductImage';
+export type { BackOfficeProductQuery } from './BackOfficeProductQuery';
+export type { CreatePhysicalProductPayload } from './CreatePhysicalProductPayload';
+export type { CreateSaasProductPayload } from './CreateSaasProductPayload';
+export type { ReorderProductPriorityPayload } from './ReorderProductPriorityPayload';
+export type { SetProductMaintenancePayload } from './SetProductMaintenancePayload';
+export type { UpdateProductImagePayload } from './UpdateProductImagePayload';
+export type { UpdateProductPayload } from './UpdateProductPayload';
+export type { UpdateProductPriorityPayload } from './UpdateProductPriorityPayload';
+export type { UpdateProductStockPayload } from './UpdateProductStockPayload';

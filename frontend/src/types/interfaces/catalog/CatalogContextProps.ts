@@ -1,6 +1,6 @@
 import { CatalogSortBy } from "@/types/enums/catalog/CatalogSortBy";
 import { Sort } from "../Sort";
-import { CatalogFilters } from "./CatelogFilters";
+import { CatalogFilters } from "./CatalogFilters";
 
 export interface CatalogContextProps {
     page: number;

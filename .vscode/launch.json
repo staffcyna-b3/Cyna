@@ -50,6 +50,18 @@
       "console": "integratedTerminal"
     },
     {
+      "name": "Payments Service",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}/micro-services/payments-service",
+      "console": "integratedTerminal"
+    },
+    {
       "name": "Frontend",
       "type": "node",
       "request": "launch",

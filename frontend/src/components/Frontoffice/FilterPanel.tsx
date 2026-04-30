@@ -1,10 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@/lib/utils';
 import { FilterPanelProps } from '@/types/interfaces/catalog/FilterPanelProps';
 import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Input } from '../ui/input';
+import { Checkbox } from '../ui/checkbox';
 import RangeSliderRadix from '../RangeSliderRadix';
 
 export default function FilterPanel({
@@ -22,6 +22,8 @@ export default function FilterPanel({
     setLocalMax,
     localInStock,
     setLocalInStock,
+    localIsService,
+    setLocalIsService,
     localSort,
     setLocalSort,
 
@@ -61,7 +63,7 @@ export default function FilterPanel({
                         variant="ghost"
                         size="sm"
                         onClick={onClose}
-                        className="flex-shrink-0 hover:bg-[#2a2a3d]"
+                        className="shrink-0 hover:bg-[#2a2a3d]"
                     >
                         ✕
                     </Button>
@@ -96,9 +98,9 @@ export default function FilterPanel({
                                 </label>
                                 <Input
                                     value={localSearch ?? ''}
-                                    onChange={(
-                                        e: React.ChangeEvent<HTMLInputElement>
-                                    ) => setLocalSearch(e.target.value)}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                                        setLocalSearch(e.target.value)
+                                    }
                                     placeholder={t('searchPlaceholder')}
                                     className="w-full bg-[#12101b] border-[#2a2a3d] text-[#b7bdd9]"
                                 />
@@ -123,23 +125,61 @@ export default function FilterPanel({
                                 </div>
                             </div>
 
-                            <button
-                                type="button"
-                                className={cn(
-                                    'w-full px-4 py-2.5 rounded-lg text-xs sm:text-sm font-medium transition-all',
-                                    localInStock
-                                        ? 'bg-gradient-to-r from-[#7b61ff] to-[#2b6ef6] text-white shadow-lg'
-                                        : 'bg-[#12101b] text-[#9aa0c7] border border-[#2a2a3d] hover:border-[#7b61ff]'
-                                )}
-                                onClick={() =>
-                                    setLocalInStock((prev) => (prev ? undefined : true))
-                                }
-                            >
-                                {localInStock ? t('inStock') : t('showAllStock')}
-                            </button>
+                            <div className="space-y-3">
+                                <label className="text-xs sm:text-sm font-semibold text-[#b7bdd9] block">
+                                    {t('type')}
+                                </label>
+                                <div className="flex gap-3">
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setLocalIsService((prev) =>
+                                                prev === false ? undefined : false
+                                            )
+                                        }
+                                        className={`flex-1 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium transition-all border ${
+                                            localIsService === false
+                                                ? 'bg-linear-to-r from-[#7b61ff] to-[#2b6ef6] text-white border-transparent shadow-lg'
+                                                : 'bg-[#12101b] text-[#9aa0c7] border-[#2a2a3d] hover:border-[#7b61ff]'
+                                        }`}
+                                    >
+                                        {t('products')}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setLocalIsService((prev) =>
+                                                prev === true ? undefined : true
+                                            )
+                                        }
+                                        className={`flex-1 rounded-lg px-3 py-2 text-xs sm:text-sm font-medium transition-all border ${
+                                            localIsService === true
+                                                ? 'bg-linear-to-r from-[#7b61ff] to-[#2b6ef6] text-white border-transparent shadow-lg'
+                                                : 'bg-[#12101b] text-[#9aa0c7] border-[#2a2a3d] hover:border-[#7b61ff]'
+                                        }`}
+                                    >
+                                        {t('services')}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3">
+                                <Checkbox
+                                    id="inStock"
+                                    checked={localInStock === true}
+                                    onCheckedChange={(checked) =>
+                                        setLocalInStock(checked ? true : undefined)
+                                    }
+                                />
+                                <label
+                                    htmlFor="inStock"
+                                    className="text-xs sm:text-sm font-medium text-[#b7bdd9] cursor-pointer"
+                                >
+                                    {t('inStock')}
+                                </label>
+                            </div>
                         </>
                     )}
-
                 </div>
 
                 <div className="flex gap-2 p-4 sm:p-6 border-t border-[#12101b] flex-none flex-col sm:flex-row">

@@ -6,7 +6,7 @@ interface OrderItemAttributes {
   order_id: string;
   product_id: string;
   quantity: number;
-  price: number;
+  unit_price: number;
 }
 
 export interface OrderItemCreationAttributes extends Optional<OrderItemAttributes, 'id'> {}
@@ -16,7 +16,7 @@ class OrderItem extends Model<OrderItemAttributes, OrderItemCreationAttributes> 
   declare order_id: string;
   declare product_id: string;
   declare quantity: number;
-  declare price: number;
+  declare unit_price: number;
 }
 
 OrderItem.init(
@@ -41,7 +41,7 @@ OrderItem.init(
         min: 1,
       },
     },
-    price: {
+    unit_price: {
       type: DataTypes.DECIMAL(10, 2),
       allowNull: false,
     },

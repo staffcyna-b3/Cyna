@@ -14,6 +14,22 @@ export class OrderController {
     this.orderService = orderService;
   }
 
+  async getAll(req: Request, res: Response) {
+    try {
+      const userIdHeader = req.headers['x-user-id'];
+      const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
+
+      if (!isValidUuid(userId)) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+
+      const orders = await this.orderService.getOrdersByUserId(userId);
+      return res.status(200).json(orders);
+    } catch (error: unknown) {
+      return this.handleError(res, error, 'Error fetching orders');
+    }
+  }
+
   async create(req: Request, res: Response) {
     try {
       const userIdHeader = req.headers['x-user-id'];
@@ -89,12 +105,12 @@ export class OrderController {
 
       await this.orderService.updateOrderStatus(id, status as OrderStatus);
       res.status(200).json({ message: 'Order status updated' });
-    } catch (err: any) {
-      if (err.statusCode === 404) {
+    } catch (err: unknown) {
+      if (err instanceof HttpError && err.statusCode === 404) {
         res.status(404).json({ message: err.message });
         return;
       }
-      Logger.error('Failed to update order status', { err: err.message });
+      Logger.error('Failed to update order status', { message: err instanceof Error ? err.message : String(err) });
       res.status(500).json({ message: 'Internal server error' });
     }
   }

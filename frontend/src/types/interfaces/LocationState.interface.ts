@@ -10,4 +10,5 @@ export interface LocationState {
   promoCode?: string;
   shippingFee?: number;
   discountAmount?: number;
+  deliveryFeeCents?: number;
 }

@@ -7,7 +7,6 @@ import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
 import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
 import { Button } from '@/components/ui/button';
-import { CartItem } from '@/types/interfaces/cart/CartItem';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
 import { CartService } from '@/services/CartService';
 
@@ -27,7 +26,7 @@ export const Checkout: React.FC = () => {
   const cartId = locationState.cartId ?? null;
   const billingAddressId = locationState.billingAddressId ?? null;
   const shippingAddressId = locationState.shippingAddressId ?? null;
-  const shippingFeeCents = Math.round((locationState.shippingFee ?? 0) * 100);
+  const shippingFeeCents = locationState.deliveryFeeCents ?? Math.round((locationState.shippingFee ?? 0) * 100);
 
   const [promoInput, setPromoInput] = useState('');
   const [promoCode, setPromoCode] = useState<string | undefined>(undefined);
@@ -61,13 +60,18 @@ export const Checkout: React.FC = () => {
     resetIntent();
   };
 
-  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isRecurring), [cartItems]);
-  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isRecurring), [cartItems]);
+  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isService || i.isRecurring), [cartItems]);
+  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isService && !i.isRecurring), [cartItems]);
   const hasSubscription = subscriptionItems.length > 0;
 
-  const totalCents = useMemo(
+  const subtotalCents = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
     [cartItems],
+  );
+
+  const totalCents = useMemo(
+    () => subtotalCents + shippingFeeCents,
+    [subtotalCents, shippingFeeCents],
   );
 
   const recurringCents = useMemo(
@@ -81,8 +85,8 @@ export const Checkout: React.FC = () => {
   );
 
   const effectiveAmountCents = useMemo(
-    () => Math.max(0, totalCents + shippingFeeCents - discountCents),
-    [totalCents, shippingFeeCents, discountCents],
+    () => Math.max(0, totalCents - discountCents),
+    [totalCents, discountCents],
   );
 
   const hasCreatedIntent = useRef(false);
@@ -121,11 +125,12 @@ export const Checkout: React.FC = () => {
             credentials: 'include',
             body: JSON.stringify({
               subscriptionItems: subscriptionItems.map((i) => ({
-                productId: i.id,
+                productId: i.productId,
                 priceAmountCents: i.unitPriceCents,
                 currency: 'eur',
                 description: i.name,
-                billingPeriod: i.billingPeriod ?? 'monthly',
+                billingPeriod: 'monthly',
+                durationMonths: i.durationMonths ?? 1,
                 quantity: i.quantity,
               })),
               oneTimeAmountCents: Math.max(0, oneTimeCents + shippingFeeCents - discountCents),
@@ -267,7 +272,7 @@ export const Checkout: React.FC = () => {
 
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                  {item.isRecurring && (
+                  {item.isService && (
                     <p className="mt-0.5 text-xs text-gray-500">
                       {t('Billed')} {item.billingPeriod === 'yearly' ? t('yearly') : t('monthly')}
                     </p>
@@ -312,7 +317,7 @@ export const Checkout: React.FC = () => {
               <div className="space-y-1">
                 <div className="flex justify-between">
                   <span className="text-xs text-gray-500">{t('subtotal')}</span>
-                  <span className="text-xs text-gray-500">{formatEuro(totalCents)}</span>
+                  <span className="text-xs text-gray-500">{formatEuro(subtotalCents)}</span>
                 </div>
                 {shippingFeeCents > 0 && (
                   <div className="flex justify-between">
@@ -337,7 +342,7 @@ export const Checkout: React.FC = () => {
                 <div className="flex justify-between pt-1 border-t border-gray-200">
                   <span className="text-sm font-bold text-gray-900">{t('Total')}</span>
                   <span className="text-sm font-bold text-gray-900">
-                    {formatEuro(totalCents + shippingFeeCents - discountCents)}
+                    {formatEuro(effectiveAmountCents)}
                   </span>
                 </div>
               </div>
