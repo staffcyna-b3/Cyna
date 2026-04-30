@@ -693,5 +693,13 @@
       },
       "footerNote": "Cette politique de cookies est conforme aux lignes directrices de la CNIL sur les cookies et traceurs (délibération n° 2020-092 du 17 septembre 2020)."
     }
+  },
+  "footer": {
+    "copyright": "© 2026 Cyna. Tous droits réservés.",
+    "cgu": "Conditions Générales d'Utilisation",
+    "cgv": "Conditions Générales de Vente",
+    "privacy": "Politique de confidentialité",
+    "mentions": "Mentions légales",
+    "cookies": "Politique de cookies"
   }
 }

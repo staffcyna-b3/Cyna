@@ -1,7 +1,10 @@
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 
 export default function LegalLayout({ title, children }: { title: string; children: React.ReactNode }) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
 
   return (
     <div
@@ -10,8 +13,15 @@ export default function LegalLayout({ title, children }: { title: string; childr
     >
       <div
         style={{ background: 'linear-gradient(to right, #0B0925 0%, #29228B 40%, #0B0925 100%)' }}
-        className="py-16 px-6 border-b border-white/10"
+        className="relative py-16 px-6 border-b border-white/10"
       >
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-6 left-6 text-white/40 hover:text-white/80 transition-colors duration-150"
+          aria-label="Retour"
+        >
+          <ArrowLeft size={20} />
+        </button>
         <div className="mx-auto max-w-4xl">
           <p className="text-xs font-semibold uppercase tracking-widest text-[#7b61ff] mb-3">
             {t('legal.tag')}

@@ -691,5 +691,13 @@
       },
       "footerNote": "This cookie policy complies with CNIL guidelines on cookies and trackers (deliberation no. 2020-092 of September 17, 2020)."
     }
+  },
+  "footer": {
+    "copyright": "© 2026 Cyna. All rights reserved.",
+    "cgu": "Terms of Use",
+    "cgv": "Terms of Sale",
+    "privacy": "Privacy Policy",
+    "mentions": "Legal Notices",
+    "cookies": "Cookie Policy"
   }
 }

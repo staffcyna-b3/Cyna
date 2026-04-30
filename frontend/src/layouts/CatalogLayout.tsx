@@ -5,6 +5,7 @@ import { CatalogLayoutProps } from '../types/interfaces/catalog/CatalogLayoutPro
 import { Category } from '../types/interfaces/category/Category';
 import CatalogNavigation from '@/components/Frontoffice/CatalogNavigation';
 import CatalogProvider from '@/providers/CatalogProvider';
+import CatalogFooter from '@/components/Frontoffice/catalog/footer/CatalogFooter';
 
 const CatalogLayout = ({
     children,
@@ -34,6 +35,7 @@ const CatalogLayout = ({
                     onCategoryClick={setActiveCategory}
                 />
                 {children ?? <Outlet />}
+                <CatalogFooter />
             </div>
         </CatalogProvider>
     );
