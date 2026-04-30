@@ -34,16 +34,7 @@ export class UserSubscriptionController {
     const userId = res.locals.userId as string;
     const stripeSubscriptionId = req.params.stripeSubscriptionId as string;
     const { reason } = req.body as { reason?: string };
-
-    if (!reason || reason.trim().length === 0) {
-      return res.status(422).json({ message: 'Le motif de la demande est requis' });
-    }
-
-    if (reason.trim().length > 2000) {
-      return res.status(422).json({ message: 'Le motif ne peut pas dépasser 2000 caractères' });
-    }
-
-    const refundRequest = await this.service.createRefundRequest(stripeSubscriptionId, userId, reason.trim());
+    const refundRequest = await this.service.createRefundRequest(stripeSubscriptionId, userId, reason);
     return res.status(201).json(refundRequest);
   }
 }

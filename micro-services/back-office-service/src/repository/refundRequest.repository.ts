@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize';
 import RefundRequest, { RefundRequestStatus } from '../models/RefundRequest';
 import User from '../models/User';
 import { IRefundRequestRepository } from '../interfaces/IRefundRequestRepository';
@@ -15,7 +16,7 @@ export class RefundRequestRepository implements IRefundRequestRepository {
     return RefundRequest.findByPk(id);
   }
 
-  async updateStatus(id: number, status: RefundRequestStatus): Promise<void> {
-    await RefundRequest.update({ status }, { where: { id } });
+  async updateStatus(id: number, status: RefundRequestStatus, options?: { transaction?: Transaction }): Promise<void> {
+    await RefundRequest.update({ status }, { where: { id }, transaction: options?.transaction });
   }
 }

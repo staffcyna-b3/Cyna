@@ -4,6 +4,7 @@ import type RefundRequest from '../models/RefundRequest';
 import { IHttpClient } from '../interfaces/IHttpClient';
 import { RefundRequestAdminDTO } from '../dto/RefundRequestAdminDTO';
 import { Logger } from '../common/logger';
+import { sequelize } from '../config/database';
 
 const PAYMENTS_URL = process.env.MS_PAYMENTS_URL || 'http://localhost:3004';
 
@@ -19,27 +20,28 @@ export class RefundRequestAdminService {
   }
 
   async updateStatus(id: number, status: 'approved' | 'rejected'): Promise<RefundRequestAdminDTO> {
-    const request = await this.repository.findById(id);
-    if (!request) {
-      throw { status: 404, code: 'NOT_FOUND', message: 'Demande introuvable' };
-    }
+    const t = await sequelize.transaction();
+    try {
+      const request = await this.repository.findById(id);
+      if (!request) {
+        throw { status: 404, code: 'NOT_FOUND', message: 'Demande introuvable' };
+      }
 
-    // Update DB first — prevents double-refund if the Stripe call fails later
-    await this.repository.updateStatus(id, status as RefundRequestStatus);
+      await this.repository.updateStatus(id, status as RefundRequestStatus, { transaction: t });
 
-    if (status === 'approved') {
-      try {
+      if (status === 'approved') {
         await this.httpClient.post(`${PAYMENTS_URL}/refunds`, {
           ...(request.stripe_payment_intent_id
             ? { paymentIntentId: request.stripe_payment_intent_id }
             : { subscriptionId: request.stripe_subscription_id }),
         });
-      } catch (err) {
-        // Stripe failed — revert to pending so the admin can retry
-        await this.repository.updateStatus(id, RefundRequestStatus.PENDING);
-        Logger.error('[REFUND-REQUEST] Stripe refund failed, status reverted to pending', { id, err });
-        throw { status: 502, code: 'STRIPE_ERROR', message: 'Échec du remboursement Stripe' };
       }
+
+      await t.commit();
+    } catch (err) {
+      await t.rollback();
+      Logger.error('[REFUND-REQUEST] Transaction rolled back', { id, err });
+      throw err;
     }
 
     const updated = await this.repository.findById(id);

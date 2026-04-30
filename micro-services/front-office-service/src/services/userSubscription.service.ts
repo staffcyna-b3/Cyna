@@ -16,6 +16,9 @@ export class UserSubscriptionService {
   }
 
   async cancelAtPeriodEnd(stripeSubscriptionId: string, userId: string): Promise<Subscription> {
+    if (!stripeSubscriptionId || stripeSubscriptionId.trim().length === 0) {
+      throw { status: 400, code: 'INVALID_PARAM', message: 'stripeSubscriptionId manquant' };
+    }
     const subscription = await this.findAndVerifyOwnership(stripeSubscriptionId, userId);
 
     const res = await fetch(`${PAYMENTS_URL}/subscriptions/${stripeSubscriptionId}/cancel`, {
@@ -39,6 +42,9 @@ export class UserSubscriptionService {
   }
 
   async reactivate(stripeSubscriptionId: string, userId: string): Promise<Subscription> {
+    if (!stripeSubscriptionId || stripeSubscriptionId.trim().length === 0) {
+      throw { status: 400, code: 'INVALID_PARAM', message: 'stripeSubscriptionId manquant' };
+    }
     const subscription = await this.findAndVerifyOwnership(stripeSubscriptionId, userId);
 
     const res = await fetch(`${PAYMENTS_URL}/subscriptions/${stripeSubscriptionId}/reactivate`, {
@@ -65,14 +71,24 @@ export class UserSubscriptionService {
   async createRefundRequest(
     stripeSubscriptionId: string,
     userId: string,
-    reason: string
+    reason: string | undefined,
   ) {
+    if (!stripeSubscriptionId || stripeSubscriptionId.trim().length === 0) {
+      throw { status: 400, code: 'INVALID_PARAM', message: 'stripeSubscriptionId manquant' };
+    }
+    if (!reason || reason.trim().length === 0) {
+      throw { status: 400, code: 'INVALID_PARAM', message: 'Le motif de la demande est requis' };
+    }
+    if (reason.trim().length > 2000) {
+      throw { status: 400, code: 'INVALID_PARAM', message: 'Le motif ne peut pas dépasser 2000 caractères' };
+    }
+
     await this.findAndVerifyOwnership(stripeSubscriptionId, userId);
 
     const refundRequest = await this.refundRequestRepository.create({
       userId,
       stripeSubscriptionId,
-      reason,
+      reason: reason.trim(),
     });
 
     Logger.info('[USER-SUB] Refund request created', { stripeSubscriptionId, userId });

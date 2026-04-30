@@ -16,15 +16,8 @@ import {
   createRefundRequest,
   SubscriptionApiError,
 } from '@/services/subscriptionService';
+import { formatDate } from '@/utils/formatDate';
 import type { SubscriptionDTO } from '@/types/interfaces/subscription/SubscriptionDTO.interface';
-
-function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  });
-}
 
 function isExpiringSoon(dateStr: string): boolean {
   const thirtyDaysFromNow = new Date();
@@ -154,10 +147,10 @@ export default function MySubscriptions() {
                   <p className="mt-2 text-sm text-gray-500">
                     {sub.cancel_at_period_end ? (
                       <span className="text-orange-600">
-                        {t('subscriptions.scheduledCancellation', { date: formatDate(sub.end_date) })}
+                        {t('subscriptions.scheduledCancellation', { date: formatDate(sub.end_date, { day: 'numeric', month: 'long', year: 'numeric' }) })}
                       </span>
                     ) : (
-                      t('subscriptions.renewsOn', { date: formatDate(sub.end_date) })
+                      t('subscriptions.renewsOn', { date: formatDate(sub.end_date, { day: 'numeric', month: 'long', year: 'numeric' }) })
                     )}
                   </p>
                 </div>
@@ -199,7 +192,7 @@ export default function MySubscriptions() {
 
       <CancelSubscriptionModal
         open={!!cancelTarget}
-        periodEndDate={cancelTarget ? formatDate(cancelTarget.end_date) : ''}
+        periodEndDate={cancelTarget ? formatDate(cancelTarget.end_date, { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
         loading={submitting}
         onConfirm={handleConfirmCancel}
         onCancel={() => setCancelTarget(null)}
@@ -207,7 +200,7 @@ export default function MySubscriptions() {
 
       <ReactivateSubscriptionModal
         open={!!reactivateTarget}
-        periodEndDate={reactivateTarget ? formatDate(reactivateTarget.end_date) : ''}
+        periodEndDate={reactivateTarget ? formatDate(reactivateTarget.end_date, { day: 'numeric', month: 'long', year: 'numeric' }) : ''}
         loading={submitting}
         onConfirm={handleConfirmReactivate}
         onCancel={() => setReactivateTarget(null)}
