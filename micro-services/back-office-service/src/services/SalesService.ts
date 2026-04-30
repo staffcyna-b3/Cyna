@@ -1,6 +1,7 @@
 import { SaleAdminDTO } from '../dto/SaleAdminDTO';
 import { ISalesRepository} from '../repository/ISalesRepository';
 import { SaleRow } from '../interfaces/SaleRow.interface';
+import { ISalesService } from './ISalesService';
 
 export interface DashboardStats {
   totalRevenue: number;
@@ -8,7 +9,7 @@ export interface DashboardStats {
   salesByPeriod: Array<{ date: string; total: number }>;
 }
 
-export class SalesService {
+export class SalesService implements ISalesService {
   constructor(private readonly repo: ISalesRepository) {}
 
   async getAll(): Promise<SaleAdminDTO[]> {

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { SalesService } from '../services/SalesService';
+import { ISalesService } from '../services/ISalesService';
 
 export class SalesController {
-  constructor(private readonly service: SalesService) {}
+  constructor(private readonly service: ISalesService) {}
 
   async getAll(req: Request, res: Response): Promise<void> {
     const sales = await this.service.getAll();
