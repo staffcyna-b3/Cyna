@@ -4,6 +4,17 @@ import { ProductResponseDto } from '../dto/response/ProductResponse.dto';
 
 export function mapProductToDto(product: Product): ProductResponseDto {
     const category = (product as any).category;
+    const activePromotion = (product as any).promotions?.[0] ?? null;
+
+    let discountedPrice: number | null = null;
+    let discountValue: number | null = null;
+    let discountType: string | null = null;
+
+    if (activePromotion) {
+        discountValue = Number(activePromotion.discount_value);
+        discountType = activePromotion.discount_type;
+        discountedPrice = Math.round(Number(product.price) * (1 - discountValue / 100) * 100) / 100;
+    }
 
     return {
         id: product.id,
@@ -15,6 +26,9 @@ export function mapProductToDto(product: Product): ProductResponseDto {
         name: product.name,
         description: product.description,
         price: Number(product.price),
+        discountedPrice,
+        discountValue,
+        discountType,
         stock: product.stock,
         status: product.status,
         isService: product.is_service,

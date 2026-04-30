@@ -8,6 +8,9 @@ export interface ProductResponseDto {
   name: string;
   description?: string | null;
   price: number;
+  discountedPrice: number | null;
+  discountValue: number | null;
+  discountType: string | null;
   stock: number;
   status: ProductStatus;
   isService: boolean;

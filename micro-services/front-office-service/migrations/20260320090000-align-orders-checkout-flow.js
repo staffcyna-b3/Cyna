@@ -25,7 +25,7 @@ module.exports = {
     const orders = await queryInterface.describeTable('orders');
     const orderItems = await queryInterface.describeTable('order_items');
 
-    if (orders.user_id) {
+    if (orders.user_id && orders.user_id.type === 'INTEGER') {
       await dropForeignKeys(queryInterface, 'orders', 'user_id');
       await queryInterface.changeColumn('orders', 'user_id', {
         type: Sequelize.INTEGER,
@@ -36,44 +36,37 @@ module.exports = {
     if (!orders.billing_address_id) {
       await queryInterface.addColumn('orders', 'billing_address_id', {
         type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: 'addresses',
-          key: 'id',
-        },
+        allowNull: true,
       });
     }
 
     if (!orders.shipping_address_id) {
       await queryInterface.addColumn('orders', 'shipping_address_id', {
         type: Sequelize.UUID,
-        allowNull: false,
-        references: {
-          model: 'addresses',
-          key: 'id',
-        },
+        allowNull: true,
       });
     }
 
     if (!orders.billing_address_snapshot) {
       await queryInterface.addColumn('orders', 'billing_address_snapshot', {
         type: Sequelize.JSON,
-        allowNull: false,
+        allowNull: true,
       });
     }
 
     if (!orders.shipping_address_snapshot) {
       await queryInterface.addColumn('orders', 'shipping_address_snapshot', {
         type: Sequelize.JSON,
-        allowNull: false,
+        allowNull: true,
       });
     }
 
-    await queryInterface.changeColumn('orders', 'status', {
-      type: Sequelize.ENUM('PENDING', 'PAID', 'CANCELLED'),
-      defaultValue: 'PENDING',
-      allowNull: false,
-    });
+    // Passer par VARCHAR pour éviter le conflit ENUM case-insensitive (pending vs PENDING)
+    await queryInterface.sequelize.query(`ALTER TABLE orders MODIFY COLUMN status VARCHAR(20) NOT NULL DEFAULT 'PENDING'`);
+    await queryInterface.sequelize.query(`UPDATE orders SET status = 'PENDING'   WHERE status = 'pending'`);
+    await queryInterface.sequelize.query(`UPDATE orders SET status = 'PAID'      WHERE status = 'success'`);
+    await queryInterface.sequelize.query(`UPDATE orders SET status = 'CANCELLED' WHERE status = 'error'`);
+    await queryInterface.sequelize.query(`ALTER TABLE orders MODIFY COLUMN status ENUM('PENDING','PAID','CANCELLED') NOT NULL DEFAULT 'PENDING'`);
 
     if (orders.stripe_payment_intent_id) {
       await queryInterface.removeColumn('orders', 'stripe_payment_intent_id');

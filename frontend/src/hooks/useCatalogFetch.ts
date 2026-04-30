@@ -2,7 +2,7 @@ import { useState, useCallback, useContext } from 'react';
 import { CatalogContext } from '../contexts/CatalogContext';
 import { CatalogService } from '../services/CatalogService';
 import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResponse';
-import { CatalogFilters } from '../types/interfaces/catalog/CatelogFilters';
+import { CatalogFilters } from '../types/interfaces/catalog/CatalogFilters';
 import i18n from '@/i18n';
 
 export const useCatalogFetch = () => {

@@ -1,5 +1,5 @@
 import { RequestTypes } from "../types/enums/RequestTypes";
-import { RequestOptions } from "../types/interfaces/RequestOptions";
+import type { RequestOptions } from "../types/interfaces/RequestOptions";
 
 export class AbstractApi {
     private baseUrl: string;
@@ -8,17 +8,30 @@ export class AbstractApi {
         this.baseUrl = import.meta.env.VITE_GATEWAY_API_URL || "/api";
     }
 
+    private getStoredAccessToken(): string | null {
+        if (typeof window === 'undefined') {
+            return null;
+        }
+
+        return localStorage.getItem('accessToken');
+    }
+
 
     private async request<T = unknown>(
         path: string,
         method: RequestTypes,
         options: RequestOptions = {},
     ): Promise<T> {
-        const { body, headers } = options;
+        const { body, headers, token } = options;
 
         const requestHeaders: HeadersInit = {
             ...headers,
         };
+
+        const resolvedToken = token ?? this.getStoredAccessToken();
+        if (resolvedToken && !(requestHeaders as Record<string, string>)['Authorization']) {
+            (requestHeaders as Record<string, string>)['Authorization'] = `Bearer ${resolvedToken}`;
+        }
 
         if (body) {
             requestHeaders['Content-Type'] = 'application/json';
@@ -66,6 +79,10 @@ export class AbstractApi {
 
     put<T = unknown>(path: string, options?: RequestOptions): Promise<T> {
         return this.request<T>(path, RequestTypes.PUT, options);
+    }
+
+    patch<T = unknown>(path: string, options?: RequestOptions): Promise<T> {
+        return this.request<T>(path, RequestTypes.PATCH, options);
     }
 
     delete<T = unknown>(path: string, options?: RequestOptions): Promise<T> {

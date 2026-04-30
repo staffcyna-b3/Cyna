@@ -1,5 +1,5 @@
 import { CatalogApi } from '../api/CatalogApi';
-import { CatalogFilters } from '../types/interfaces/catalog/CatelogFilters';
+import { CatalogFilters } from '../types/interfaces/catalog/CatalogFilters';
 import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResponse';
 
 export class CatalogService {
