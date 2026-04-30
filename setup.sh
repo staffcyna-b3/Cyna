@@ -5,6 +5,12 @@ echo "Démarrage de l'installation complète..."
 # ==================== INSTALLATION DES DÉPENDANCES ====================
 echo "Installation des dépendances..."
 
+echo "→ Frontend..."
+cd frontend
+npm install
+cd ..
+
+
 echo "→ Gateway..."
 cd gateway
 npm install
@@ -49,6 +55,12 @@ echo "Exécution des seeders..."
 
 echo "→ Product Service seeders..."
 cd micro-services/product-service
+npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
+cd ../..
+
+echo "→ Front-office Service seeders..."
+cd micro-services/front-office-service
+npx sequelize-cli db:seed:undo --seed 001-seed-checkout.js --seeders-path seeders --models-path src/models --config config/config.js || true
 npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
 cd ../..
 

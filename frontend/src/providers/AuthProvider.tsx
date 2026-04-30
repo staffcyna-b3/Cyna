@@ -1,13 +1,14 @@
-import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
-import { AuthProviderProps } from '../types/interfaces/AuthProviderProps.interface';
-import { AuthContext, AuthContextType } from '../contexts/AuthContext'; 
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AuthProviderProps } from '../types/interfaces/auth/AuthProviderProps.interface';
+import { AuthContext, AuthContextType } from '../contexts/AuthContext';
 import { User } from '@/types/interfaces/User.interface';
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const hasCheckedRememberMe = useRef(false);
+  const hasInitialized = useRef(false);
 
   const clearError = useCallback(() => setError(null), []);
 
@@ -88,13 +89,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
 
         const data = await response.json();
-        
-        // Stocker SEULEMENT le sessionId (pas d'infos utilisateur)
+
         if (data.requires2FA) {
           sessionStorage.setItem('pending_2fa_session_id', data.sessionId);
           sessionStorage.setItem('pending_2fa_remember_me', rememberMe.toString());
         } else {
-          // Si pas de 2FA, connecter directement (rare mais possible)
+          if (data.accessToken) {
+            localStorage.setItem('accessToken', data.accessToken);
+            setAccessToken(data.accessToken);
+            window.dispatchEvent(new Event('cart:auth-change'));
+          }
           setUser({
             id: data.id,
             email: data.email,
@@ -135,11 +139,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         const data = await response.json();
         const userData = data?.data?.user;
+        const accessToken = data?.data?.accessToken;
 
         if (!userData) {
           throw new Error('Données utilisateur manquantes après vérification 2FA');
         }
 
+        if (accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+          window.dispatchEvent(new Event('cart:auth-change'));
+        }
+
+        setAccessToken(data.data.accessToken ?? null);
         setUser({
           id: userData.id,
           email: userData.email,
@@ -147,8 +158,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           email_verified: userData.email_verified,
           role: userData.role,
         });
+        setAccessToken(data?.data?.accessToken ?? null);
 
-        // Nettoyer sessionStorage après connexion réussie
         sessionStorage.removeItem('pending_2fa_session_id');
         sessionStorage.removeItem('pending_2fa_remember_me');
       } catch (err) {
@@ -162,6 +173,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const verifyRememberMe = useCallback(async () => {
     try {
+      // 1. Vérification cookie remember-me
       const response = await fetch('/api/auth/verify-remember-me', {
         credentials: 'include',
       });
@@ -169,6 +181,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.ok) {
         const data = await response.json();
         if (data.authenticated) {
+          if (data.accessToken) {
+            localStorage.setItem('accessToken', data.accessToken);
+            window.dispatchEvent(new Event('cart:auth-change'));
+          }
           setUser({
             id: data.id,
             email: data.email,
@@ -176,21 +192,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             email_verified: data.email_verified,
             role: data.role,
           });
+          setAccessToken(data.accessToken ?? null);
         }
       }
     } catch (err) {
-      console.error('Erreur vérification remember me:', err);
+      console.error('Erreur vérification auth:', err);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  // Au chargement initial, vérifier le remember me token
+  // Au chargement initial : tenter le refresh JWT, sinon fallback sur remember-me
   useEffect(() => {
     // Evite le double appel en dev avec React.StrictMode
-    if (hasCheckedRememberMe.current) return;
-    hasCheckedRememberMe.current = true;
-    verifyRememberMe();
+    if (hasInitialized.current) return;
+    hasInitialized.current = true;
+    void verifyRememberMe();
   }, [verifyRememberMe]);
 
   const logout = useCallback(async () => {
@@ -203,7 +220,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } catch (err) {
         console.error('Erreur lors de la déconnexion:', err);
       } finally {
+        localStorage.removeItem('accessToken');
+        window.dispatchEvent(new Event('cart:auth-change'));
         setUser(null);
+        setAccessToken(null);
       }
   }, []);
 
@@ -279,6 +299,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value: AuthContextType = {
     user,
+    accessToken,
     isLoading,
     isAuthenticated: !!user,
     register,

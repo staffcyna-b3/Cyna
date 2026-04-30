@@ -26,7 +26,7 @@ const formatLog = (level: string, message: string, meta?: any) => {
 
 export class Logger {
   static info(message: string, meta?: any) {
-    console.log(formatLog('info', message, meta));
+    process.stdout.write(formatLog('info', message, meta));
     fs.appendFileSync(logFilePath, formatLog('info', message, meta));
   }
 

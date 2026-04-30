@@ -10,7 +10,7 @@ export const ConfirmEmail: React.FC = () => {
   const { confirmEmail } = useAuth();
   const { t } = useTranslation();
 
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [status, setStatus] = useState<'pending' | 'loading' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState<string>('');
 
   useEffect(() => {
@@ -18,8 +18,7 @@ export const ConfirmEmail: React.FC = () => {
       const token = searchParams.get('token');
 
       if (!token) {
-        setStatus('error');
-        setMessage(t('ErrorTokenMissing'));
+        setStatus('pending');
         return;
       }
 
@@ -63,6 +62,22 @@ export const ConfirmEmail: React.FC = () => {
           <Typography variant="h2" className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8 text-center lg:text-left">
             {t('ConfirmEmail')}
           </Typography>
+
+          {/* Pending — arrivée depuis Register, en attente du clic sur le lien email */}
+          {status === 'pending' && (
+            <div className="text-center">
+              <div className="flex justify-center mb-4">
+                <div className="bg-blue-100 rounded-full p-3">
+                  <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              </div>
+              <Typography variant="body" className="text-gray-800 font-semibold mb-2">
+                {t('RegistrationSuccessful')}
+              </Typography>
+            </div>
+          )}
 
           {/* Loading */}
           {status === 'loading' && (

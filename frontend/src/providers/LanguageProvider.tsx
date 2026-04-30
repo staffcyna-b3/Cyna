@@ -1,6 +1,7 @@
 import { useState, useCallback, type ReactNode } from "react"
 import { useTranslation } from "react-i18next"
-import { Language, languages } from "../i18n/language"
+import { languages } from "../i18n/language"
+import type { Language } from "@/types/interfaces/Language/Language"
 import { LanguageContext } from "../contexts/LanguageContext"
 
 

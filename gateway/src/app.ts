@@ -12,6 +12,7 @@ import { AuthService } from './services/auth.service';
 import { AuthController } from './controllers/auth.controller';
 import cookieParser from 'cookie-parser';
 import roleRoutes from './routes/role.route';
+import stripeWebhookRouter from './webhooks/stripe.webhook';
 
 if (!process.env.JWT_SECRET) {
   throw new Error('JWT_SECRET manquant dans les variables d\'environnement');
@@ -40,6 +41,9 @@ export const createApp = (): Express => {
   app.use(helmet());
 
   app.use(corsMiddleware);
+
+  // Stripe signature verification requires the raw request body.
+  app.use('/webhooks', stripeWebhookRouter);
 
   app.use(express.json({ limit: '10mb' }));
   app.use(express.urlencoded({ limit: '10mb', extended: true }));

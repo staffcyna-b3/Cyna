@@ -6,6 +6,13 @@ echo Démarrage de l'installation complète...
 REM ==================== INSTALLATION DES DÉPENDANCES ====================
 echo Installation des dépendances...
 
+
+echo → Frontend...
+cd frontend
+call npm install
+cd ..
+
+
 echo → Gateway...
 cd gateway
 call npm install

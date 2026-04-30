@@ -43,22 +43,22 @@ Cart.belongsTo(User, {
   as: 'user',
 });
 
-User.hasMany(Order, {
-  foreignKey: 'user_id',
-  as: 'orders',
-  onDelete: 'CASCADE',
-});
-Order.belongsTo(User, {
-  foreignKey: 'user_id',
-  as: 'user',
-});
-
 User.hasMany(Subscription, {
   foreignKey: 'user_id',
   as: 'subscriptions',
   onDelete: 'CASCADE',
 });
 Subscription.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+
+User.hasMany(Order, {
+  foreignKey: 'user_id',
+  as: 'orders',
+  onDelete: 'CASCADE',
+});
+Order.belongsTo(User, {
   foreignKey: 'user_id',
   as: 'user',
 });
@@ -91,16 +91,6 @@ Product.hasMany(CartItem, {
   onDelete: 'CASCADE',
 });
 CartItem.belongsTo(Product, {
-  foreignKey: 'product_id',
-  as: 'product',
-});
-
-Product.hasMany(OrderItem, {
-  foreignKey: 'product_id',
-  as: 'orderItems',
-  onDelete: 'RESTRICT',
-});
-OrderItem.belongsTo(Product, {
   foreignKey: 'product_id',
   as: 'product',
 });
@@ -150,6 +140,16 @@ CartItem.belongsTo(Cart, {
 });
 
 // Order Associations
+Product.hasMany(OrderItem, {
+  foreignKey: 'product_id',
+  as: 'orderItems',
+  onDelete: 'RESTRICT',
+});
+OrderItem.belongsTo(Product, {
+  foreignKey: 'product_id',
+  as: 'product',
+});
+
 Order.hasMany(OrderItem, {
   foreignKey: 'order_id',
   as: 'items',
@@ -158,6 +158,16 @@ Order.hasMany(OrderItem, {
 OrderItem.belongsTo(Order, {
   foreignKey: 'order_id',
   as: 'order',
+});
+
+Order.belongsTo(Address, {
+  foreignKey: 'billing_address_id',
+  as: 'billingAddress',
+});
+
+Order.belongsTo(Address, {
+  foreignKey: 'shipping_address_id',
+  as: 'shippingAddress',
 });
 
 export {

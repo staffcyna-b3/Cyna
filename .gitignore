@@ -1,0 +1,8 @@
+# AI tools
+.claude/
+.junie/
+.agents/
+skills-lock.json
+
+# Demo
+PREP_DEMO/

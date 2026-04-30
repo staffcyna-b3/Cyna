@@ -1,0 +1,15 @@
+import { CartItem } from './CartItem';
+import { AddToCartOptions } from './AddToCartOptions';
+
+export interface CartContextValue {
+    cartId: string | null;
+    items: CartItem[];
+    totalAmount: number;
+    isLoading: boolean;
+    error: string | null;
+    fetchCart: () => Promise<void>;
+    addToCart: (productId: string, options: AddToCartOptions) => Promise<void>;
+    removeFromCart: (itemId: string) => Promise<void>;
+    updateQuantity: (itemId: string, quantity: number) => Promise<void>;
+    clearCart: () => Promise<void>;
+}

@@ -24,3 +24,9 @@ Thumbs.db
 
 # Sequelize
 *.sqlite
+
+# Test coverage
+coverage/
+
+# Lock files
+package-lock.json
