@@ -8,4 +8,5 @@ export interface PromoCartItem {
 
 export interface IPromoService {
   validate(code: string, cartItems: PromoCartItem[]): Promise<PromoValidationResponse>;
+  validateForCart(userId: string, code: string): Promise<PromoValidationResponse>;
 }

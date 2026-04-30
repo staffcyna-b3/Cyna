@@ -10,6 +10,7 @@ import { CheckoutService } from '../services/checkout.service';
 import { AddressService } from '../services/address.service';
 import { ShippingService } from '../services/shipping.service';
 import { PromoService } from '../services/promo.service';
+import { PromoRepository } from '../repository/promo.repository';
 
 /*
 STRIPE INTEGRATION NOTE — for Marie
@@ -30,7 +31,7 @@ const orderRepository = new OrderRepository();
 const cartRepository = new CartRepository();
 const addressRepository = new AddressRepository();
 const shippingService = new ShippingService();
-const promoService = new PromoService();
+const promoService = new PromoService(new PromoRepository());
 
 const orderService = new OrderService(orderRepository, shippingService, promoService);
 const checkoutService = new CheckoutService(cartRepository, addressRepository);

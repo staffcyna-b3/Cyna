@@ -21,7 +21,8 @@ export const Checkout: React.FC = () => {
   const location = useLocation();
 
   const locationState = location.state as LocationState ?? {};
-  const cartItems = locationState.cartItems ?? [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const cartItems = useMemo(() => locationState.cartItems ?? [], []);
   const billingAddress = locationState.billingAddress ?? null;
   const cartId = locationState.cartId ?? null;
   const billingAddressId = locationState.billingAddressId ?? null;
@@ -42,6 +43,7 @@ export const Checkout: React.FC = () => {
       const result = await CartService.getInstance().applyPromo(promoInput.trim());
       setPromoCode(result.promoCode);
       setDiscountCents(Math.round(result.discountAmount * 100));
+      resetIntent();
     } catch (err) {
       setPromoError(err instanceof Error ? err.message : t('promoError'));
       setPromoCode(undefined);
@@ -56,6 +58,7 @@ export const Checkout: React.FC = () => {
     setDiscountCents(0);
     setPromoInput('');
     setPromoError(null);
+    resetIntent();
   };
 
   const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isRecurring), [cartItems]);
@@ -77,7 +80,20 @@ export const Checkout: React.FC = () => {
     [oneTimeItems],
   );
 
+  const effectiveAmountCents = useMemo(
+    () => Math.max(0, totalCents + shippingFeeCents - discountCents),
+    [totalCents, shippingFeeCents, discountCents],
+  );
+
   const hasCreatedIntent = useRef(false);
+  const [intentVersion, setIntentVersion] = useState(0);
+
+  const resetIntent = () => {
+    setClientSecret(null);
+    setPaymentIntentId(null);
+    hasCreatedIntent.current = false;
+    setIntentVersion((v) => v + 1);
+  };
 
   const [isLoadingIntent, setIsLoadingIntent] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -85,7 +101,7 @@ export const Checkout: React.FC = () => {
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isConfigured || !user?.id || !accessToken || totalCents <= 0) return;
+    if (!isConfigured || !user?.id || !accessToken || effectiveAmountCents <= 0) return;
     if (hasCreatedIntent.current) return;
     hasCreatedIntent.current = true;
 
@@ -150,7 +166,8 @@ export const Checkout: React.FC = () => {
     };
 
     createIntent();
-  }, [isConfigured, user?.id, accessToken, totalCents]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConfigured, user?.id, accessToken, effectiveAmountCents, intentVersion]);
 
   // console.log('Checkout state:', { clientSecret, paymentIntentId, stripePromise });
 
