@@ -3,6 +3,7 @@ import { SalesController } from '../../controllers/SalesController';
 import { ISalesService } from '../../services/ISalesService';
 import { DashboardStats } from '../../services/SalesService';
 import { SaleAdminDTO } from '../../dto/SaleAdminDTO';
+import { HttpError } from '../../common/httpError';
 
 const mockReq = (overrides: Record<string, unknown> = {}) => ({
   body: {},
@@ -113,71 +114,39 @@ describe('SalesController', () => {
       expect(res.status).toHaveBeenCalledWith(200);
     });
 
-    it('retourne 400 si from est une date invalide', async () => {
+    it('propage HttpError 400 si from est une date invalide', async () => {
       const req = mockReq({ query: { from: 'pas-une-date', to: '2026-04-30' } }) as any;
       const res = mockRes();
+      service.getDashboardStats.mockRejectedValue(new HttpError(400, 'Parametre "from" invalide'));
 
-      await controller.getDashboardStats(req, res as any);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false }),
-      );
-      expect(service.getDashboardStats).not.toHaveBeenCalled();
+      await expect(controller.getDashboardStats(req, res as any)).rejects.toBeInstanceOf(HttpError);
+      expect(service.getDashboardStats).toHaveBeenCalled();
     });
 
-    it('retourne 400 si to est une date invalide', async () => {
+    it('propage HttpError 400 si to est une date invalide', async () => {
       const req = mockReq({ query: { from: '2026-04-01', to: 'invalid' } }) as any;
       const res = mockRes();
+      service.getDashboardStats.mockRejectedValue(new HttpError(400, 'Parametre "to" invalide'));
 
-      await controller.getDashboardStats(req, res as any);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false }),
-      );
-      expect(service.getDashboardStats).not.toHaveBeenCalled();
+      await expect(controller.getDashboardStats(req, res as any)).rejects.toBeInstanceOf(HttpError);
+      expect(service.getDashboardStats).toHaveBeenCalled();
     });
 
-    it('retourne 400 si from est postérieur à to', async () => {
+    it('propage HttpError 400 si from est postérieur à to', async () => {
       const req = mockReq({ query: { from: '2026-04-30', to: '2026-04-01' } }) as any;
       const res = mockRes();
+      service.getDashboardStats.mockRejectedValue(new HttpError(400, 'La date "from" doit etre inferieure a "to"'));
 
-      await controller.getDashboardStats(req, res as any);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ success: false }),
-      );
-      expect(service.getDashboardStats).not.toHaveBeenCalled();
+      await expect(controller.getDashboardStats(req, res as any)).rejects.toBeInstanceOf(HttpError);
+      expect(service.getDashboardStats).toHaveBeenCalled();
     });
 
-    it('retourne 500 si le service lève une erreur', async () => {
+    it('propage l\'erreur si le service lève une exception inattendue', async () => {
       const req = mockReq({ query: { from: '2026-04-01', to: '2026-04-30' } }) as any;
       const res = mockRes();
       service.getDashboardStats.mockRejectedValue(new Error('Erreur base de données'));
 
-      await controller.getDashboardStats(req, res as any);
-
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: 'Erreur base de données',
-      });
-    });
-
-    it('retourne 500 avec message générique si erreur non-Error est levée', async () => {
-      const req = mockReq({ query: { from: '2026-04-01', to: '2026-04-30' } }) as any;
-      const res = mockRes();
-      service.getDashboardStats.mockRejectedValue('crash inattendu');
-
-      await controller.getDashboardStats(req, res as any);
-
-      expect(res.status).toHaveBeenCalledWith(500);
-      expect(res.json).toHaveBeenCalledWith({
-        success: false,
-        message: 'Erreur interne.',
-      });
+      await expect(controller.getDashboardStats(req, res as any)).rejects.toThrow('Erreur base de données');
     });
   });
 });

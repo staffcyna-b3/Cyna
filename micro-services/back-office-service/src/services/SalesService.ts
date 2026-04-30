@@ -2,6 +2,7 @@ import { SaleAdminDTO } from '../dto/SaleAdminDTO';
 import { ISalesRepository} from '../repository/ISalesRepository';
 import { SaleRow } from '../interfaces/SaleRow.interface';
 import { ISalesService } from './ISalesService';
+import { HttpError } from '../common/httpError';
 
 export interface DashboardStats {
   totalRevenue: number;
@@ -24,6 +25,16 @@ export class SalesService implements ISalesService {
   }
 
   async getDashboardStats(from?: Date, to?: Date): Promise<DashboardStats> {
+    if (from && isNaN(from.getTime())) {
+      throw new HttpError(400, 'Parametre "from" invalide');
+    }
+    if (to && isNaN(to.getTime())) {
+      throw new HttpError(400, 'Parametre "to" invalide');
+    }
+    if (from && to && from > to) {
+      throw new HttpError(400, 'La date "from" doit etre inferieure a "to"');
+    }
+
     const [rangeFrom, rangeTo] = this.resolveDateRange(from, to);
     const [orders, subscriptions] = await Promise.all([
       this.repo.findAllOrders({ from: rangeFrom, to: rangeTo }),
