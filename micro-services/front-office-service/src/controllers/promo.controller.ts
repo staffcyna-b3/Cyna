@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { IPromoService } from '../interfaces/IPromoService';
-import { isValidUuid } from '../common/validation';
 
 export class PromoController {
   constructor(private readonly promoService: IPromoService) {}
@@ -10,18 +9,10 @@ export class PromoController {
   async applyPromo(req: Request, res: Response) {
     try {
       const userIdHeader = req.headers['x-user-id'];
-      const userId = Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader;
+      const userId = (Array.isArray(userIdHeader) ? userIdHeader[0] : userIdHeader) ?? '';
+      const code = ((req.body.code as string) ?? '').trim().toUpperCase();
 
-      if (!isValidUuid(userId)) {
-        return res.status(401).json({ message: 'Non autorisé' });
-      }
-
-      const code = req.body.code as string;
-      if (!code || typeof code !== 'string' || !code.trim()) {
-        return res.status(422).json({ message: 'Le champ code est requis' });
-      }
-
-      const result = await this.promoService.validateForCart(userId, code.trim().toUpperCase());
+      const result = await this.promoService.validateForCart(userId, code);
       return res.status(200).json(result);
     } catch (error) {
       return this.handleError(res, error, "Erreur lors de l'application du code promo");

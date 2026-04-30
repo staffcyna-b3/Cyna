@@ -50,6 +50,10 @@ export class PromoService implements IPromoService {
       throw new HttpError(500, 'Service panier non disponible');
     }
 
+    if (!code) {
+      throw new HttpError(422, 'Le champ code est requis');
+    }
+
     const cart = await this.cartService.getCart(userId);
 
     if (!cart.items.length) {

@@ -128,7 +128,7 @@ export const Checkout: React.FC = () => {
                 billingPeriod: i.billingPeriod ?? 'monthly',
                 quantity: i.quantity,
               })),
-              oneTimeAmountCents: oneTimeCents,
+              oneTimeAmountCents: Math.max(0, oneTimeCents + shippingFeeCents - discountCents),
               oneTimeDescription: oneTimeItems.map((i) => i.name).join(', '),
               userEmail: user.email,
             }),
@@ -142,7 +142,7 @@ export const Checkout: React.FC = () => {
             },
             credentials: 'include',
             body: JSON.stringify({
-              amount: totalCents,
+              amount: effectiveAmountCents,
               currency: 'eur',
               description: cartItems.map((i) => i.name).join(', '),
               userId: user.id,
@@ -234,7 +234,7 @@ export const Checkout: React.FC = () => {
                 options={{ clientSecret, appearance: { theme: 'stripe' } }}
               >
                 <StripePaymentForm
-                  amountCents={totalCents}
+                  amountCents={effectiveAmountCents}
                   description={cartItems.map((i) => i.name).join(', ')}
                   paymentIntentId={paymentIntentId}
                   cartId={cartId}

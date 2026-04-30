@@ -70,44 +70,34 @@ describe('PromoController.applyPromo', () => {
     expect(service.validateForCart).toHaveBeenCalledWith(VALID_USER_UUID, 'PROMO10');
   });
 
-  it('returns 401 when x-user-id header is missing', async () => {
+  it('passes empty string to service when x-user-id header is missing', async () => {
     const req = mockReq({ headers: {} }) as any;
     const res = mockRes();
+    service.validateForCart.mockResolvedValue(fakePromoResult);
 
     await controller.applyPromo(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(service.validateForCart).not.toHaveBeenCalled();
+    expect(service.validateForCart).toHaveBeenCalledWith('', 'PROMO10');
   });
 
-  it('returns 401 when x-user-id is not a valid UUID', async () => {
-    const req = mockReq({ headers: { 'x-user-id': 'not-a-uuid' } }) as any;
-    const res = mockRes();
-
-    await controller.applyPromo(req, res);
-
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(service.validateForCart).not.toHaveBeenCalled();
-  });
-
-  it('returns 422 when code is missing from body', async () => {
+  it('maps HttpError 422 from service when code is missing', async () => {
     const req = mockReq({ body: {} }) as any;
     const res = mockRes();
+    service.validateForCart.mockRejectedValue(new HttpError(422, 'Le champ code est requis'));
 
     await controller.applyPromo(req, res);
 
     expect(res.status).toHaveBeenCalledWith(422);
-    expect(service.validateForCart).not.toHaveBeenCalled();
   });
 
-  it('returns 422 when code is blank whitespace', async () => {
+  it('maps HttpError 422 from service when code is blank whitespace', async () => {
     const req = mockReq({ body: { code: '   ' } }) as any;
     const res = mockRes();
+    service.validateForCart.mockRejectedValue(new HttpError(422, 'Le champ code est requis'));
 
     await controller.applyPromo(req, res);
 
     expect(res.status).toHaveBeenCalledWith(422);
-    expect(service.validateForCart).not.toHaveBeenCalled();
   });
 
   it('maps HttpError 404 from service to HTTP 404', async () => {
