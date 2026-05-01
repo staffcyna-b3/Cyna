@@ -15,17 +15,21 @@ export default function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentLanguage, availableLanguages, setLanguage } = useLanguage();
-    const { logout, isAuthenticated } = useAuth();
+    const { logout, isAuthenticated, user } = useAuth();
     const { items } = useCart();
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
     const service = useMemo(() => CatalogService.getInstance(), []);
     const searchContainerRef = useRef<HTMLDivElement | null>(null);
+    const cartContainerRef = useRef<HTMLDivElement | null>(null);
+    const userContainerRef = useRef<HTMLDivElement | null>(null);
     const { t } = useTranslation();
 
     const [search, setSearch] = useState('');
     const [suggestions, setSuggestions] = useState<ProductSuggestion[]>([]);
     const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isUserOpen, setIsUserOpen] = useState(false);
 
     const handleLogout = async () => {
         await logout();
@@ -64,6 +68,12 @@ export default function Navbar() {
             if (!searchContainerRef.current?.contains(event.target as Node)) {
                 setIsSuggestionsOpen(false);
             }
+            if (!cartContainerRef.current?.contains(event.target as Node)) {
+                setIsCartOpen(false);
+            }
+            if (!userContainerRef.current?.contains(event.target as Node)) {
+                setIsUserOpen(false);
+            }
         };
 
         document.addEventListener('mousedown', handleOutsideClick);
@@ -72,6 +82,8 @@ export default function Navbar() {
 
     useEffect(() => {
         setIsSuggestionsOpen(false);
+        setIsCartOpen(false);
+        setIsUserOpen(false);
     }, [location.pathname]);
 
     const goToProduct = (productId: string) => {
@@ -117,11 +129,11 @@ export default function Navbar() {
                             <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2" />
                         </div>
 
-                        <div className="relative group">
+                        <div className="relative group" ref={cartContainerRef}>
                             <Button
                                 variant='ghost'
                                 size='icon'
-                                onClick={() => { setIsSuggestionsOpen(false); navigate('/cart'); }}
+                                onClick={() => { setIsSuggestionsOpen(false); setIsCartOpen(prev => !prev); }}
                                 aria-label={t('cart.title')}
                                 className="relative"
                             >
@@ -133,8 +145,7 @@ export default function Navbar() {
                                     )}
                             </Button>
 
-                            {/* Dropdown panier au hover */}
-                            <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
+                            <div className={`absolute right-0 top-full pt-3 z-50 ${isCartOpen ? 'block' : 'hidden group-hover:block'}`}>
                                 <div className="w-80 rounded-2xl border border-[#e0e4f8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.18)] overflow-hidden">
                                     {items.length === 0 ? (
                                         <p className="px-5 py-6 text-center text-sm text-gray-400">{t('cart.empty')}</p>
@@ -175,12 +186,17 @@ export default function Navbar() {
                             </div>
                         </div>
 
-                        <div className="relative group">
-                            <Button variant="ghost" size="icon" className="flex items-center justify-center" aria-label={t('account')}>
-                                <User strokeWidth={3} />
+                        <div className="relative group" ref={userContainerRef}>
+                            <Button variant="ghost" size="icon" className="flex items-center justify-center gap-1.5" aria-label={t('account')} onClick={() => setIsUserOpen(prev => !prev)}>
+                                <User strokeWidth={3} className="h-5 w-5 shrink-0" />
+                                {isAuthenticated && (
+                                    <span className="hidden sm:block text-xs font-semibold max-w-20 truncate">
+                                        {user?.full_name.split(' ')[0]}
+                                    </span>
+                                )}
                             </Button>
 
-                            <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
+                            <div className={`absolute right-0 top-full pt-3 z-50 ${isUserOpen ? 'block' : 'hidden group-hover:block'}`}>
                                 <div className="w-56 rounded-2xl border border-[#e0e4f8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.18)] overflow-hidden">
                                     {isAuthenticated ? (
                                         <>

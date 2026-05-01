@@ -103,7 +103,7 @@ export const Cart = () => {
   }
 
   if ((checkoutLoading || cartLoading) && items.length === 0) {
-    return <div className="py-20 px-40">{t("loading")}</div>
+    return <div className="py-10 px-4 sm:px-8 lg:px-40">{t("loading")}</div>
   }
 
   if (cartError) {
@@ -117,7 +117,7 @@ export const Cart = () => {
 
   if (currentStep === "cart" && items.length === 0) {
     return (
-      <div className="py-20 px-40 flex justify-center items-center">
+      <div className="py-10 px-4 sm:px-8 lg:px-40 flex justify-center items-center">
         <div className="rounded-lg p-6 flex flex-col gap-4 w-fit">
           <p>{t("emptyCart")}</p>
           <Button variant={'cyna'} asChild>
@@ -132,7 +132,7 @@ export const Cart = () => {
   const shippingAddresses = addresses.filter((a) => a.type === 'shipping')
 
   return (
-    <div className="py-20 px-40 min-h-screen bg-white">
+    <div className="py-8 px-4 sm:px-8 lg:px-40 min-h-screen bg-white">
       <div className="flex justify-between mb-10">
         <p className="text-5xl">{currentStep === "cart" ? t("cart.title") : t("shippingAddress")}</p>
         <div>
@@ -141,7 +141,7 @@ export const Cart = () => {
         </div>
       </div>
 
-      <div className="flex justify-between gap-8">
+      <div className="flex flex-col lg:flex-row justify-between gap-8">
         {currentStep === "cart" ? (
           <div className="flex flex-col gap-2 flex-1">
             {items.map((item) => (

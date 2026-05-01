@@ -6,10 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { submitContact } from '@/services/contactService';
+import { useAuth } from '@/hooks/useAuth';
 
 export default function Contact() {
   const { t } = useTranslation();
-  const [email, setEmail] = useState('');
+  const { user } = useAuth();
+  const [email, setEmail] = useState(user?.email ?? '');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);

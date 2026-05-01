@@ -135,7 +135,7 @@ export default function HomePage() {
                     <div
                         className="pointer-events-none absolute inset-x-0 top-0 h-96"
                     />
-                    <div className="relative mx-auto w-[65%]">
+                    <div className="relative mx-auto w-full max-w-5xl px-4 sm:px-8 lg:px-16">
                         <Typography variant='h2' className="mb-8 text-2xl font-bold text-white">
                             {t('home.services')}
                         </Typography>
@@ -175,7 +175,7 @@ export default function HomePage() {
                 {/* Top products section */}
                 {topProducts.length > 0 && (
                     <section className="px-6 py-16 sm:px-12 lg:px-24">
-                        <div className="mx-auto w-[65%]">
+                        <div className="mx-auto max-w-5xl">
                             <Typography variant="h2" className="mb-8 text-2xl font-bold text-white">
                                 {t('home.topProducts')}
                             </Typography>
