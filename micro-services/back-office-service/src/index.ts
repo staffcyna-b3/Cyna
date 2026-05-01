@@ -48,7 +48,7 @@ app.use('/transactions', requireAdminHeader, transactionsRouter);
 app.use('/refunds', requireAdminHeader, refundsRouter);
 app.use('/subscriptions', requireAdminHeader, subscriptionsAdminRouter);
 app.use('/refund-requests', requireAdminHeader, refundRequestsRouter);
-app.use('/sales', salesRouter);
+app.use('/sales', requireAdminHeader, salesRouter);
 
 app.use(errorHandler);
 

@@ -246,8 +246,33 @@
 [26/04/2026 20:30:54] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TQXRp1AdBsYOB9D1khUUS8P","paymentIntentId":"pi_3TQXRp1AdBsYOB9D1AIjhIhh","invoiceId":null}
 [26/04/2026 20:30:57] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TQXRp1AdBsYOB9D14c6RvUT"}
 [26/04/2026 20:30:57] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[27/04/2026 21:19:48] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.updated","eventId":"evt_1TQuh51AdBsYOB9DNEZfl8GP"}
+[27/04/2026 21:19:48] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.updated
+[27/04/2026 21:19:48] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.voided","eventId":"evt_1TQuh51AdBsYOB9Dss6qL7rb"}
+[27/04/2026 21:19:48] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.voided
 [29/04/2026 14:22:55] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TObN61AdBsYOB9DH4pfjw4Y/cancel"}
 [29/04/2026 14:23:30] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TObN61AdBsYOB9DH4pfjw4Y/cancel"}
 [29/04/2026 14:24:15] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TObN61AdBsYOB9DH4pfjw4Y/cancel"}
 [29/04/2026 14:26:02] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TQQEs1AdBsYOB9DEC3nSy86/cancel"}
 [29/04/2026 14:26:07] [ERROR] [ERROR] A canceled subscription can only update its cancellation_details and metadata. | {"code":"STRIPE_INVALID_REQUEST","status":400,"path":"/subscriptions/sub_1TQWLk1AdBsYOB9DcLHdCb8Y/cancel"}
+[01/05/2026 10:41:41] [INFO] [REFUND] Created refund | {"paymentIntentId":"pi_3TQQEu1AdBsYOB9D1AtkJ4La"}
+[01/05/2026 10:41:41] [INFO] [STRIPE WEBHOOK] Event received | {"type":"refund.created","eventId":"evt_3TQQEu1AdBsYOB9D1BVFtFWu"}
+[01/05/2026 10:41:41] [INFO] [STRIPE WEBHOOK] Ignored event: refund.created
+[01/05/2026 10:41:41] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.refunded","eventId":"evt_3TQQEu1AdBsYOB9D1pWjPAI7"}
+[01/05/2026 10:41:41] [INFO] [STRIPE WEBHOOK] Ignored event: charge.refunded
+[01/05/2026 10:41:42] [INFO] [STRIPE WEBHOOK] Event received | {"type":"refund.updated","eventId":"evt_3TQQEu1AdBsYOB9D132HS3hP"}
+[01/05/2026 10:41:42] [INFO] [STRIPE WEBHOOK] Ignored event: refund.updated
+[01/05/2026 10:41:42] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.refund.updated","eventId":"evt_3TQQEu1AdBsYOB9D1zYhIgTr"}
+[01/05/2026 10:41:42] [INFO] [STRIPE WEBHOOK] Ignored event: charge.refund.updated
+[01/05/2026 10:43:32] [INFO] [PAYMENT] PaymentIntent created | {"paymentIntentId":"pi_3TSCfY1AdBsYOB9D0p6gxnVf","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","amount":430598,"currency":"eur"}
+[01/05/2026 10:43:33] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TSCfY1AdBsYOB9D0clqfVUT"}
+[01/05/2026 10:43:33] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[01/05/2026 10:43:46] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TSCfY1AdBsYOB9D0I7Orxuz"}
+[01/05/2026 10:43:46] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TSCfY1AdBsYOB9D0p6gxnVf → success
+[01/05/2026 10:43:46] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TSCfY1AdBsYOB9D0Y0cm3f2"}
+[01/05/2026 10:43:46] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[01/05/2026 10:43:47] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[01/05/2026 10:43:47] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TSCfY1AdBsYOB9D0p6gxnVf"}
+[01/05/2026 10:43:47] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TSCfY1AdBsYOB9D0I7Orxuz","paymentIntentId":"pi_3TSCfY1AdBsYOB9D0p6gxnVf","invoiceId":null}
+[01/05/2026 10:43:49] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TSCfY1AdBsYOB9D0lyfIuim"}
+[01/05/2026 10:43:49] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated

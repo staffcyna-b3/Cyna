@@ -1,8 +1,8 @@
-export interface SaleAdminDTO {
+export interface SaleRow {
   id: string;
-  date: string;
+  date: Date;
   userEmail: string | null;
-  productName: string;
+  productNames: Array<string | null>;
   categoryNames: string[];
   type: 'order' | 'subscription';
   amount: number;

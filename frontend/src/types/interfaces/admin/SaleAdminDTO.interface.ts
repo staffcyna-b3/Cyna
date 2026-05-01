@@ -3,6 +3,7 @@ export interface SaleAdminDTO {
   date: string;
   userEmail: string | null;
   productName: string;
+  categoryNames: string[];
   type: 'order' | 'subscription';
   amount: number;
   status: string;
