@@ -9,7 +9,9 @@
     "test:unit": "vitest run src/tests/unit",
     "test:integration": "vitest run src/tests/integration",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo"
   },
   "keywords": [],
   "author": "",

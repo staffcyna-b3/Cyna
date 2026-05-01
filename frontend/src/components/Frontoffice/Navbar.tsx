@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, ChevronDown, ClipboardList, LogOut, Mail, Search, ShoppingCart, User } from 'lucide-react';
+import { ArrowRight, ChevronDown, ClipboardList, CreditCard, LogOut, Mail, Search, ShoppingCart, User } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
@@ -191,15 +191,15 @@ export default function Navbar() {
                                                 </Link>
                                             </div>
                                             <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
-                                                <Link to="/orders" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                <Link to="/my-orders" className="flex items-center gap-2 text-sm text-[#3d49f5]">
                                                     <ClipboardList className="h-4 w-4" strokeWidth={2} />
                                                     {t('orders.myOrders')}
                                                 </Link>
                                             </div>
                                             <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
-                                                <Link to="/contact" className="flex items-center gap-2 text-sm text-[#3d49f5]">
-                                                    <Mail className="h-4 w-4" strokeWidth={2} />
-                                                    {t('contact.support')}
+                                                <Link to="/mon-compte/abonnements" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <CreditCard className="h-4 w-4" strokeWidth={2} />
+                                                    {t('subscriptions.pageTitle')}
                                                 </Link>
                                             </div>
                                             <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">

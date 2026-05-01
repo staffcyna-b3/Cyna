@@ -96,4 +96,21 @@ export class OrderRepository implements IOrderRepository {
         await order.save();
         return order;
     }
+
+    async updateStatusByPaymentIntentId(paymentIntentId: string, status: OrderStatus): Promise<boolean> {
+        const [affectedCount] = await Order.update(
+            { status },
+            { where: { stripe_payment_intent_id: paymentIntentId } }
+        );
+        return affectedCount > 0;
+    }
+
+    async findItemsByPaymentIntentId(paymentIntentId: string): Promise<{ product_id: string; quantity: number }[]> {
+        const order = await Order.findOne({
+            where: { stripe_payment_intent_id: paymentIntentId },
+            include: [{ model: OrderItem, as: 'items', attributes: ['product_id', 'quantity'] }],
+        });
+        const items = (order as any)?.items ?? [];
+        return items.map((i: any) => ({ product_id: i.product_id, quantity: i.quantity }));
+    }
 }

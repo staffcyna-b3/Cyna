@@ -22,6 +22,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         // Inject user context headers for downstream micro-services (e.g. payments-service)
         req.headers['x-user-id'] = decoded.userId;
         req.headers['x-user-email'] = decoded.email;
+        req.headers['x-user-role'] = decoded.role;
         next()
 
     } catch (error) {

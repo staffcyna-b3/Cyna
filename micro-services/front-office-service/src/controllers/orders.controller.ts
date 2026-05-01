@@ -91,6 +91,25 @@ export class OrderController {
     }
   }
 
+  async getItemsByPaymentIntent(req: Request, res: Response): Promise<void> {
+    const paymentIntentId = req.params.paymentIntentId as string;
+    const items = await this.orderService.getOrderItemsByPaymentIntentId(paymentIntentId);
+    res.status(200).json(items);
+  }
+
+  async updateStatusByPaymentIntent(req: Request, res: Response): Promise<void> {
+    const paymentIntentId = req.params.paymentIntentId as string;
+    const { status } = req.body;
+
+    if (!status || !Object.values(OrderStatus).includes(status as OrderStatus)) {
+      res.status(422).json({ message: 'Invalid or missing status value' });
+      return;
+    }
+
+    await this.orderService.updateOrderStatusByPaymentIntentId(paymentIntentId, status as OrderStatus);
+    res.status(200).json({ message: 'Order status updated' });
+  }
+
   async updateStatus(req: Request, res: Response): Promise<void> {
     try {
       const idParam = req.params.id;

@@ -4,7 +4,9 @@ import type { TransactionAdminDTO } from '@/types/interfaces/admin/TransactionAd
 import type { RefundAdminDTO } from '@/types/interfaces/admin/RefundAdminDTO.interface';
 import type { PaginatedResponse } from '@/types/interfaces/admin/PaginatedResponse.interface';
 import type { CreateRefundRequest } from '@/types/interfaces/admin/CreateRefundRequest.interface';
-import type { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageDTO.interface';
+import { RefundRequestAdminDTO } from '@/types/interfaces/admin/RefundRequestAdminDTO.interface';
+import { SaleAdminDTO } from '@/types/interfaces/admin/SaleAdminDTO.interface';
+import { SubscriptionAdminDTO } from '@/types/interfaces/admin/SubscriptionAdminDTO.interface';
 
 export class BackOfficeApiError extends Error {
   constructor(public readonly status: number, message: string) {
@@ -22,7 +24,7 @@ const handleResponse = async <T>(res: Response): Promise<T> => {
   if (res.status === 401) throw new BackOfficeApiError(401, 'UNAUTHORIZED');
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
-    throw new BackOfficeApiError(res.status, body?.error ?? 'REQUEST_FAILED');
+    throw new BackOfficeApiError(res.status, body?.message ?? body?.error ?? 'REQUEST_FAILED');
   }
   const json = await res.json();
   return json.data as T;
@@ -114,31 +116,38 @@ export async function updateOrderStatus(
   return handleResponse<OrderAdminDTO>(res);
 }
 
-export async function getContactMessages(token: string): Promise<ContactMessageDTO[]> {
-  const res = await fetch('/api/back-office/support', { headers: withAuth(token) });
-  return handleResponse<ContactMessageDTO[]>(res);
-}
-
-export async function markContactAsProcessed(
-  token: string,
-  id: string
-): Promise<ContactMessageDTO> {
-  const res = await fetch(`/api/back-office/support/${id}/processed`, {
-    method: 'PATCH',
-    headers: withAuth(token),
-  });
-  return handleResponse<ContactMessageDTO>(res);
-}
-
-export async function replyToContact(
-  token: string,
-  id: string,
-  replyMessage: string
-): Promise<ContactMessageDTO> {
-  const res = await fetch(`/api/back-office/support/${id}/reply`, {
+export async function cancelSubscriptionAdmin(token: string, id: string): Promise<void> {
+  const res = await fetch(`/api/back-office/subscriptions/${id}/cancel`, {
     method: 'POST',
     headers: withAuth(token),
-    body: JSON.stringify({ replyMessage }),
   });
-  return handleResponse<ContactMessageDTO>(res);
+  return handleResponse<void>(res);
+}
+
+export async function getRefundRequests(token: string): Promise<RefundRequestAdminDTO[]> {
+  const res = await fetch('/api/back-office/refund-requests', { headers: withAuth(token) });
+  return handleResponse<RefundRequestAdminDTO[]>(res);
+}
+
+export async function getSales(token: string): Promise<SaleAdminDTO[]> {
+  const res = await fetch('/api/back-office/sales', { headers: withAuth(token) });
+  return handleResponse<SaleAdminDTO[]>(res);
+}
+
+export async function getSubscriptions(token: string): Promise<SubscriptionAdminDTO[]> {
+  const res = await fetch('/api/back-office/subscriptions', { headers: withAuth(token) });
+  return handleResponse<SubscriptionAdminDTO[]>(res);
+}
+
+export async function updateRefundRequestStatus(
+  token: string,
+  id: number,
+  status: 'approved' | 'rejected'
+): Promise<RefundRequestAdminDTO> {
+  const res = await fetch(`/api/back-office/refund-requests/${id}`, {
+    method: 'PATCH',
+    headers: withAuth(token),
+    body: JSON.stringify({ status }),
+  });
+  return handleResponse<RefundRequestAdminDTO>(res);
 }

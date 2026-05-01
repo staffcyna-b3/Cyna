@@ -1,4 +1,4 @@
-import { WhereOptions, Op } from 'sequelize';
+import { WhereOptions, Op, literal } from 'sequelize';
 import Product from '../models/Product';
 import Promotion from '../models/Promotion';
 import { AbstractRepository } from './abstract.repository';
@@ -98,6 +98,17 @@ export default class ProductRepository extends AbstractRepository<Product> {
                 return null;
             }
             throw error;
+        }
+    }
+
+    async decrementStockForPhysicalProducts(items: { productId: string; quantity: number }[]): Promise<void> {
+        for (const { productId, quantity } of items) {
+            const safeQty = Math.max(0, Math.floor(quantity));
+            if (safeQty === 0) continue;
+            await this.model.update(
+                { stock: literal(`GREATEST(0, stock - ${safeQty})`) },
+                { where: { id: productId, is_service: false } }
+            );
         }
     }
 

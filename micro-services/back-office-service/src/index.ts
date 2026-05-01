@@ -7,12 +7,15 @@ import usersRouter from './routes/users.routes';
 import ordersRouter from './routes/orders.routes';
 import transactionsRouter from './routes/transactions.routes';
 import refundsRouter from './routes/refunds.routes';
-import supportRouter from './routes/support.routes';
+import subscriptionsAdminRouter from './routes/subscriptions.routes';
+import refundRequestsRouter from './routes/refundRequests.routes';
+import salesRouter from './routes/sales.routes';
 import { errorHandler } from './middlewares/errorHandler';
 
 import productRoutes from './routes/product.routes'
 import promotionRoutes from './routes/promotion.routes'
 import categoryRoutes from './routes/category.routes'
+import { requireAdminHeader } from './middlewares/requireAdminHeader';
 
 dotenv.config();
 
@@ -41,9 +44,11 @@ app.use('/', categoryRoutes)
 
 app.use('/users', usersRouter);
 app.use('/orders', ordersRouter);
-app.use('/transactions', transactionsRouter);
-app.use('/refunds', refundsRouter);
-app.use('/support', supportRouter);
+app.use('/transactions', requireAdminHeader, transactionsRouter);
+app.use('/refunds', requireAdminHeader, refundsRouter);
+app.use('/subscriptions', requireAdminHeader, subscriptionsAdminRouter);
+app.use('/refund-requests', requireAdminHeader, refundRequestsRouter);
+app.use('/sales', requireAdminHeader, salesRouter);
 
 app.use(errorHandler);
 

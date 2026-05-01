@@ -17,8 +17,6 @@ import Orders from "@/pages/backoffice/Orders"
 import Transactions from "@/pages/backoffice/Transactions"
 import Refunds from "@/pages/backoffice/Refunds"
 import Discounts from "@/pages/backoffice/Discounts"
-import Support from "@/pages/backoffice/Support"
-import Contact from "@/pages/frontoffice/Contact"
 import { CheckoutSuccess } from "@/pages/frontoffice/stripe/CheckoutSuccess"
 import { CheckoutCancel } from "@/pages/frontoffice/stripe/CheckoutCancel"
 import { Checkout as StripeCheckout } from "@/pages/frontoffice/stripe/Checkout"
@@ -30,6 +28,8 @@ import { Cart } from "@/pages/frontoffice/Cart"
 import AccountPage from "@/pages/frontoffice/AccountPage"
 import OrdersPage from "@/pages/frontoffice/OrdersPage"
 import { ProtectedRoute } from "@/components/protectedRoute"
+import Contact from "@/pages/frontoffice/Contact"
+import MySubscriptions from "@/pages/frontoffice/MySubscriptions"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -95,29 +95,13 @@ export default function CustomRoutes() {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/refunds" 
+          <Route
+            path="/refunds"
             element={
               <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
                 <Refunds />
               </ProtectedRoute>
             } 
-          />
-          <Route
-            path="/discounts"
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Discounts />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/support"
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Support />
-              </ProtectedRoute>
-            }
           />
       </Route>
 
@@ -139,10 +123,18 @@ export default function CustomRoutes() {
           }
         />
         <Route
-          path="/orders"
+          path="/my-orders"
           element={
             <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
               <OrdersPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mon-compte/abonnements"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <MySubscriptions />
             </ProtectedRoute>
           }
         />

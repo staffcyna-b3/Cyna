@@ -1,6 +1,5 @@
 import User from './User';
 import UserRole from './UserRole';
-import ContactMessage from './ContactMessage';
 import Address from './Address';
 import Category from './Category';
 import Product from './Product';
@@ -12,6 +11,8 @@ import CartItem from './CartItem';
 import Order from './Order';
 import OrderItem from './OrderItem';
 import Subscription from './Subscription';
+import RefundRequest from './RefundRequest';
+import ContactMessage from './ContactMessage';
 
 // User Associations
 User.hasMany(UserRole, {
@@ -161,6 +162,16 @@ OrderItem.belongsTo(Order, {
   as: 'order',
 });
 
+User.hasMany(RefundRequest, {
+  foreignKey: 'user_id',
+  as: 'refundRequests',
+  onDelete: 'CASCADE',
+});
+RefundRequest.belongsTo(User, {
+  foreignKey: 'user_id',
+  as: 'user',
+});
+
 export {
   User,
   UserRole,
@@ -176,4 +187,5 @@ export {
   OrderItem,
   Subscription,
   ContactMessage,
+  RefundRequest,
 };
