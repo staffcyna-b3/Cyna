@@ -1,10 +1,5 @@
 import User from './User';
 import UserRole from './UserRole';
-<<<<<<< HEAD
-import RefundRequest from './RefundRequest';
-=======
-import ContactMessage from './ContactMessage';
->>>>>>> origin/dev
 import Address from './Address';
 import Category from './Category';
 import Product from './Product';
@@ -16,6 +11,8 @@ import CartItem from './CartItem';
 import Order from './Order';
 import OrderItem from './OrderItem';
 import Subscription from './Subscription';
+import RefundRequest from './RefundRequest';
+import ContactMessage from './ContactMessage';
 
 // User Associations
 User.hasMany(UserRole, {
@@ -189,9 +186,6 @@ export {
   Order,
   OrderItem,
   Subscription,
-<<<<<<< HEAD
-  RefundRequest,
-=======
   ContactMessage,
->>>>>>> origin/dev
+  RefundRequest,
 };

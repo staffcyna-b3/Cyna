@@ -196,4 +196,6 @@ export {
   Order,
   OrderItem,
   Subscription,
+  ContactMessage,
+  RefundRequest,
 };
