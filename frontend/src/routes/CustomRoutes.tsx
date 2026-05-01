@@ -30,6 +30,7 @@ import OrdersPage from "@/pages/frontoffice/OrdersPage"
 import { ProtectedRoute } from "@/components/protectedRoute"
 import Contact from "@/pages/frontoffice/Contact"
 import MySubscriptions from "@/pages/frontoffice/MySubscriptions"
+import Support from "@/pages/backoffice/Support"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -102,6 +103,22 @@ export default function CustomRoutes() {
                 <Refunds />
               </ProtectedRoute>
             } 
+          />
+          <Route
+            path="/discounts"
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+                <Discounts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/support"
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+                <Support />
+              </ProtectedRoute>
+            }
           />
       </Route>
 

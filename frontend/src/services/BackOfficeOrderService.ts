@@ -7,6 +7,7 @@ import type { CreateRefundRequest } from '@/types/interfaces/admin/CreateRefundR
 import { RefundRequestAdminDTO } from '@/types/interfaces/admin/RefundRequestAdminDTO.interface';
 import { SaleAdminDTO } from '@/types/interfaces/admin/SaleAdminDTO.interface';
 import { SubscriptionAdminDTO } from '@/types/interfaces/admin/SubscriptionAdminDTO.interface';
+import { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageDTO.interface';
 
 export class BackOfficeApiError extends Error {
   constructor(public readonly status: number, message: string) {
@@ -150,4 +151,33 @@ export async function updateRefundRequestStatus(
     body: JSON.stringify({ status }),
   });
   return handleResponse<RefundRequestAdminDTO>(res);
+}
+
+export async function getContactMessages(token: string): Promise<ContactMessageDTO[]> {
+  const res = await fetch('/api/back-office/support', { headers: withAuth(token) });
+  return handleResponse<ContactMessageDTO[]>(res);
+}
+
+export async function markContactAsProcessed(
+  token: string,
+  id: string
+): Promise<ContactMessageDTO> {
+  const res = await fetch(`/api/back-office/support/${id}/processed`, {
+    method: 'PATCH',
+    headers: withAuth(token),
+  });
+  return handleResponse<ContactMessageDTO>(res);
+}
+
+export async function replyToContact(
+  token: string,
+  id: string,
+  replyMessage: string
+): Promise<ContactMessageDTO> {
+  const res = await fetch(`/api/back-office/support/${id}/reply`, {
+    method: 'POST',
+    headers: withAuth(token),
+    body: JSON.stringify({ replyMessage }),
+  });
+  return handleResponse<ContactMessageDTO>(res);
 }
