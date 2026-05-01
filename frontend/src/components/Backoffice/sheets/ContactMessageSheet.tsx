@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageDTO.interface';
+import type { ContactMessageSheetProps } from '@/types/interfaces/support/ContactMessageSheetProps.interface';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,18 +11,6 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { ContactStatusBadge } from '@/components/Backoffice/ContactStatusBadge';
-
-interface ContactMessageSheetProps {
-  open: boolean;
-  message: ContactMessageDTO | null;
-  replyMessage: string;
-  replying: boolean;
-  marking: boolean;
-  onOpenChange: (open: boolean) => void;
-  onReplyMessageChange: (value: string) => void;
-  onReply: () => void;
-  onMarkAsProcessed: () => void;
-}
 
 export function ContactMessageSheet({
   open,

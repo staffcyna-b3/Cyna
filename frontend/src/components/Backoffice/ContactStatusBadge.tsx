@@ -1,9 +1,6 @@
 import { t } from 'i18next';
 import { Badge } from '@/components/ui/badge';
-
-interface ContactStatusBadgeProps {
-  status: 'new' | 'processed';
-}
+import type { ContactStatusBadgeProps } from '@/types/interfaces/support/ContactStatusBadgeProps.interface';
 
 export function ContactStatusBadge({ status }: ContactStatusBadgeProps) {
   return (
