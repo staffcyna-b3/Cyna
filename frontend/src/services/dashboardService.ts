@@ -52,14 +52,19 @@ export async function computeDashboardData(
   const curLocal = computeLocalMetrics(currentFiltered);
   const prevLocal = computeLocalMetrics(prevFiltered);
 
+  const curRevenue = categoryFilter ? curLocal.totalRevenue : currentStats.totalRevenue;
+  const prevRevenue = categoryFilter ? prevLocal.totalRevenue : prevStats.totalRevenue;
+  const curAvgCart = categoryFilter ? curLocal.averageCart : currentStats.averageCart;
+  const prevAvgCart = categoryFilter ? prevLocal.averageCart : prevStats.averageCart;
+
   const kpis: KpiData = {
     totalSales: {
-      value: Math.round(currentStats.totalRevenue * 100) / 100,
-      trend: trendPct(currentStats.totalRevenue, prevStats.totalRevenue),
+      value: Math.round(curRevenue * 100) / 100,
+      trend: trendPct(curRevenue, prevRevenue),
     },
     averageBasket: {
-      value: Math.round(currentStats.averageCart * 100) / 100,
-      trend: trendPct(currentStats.averageCart, prevStats.averageCart),
+      value: Math.round(curAvgCart * 100) / 100,
+      trend: trendPct(curAvgCart, prevAvgCart),
     },
     nbOrders: {
       value: curLocal.count,

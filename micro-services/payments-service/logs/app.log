@@ -276,3 +276,41 @@
 [01/05/2026 10:43:47] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TSCfY1AdBsYOB9D0I7Orxuz","paymentIntentId":"pi_3TSCfY1AdBsYOB9D0p6gxnVf","invoiceId":null}
 [01/05/2026 10:43:49] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TSCfY1AdBsYOB9D0lyfIuim"}
 [01/05/2026 10:43:49] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[01/05/2026 11:57:49] [INFO] [PAYMENT] PaymentIntent created | {"paymentIntentId":"pi_3TSDpR1AdBsYOB9D0dHtKR0W","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","amount":600598,"currency":"eur"}
+[01/05/2026 11:57:50] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TSDpR1AdBsYOB9D0FH64l7i"}
+[01/05/2026 11:57:50] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[01/05/2026 12:09:11] [INFO] [STRIPE WEBHOOK] Event received | {"type":"product.created","eventId":"evt_1TSE0R1AdBsYOB9DjdFOiUcd"}
+[01/05/2026 12:09:11] [INFO] [STRIPE WEBHOOK] Ignored event: product.created
+[01/05/2026 12:09:13] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TSE0S1AdBsYOB9D1TlIMFPY"}
+[01/05/2026 12:09:13] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[01/05/2026 12:09:13] [INFO] [PAYMENT] Subscription created | {"subscriptionId":"sub_1TSE0R1AdBsYOB9De8QgXvE0","paymentIntentId":"pi_3TSE0T1AdBsYOB9D0xhGxzZd","userId":"cc24542d-784f-4588-a65d-6e86b54e3e49","totalAmountCents":79999}
+[01/05/2026 12:09:13] [INFO] [STRIPE WEBHOOK] Event received | {"type":"customer.subscription.created","eventId":"evt_1TSE0T1AdBsYOB9DPZ3SFVC9"}
+[01/05/2026 12:09:13] [INFO] [STRIPE WEBHOOK] Ignored event: customer.subscription.created
+[01/05/2026 12:09:14] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.created","eventId":"evt_1TSE0T1AdBsYOB9Dp2uS8wz1"}
+[01/05/2026 12:09:14] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.created
+[01/05/2026 12:09:14] [INFO] [STRIPE WEBHOOK] Event received | {"type":"invoice.finalized","eventId":"evt_1TSE0T1AdBsYOB9DT0ipKJZh"}
+[01/05/2026 12:09:14] [INFO] [STRIPE WEBHOOK] Ignored event: invoice.finalized
+[01/05/2026 12:09:14] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.created","eventId":"evt_3TSE0T1AdBsYOB9D0wrnubFi"}
+[01/05/2026 12:09:14] [INFO] [STRIPE WEBHOOK] Ignored event: payment_intent.created
+[01/05/2026 12:09:27] [INFO] [STRIPE WEBHOOK] Event received | {"type":"payment_intent.succeeded","eventId":"evt_3TSE0T1AdBsYOB9D0gnI5AHt"}
+[01/05/2026 12:09:27] [WARN] [REPO] updateStatus: 1 rows affected for PI pi_3TSE0T1AdBsYOB9D0xhGxzZd → success
+[01/05/2026 12:09:27] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.succeeded","eventId":"evt_3TSE0T1AdBsYOB9D0M8qodaa"}
+[01/05/2026 12:09:27] [INFO] [STRIPE WEBHOOK] Ignored event: charge.succeeded
+[01/05/2026 12:09:27] [INFO] Email de confirmation de commande envoyé à marie.richir35@gmail.com
+[01/05/2026 12:09:27] [INFO] [STRIPE WEBHOOK] Order confirmation email sent | {"paymentIntentId":"pi_3TSE0T1AdBsYOB9D0xhGxzZd"}
+[01/05/2026 12:09:28] [ERROR] [STRIPE WEBHOOK] Failed to activate subscription invoice | {"invoiceId":"in_1TSE0R1AdBsYOB9DbgM9jLOw","subscriptionId":"sub_1TSE0R1AdBsYOB9De8QgXvE0","error":"The customer does not have a payment method with the ID pm_1TSE0f1AdBsYOB9DEYciEb0Z. The payment method must be attached to the customer."}
+[01/05/2026 12:09:28] [INFO] [STRIPE WEBHOOK] payment_intent.succeeded processed | {"eventId":"evt_3TSE0T1AdBsYOB9D0gnI5AHt","paymentIntentId":"pi_3TSE0T1AdBsYOB9D0xhGxzZd","invoiceId":"in_1TSE0R1AdBsYOB9DbgM9jLOw"}
+[01/05/2026 12:09:29] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.updated","eventId":"evt_3TSE0T1AdBsYOB9D0wL7wRji"}
+[01/05/2026 12:09:29] [INFO] [STRIPE WEBHOOK] Ignored event: charge.updated
+[01/05/2026 12:31:53] [INFO] [SUBSCRIPTION] Scheduled cancel at period end | {"subscriptionId":"sub_1TSE0R1AdBsYOB9De8QgXvE0"}
+[01/05/2026 12:31:54] [INFO] [STRIPE WEBHOOK] Event received | {"type":"customer.subscription.updated","eventId":"evt_1TSEMP1AdBsYOB9D2YLI9nYJ"}
+[01/05/2026 12:31:54] [INFO] [STRIPE WEBHOOK] Ignored event: customer.subscription.updated
+[01/05/2026 12:32:44] [INFO] [REFUND] Created refund | {"paymentIntentId":"pi_3TQWLm1AdBsYOB9D1nypJSTP"}
+[01/05/2026 12:32:45] [INFO] [STRIPE WEBHOOK] Event received | {"type":"refund.created","eventId":"evt_3TQWLm1AdBsYOB9D1cru6Vks"}
+[01/05/2026 12:32:45] [INFO] [STRIPE WEBHOOK] Ignored event: refund.created
+[01/05/2026 12:32:45] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.refunded","eventId":"evt_3TQWLm1AdBsYOB9D1IFoUuGA"}
+[01/05/2026 12:32:45] [INFO] [STRIPE WEBHOOK] Ignored event: charge.refunded
+[01/05/2026 12:32:45] [INFO] [STRIPE WEBHOOK] Event received | {"type":"refund.updated","eventId":"evt_3TQWLm1AdBsYOB9D1lhPDOEx"}
+[01/05/2026 12:32:45] [INFO] [STRIPE WEBHOOK] Ignored event: refund.updated
+[01/05/2026 12:32:45] [INFO] [STRIPE WEBHOOK] Event received | {"type":"charge.refund.updated","eventId":"evt_3TQWLm1AdBsYOB9D1gUp7HNl"}
+[01/05/2026 12:32:45] [INFO] [STRIPE WEBHOOK] Ignored event: charge.refund.updated

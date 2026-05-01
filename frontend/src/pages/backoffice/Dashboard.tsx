@@ -119,10 +119,11 @@ export default function Dashboard() {
     )
       .then(setDashboardData)
       .catch(() => toast.error(t("errorOccurred")));
+      console.log("Test", allSales);
   }, [accessToken, allSales, period, customFrom, customTo, categoryFilter]);
 
   const { kpis, salesSeries, categoryData, categories } = dashboardData;
-
+  console.log("Dashboard data:", salesSeries);
   const salesBarOptions: ApexOptions = {
     ...baseBarOptions,
     xaxis: {

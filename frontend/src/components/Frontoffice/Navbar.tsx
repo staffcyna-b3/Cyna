@@ -203,6 +203,12 @@ export default function Navbar() {
                                                 </Link>
                                             </div>
                                             <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
+                                                <Link to="/contact" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <Mail className="h-4 w-4" strokeWidth={2} />
+                                                    {t('contact.support')}
+                                                </Link>
+                                            </div>
+                                            <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
                                                 <button
                                                     onClick={handleLogout}
                                                     className="flex items-center gap-2 text-sm text-[#3d49f5]"

@@ -1,6 +1,7 @@
 import type { SaleAdminDTO } from '@/types/interfaces/admin/SaleAdminDTO.interface';
 import type { KpiData, TimePeriod } from './dashboard.types';
 import { formatDay } from './dashboard.dateUtils';
+import { toLocalIsoDate } from '@/utils/formatDate';
 
 export const PAID_STATUSES = ['PAID', 'active'];
 
@@ -20,7 +21,9 @@ export function computeLocalMetrics(sales: SaleAdminDTO[]) {
   const paid = sales.filter((s) => PAID_STATUSES.includes(s.status));
   const count = paid.length;
   const convRate = sales.length > 0 ? (count / sales.length) * 100 : 0;
-  return { count, convRate };
+  const totalRevenue = paid.reduce((sum, s) => sum + s.amount, 0);
+  const averageCart = count > 0 ? totalRevenue / count : 0;
+  return { count, convRate, totalRevenue, averageCart };
 }
 
 export function computeCategoryData(
@@ -54,9 +57,9 @@ export function computeSalesSeries(
     return Array.from({ length: 7 }, (_, i) => {
       const d = new Date(from);
       d.setDate(d.getDate() + i);
-      const iso = d.toISOString().slice(0, 10);
+      const iso = toLocalIsoDate(d);
       const total = paid
-        .filter((s) => new Date(s.date).toISOString().slice(0, 10) === iso)
+        .filter((s) => toLocalIsoDate(new Date(s.date)) === iso)
         .reduce((sum, s) => sum + s.amount, 0);
       return { date: formatDay(d), total };
     });
@@ -80,12 +83,14 @@ export function computeSalesSeries(
     });
   }
 
-  const map = new Map<string, number>();
+  const map = new Map<string, { total: number; label: string }>();
   paid.forEach((s) => {
-    const label = formatDay(new Date(s.date));
-    map.set(label, (map.get(label) ?? 0) + s.amount);
+    const d = new Date(s.date);
+    const iso = toLocalIsoDate(d);
+    const existing = map.get(iso);
+    map.set(iso, { total: (existing?.total ?? 0) + s.amount, label: formatDay(d) });
   });
   return Array.from(map.entries())
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, total]) => ({ date, total }));
+    .map(([, { label, total }]) => ({ date: label, total }));
 }
