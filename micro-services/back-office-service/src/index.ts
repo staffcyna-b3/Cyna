@@ -10,12 +10,12 @@ import refundsRouter from './routes/refunds.routes';
 import subscriptionsAdminRouter from './routes/subscriptions.routes';
 import refundRequestsRouter from './routes/refundRequests.routes';
 import salesRouter from './routes/sales.routes';
-import { errorHandler } from './middleware/errorHandler';
-import { requireAdminHeader } from './middlewares/requireAdminHeader';
+import { errorHandler } from './middlewares/errorHandler';
 
 import productRoutes from './routes/product.routes'
 import promotionRoutes from './routes/promotion.routes'
 import categoryRoutes from './routes/category.routes'
+import { requireAdminHeader } from './middlewares/requireAdminHeader';
 
 dotenv.config();
 

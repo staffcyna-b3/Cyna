@@ -1,6 +1,10 @@
 import User from './User';
 import UserRole from './UserRole';
+<<<<<<< HEAD
 import RefundRequest from './RefundRequest';
+=======
+import ContactMessage from './ContactMessage';
+>>>>>>> origin/dev
 import Address from './Address';
 import Category from './Category';
 import Product from './Product';
@@ -185,5 +189,9 @@ export {
   Order,
   OrderItem,
   Subscription,
+<<<<<<< HEAD
   RefundRequest,
+=======
+  ContactMessage,
+>>>>>>> origin/dev
 };

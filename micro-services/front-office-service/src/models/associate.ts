@@ -1,5 +1,6 @@
 import User from './User';
 import UserRole from './UserRole';
+import ContactMessage from './ContactMessage';
 import Address from './Address';
 import Category from './Category';
 import Product from './Product';
@@ -195,5 +196,4 @@ export {
   Order,
   OrderItem,
   Subscription,
-  RefundRequest,
 };

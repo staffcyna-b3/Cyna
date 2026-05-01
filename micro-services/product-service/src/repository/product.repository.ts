@@ -1,5 +1,6 @@
 import { WhereOptions, Op, literal } from 'sequelize';
 import Product from '../models/Product';
+import Promotion from '../models/Promotion';
 import { AbstractRepository } from './abstract.repository';
 import { AppError } from '../common/errors';
 import { ProductResponseDto } from '../dto/response/ProductResponse.dto';
@@ -21,6 +22,13 @@ export default class ProductRepository extends AbstractRepository<Product> {
             {
                 association: 'category',
                 attributes: ['id', 'name', 'description', 'type'],
+                required: false,
+            },
+            {
+                model: Promotion,
+                as: 'promotions',
+                through: { attributes: [] },
+                where: { active: true },
                 required: false,
             },
         ];
