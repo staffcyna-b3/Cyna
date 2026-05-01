@@ -1,4 +1,4 @@
-import { HttpError } from '../common/HttpError';
+import { HttpError } from '../common/httpError';
 import { IAddressRepository } from '../interfaces/AddressRepository';
 import { IAddressService } from '../interfaces/AddressService';
 import { CreateAddressPayload } from '../interfaces/CreateAddressPayload';

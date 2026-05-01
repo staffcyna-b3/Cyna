@@ -17,6 +17,8 @@ import Orders from "@/pages/backoffice/Orders"
 import Transactions from "@/pages/backoffice/Transactions"
 import Refunds from "@/pages/backoffice/Refunds"
 import Discounts from "@/pages/backoffice/Discounts"
+import Support from "@/pages/backoffice/Support"
+import Contact from "@/pages/frontoffice/Contact"
 import { CheckoutSuccess } from "@/pages/frontoffice/stripe/CheckoutSuccess"
 import { CheckoutCancel } from "@/pages/frontoffice/stripe/CheckoutCancel"
 import { Checkout as StripeCheckout } from "@/pages/frontoffice/stripe/Checkout"
@@ -101,13 +103,21 @@ export default function CustomRoutes() {
               </ProtectedRoute>
             } 
           />
-          <Route 
-            path="/discounts" 
+          <Route
+            path="/discounts"
             element={
               <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
                 <Discounts />
               </ProtectedRoute>
-            } 
+            }
+          />
+          <Route
+            path="/support"
+            element={
+              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+                <Support />
+              </ProtectedRoute>
+            }
           />
       </Route>
 
@@ -119,6 +129,7 @@ export default function CustomRoutes() {
           <Route path="/catalog/:id" element={<CatalogDetail />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
+        <Route path="/contact" element={<Contact />} />
         <Route
           path="/account"
           element={

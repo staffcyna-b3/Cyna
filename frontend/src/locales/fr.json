@@ -297,5 +297,22 @@
   "backoffice.moveUp": "Monter",
   "backoffice.moveDown": "Descendre",
   "backoffice.ordersComingSoon": "Module commandes pret: structure front en place, data a connecter selon endpoints.",
-  "backoffice.transactionsComingSoon": "Module transactions pret: structure front en place, data a connecter selon endpoints."
+  "backoffice.transactionsComingSoon": "Module transactions pret: structure front en place, data a connecter selon endpoints.",
+  "contact.pageTitle": "Nous contacter",
+  "contact.email": "Votre adresse e-mail",
+  "contact.subject": "Sujet",
+  "contact.message": "Message",
+  "contact.submit": "Envoyer",
+  "contact.successTitle": "Message envoyé !",
+  "contact.successMessage": "Nous vous répondrons dans les plus brefs délais.",
+  "contact.reply": "Envoyer la réponse",
+  "contact.markProcessed": "Marquer comme traité",
+  "contact.statusNew": "Nouveau",
+  "contact.statusProcessed": "Traité",
+  "contact.support": "Support",
+  "contact.replyLabel": "Votre réponse",
+  "contact.replyPlaceholder": "Écrivez votre réponse...",
+  "contact.replySent": "Réponse envoyée",
+  "contact.previousReply": "Réponse envoyée",
+  "contact.repliedAt": "Répondu le"
 }

@@ -7,7 +7,8 @@ import usersRouter from './routes/users.routes';
 import ordersRouter from './routes/orders.routes';
 import transactionsRouter from './routes/transactions.routes';
 import refundsRouter from './routes/refunds.routes';
-import { errorHandler } from './middleware/errorHandler';
+import supportRouter from './routes/support.routes';
+import { errorHandler } from './middlewares/errorHandler';
 
 import productRoutes from './routes/product.routes'
 import promotionRoutes from './routes/promotion.routes'
@@ -42,6 +43,7 @@ app.use('/users', usersRouter);
 app.use('/orders', ordersRouter);
 app.use('/transactions', transactionsRouter);
 app.use('/refunds', refundsRouter);
+app.use('/support', supportRouter);
 
 app.use(errorHandler);
 
