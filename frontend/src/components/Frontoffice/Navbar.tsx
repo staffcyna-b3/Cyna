@@ -41,7 +41,6 @@ export default function Navbar() {
             setIsLoading(false);
             return;
         }
-
         const timeoutId = window.setTimeout(async () => {
             try {
                 setIsLoading(true);
