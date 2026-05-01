@@ -1,7 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { t } from 'i18next';
 import type { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageDTO.interface';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -12,14 +10,7 @@ import {
   SheetTitle,
   SheetDescription,
 } from '@/components/ui/sheet';
-
-export function StatusBadge({ status }: { status: 'new' | 'processed' }) {
-  return (
-    <Badge variant={status === 'new' ? 'default' : 'secondary'}>
-      {status === 'new' ? t('contact.statusNew') : t('contact.statusProcessed')}
-    </Badge>
-  );
-}
+import { ContactStatusBadge } from '@/components/Backoffice/ContactStatusBadge';
 
 interface ContactMessageSheetProps {
   open: boolean;
@@ -86,7 +77,7 @@ export function ContactMessageSheet({
 
           <div className="flex flex-col gap-1.5">
             <Label>{t('admin.status')}</Label>
-            <StatusBadge status={message.status} />
+            <ContactStatusBadge status={message.status} />
           </div>
 
           {message.status === 'new' && (

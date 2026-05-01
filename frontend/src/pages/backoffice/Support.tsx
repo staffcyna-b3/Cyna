@@ -12,7 +12,8 @@ import {
   replyToContact,
   BackOfficeApiError,
 } from '@/services/BackOfficeOrderService';
-import { ContactMessageSheet, StatusBadge } from './components/ContactMessageSheet';
+import { ContactMessageSheet } from '@/components/Backoffice/sheets/ContactMessageSheet';
+import { ContactStatusBadge } from '@/components/Backoffice/ContactStatusBadge';
 
 export default function Support() {
   const { t } = useTranslation();
@@ -100,7 +101,7 @@ export default function Support() {
     {
       accessorKey: 'status',
       header: t('admin.status'),
-      cell: ({ row }) => <StatusBadge status={row.original.status} />,
+      cell: ({ row }) => <ContactStatusBadge status={row.original.status} />,
     },
   ];
 
