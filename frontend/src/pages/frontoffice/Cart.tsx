@@ -52,7 +52,7 @@ export const Cart = () => {
   const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items])
   // immediateTotal = ce qui est débité immédiatement (1 période pour les abonnements, pas le total du contrat)
   const immediateTotal = useMemo(
-    () => items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
+    () => items.reduce((sum, item) => sum + (item.discountedUnitPrice ?? item.unitPrice) * item.quantity, 0),
     [items]
   )
   const finalTotal = useMemo(() => immediateTotal + shippingFee, [immediateTotal, shippingFee])
@@ -84,7 +84,10 @@ export const Cart = () => {
           productId: item.productId,
           name: item.name,
           quantity: item.quantity,
-          unitPriceCents: Math.round(item.unitPrice * 100),
+          unitPriceCents: Math.round((item.discountedUnitPrice ?? item.unitPrice) * 100),
+          ...(item.discountedUnitPrice !== undefined && {
+            originalUnitPriceCents: Math.round(item.unitPrice * 100),
+          }),
           isService: item.isService === true && item.period != null,
           isRecurring: item.isService === true && item.period != null,
           billingPeriod: item.period != null ? 'monthly' : undefined,
@@ -218,7 +221,16 @@ export const Cart = () => {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between gap-3">
                     <span>{item.name} x{item.quantity}</span>
-                    <span>{formatCurrency(item.unitPrice * item.quantity)}</span>
+                    <span className="flex flex-col items-end">
+                      {item.discountedUnitPrice !== undefined && (
+                        <span className="line-through text-white/40 text-xs">
+                          {formatCurrency(item.unitPrice * item.quantity)}
+                        </span>
+                      )}
+                      <span className={item.discountedUnitPrice !== undefined ? 'text-red-400' : ''}>
+                        {formatCurrency((item.discountedUnitPrice ?? item.unitPrice) * item.quantity)}
+                      </span>
+                    </span>
                   </div>
                 ))}
               </div>

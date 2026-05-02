@@ -150,13 +150,19 @@ export default function Navbar() {
                                                         />
                                                         <div className="flex-1 min-w-0">
                                                             <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
-                                                            <p className="text-xs text-gray-500">
-                                                                {item.quantity} × {formatCurrency(item.unitPrice)}
+                                                            <p className="text-xs text-gray-500 flex items-baseline gap-1">
+                                                                {item.quantity} ×{' '}
+                                                                {item.discountedUnitPrice !== undefined && (
+                                                                    <span className="line-through text-gray-400">{formatCurrency(item.unitPrice)}</span>
+                                                                )}
+                                                                <span className={item.discountedUnitPrice !== undefined ? 'text-red-500 font-semibold' : ''}>
+                                                                    {formatCurrency(item.discountedUnitPrice ?? item.unitPrice)}
+                                                                </span>
                                                                 {item.isService && item.period ? <> / mois</> : null}
                                                             </p>
                                                         </div>
                                                         <p className="text-sm font-bold text-[#3d49f5] shrink-0">
-                                                            {formatCurrency(item.unitPrice * item.quantity)}
+                                                            {formatCurrency((item.discountedUnitPrice ?? item.unitPrice) * item.quantity)}
                                                             {item.isService && item.period ? <span className="text-xs font-normal text-gray-400"> / mois</span> : null}
                                                         </p>
                                                     </li>

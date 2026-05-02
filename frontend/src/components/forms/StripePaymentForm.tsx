@@ -10,11 +10,15 @@ import useCart from '@/hooks/useCart';
 import { createOrder, updateOrderStatus } from '@/services/orderService';
 
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
+  amountCents,
   paymentIntentId,
   cartId,
   billingAddressId,
   shippingAddressId,
   promoCode,
+  discountCents,
+  shippingFeeCents,
+  cartItems,
 }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -52,7 +56,25 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
 
     // Toujours resynchroniser le panier après paiement (qu'il ait été vidé en DB ou non)
     await fetchCart();
-    navigate('/checkout/confirmation', { state: { order, paymentIntentId } });
+    navigate('/checkout/confirmation', {
+      state: {
+        order,
+        paymentIntentId,
+        items: cartItems.map((item) => ({
+          id: item.id,
+          name: item.name,
+          quantity: item.quantity,
+          unitPrice: item.unitPriceCents / 100,
+          ...(item.originalUnitPriceCents !== undefined && {
+            originalUnitPrice: item.originalUnitPriceCents / 100,
+          }),
+        })),
+        total_amount: amountCents / 100,
+        shippingFee: shippingFeeCents / 100,
+        discountAmount: discountCents / 100,
+        promoCode: promoCode ?? null,
+      },
+    });
   };
 
   const handleSubmit = async (event: React.FormEvent) => {

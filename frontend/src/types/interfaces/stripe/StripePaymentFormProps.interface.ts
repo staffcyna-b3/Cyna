@@ -1,3 +1,5 @@
+import type { CartItem } from '@/types/interfaces/cart/CartItem';
+
 export interface StripePaymentFormProps {
   amountCents: number;
   description: string;
@@ -6,4 +8,7 @@ export interface StripePaymentFormProps {
   billingAddressId: string | null;
   shippingAddressId: string | null;
   promoCode?: string;
+  discountCents: number;
+  shippingFeeCents: number;
+  cartItems: CartItem[];
 }

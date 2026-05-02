@@ -5,6 +5,7 @@ export interface AddToCartOptions {
   period?: Period;
   name?: string;
   unitPrice?: number;
+  discountedUnitPrice?: number;
   isService?: boolean;
   stock?: number;
 }

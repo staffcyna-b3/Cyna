@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { PromoService } from '../../services/promo.service';
 import { IPromoRepository, PromotionWithProducts } from '../../interfaces/IPromoRepository';
 import { ICartService } from '../../interfaces/CartService';
-import { HttpError } from '../../common/httpError';
 import { PromotionType } from '../../enum/PromotionType';
 import { CartResponse } from '../../dto/response/CartResponse';
 
@@ -14,22 +13,24 @@ const makeCartServiceMock = () => ({
   getCart: vi.fn(),
 }) as unknown as ICartService & { getCart: ReturnType<typeof vi.fn> };
 
-const productPromo: PromotionWithProducts = {
+// Code promo sans produits liés → s'applique sur tout le panier
+const cartPromo: PromotionWithProducts = {
   id: 'promo-1',
-  code: 'PRODUCT10',
+  code: 'WELCOME10',
   discount_type: PromotionType.PRODUCT,
   discount_value: 10,
   active: true,
-  products: [{ id: 'prod-1' }, { id: 'prod-2' }],
+  products: [],
 };
 
-const servicePromo: PromotionWithProducts = {
+// Réduction automatique liée à des produits spécifiques
+const reductionPromo: PromotionWithProducts = {
   id: 'promo-2',
-  code: 'SERVICE20',
-  discount_type: PromotionType.SERVICE,
+  code: 'REDUCTION20',
+  discount_type: PromotionType.PRODUCT,
   discount_value: 20,
   active: true,
-  products: [{ id: 'svc-1' }],
+  products: [{ id: 'prod-1' }],
 };
 
 describe('PromoService.validate', () => {
@@ -41,70 +42,45 @@ describe('PromoService.validate', () => {
     service = new PromoService(repo);
   });
 
-  it('returns correct discount for a product promo', async () => {
-    repo.findByCode.mockResolvedValue(productPromo);
+  it('applique la remise sur tout le panier (produits + services)', async () => {
+    repo.findByCode.mockResolvedValue(cartPromo);
 
-    const result = await service.validate('PRODUCT10', [
+    const result = await service.validate('WELCOME10', [
       { productId: 'prod-1', isService: false, subtotal: 100 },
-      { productId: 'prod-2', isService: false, subtotal: 50 },
-    ]);
-
-    expect(result.promoCode).toBe('PRODUCT10');
-    expect(result.discountAmount).toBe(15); // 10% of 150
-    expect(result.discountedTotal).toBe(135);
-    expect(result.valid).toBe(true);
-  });
-
-  it('returns correct discount for a service promo', async () => {
-    repo.findByCode.mockResolvedValue(servicePromo);
-
-    const result = await service.validate('SERVICE20', [
       { productId: 'svc-1', isService: true, subtotal: 200 },
     ]);
 
-    expect(result.discountAmount).toBe(40); // 20% of 200
-    expect(result.discountedTotal).toBe(160);
+    expect(result.promoCode).toBe('WELCOME10');
+    expect(result.discountAmount).toBe(30); // 10% de 300
+    expect(result.discountedTotal).toBe(270);
+    expect(result.valid).toBe(true);
   });
 
-  it('only discounts eligible items, not the whole cart', async () => {
-    repo.findByCode.mockResolvedValue(productPromo);
+  it('applique la remise même si le panier ne contient que des services', async () => {
+    repo.findByCode.mockResolvedValue(cartPromo);
 
-    const result = await service.validate('PRODUCT10', [
-      { productId: 'prod-1', isService: false, subtotal: 100 },
-      { productId: 'other-prod', isService: false, subtotal: 200 }, // not in promo products
+    const result = await service.validate('WELCOME10', [
+      { productId: 'svc-1', isService: true, subtotal: 200 },
     ]);
 
-    // Only prod-1 is eligible: 10% of 100 = 10
-    expect(result.discountAmount).toBe(10);
-    expect(result.discountedTotal).toBe(290); // 300 - 10
+    expect(result.discountAmount).toBe(20); // 10% de 200
+    expect(result.discountedTotal).toBe(180);
   });
 
-  it('does not apply product promo to service items', async () => {
-    repo.findByCode.mockResolvedValue(productPromo);
+  it('rejette une réduction automatique utilisée comme code promo', async () => {
+    repo.findByCode.mockResolvedValue(reductionPromo);
 
     await expect(
-      service.validate('PRODUCT10', [
-        { productId: 'prod-1', isService: true, subtotal: 100 }, // isService true, promo is PRODUCT
-      ])
-    ).rejects.toMatchObject<HttpError>({ statusCode: 422 });
+      service.validate('REDUCTION20', [{ productId: 'prod-1', isService: false, subtotal: 100 }])
+    ).rejects.toMatchObject({ statusCode: 422 });
   });
 
-  it('throws HttpError 404 when promo code does not exist', async () => {
+  it('lance HttpError 404 quand le code est introuvable', async () => {
     repo.findByCode.mockResolvedValue(null);
 
     await expect(
       service.validate('UNKNOWN', [{ productId: 'prod-1', isService: false, subtotal: 50 }])
-    ).rejects.toMatchObject<HttpError>({ statusCode: 404 });
-  });
-
-  it('throws HttpError 422 when no cart item matches the promo', async () => {
-    repo.findByCode.mockResolvedValue(productPromo);
-
-    await expect(
-      service.validate('PRODUCT10', [
-        { productId: 'unrelated-prod', isService: false, subtotal: 100 },
-      ])
-    ).rejects.toMatchObject<HttpError>({ statusCode: 422 });
+    ).rejects.toMatchObject({ statusCode: 404 });
   });
 });
 
@@ -126,35 +102,36 @@ describe('PromoService.validateForCart', () => {
     service = new PromoService(repo, cartService);
   });
 
-  it('maps cart items as unitPrice × quantity and delegates to validate', async () => {
-    repo.findByCode.mockResolvedValue(productPromo);
+  it('calcule la remise sur le total complet du panier (produits + services)', async () => {
+    repo.findByCode.mockResolvedValue(cartPromo);
     cartService.getCart.mockResolvedValue(
       makeCart([
         { id: 'ci-1', productId: 'prod-1', name: 'Widget', quantity: 2, unitPrice: 50, subtotal: 100, isService: false },
+        { id: 'ci-2', productId: 'svc-1', name: 'Service', quantity: 1, unitPrice: 200, subtotal: 200, isService: true },
       ])
     );
 
-    const result = await service.validateForCart('user-1', 'PRODUCT10');
+    const result = await service.validateForCart('user-1', 'WELCOME10');
 
-    // subtotal passed to validate = unitPrice(50) × quantity(2) = 100; 10% = 10
-    expect(result.discountAmount).toBe(10);
-    expect(repo.findByCode).toHaveBeenCalledWith('PRODUCT10');
+    // 10% de (100 + 200) = 30
+    expect(result.discountAmount).toBe(30);
+    expect(result.discountedTotal).toBe(270);
   });
 
-  it('throws HttpError 422 when cart is empty', async () => {
+  it('lance HttpError 422 quand le panier est vide', async () => {
     cartService.getCart.mockResolvedValue(makeCart([]));
 
-    await expect(service.validateForCart('user-1', 'PRODUCT10')).rejects.toMatchObject<HttpError>({
+    await expect(service.validateForCart('user-1', 'WELCOME10')).rejects.toMatchObject({
       statusCode: 422,
     });
 
     expect(repo.findByCode).not.toHaveBeenCalled();
   });
 
-  it('throws HttpError 500 when no cartService was injected', async () => {
+  it('lance HttpError 500 quand cartService n\'est pas injecté', async () => {
     const serviceWithoutCart = new PromoService(repo);
 
-    await expect(serviceWithoutCart.validateForCart('user-1', 'PRODUCT10')).rejects.toMatchObject<HttpError>({
+    await expect(serviceWithoutCart.validateForCart('user-1', 'WELCOME10')).rejects.toMatchObject({
       statusCode: 500,
     });
   });

@@ -3,4 +3,5 @@ export interface ConfirmationItem {
   name: string
   quantity: number
   unitPrice: number
+  originalUnitPrice?: number
 }

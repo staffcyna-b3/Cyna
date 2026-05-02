@@ -246,6 +246,9 @@ export const Checkout: React.FC = () => {
                   billingAddressId={billingAddressId}
                   shippingAddressId={shippingAddressId}
                   promoCode={promoCode}
+                  discountCents={discountCents}
+                  shippingFeeCents={shippingFeeCents}
+                  cartItems={cartItems}
                 />
               </Elements>
             )}
@@ -279,9 +282,16 @@ export const Checkout: React.FC = () => {
                   )}
                 </div>
 
-                <p className="text-sm font-medium text-gray-900 whitespace-nowrap">
-                  {formatEuro(item.unitPriceCents * item.quantity)}
-                </p>
+                <div className="flex flex-col items-end whitespace-nowrap">
+                  {item.originalUnitPriceCents !== undefined && (
+                    <span className="text-xs line-through text-gray-400">
+                      {formatEuro(item.originalUnitPriceCents * item.quantity)}
+                    </span>
+                  )}
+                  <p className={`text-sm font-medium ${item.originalUnitPriceCents !== undefined ? 'text-red-600' : 'text-gray-900'}`}>
+                    {formatEuro(item.unitPriceCents * item.quantity)}
+                  </p>
+                </div>
               </div>
             ))}
           </div>

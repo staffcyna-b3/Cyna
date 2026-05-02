@@ -40,6 +40,7 @@ export function useGuestCart() {
     const addToCart = useCallback(async (productId: string, options: AddToCartOptions) => {
         const qty = options.quantity || 1;
         const unitPrice = options.unitPrice ?? 0;
+        const discountedUnitPrice = options.discountedUnitPrice;
         const isService = options.isService ?? false;
         const stock = options.stock;
 
@@ -72,6 +73,7 @@ export function useGuestCart() {
                 name: options.name ?? productId,
                 quantity: qty,
                 unitPrice,
+                ...(discountedUnitPrice !== undefined && { discountedUnitPrice }),
                 subtotal,
                 isService,
                 period: periodMonths,

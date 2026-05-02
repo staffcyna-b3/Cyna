@@ -2,6 +2,7 @@
 
 const PROMO_SERVICE_ID = '00000000-0000-0000-0000-000000001001';
 const PROMO_PRODUCT_ID = '00000000-0000-0000-0000-000000001002';
+const PROMO_CODE_ID    = '00000000-0000-0000-0000-000000001003';
 
 module.exports = {
   async up(queryInterface) {
@@ -11,7 +12,7 @@ module.exports = {
       promotion_id: [PROMO_SERVICE_ID, PROMO_PRODUCT_ID],
     });
     await queryInterface.bulkDelete('promotions', {
-      id: [PROMO_SERVICE_ID, PROMO_PRODUCT_ID],
+      id: [PROMO_SERVICE_ID, PROMO_PRODUCT_ID, PROMO_CODE_ID],
     });
 
     await queryInterface.bulkInsert('promotions', [
@@ -29,6 +30,15 @@ module.exports = {
         code: 'PRODUCT20',
         discount_type: 'product',
         discount_value: 20.00,
+        active: true,
+        created_at: now,
+        updated_at: now,
+      },
+      {
+        id: PROMO_CODE_ID,
+        code: 'WELCOME10',
+        discount_type: 'product',
+        discount_value: 10.00,
         active: true,
         created_at: now,
         updated_at: now,
@@ -76,6 +86,7 @@ module.exports = {
       id: [
         '00000000-0000-0000-0000-000000001001',
         '00000000-0000-0000-0000-000000001002',
+        '00000000-0000-0000-0000-000000001003',
       ],
     });
   },

@@ -17,7 +17,10 @@ export const CheckoutConfirmation = () => {
     return <Navigate to="/cart" replace />
   }
 
-  const total = order?.total_amount ?? checkoutState.total_amount ?? 0
+  const total = checkoutState.total_amount ?? order?.total_amount ?? 0
+  const shippingFee = checkoutState.shippingFee ?? (order as unknown as { shipping_fee?: number })?.shipping_fee ?? 0
+  const discountAmount = checkoutState.discountAmount ?? (order as unknown as { discount_amount?: number })?.discount_amount ?? 0
+  const promoCode = checkoutState.promoCode ?? (order as unknown as { promo_code?: string | null })?.promo_code ?? null
   const fallbackItems: ConfirmationItem[] =
     order?.items?.map((item) => ({
       id: item.id,
@@ -42,9 +45,16 @@ export const CheckoutConfirmation = () => {
           <h2 className="text-lg font-medium">{t("orderedItems")}</h2>
           {items.map((item) => (
             <div key={item.id} className="flex justify-between text-sm">
-              <span>{item.name}</span>
-              <span>
-                {item.quantity} {t("multiply")} {t("currency")}{item.unitPrice.toFixed(2)} {t("equals")} {t("currency")}{(item.quantity * item.unitPrice).toFixed(2)}
+              <span>{item.name} × {item.quantity}</span>
+              <span className="flex flex-col items-end gap-0.5">
+                {item.originalUnitPrice !== undefined && (
+                  <span className="text-xs text-gray-400 line-through">
+                    {t("currency")}{(item.originalUnitPrice * item.quantity).toFixed(2)}
+                  </span>
+                )}
+                <span className={item.originalUnitPrice !== undefined ? 'text-red-600 font-medium' : ''}>
+                  {t("currency")}{(item.unitPrice * item.quantity).toFixed(2)}
+                </span>
               </span>
             </div>
           ))}
@@ -73,34 +83,28 @@ export const CheckoutConfirmation = () => {
 
       {total > 0 ? (
         <div className="rounded-md border p-4 space-y-2">
-          {(order?.shipping_fee != null || order?.discount_amount != null) && (
-            <>
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>{t("subtotal")}</span>
-                <span>
-                  {t("currency")}
-                  {(
-                    Number(total) -
-                    Number(order?.shipping_fee ?? 0) +
-                    Number(order?.discount_amount ?? 0)
-                  ).toFixed(2)}
-                </span>
-              </div>
-              {Number(order?.shipping_fee) > 0 && (
-                <div className="flex justify-between text-sm text-muted-foreground">
-                  <span>{t("shipping")}</span>
-                  <span>{t("currency")}{Number(order.shipping_fee).toFixed(2)}</span>
-                </div>
-              )}
-              {Number(order?.discount_amount) > 0 && (
-                <div className="flex justify-between text-sm text-green-600">
-                  <span>{t("discount") || "Réduction"}{order?.promo_code ? ` (${order.promo_code})` : ""}</span>
-                  <span>-{t("currency")}{Number(order.discount_amount).toFixed(2)}</span>
-                </div>
-              )}
-              <div className="border-t pt-2" />
-            </>
+          {items.length > 0 && (
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>{t("subtotal")}</span>
+              <span>{t("currency")}{items.reduce((s, i) => s + i.unitPrice * i.quantity, 0).toFixed(2)}</span>
+            </div>
           )}
+          {shippingFee > 0 && (
+            <div className="flex justify-between text-sm text-muted-foreground">
+              <span>{t("shipping")}</span>
+              <span>{t("currency")}{shippingFee.toFixed(2)}</span>
+            </div>
+          )}
+          {discountAmount > 0 && (
+            <div className="flex justify-between text-sm text-green-600">
+              <span>
+                {t("discount") || "Réduction"}
+                {promoCode ? ` (${promoCode})` : ''}
+              </span>
+              <span>-{t("currency")}{discountAmount.toFixed(2)}</span>
+            </div>
+          )}
+          <div className="border-t pt-2" />
           <div className="flex justify-between">
             <span className="font-medium">{t("totalAmount")}</span>
             <span className="font-medium">{t("currency")}{Number(total).toFixed(2)}</span>

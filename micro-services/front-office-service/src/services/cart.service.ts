@@ -29,18 +29,31 @@ export class CartService implements ICartService {
     //forcer typescript a comprendre que le cart contient les items, et que chaque item contient un product
     const cartWithItems = cart as Cart & { items: (CartItem & { product: Product & { images: ProductImage[] } })[] };
 
+    const productIds = cartWithItems.items.map((item) => item.product_id);
+    const promoResults = await Promise.all(
+      productIds.map((id) => this.productRepository.findByIdWithActivePromo(id)),
+    );
+    const promoByProductId = new Map(
+      promoResults
+        .filter((p): p is NonNullable<typeof p> => p !== null)
+        .map((p) => [p.id, p.promotions?.[0] ?? null]),
+    );
+
     const items: CartItemResponse[] = cartWithItems.items.map((item) => {
       const mainImage = item.product.images?.find(img => img.is_main) ?? item.product.images?.[0];
       const imageUrl = mainImage?.image
         ? `data:image/jpeg;base64,${(mainImage.image as Buffer).toString('base64')}`
         : undefined;
 
-      // Utiliser le prix snapshot stocké dans cart_items
       const unitPrice = Number(item.unit_price);
-      // Pour les services avec période : subtotal = unitPrice * quantity * period
       const subtotal = item.period
         ? unitPrice * item.quantity * item.period
         : unitPrice * item.quantity;
+
+      const activePromo = promoByProductId.get(item.product_id);
+      const discountedUnitPrice = activePromo
+        ? Number((unitPrice * (1 - Number(activePromo.discount_value) / 100)).toFixed(2))
+        : undefined;
 
       const base: CartItemResponse = {
         id: item.id,
@@ -48,6 +61,7 @@ export class CartService implements ICartService {
         name: item.product_name,
         quantity: item.quantity,
         unitPrice,
+        ...(discountedUnitPrice !== undefined && { discountedUnitPrice }),
         subtotal,
         isService: item.product.is_service,
         period: item.period ?? undefined,

@@ -3,7 +3,6 @@ import { IPromoService, PromoCartItem } from '../interfaces/IPromoService';
 import { IPromoRepository } from '../interfaces/IPromoRepository';
 import { ICartService } from '../interfaces/CartService';
 import { PromoValidationResponse } from '../dto/response/PromoValidationResponse';
-import { PromotionType } from '../enum/PromotionType';
 
 export class PromoService implements IPromoService {
   constructor(
@@ -18,23 +17,13 @@ export class PromoService implements IPromoService {
       throw new HttpError(404, 'Code promotionnel invalide ou inactif');
     }
 
-    const eligibleProductIds = new Set(promotion.products.map((p) => p.id));
-
-    const eligibleItems = cartItems.filter((item) => {
-      const matchesType =
-        promotion.discount_type === PromotionType.SERVICE ? item.isService : !item.isService;
-      return matchesType && eligibleProductIds.has(item.productId);
-    });
-
-    if (eligibleItems.length === 0) {
-      throw new HttpError(422, "Ce code promotionnel ne s'applique à aucun article de votre panier");
+    // Une promo liée à des produits spécifiques est une réduction automatique, pas un code promo manuel
+    if (promotion.products.length > 0) {
+      throw new HttpError(422, 'Code promotionnel invalide');
     }
 
-    const eligibleSubtotal = eligibleItems.reduce((sum, item) => sum + item.subtotal, 0);
-    const discountAmount = Number(
-      (eligibleSubtotal * (promotion.discount_value / 100)).toFixed(2),
-    );
     const totalAmount = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
+    const discountAmount = Number((totalAmount * (promotion.discount_value / 100)).toFixed(2));
     const discountedTotal = Number((totalAmount - discountAmount).toFixed(2));
 
     return {
