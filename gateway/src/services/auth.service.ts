@@ -315,7 +315,8 @@ export class AuthService implements IAuthService {
         { expiresIn: rememberMe ? '7d' : '1d' }
       );
 
-      await this.jwtRepository.updateRefreshToken(userId, refreshToken);
+      const refreshTokenHash = hashToken(refreshToken);
+      await this.jwtRepository.updateRefreshToken(userId, refreshTokenHash);
 
       return { accessToken, refreshToken, user: { id: user.id, email: user.email } };
     } catch (error) {
@@ -360,7 +361,8 @@ export class AuthService implements IAuthService {
         throw new Error('Refresh token expiré ou invalide');
       }
 
-      const user = await this.jwtRepository.findUserByIdAndToken(decoded.userId, refreshToken);
+      const tokenHash = hashToken(refreshToken);
+      const user = await this.jwtRepository.findUserByIdAndToken(decoded.userId, tokenHash);
 
       if (!user) {
         throw new Error('Refresh token invalide');
