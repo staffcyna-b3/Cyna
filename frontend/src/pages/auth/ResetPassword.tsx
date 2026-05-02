@@ -102,7 +102,7 @@ export const ResetPassword: React.FC = () => {
     return (
       <div className="min-h-screen w-full flex flex-col lg:flex-row">
         <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-blue-950 to-blue-900 items-center justify-center p-4">
-          <Typography variant="h1" className="text-6xl font-bold text-white">
+          <Typography variant="h1" className="text-9xl font-bold text-white">
             {t('CYNA')}
           </Typography>
         </div>
@@ -148,7 +148,7 @@ export const ResetPassword: React.FC = () => {
     <div className="min-h-screen w-full flex flex-col lg:flex-row">
       {/* Section gauche: Logo */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-blue-950 to-blue-900 items-center justify-center p-4">
-        <Typography variant="h1" className="text-6xl font-bold text-white">
+        <Typography variant="h1" className="text-9xl font-bold text-white">
           {t('CYNA')}
         </Typography>
       </div>
@@ -156,7 +156,7 @@ export const ResetPassword: React.FC = () => {
       {/* Section droite: Formulaire */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="lg:hidden mb-8">
-          <Typography variant="h1" className="text-4xl font-bold text-gray-900">
+          <Typography variant="h1" className="text-9xl font-bold text-gray-900">
             {t('CYNA')}
           </Typography>
         </div>
@@ -179,34 +179,46 @@ export const ResetPassword: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Password */}
-            <Input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              label={t('newPassword')}
-              error={errors.password}
-              disabled={isLoading}
-            />
-            <Typography variant="body" className="text-xs text-gray-500">
-              {t('PasswordRequirements')}
-            </Typography>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('newPassword')}
+              </label>
+              <Input
+                id="password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="••••••••"
+                aria-invalid={!!errors.password}
+                disabled={isLoading}
+              />
+              <Typography variant="body" className="text-xs text-gray-500 mt-1">
+                {t('PasswordRequirements')}
+              </Typography>
+              {errors.password && (
+                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+              )}
+            </div>
 
-            {/* Confirm Password */}
-            <Input
-              id="confirmPassword"
-              name="confirmPassword"
-              type="password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="••••••••"
-              label={t('confirmPassword')}
-              error={errors.confirmPassword}
-              disabled={isLoading}
-            />
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('confirmPassword')}
+              </label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                placeholder="••••••••"
+                aria-invalid={!!errors.confirmPassword}
+                disabled={isLoading}
+              />
+              {errors.confirmPassword && (
+                <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
+              )}
+            </div>
 
             {/* Submit Button */}
             <Button
