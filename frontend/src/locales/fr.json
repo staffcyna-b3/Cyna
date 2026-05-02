@@ -329,6 +329,8 @@
   "backoffice.promotionConfiguration": "Configuration de la promotion",
   "backoffice.productsSelection": "Produits concernes",
   "backoffice.noDiscounts": "Aucune reduction trouvee",
+  "backoffice.productDeleted": "Produit supprimé",
+  "backoffice.promotionDeleted": "Promotion supprimée",
   "backoffice.errors.generic": "Impossible de charger les donnees pour le moment.",
   "backoffice.reorderServiceCategories": "Reordonnez les categories de service affichees sous Nos solutions sur la page d'accueil.",
   "backoffice.saveOrder": "Sauvegarder l'ordre",
