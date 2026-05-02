@@ -70,6 +70,32 @@ export default class ProductService {
         }
     }
 
+    async getProductBySlug(slug: string): Promise<ProductResponseDto> {
+        if (!slug || typeof slug !== 'string') {
+            throw new ValidationError('Slug produit invalide', {
+                context: { providedSlug: slug },
+            });
+        }
+
+        try {
+            const product = await this.productRepository.getProductBySlug(slug);
+            if (!product) {
+                throw new NotFoundError(`Produit avec le slug '${slug}' non trouve`, { context: { slug } });
+            }
+
+            return product;
+        } catch (error) {
+            if (error instanceof ValidationError || error instanceof NotFoundError) {
+                throw error;
+            }
+            Logger.error('Erreur lors de la recuperation du produit par slug', {
+                slug,
+                originalError: error instanceof Error ? error.message : String(error),
+            });
+            throw error;
+        }
+    }
+
     async countProducts(filters?: ProductListFilterDto): Promise<number> {
         const where = this.buildWhereClause(filters);
         try {

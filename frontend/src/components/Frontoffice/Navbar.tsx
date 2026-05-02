@@ -74,18 +74,18 @@ export default function Navbar() {
         setIsSuggestionsOpen(false);
     }, [location.pathname]);
 
-    const goToProduct = (productId: string) => {
+    const goToProduct = (slug: string) => {
         setSearch('');
         setSuggestions([]);
         setIsSuggestionsOpen(false);
-        navigate(`/catalog/${productId}`);
+        navigate(`/catalog/${slug}`);
     };
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         if (suggestions.length > 0) {
-            goToProduct(suggestions[0].id);
+            goToProduct(suggestions[0].slug);
         }
     };
 
@@ -280,7 +280,7 @@ export default function Navbar() {
                                             variant="ghost"
                                             size='icon'
                                             key={suggestion.id}
-                                            onClick={() => goToProduct(suggestion.id)}
+                                            onClick={() => goToProduct(suggestion.slug)}
                                             className="flex w-full items-center justify-between px-5 py-4 text-left text-[#181d42] transition hover:bg-[#f3f5ff]"
                                         >
                                             <span className="font-medium">{suggestion.name}</span>

@@ -45,7 +45,7 @@ export const CatalogProductCard = ({
 
     return (
         <article
-            onClick={() => navigate(`/catalog/${product.id}`)}
+            onClick={() => navigate(`/catalog/${product.slug}`)}
             className={
                     'cursor-pointer flex-none w-full sm:w-5/6 md:w-3/4 lg:w-3/5 max-w-full mx-auto h-[450px] relative shadow-lg rounded-xl overflow-hidden text-white transform-gpu transition-transform duration-200 ease-out hover:scale-[1.02] flex flex-col ' +
                     (unavailable ? 'opacity-70 grayscale' : '')

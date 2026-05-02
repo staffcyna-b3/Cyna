@@ -1,3 +1,14 @@
+export function emailSignature(): string {
+  return `
+    <hr style="margin: 24px 0; border-color: #e5e7eb;" />
+    <p style="font-size: 12px; color: #9ca3af; margin: 0;">
+      <strong>CYNA</strong> — Sécurisez votre futur.<br/>
+      Cet email est généré automatiquement. Ne pas répondre directement à cet email.<br/>
+      © 2026 CYNA. Tous droits réservés. Cet email contient des informations confidentielles destinées uniquement à son destinataire.
+    </p>
+  `;
+}
+
 const emailTemplates = {
   fr: {
     confirmEmail: {
@@ -8,6 +19,7 @@ const emailTemplates = {
         <a href="${confirmUrl}">Confirmer mon email</a>
         <p>Ou copiez-collez ce lien : ${confirmUrl}</p>
         <p>Ce lien expire dans 24h.</p>
+        ${emailSignature()}
       `,
     },
     resetPassword: {
@@ -18,6 +30,7 @@ const emailTemplates = {
         <a href="${resetUrl}">Réinitialiser mon mot de passe</a>
         <p>Ou copiez-collez ce lien : ${resetUrl}</p>
         <p>Ce lien expire dans 1h.</p>
+        ${emailSignature()}
       `,
     },
     twoFactorCode: {
@@ -28,6 +41,7 @@ const emailTemplates = {
         <h2 style="font-size: 32px; letter-spacing: 5px; font-weight: bold;">${code}</h2>
         <p>Ce code expire dans 5 minutes.</p>
         <p>Ne partagez ce code avec personne.</p>
+        ${emailSignature()}
       `,
     },
   },

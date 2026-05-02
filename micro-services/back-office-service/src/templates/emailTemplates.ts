@@ -7,6 +7,17 @@ function escapeHtml(str: string): string {
     .replace(/'/g, '&#x27;');
 }
 
+export function emailSignature(): string {
+  return `
+    <hr style="margin: 24px 0; border-color: #e5e7eb;" />
+    <p style="font-size: 12px; color: #9ca3af; margin: 0;">
+      <strong>CYNA</strong> — Sécurisez votre futur.<br/>
+      Cet email est généré automatiquement. Ne pas répondre directement à cet email.<br/>
+      © 2026 CYNA. Tous droits réservés. Cet email contient des informations confidentielles destinées uniquement à son destinataire.
+    </p>
+  `;
+}
+
 export function buildReplyEmailHtml(options: {
   replyMessage: string;
   originalMessage: string;
@@ -19,9 +30,7 @@ export function buildReplyEmailHtml(options: {
         Message original :<br/>
         ${escapeHtml(options.originalMessage).replace(/\n/g, '<br/>')}
       </p>
-      <p style="color: #9ca3af; font-size: 12px; margin-top: 24px;">
-        Cyna — secure your future
-      </p>
+      ${emailSignature()}
     </div>
   `;
 }

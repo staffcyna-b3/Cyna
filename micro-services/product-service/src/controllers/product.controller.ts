@@ -48,7 +48,16 @@ export class ProductController {
 
             Logger.info("Recuperation d'un produit", { id });
 
-            const product = await this.productService.getProductById(id);
+            const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+            if (!UUID_RE.test(id) && !SLUG_RE.test(id)) {
+                return res.status(400).json(new ErrorResponse('Invalid product identifier'));
+            }
+
+            const product = UUID_RE.test(id)
+                ? await this.productService.getProductById(id)
+                : await this.productService.getProductBySlug(id);
 
             return res.status(200).json(new SuccessResponse('Produit recupere avec succes', product));
         } catch (error: any) {
