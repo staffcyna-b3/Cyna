@@ -5,6 +5,7 @@ import {
   verify2FALimiter,
   registerLimiter,
   passwordResetLimiter,
+  refreshLimiter,
 } from '../middlewares/rate-limit.middleware';
 import { authMiddleware } from '../middlewares/auth.middleware';
 
@@ -25,7 +26,7 @@ export const createAuthRoutes = (authController: AuthController): Router => {
   router.post('/verify-2fa', verify2FALimiter, (req, res) => authController.verify2FA(req, res));
 
   //Refresh
-  router.post('/refresh', (req, res) => authController.refresh(req, res))
+  router.post('/refresh', refreshLimiter, (req, res) => authController.refresh(req, res))
   router.get('/me', authMiddleware, (req, res) => authController.me(req, res))
   router.patch('/me', authMiddleware, (req, res) => authController.updateMe(req, res))
   router.patch('/password', authMiddleware, (req, res) => authController.changePassword(req, res))

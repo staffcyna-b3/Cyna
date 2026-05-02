@@ -144,6 +144,9 @@ export const Login: React.FC = () => {
                     <a href="/request-reset" className="text-center text-gray-600 text-sm mt-6">
                         {t("forgottenPassword")}{' '}
                     </a>
+                    <a href="/register" className="text-center text-gray-600 text-sm mt-6">
+                        {t("noAccount", "Pas encore de compte ? S'inscrire")}
+                    </a>
                 </div>
             </div>
         </div>

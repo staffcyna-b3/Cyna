@@ -240,10 +240,20 @@ export class AuthService implements IAuthService {
     }
   }
 
-  async logout(token: string) {
+  async logout(rememberMeToken?: string, refreshToken?: string) {
     try {
-      const tokenHash = hashToken(token);
-      await this.userRepository.clearRememberToken(tokenHash);
+      if (rememberMeToken) {
+        const tokenHash = hashToken(rememberMeToken);
+        await this.userRepository.clearRememberToken(tokenHash);
+      }
+      if (refreshToken) {
+        try {
+          const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as JwtPayloadDto;
+          await this.jwtRepository.updateRefreshToken(decoded.userId, '');
+        } catch {
+          // token expiré ou invalide — le cookie sera effacé côté client quoi qu'il arrive
+        }
+      }
     } catch (error) {
       Logger.error('Auth logout error:', error);
       throw error;
@@ -277,7 +287,7 @@ export class AuthService implements IAuthService {
   }
 
   // ===== JWT - généré après 2FA =====
-  async generateTokensForUser(userId: string) {
+  async generateTokensForUser(userId: string, rememberMe = false) {
     try {
       const user = await this.jwtRepository.findUserById(userId);
 
@@ -299,13 +309,12 @@ export class AuthService implements IAuthService {
         { expiresIn: '15m' }
       );
 
-      // const refreshToken = jwt.sign(
-      //   payload,
-      //   process.env.JWT_REFRESH_SECRET!,
-      //   { expiresIn: '7d' }
-      // );
+      const refreshToken = jwt.sign(
+        payload,
+        process.env.JWT_REFRESH_SECRET!,
+        { expiresIn: rememberMe ? '7d' : '1d' }
+      );
 
-      const refreshToken = this.generateSecureToken();
       await this.jwtRepository.updateRefreshToken(userId, refreshToken);
 
       return { accessToken, refreshToken, user: { id: user.id, email: user.email } };
