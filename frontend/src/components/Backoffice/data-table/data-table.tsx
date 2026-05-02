@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DataTablePagination } from "@/components/Backoffice/data-table/data-table-pagination"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { LucideSearch } from "lucide-react"
@@ -26,12 +26,14 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   onRowClick?: (row: TData) => void
+  onSelectionChange?: (rows: TData[]) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onRowClick,
+  onSelectionChange,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -40,6 +42,7 @@ export function DataTable<TData, TValue>({
     
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
+        enableRowSelection: true,
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
@@ -56,6 +59,12 @@ export function DataTable<TData, TValue>({
             rowSelection,
         },
     })
+
+  useEffect(() => {
+    if (!onSelectionChange) return;
+    const selected = table.getFilteredSelectedRowModel().rows.map((row) => row.original);
+    onSelectionChange(selected);
+  }, [rowSelection]);
 
   return (
     <>

@@ -59,6 +59,7 @@ export function usePromotionEditor({
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [saving, setSaving] = useState(false);
     const [deleting, setDeleting] = useState(false);
+    const [saveError, setSaveError] = useState<string | null>(null);
     const [availableProducts, setAvailableProducts] = useState<BackOfficeProduct[]>([]);
 
     useEffect(() => {
@@ -87,6 +88,11 @@ export function usePromotionEditor({
 
     useEffect(() => {
         if (!open) {
+            return;
+        }
+
+        if (form.discountType === 'cart') {
+            setAvailableProducts([]);
             return;
         }
 
@@ -152,6 +158,7 @@ export function usePromotionEditor({
 
     async function save() {
         setSaving(true);
+        setSaveError(null);
         try {
             if (mode === 'create') {
                 await createBackOfficePromotion({
@@ -196,6 +203,8 @@ export function usePromotionEditor({
             }
 
             await onSaved();
+        } catch (error: unknown) {
+            setSaveError(error instanceof Error ? error.message : 'Une erreur est survenue');
         } finally {
             setSaving(false);
         }
@@ -207,9 +216,12 @@ export function usePromotionEditor({
         }
 
         setDeleting(true);
+        setSaveError(null);
         try {
             await deleteBackOfficePromotion(promotion.id);
             await onDeleted();
+        } catch (error: unknown) {
+            setSaveError(error instanceof Error ? error.message : 'Une erreur est survenue');
         } finally {
             setDeleting(false);
         }
@@ -227,6 +239,7 @@ export function usePromotionEditor({
         loadingProducts,
         saving,
         deleting,
+        saveError,
         availableProducts,
         selectedProducts,
         setCode,

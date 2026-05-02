@@ -127,6 +127,13 @@ export class PromotionService implements IPromotionService {
             throw new HttpError(400, 'product_ids doit etre un tableau');
         }
 
+        if (discountType === PromotionType.CART) {
+            if (productIds.length > 0) {
+                throw new HttpError(400, 'Une promotion panier ne peut pas être liée à des produits spécifiques');
+            }
+            return;
+        }
+
         if (productIds.length === 0) {
             return;
         }
