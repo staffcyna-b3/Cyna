@@ -52,7 +52,7 @@ export class PromoService implements IPromoService {
     const cartItems: PromoCartItem[] = cart.items.map((item) => ({
       productId: item.productId,
       isService: item.isService,
-      subtotal: item.unitPrice * item.quantity,
+      subtotal: (item.discountedUnitPrice ?? item.unitPrice) * item.quantity,
     }));
 
     return this.validate(code, cartItems);
