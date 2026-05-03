@@ -143,5 +143,16 @@ export class ProductRepository implements IProductRepository {
             ],
         });
     }
+
+    async findProductsByIds(productIds: string[]) {
+        return Product.findAll({
+            where: {
+                id: {
+                    [Op.in]: productIds,
+                },
+            },
+            attributes: ['id', 'is_service'],
+        });
+    }
 }
 

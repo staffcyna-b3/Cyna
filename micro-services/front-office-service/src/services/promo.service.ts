@@ -7,7 +7,7 @@ import { PromoValidationResponse } from '../dto/response/PromoValidationResponse
 export class PromoService implements IPromoService {
   constructor(
     private readonly promoRepository: IPromoRepository,
-    private readonly cartService?: ICartService,
+    private readonly cartService: ICartService,
   ) {}
 
   async validate(code: string, cartItems: PromoCartItem[]): Promise<PromoValidationResponse> {
@@ -35,10 +35,6 @@ export class PromoService implements IPromoService {
   }
 
   async validateForCart(userId: string, code: string): Promise<PromoValidationResponse> {
-    if (!this.cartService) {
-      throw new HttpError(500, 'Service panier non disponible');
-    }
-
     if (!code) {
       throw new HttpError(422, 'Le champ code est requis');
     }

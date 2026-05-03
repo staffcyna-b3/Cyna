@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { PromotionController } from '../controllers/promotion.controller';
 import { PromotionService } from '../services/promotion.service';
 import { PromotionRepository } from '../repository/promotion.repository';
+import { ProductRepository } from '../repository/product.repository';
 import { IPromotionService } from '../interfaces/IPromotionService';
 import { validatorSchema } from '../middlewares/validations';
 import {
@@ -16,7 +17,8 @@ import {
 const router = Router();
 
 const promotionRepository = new PromotionRepository();
-const promotionService: IPromotionService = new PromotionService(promotionRepository);
+const productRepository = new ProductRepository();
+const promotionService: IPromotionService = new PromotionService(promotionRepository, productRepository);
 const promotionController = new PromotionController(promotionService);
 
 router.get('/promotions', (req, res) => promotionController.list(req, res));

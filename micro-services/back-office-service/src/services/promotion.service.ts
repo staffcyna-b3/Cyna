@@ -2,10 +2,14 @@ import { HttpError } from '../common/httpError';
 import { PromotionType } from '../enum/PromotionType';
 import { CreatePromotionDto, UpdatePromotionDto } from '../dto/promotion';
 import { IPromotionRepository } from '../interfaces/IPromotionRepository';
+import { IProductRepository } from '../interfaces/IProductRepository';
 import { IPromotionService } from '../interfaces/IPromotionService';
 
 export class PromotionService implements IPromotionService {
-    constructor(private readonly promotionRepository: IPromotionRepository) { }
+    constructor(
+        private readonly promotionRepository: IPromotionRepository,
+        private readonly productRepository: IProductRepository,
+    ) { }
 
     async list() {
         return this.promotionRepository.list();
@@ -138,7 +142,7 @@ export class PromotionService implements IPromotionService {
             return;
         }
 
-        const products = await this.promotionRepository.findProductsByIds(productIds);
+        const products = await this.productRepository.findProductsByIds(productIds);
 
         if (products.length !== productIds.length) {
             throw new HttpError(400, 'Un ou plusieurs produits sont introuvables');

@@ -33,3 +33,5 @@
 [02/05/2026 23:14:09] [INFO] [PAYMENT] PaymentIntent created | {"paymentIntentId":"pi_3TSkrV1AdBsYOB9D02Jm1Sv1","userId":"a58e9fc7-a791-4eff-9d03-9fcd53650e99","amount":493595,"currency":"eur"}
 [02/05/2026 23:14:24] [INFO] [PAYMENT] PaymentIntent created | {"paymentIntentId":"pi_3TSkrk1AdBsYOB9D1eym8lpS","userId":"a58e9fc7-a791-4eff-9d03-9fcd53650e99","amount":136597,"currency":"eur"}
 [02/05/2026 23:14:43] [INFO] [PAYMENT] PaymentIntent created | {"paymentIntentId":"pi_3TSks31AdBsYOB9D1G7xTYE7","userId":"a58e9fc7-a791-4eff-9d03-9fcd53650e99","amount":493595,"currency":"eur"}
+[03/05/2026 13:14:47] [INFO] [PAYMENT] Subscription created | {"subscriptionId":"sub_1TSxyy1AdBsYOB9DzBdOW8Rh","paymentIntentId":"pi_3TSxz01AdBsYOB9D0VukCqy0","userId":"a58e9fc7-a791-4eff-9d03-9fcd53650e99","totalAmountCents":535596}
+[03/05/2026 13:14:51] [INFO] [PAYMENT] Subscription created | {"subscriptionId":"sub_1TSxz31AdBsYOB9De9iK2bse","paymentIntentId":"pi_3TSxz51AdBsYOB9D06KKdTtN","userId":"a58e9fc7-a791-4eff-9d03-9fcd53650e99","totalAmountCents":482096}
