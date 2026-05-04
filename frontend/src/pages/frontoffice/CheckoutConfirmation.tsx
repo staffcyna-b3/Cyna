@@ -34,7 +34,7 @@ export const CheckoutConfirmation = () => {
   const shippingAddress = checkoutState.shippingAddress
 
   return (
-    <div className="mx-auto px-40 py-10 space-y-5 bg-white min-h-screen">
+    <div className="mx-auto px-4 sm:px-8 lg:px-40 py-10 space-y-5 bg-white min-h-screen">
       <h1 className="text-3xl font-semibold">{t("orderConfirmed")}</h1>
       {order?.id ? (
         <p className="text-muted-foreground">{t("orderNumber")} {order.id}</p>
