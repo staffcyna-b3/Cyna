@@ -55,6 +55,7 @@ export class WebhookService {
     }
 
     await this.updateOrderStatus(intent.id, OrderStatus.SUCCESS);
+    await this.updateFrontOfficeOrderStatus(intent.id, 'PAID');
     await this.sendTransactionToProductService(intent, 'succeeded', event.id);
     await this.sendOrderConfirmationEmail(intent);
     await this.activateSubscriptionInvoice(intent);
@@ -213,8 +214,21 @@ export class WebhookService {
     status: 'succeeded' | 'failed',
     eventId: string
   ): Promise<void> {
-    const transactionPath = process.env.PRODUCTS_TRANSACTION_PATH || '/products/transactions';
+    const transactionPath = process.env.PRODUCTS_TRANSACTION_PATH || '/payment-notification';
     const url = `${MICROSERVICES.PRODUCT.url}${transactionPath}`;
+
+    let items: { product_id: string; quantity: number }[] = [];
+    if (status === 'succeeded') {
+      try {
+        const itemsUrl = `${MICROSERVICES.FRONTOFFICE.url}/orders/by-payment-intent/${intent.id}/items`;
+        items = await this.httpClient.get<{ product_id: string; quantity: number }[]>(itemsUrl);
+      } catch (error) {
+        Logger.error('[PAYMENT] Failed to fetch order items from front-office', {
+          paymentIntentId: intent.id,
+          error: (error as any)?.message,
+        });
+      }
+    }
 
     try {
       await this.httpClient.post(
@@ -226,12 +240,26 @@ export class WebhookService {
           amount: intent.amount,
           currency: intent.currency,
           status,
+          items,
         },
         HTTP_JSON_CONFIG
       );
     } catch (error) {
       Logger.error('[PAYMENT] Failed to notify product service', {
         paymentIntentId: intent.id,
+        status,
+        error: (error as any)?.message,
+      });
+    }
+  }
+
+  private async updateFrontOfficeOrderStatus(paymentIntentId: string, status: string): Promise<void> {
+    const url = `${MICROSERVICES.FRONTOFFICE.url}/orders/by-payment-intent/${paymentIntentId}/status`;
+    try {
+      await this.httpClient.patch(url, { status }, HTTP_JSON_CONFIG);
+    } catch (error) {
+      Logger.error('[PAYMENT] Failed to update front-office order status', {
+        paymentIntentId,
         status,
         error: (error as any)?.message,
       });

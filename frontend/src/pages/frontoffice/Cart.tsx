@@ -97,7 +97,8 @@ export const Cart = () => {
         billingAddressId: billingId,
         shippingAddressId: shippingId,
         shippingFee,
-        deliveryFeeCents: Math.round(shippingFee * 100),
+        billingAddresses,
+        deliveryFeeCents: Math.round(deliveryFee * 100),
       },
     })
   }

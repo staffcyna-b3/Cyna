@@ -16,7 +16,12 @@ export class HttpClient implements IHttpClient {
       body: JSON.stringify(body),
     });
     if (!res.ok) {
-      throw { status: res.status, error: `HTTP_ERROR_${res.status}` };
+      const json = await res.json().catch(() => ({})) as Record<string, unknown>;
+      throw {
+        status: res.status,
+        error: json.error ?? `HTTP_ERROR_${res.status}`,
+        message: json.message,
+      };
     }
     return res.json() as Promise<T>;
   }

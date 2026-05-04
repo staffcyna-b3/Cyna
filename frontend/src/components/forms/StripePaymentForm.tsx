@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { StripePaymentFormProps } from '@/types/interfaces/stripe/StripePaymentFormProps.interface';
 import { useAuth } from '@/hooks/useAuth';
 import useCart from '@/hooks/useCart';
-import { createOrder, updateOrderStatus } from '@/services/orderService';
+import { createOrder } from '@/services/orderService';
 
 export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
   amountCents,
@@ -40,7 +40,6 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
           { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId: paymentIntentId, promoCode },
           accessToken
         );
-        await updateOrderStatus(order.id, 'PAID', accessToken);
       } catch (err) {
         // Payment succeeded — don't block the user, log and fall through to confirmation
         console.error('[Payment] Order creation/update failed after payment:', err);

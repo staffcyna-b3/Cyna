@@ -1,4 +1,4 @@
-import { HttpError } from '../common/HttpError';
+import { HttpError } from '../common/httpError';
 import { ICartRepository } from '../interfaces/CartRepository';
 import { ICartService } from '../interfaces/CartService';
 import { IShippingService } from '../interfaces/IShippingService';

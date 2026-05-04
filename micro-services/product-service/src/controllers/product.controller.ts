@@ -89,6 +89,21 @@ export class ProductController {
         }
     }
 
+    async handleTransaction(req: Request, res: Response): Promise<Response> {
+        try {
+            const { status, items } = req.body as {
+                status: string;
+                items?: { product_id: string; quantity: number }[];
+            };
+            const normalized = (items ?? []).map((i) => ({ productId: i.product_id, quantity: i.quantity }));
+            await this.productService.handleTransaction(normalized, status);
+            return res.status(200).json(new SuccessResponse('Transaction handled', null));
+        } catch (error: any) {
+            Logger.error('Erreur handleTransaction', error);
+            return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
+        }
+    }
+
     async getProductSuggestions(req: Request, res: Response): Promise<Response> {
         try {
             const search = String(req.query.search ?? '');

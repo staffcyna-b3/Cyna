@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { HttpError } from '../common/HttpError';
+import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { IAddressService } from '../interfaces/AddressService';
 import { isValidUuid } from '../common/validation';
@@ -33,7 +33,8 @@ export class AddressesController {
     try {
       const userId = this.getUserId(req, res);
       if (!userId) return;
-      const address = await this.addressService.update(userId, req.params.id, req.body);
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const address = await this.addressService.update(userId, id, req.body);
       return res.status(200).json(address);
     } catch (error: unknown) {
       return this.handleError(res, error, 'Error updating address');
@@ -44,7 +45,8 @@ export class AddressesController {
     try {
       const userId = this.getUserId(req, res);
       if (!userId) return;
-      const address = await this.addressService.setDefault(userId, req.params.id);
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const address = await this.addressService.setDefault(userId, id);
       return res.status(200).json(address);
     } catch (error: unknown) {
       return this.handleError(res, error, 'Error setting default address');
@@ -55,7 +57,8 @@ export class AddressesController {
     try {
       const userId = this.getUserId(req, res);
       if (!userId) return;
-      await this.addressService.delete(userId, req.params.id);
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      await this.addressService.delete(userId, id);
       return res.status(204).send();
     } catch (error: unknown) {
       return this.handleError(res, error, 'Error deleting address');
