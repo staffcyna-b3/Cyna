@@ -44,11 +44,15 @@ cd gateway
 npx sequelize-cli db:migrate
 cd ..
 
+echo "→ Back-office Service migrations..."
+cd micro-services/back-office-service
+npx sequelize-cli db:migrate
+cd ../..
+
 echo "→ Product Service migrations..."
 cd micro-services/product-service
 npx sequelize-cli db:migrate
 cd ../..
-
 
 echo "→ Front-office Service migrations..."
 cd micro-services/front-office-service

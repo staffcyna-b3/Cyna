@@ -8,16 +8,26 @@ import { GetOrderResponse } from "../dto/response/GetOrderResponse";
 import { GetOrdersResponse } from "../dto/response/GetOrdersResponse";
 import { IOrderRepository } from "../interfaces/OrderRepository";
 import { IOrderService } from "../interfaces/OrderService";
+import { IShippingService } from "../interfaces/IShippingService";
+import { IPromoService } from "../interfaces/IPromoService";
 
 export class OrderService implements IOrderService {
     private readonly orderRepository: IOrderRepository;
+    private readonly shippingService: IShippingService;
+    private readonly promoService: IPromoService;
 
-    constructor(orderRepository: IOrderRepository) {
+    constructor(
+        orderRepository: IOrderRepository,
+        shippingService: IShippingService,
+        promoService: IPromoService,
+    ) {
         this.orderRepository = orderRepository;
+        this.shippingService = shippingService;
+        this.promoService = promoService;
     }
 
     async createOrder(createOrderRequest: CreateOrderRequest): Promise<CreateOrderResponse> {
-        const { userId, userEmail, cartId, billingAddressId, shippingAddressId, stripePaymentIntentId } = createOrderRequest;
+        const { userId, userEmail, cartId, billingAddressId, shippingAddressId, stripePaymentIntentId, promoCode } = createOrderRequest;
 
         const normalizedCartId = String(cartId);
         const normalizedBillingAddressId = String(billingAddressId);
@@ -44,6 +54,7 @@ export class OrderService implements IOrderService {
                 quantity: number;
                 product?: {
                     price?: number | string;
+                    is_service?: boolean;
                 };
             }>;
         }).items ?? []).map((item) => {
@@ -53,6 +64,7 @@ export class OrderService implements IOrderService {
                 productId: item.product_id,
                 quantity: item.quantity,
                 unitPrice: Number(product?.price ?? 0),
+                isService: product?.is_service ?? false,
             };
         });
 
@@ -66,7 +78,24 @@ export class OrderService implements IOrderService {
             unit_price: Number(item.unitPrice ?? 0),
         }));
 
-        const totalAmount = orderItems.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+        const subtotal = orderItems.reduce((sum, item) => sum + item.quantity * item.unit_price, 0);
+        const shippingFee = this.shippingService.calculateFee(cartItems);
+
+        let discountAmount = 0;
+        let appliedPromoCode: string | null = null;
+
+        if (promoCode) {
+            const promoItems = cartItems.map((item) => ({
+                productId: item.productId,
+                isService: item.isService,
+                subtotal: item.quantity * item.unitPrice,
+            }));
+            const promoResult = await this.promoService.validate(promoCode, promoItems);
+            discountAmount = promoResult.discountAmount;
+            appliedPromoCode = promoResult.promoCode;
+        }
+
+        const totalAmount = subtotal + shippingFee - discountAmount;
 
         const order = await this.orderRepository.create({
             user_id: userId,
@@ -75,6 +104,9 @@ export class OrderService implements IOrderService {
             billing_address_snapshot: billingAddress.toJSON(),
             shipping_address_snapshot: shippingAddress.toJSON(),
             total_amount: Number(totalAmount.toFixed(2)),
+            shipping_fee: shippingFee,
+            discount_amount: discountAmount,
+            promo_code: appliedPromoCode,
             status: OrderStatus.PENDING,
             stripe_payment_intent_id: stripePaymentIntentId ?? null,
         });
@@ -117,6 +149,7 @@ export class OrderService implements IOrderService {
                     id: string;
                     unit_price: number;
                     quantity: number;
+                    license_key?: string | null;
                     product?: { name?: string; is_service?: boolean; duration?: number | null };
                 }>;
                 billing_period?: never;
@@ -128,12 +161,16 @@ export class OrderService implements IOrderService {
                 unit_price: Number(item.unit_price),
                 quantity: item.quantity,
                 is_recurring: item.product?.is_service ?? false,
+                license_key: item.license_key ?? null,
             }));
 
             return {
                 id: order.id,
                 status: order.status,
                 total_amount: Number(order.total_amount),
+                shipping_fee: Number(order.shipping_fee ?? 0),
+                discount_amount: Number(order.discount_amount ?? 0),
+                promo_code: order.promo_code ?? null,
                 created_at: order.created_at.toISOString(),
                 billing_period: this.resolveBillingPeriod(raw.items ?? []),
                 stripe_payment_intent_id: order.stripe_payment_intent_id ?? null,
@@ -158,6 +195,7 @@ export class OrderService implements IOrderService {
                 id: string;
                 unit_price: number;
                 quantity: number;
+                license_key?: string | null;
                 product?: { name?: string; is_service?: boolean; duration?: number | null };
             }>;
             billingAddress?: object;
@@ -169,6 +207,9 @@ export class OrderService implements IOrderService {
             user_id: order.user_id,
             status: order.status,
             total_amount: Number(order.total_amount),
+            shipping_fee: Number(order.shipping_fee ?? 0),
+            discount_amount: Number(order.discount_amount ?? 0),
+            promo_code: order.promo_code ?? null,
             billing_period: this.resolveBillingPeriod(raw.items ?? []),
             stripe_payment_intent_id: order.stripe_payment_intent_id ?? null,
             items: (raw.items ?? []).map((item) => ({
@@ -176,6 +217,7 @@ export class OrderService implements IOrderService {
                 product_name: item.product?.name ?? '',
                 unit_price: Number(item.unit_price),
                 quantity: item.quantity,
+                license_key: item.license_key ?? null,
             })),
             billing_address_snapshot: order.billing_address_snapshot as GetOrderResponse['billing_address_snapshot'],
             billingAddress: raw.billingAddress as GetOrderResponse['billingAddress'],
@@ -212,6 +254,14 @@ export class OrderService implements IOrderService {
         const updated = await this.orderRepository.updateStatusByPaymentIntentId(paymentIntentId, status);
         if (!updated) {
             throw new HttpError(404, "Order not found for payment intent");
+        }
+        if (status === OrderStatus.PAID) {
+            await this.orderRepository.generateLicenseKeysForOrderItems(paymentIntentId).catch((err: unknown) => {
+                Logger.warn("Failed to generate license keys for order items", {
+                    paymentIntentId,
+                    message: err instanceof Error ? err.message : String(err),
+                });
+            });
         }
         Logger.info("Order status updated by payment intent", { paymentIntentId, status });
     }

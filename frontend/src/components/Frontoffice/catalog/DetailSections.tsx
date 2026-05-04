@@ -24,7 +24,7 @@ function AddToCartPanel({
                 </div>
                 {product.discountedPrice ? (
                     <div className="flex flex-col gap-0.5">
-                        <span className="text-4xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                        <span className="text-4xl font-black text-red-500">
                             {formatCurrency(product.discountedPrice)}
                         </span>
                         <span className="text-sm text-gray-400 line-through">
@@ -46,6 +46,7 @@ function AddToCartPanel({
                 productId={product.id}
                 name={product.name}
                 unitPrice={product.price}
+                discountedUnitPrice={product.discountedPrice ?? undefined}
                 isService={product.isService}
                 stock={product.isService ? undefined : product.stock}
                 text={isAvailable ? t('addToCart') : unavailableLabel}
@@ -75,7 +76,7 @@ export function ServiceDetailSection({
                 </div>
                 {product.discountedPrice ? (
                     <div className="flex flex-col gap-0.5">
-                        <span className="text-5xl lg:text-6xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                        <span className="text-5xl lg:text-6xl font-black text-red-500">
                             {formatCurrency(product.discountedPrice)}
                         </span>
                         <span className="text-sm text-gray-400 line-through">
@@ -142,7 +143,7 @@ export function PhysicalProductDetailSection({
                     </div>
                     {product.discountedPrice ? (
                         <div className="flex flex-col gap-0.5">
-                            <span className="text-5xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                            <span className="text-5xl font-black text-red-500">
                                 {formatCurrency(product.discountedPrice)}
                             </span>
                             <span className="text-sm text-gray-400 line-through">

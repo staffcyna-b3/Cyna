@@ -17,17 +17,37 @@ const getPeriodLabel = (months: number): string => {
 
 export const CartItem = ({ item, onQuantityChange, onRemove }: CartItemProps) => {
   const periodLabel = item.period ? getPeriodLabel(item.period) : '';
-  const periodTotal = item.period ? item.unitPrice * item.period : item.unitPrice;
+  const effectivePrice = item.discountedUnitPrice ?? item.unitPrice;
+  const hasDiscount = item.discountedUnitPrice !== undefined;
 
-  // Texte du prix principal
-  const priceDisplay = item.isService && item.period
-    ? <>{formatCurrency(periodTotal)} <span className="font-normal text-gray-500 text-sm">{t("for a total period of")} {periodLabel}</span></>
-    : <>{formatCurrency(item.unitPrice)}</>;
+  const priceDisplay = item.isService && item.period ? (
+    <span className="flex items-baseline gap-1">
+      {hasDiscount && (
+        <span className="line-through text-gray-400 text-sm">
+          {formatCurrency(item.unitPrice * item.period)}
+        </span>
+      )}
+      <span className={hasDiscount ? 'text-red-600 font-semibold' : ''}>
+        {formatCurrency(effectivePrice * item.period)}
+      </span>
+      <span className="font-normal text-gray-500 text-sm">{t("for a total period of")} {periodLabel}</span>
+    </span>
+  ) : (
+    <span className="flex items-baseline gap-1">
+      {hasDiscount && (
+        <span className="line-through text-gray-400 text-sm">{formatCurrency(item.unitPrice)}</span>
+      )}
+      <span className={hasDiscount ? 'text-red-600 font-semibold' : ''}>{formatCurrency(effectivePrice)}</span>
+    </span>
+  );
 
-  // Texte du sous-total
+  const effectiveSubtotal = item.period
+    ? effectivePrice * item.quantity * item.period
+    : effectivePrice * item.quantity;
+
   const totalDisplay = item.isService && item.period
-    ? <>{formatCurrency(item.unitPrice * item.quantity)} <span className="text-gray-400 text-xs">{t("per month")}</span></>
-    : <>{formatCurrency(item.subtotal)}</>;
+    ? <>{formatCurrency(effectivePrice * item.quantity)} <span className="text-gray-400 text-xs">{t("per month")}</span></>
+    : <>{formatCurrency(effectiveSubtotal)}</>;
 
   return (
     <div className="flex bg-muted/80 p-4 rounded-lg gap-4">
@@ -35,7 +55,6 @@ export const CartItem = ({ item, onQuantityChange, onRemove }: CartItemProps) =>
         <p>{item.name}</p>
         <p>{priceDisplay}</p>
         <div className="flex gap-2 items-center">
-          {/* // TODO: replace gray */}
           <div className="flex items-center gap-1 px-1.5 bg-gray-200 rounded-lg w-fit justify-center">
             <Button variant="ghost" onClick={() => onQuantityChange(item.id, Math.max(1, item.quantity - 1))}>-</Button>
             <p>{item.quantity}</p>

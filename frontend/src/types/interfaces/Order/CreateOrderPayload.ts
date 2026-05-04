@@ -3,4 +3,5 @@ export interface CreateOrderPayload {
   billingAddressId: string
   shippingAddressId: string
   stripePaymentIntentId?: string
+  promoCode?: string
 }

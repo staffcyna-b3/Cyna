@@ -72,4 +72,15 @@ export class CartService {
         }
         return await response.json();
     }
+
+    public async applyPromo(code: string) {
+        const response = await fetch(`${GATEWAY_URL}/api/front-office/cart/promo`, this.getOptions('POST', { code }));
+        if (!response.ok) {
+            const data = await response.json().catch(() => null);
+            const err = new Error(data?.message || 'Code promotionnel invalide') as Error & { status: number };
+            err.status = response.status;
+            throw err;
+        }
+        return await response.json() as { valid: boolean; promoCode: string; discountAmount: number; discountedTotal: number };
+    }
 }

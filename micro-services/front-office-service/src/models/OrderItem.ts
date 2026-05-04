@@ -7,10 +7,11 @@ interface OrderItemAttributes {
   product_id: string;
   quantity: number;
   unit_price: number;
+  license_key?: string | null;
   product_name?: string | null;
 }
 
-export interface OrderItemCreationAttributes extends Optional<OrderItemAttributes, 'id' | 'product_name'> {}
+export interface OrderItemCreationAttributes extends Optional<OrderItemAttributes, 'id' | 'product_name' | 'license_key'> {}
 
 class OrderItem extends Model<OrderItemAttributes, OrderItemCreationAttributes> implements OrderItemAttributes {
   declare id: string;
@@ -18,6 +19,7 @@ class OrderItem extends Model<OrderItemAttributes, OrderItemCreationAttributes> 
   declare product_id: string;
   declare quantity: number;
   declare unit_price: number;
+  declare license_key: string | null;
   declare readonly product_name: string | null;
 }
 
@@ -35,6 +37,10 @@ OrderItem.init(
     product_id: {
       type: DataTypes.UUID,
       allowNull: false,
+    },
+    license_key: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     product_name: {
       type: DataTypes.VIRTUAL,

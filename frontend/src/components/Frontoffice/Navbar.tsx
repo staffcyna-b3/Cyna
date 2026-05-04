@@ -15,17 +15,21 @@ export default function Navbar() {
     const navigate = useNavigate();
     const location = useLocation();
     const { currentLanguage, availableLanguages, setLanguage } = useLanguage();
-    const { logout, isAuthenticated } = useAuth();
+    const { logout, isAuthenticated, user } = useAuth();
     const { items } = useCart();
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
     const service = useMemo(() => CatalogService.getInstance(), []);
     const searchContainerRef = useRef<HTMLDivElement | null>(null);
+    const cartContainerRef = useRef<HTMLDivElement | null>(null);
+    const userContainerRef = useRef<HTMLDivElement | null>(null);
     const { t } = useTranslation();
 
     const [search, setSearch] = useState('');
     const [suggestions, setSuggestions] = useState<ProductSuggestion[]>([]);
     const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isUserOpen, setIsUserOpen] = useState(false);
 
     const handleLogout = async () => {
         await logout();
@@ -64,6 +68,12 @@ export default function Navbar() {
             if (!searchContainerRef.current?.contains(event.target as Node)) {
                 setIsSuggestionsOpen(false);
             }
+            if (!cartContainerRef.current?.contains(event.target as Node)) {
+                setIsCartOpen(false);
+            }
+            if (!userContainerRef.current?.contains(event.target as Node)) {
+                setIsUserOpen(false);
+            }
         };
 
         document.addEventListener('mousedown', handleOutsideClick);
@@ -72,20 +82,22 @@ export default function Navbar() {
 
     useEffect(() => {
         setIsSuggestionsOpen(false);
+        setIsCartOpen(false);
+        setIsUserOpen(false);
     }, [location.pathname]);
 
-    const goToProduct = (productId: string) => {
+    const goToProduct = (slug: string) => {
         setSearch('');
         setSuggestions([]);
         setIsSuggestionsOpen(false);
-        navigate(`/catalog/${productId}`);
+        navigate(`/catalog/${slug}`);
     };
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
         if (suggestions.length > 0) {
-            goToProduct(suggestions[0].id);
+            goToProduct(suggestions[0].slug);
         }
     };
 
@@ -117,11 +129,11 @@ export default function Navbar() {
                             <ChevronDown className="pointer-events-none absolute right-0 top-1/2 h-4 w-4 -translate-y-1/2" />
                         </div>
 
-                        <div className="relative group">
+                        <div className="relative group" ref={cartContainerRef}>
                             <Button
                                 variant='ghost'
                                 size='icon'
-                                onClick={() => { setIsSuggestionsOpen(false); navigate('/cart'); }}
+                                onClick={() => { setIsSuggestionsOpen(false); setIsCartOpen(prev => !prev); }}
                                 aria-label={t('cart.title')}
                                 className="relative"
                             >
@@ -133,8 +145,7 @@ export default function Navbar() {
                                     )}
                             </Button>
 
-                            {/* Dropdown panier au hover */}
-                            <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
+                            <div className={`absolute right-0 top-full pt-3 z-50 ${isCartOpen ? 'block' : 'hidden group-hover:block'}`}>
                                 <div className="w-80 rounded-2xl border border-[#e0e4f8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.18)] overflow-hidden">
                                     {items.length === 0 ? (
                                         <p className="px-5 py-6 text-center text-sm text-gray-400">{t('cart.empty')}</p>
@@ -150,13 +161,19 @@ export default function Navbar() {
                                                         />
                                                         <div className="flex-1 min-w-0">
                                                             <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
-                                                            <p className="text-xs text-gray-500">
-                                                                {item.quantity} × {formatCurrency(item.unitPrice)}
+                                                            <p className="text-xs text-gray-500 flex items-baseline gap-1">
+                                                                {item.quantity} ×{' '}
+                                                                {item.discountedUnitPrice !== undefined && (
+                                                                    <span className="line-through text-gray-400">{formatCurrency(item.unitPrice)}</span>
+                                                                )}
+                                                                <span className={item.discountedUnitPrice !== undefined ? 'text-red-500 font-semibold' : ''}>
+                                                                    {formatCurrency(item.discountedUnitPrice ?? item.unitPrice)}
+                                                                </span>
                                                                 {item.isService && item.period ? <> / mois</> : null}
                                                             </p>
                                                         </div>
                                                         <p className="text-sm font-bold text-[#3d49f5] shrink-0">
-                                                            {formatCurrency(item.unitPrice * item.quantity)}
+                                                            {formatCurrency((item.discountedUnitPrice ?? item.unitPrice) * item.quantity)}
                                                             {item.isService && item.period ? <span className="text-xs font-normal text-gray-400"> / mois</span> : null}
                                                         </p>
                                                     </li>
@@ -175,12 +192,17 @@ export default function Navbar() {
                             </div>
                         </div>
 
-                        <div className="relative group">
-                            <Button variant="ghost" size="icon" className="flex items-center justify-center" aria-label={t('account')}>
-                                <User strokeWidth={3} />
+                        <div className="relative group" ref={userContainerRef}>
+                            <Button variant="ghost" size="icon" className="flex items-center justify-center gap-1.5" aria-label={t('account')} onClick={() => setIsUserOpen(prev => !prev)}>
+                                <User strokeWidth={3} className="h-5 w-5 shrink-0" />
+                                {isAuthenticated && (
+                                    <span className="hidden sm:block text-xs font-semibold max-w-20 truncate">
+                                        {user?.full_name.split(' ')[0]}
+                                    </span>
+                                )}
                             </Button>
 
-                            <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
+                            <div className={`absolute right-0 top-full pt-3 z-50 ${isUserOpen ? 'block' : 'hidden group-hover:block'}`}>
                                 <div className="w-56 rounded-2xl border border-[#e0e4f8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.18)] overflow-hidden">
                                     {isAuthenticated ? (
                                         <>
@@ -280,7 +302,7 @@ export default function Navbar() {
                                             variant="ghost"
                                             size='icon'
                                             key={suggestion.id}
-                                            onClick={() => goToProduct(suggestion.id)}
+                                            onClick={() => goToProduct(suggestion.slug)}
                                             className="flex w-full items-center justify-between px-5 py-4 text-left text-[#181d42] transition hover:bg-[#f3f5ff]"
                                         >
                                             <span className="font-medium">{suggestion.name}</span>

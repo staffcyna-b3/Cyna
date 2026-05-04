@@ -15,16 +15,16 @@ import {
 } from '@/components/Frontoffice/catalog/DetailSections';
 
 export default function CatalogDetail(): JSX.Element {
-    const { id } = useParams<{ id: string }>();
+    const { slug } = useParams<{ slug: string }>();
     const navigate = useNavigate();
     const { t } = useTranslation();
 
     const { data: product, loading, error, getOne } = useProductDetail();
 
     useEffect(() => {
-        if (!id) return;
-        void getOne(id);
-    }, [id, getOne]);
+        if (!slug) return;
+        void getOne(slug);
+    }, [slug, getOne]);
 
     if (loading) {
         return <DetailLoadingState />;
@@ -34,7 +34,7 @@ export default function CatalogDetail(): JSX.Element {
         return (
             <DetailErrorState
                 error={error}
-                onRetry={() => void getOne(id ?? '')}
+                onRetry={() => void getOne(slug ?? '')}
                 onBack={() => navigate(-1)}
                 t={t}
             />

@@ -1,1 +1,1 @@
-export type PromotionType = 'service' | 'product';
+export type PromotionType = 'service' | 'product' | 'cart';

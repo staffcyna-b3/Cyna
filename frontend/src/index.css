@@ -255,6 +255,11 @@ button:focus-visible {
   }
 }
 
+@keyframes navSlideIn {
+  from { bottom: calc(1.25rem + 48px); opacity: 0; }
+  to   { bottom: 1.25rem;              opacity: 1; }
+}
+
 @layer utilities {
   .font-space-grotesk {
     font-family: 'Space Grotesk', sans-serif;

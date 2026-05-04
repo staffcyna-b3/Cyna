@@ -129,7 +129,7 @@ export default function CustomRoutes() {
         <Route element={<CatalogLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/catalog" element={<CatalogList />} />
-          <Route path="/catalog/:id" element={<CatalogDetail />} />
+          <Route path="/catalog/:slug" element={<CatalogDetail />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/contact" element={<Contact />} />

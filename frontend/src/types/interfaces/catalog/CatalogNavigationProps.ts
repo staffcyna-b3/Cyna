@@ -4,4 +4,5 @@ export interface CatalogNavigationProps {
     categories: Category[];
     activeCategory: string | null;
     onCategoryClick: (categoryId: string | null) => void;
+    className?: string;
 }

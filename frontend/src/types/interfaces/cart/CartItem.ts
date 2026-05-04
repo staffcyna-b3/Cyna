@@ -4,6 +4,7 @@ export interface CartItem {
   name: string;
   quantity: number;
   unitPrice: number;
+  discountedUnitPrice?: number;
   subtotal: number;
   isService: boolean;
   period?: number;
@@ -12,6 +13,7 @@ export interface CartItem {
   imageUrl?: string;
   stock?: number;
   unitPriceCents: number;
+  originalUnitPriceCents?: number;
   billingPeriod?: 'monthly' | 'yearly';
   isRecurring?: boolean;
 }

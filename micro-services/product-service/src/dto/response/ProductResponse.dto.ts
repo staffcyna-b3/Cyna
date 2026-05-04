@@ -4,6 +4,7 @@ import { CategoryResponseDto } from "./CategoryResponse.dto";
 
 export interface ProductResponseDto {
   id: string;
+  slug: string;
   category: CategoryResponseDto;
   name: string;
   description?: string | null;
