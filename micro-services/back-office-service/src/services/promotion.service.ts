@@ -2,10 +2,14 @@ import { HttpError } from '../common/httpError';
 import { PromotionType } from '../enum/PromotionType';
 import { CreatePromotionDto, UpdatePromotionDto } from '../dto/promotion';
 import { IPromotionRepository } from '../interfaces/IPromotionRepository';
+import { IProductRepository } from '../interfaces/IProductRepository';
 import { IPromotionService } from '../interfaces/IPromotionService';
 
 export class PromotionService implements IPromotionService {
-    constructor(private readonly promotionRepository: IPromotionRepository) { }
+    constructor(
+        private readonly promotionRepository: IPromotionRepository,
+        private readonly productRepository: IProductRepository,
+    ) { }
 
     async list() {
         return this.promotionRepository.list();
@@ -127,11 +131,18 @@ export class PromotionService implements IPromotionService {
             throw new HttpError(400, 'product_ids doit etre un tableau');
         }
 
+        if (discountType === PromotionType.CART) {
+            if (productIds.length > 0) {
+                throw new HttpError(400, 'Une promotion panier ne peut pas être liée à des produits spécifiques');
+            }
+            return;
+        }
+
         if (productIds.length === 0) {
             return;
         }
 
-        const products = await this.promotionRepository.findProductsByIds(productIds);
+        const products = await this.productRepository.findProductsByIds(productIds);
 
         if (products.length !== productIds.length) {
             throw new HttpError(400, 'Un ou plusieurs produits sont introuvables');

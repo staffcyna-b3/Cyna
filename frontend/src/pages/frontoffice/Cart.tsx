@@ -29,7 +29,7 @@ export const Cart = () => {
     loading: checkoutLoading,
     setCheckoutIds,
   } = useCheckout()
-  const { cartId, items, updateQuantity, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
+  const { cartId, items, shippingFee, updateQuantity, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
 
   const [addresses, setAddresses] = useState<Address[]>([])
   const [billingId, setBillingId] = useState('')
@@ -50,16 +50,13 @@ export const Cart = () => {
   }, [accessToken])
 
   const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items])
-  const deliveryFee = useMemo(() => {
-    const hasPhysicalProduct = items.some((item) => item.isService === false)
-    return hasPhysicalProduct ? 5.99 : 0
-  }, [items])
+  // immediateTotal = ce qui est débité immédiatement (1 période pour les abonnements, pas le total du contrat)
   const immediateTotal = useMemo(
-    () => items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0),
+    () => items.reduce((sum, item) => sum + (item.discountedUnitPrice ?? item.unitPrice) * item.quantity, 0),
     [items]
   )
-  const finalTotal = useMemo(() => immediateTotal + deliveryFee, [immediateTotal, deliveryFee])
-  const finalTotalWithoutDelivery = useMemo(() => immediateTotal, [immediateTotal])
+  const finalTotal = useMemo(() => immediateTotal + shippingFee, [immediateTotal, shippingFee])
+
 
   const handleContinue = () => {
     if (!isAuthenticated) {
@@ -87,7 +84,10 @@ export const Cart = () => {
           productId: item.productId,
           name: item.name,
           quantity: item.quantity,
-          unitPriceCents: Math.round(item.unitPrice * 100),
+          unitPriceCents: Math.round((item.discountedUnitPrice ?? item.unitPrice) * 100),
+          ...(item.discountedUnitPrice !== undefined && {
+            originalUnitPriceCents: Math.round(item.unitPrice * 100),
+          }),
           isService: item.isService === true && item.period != null,
           isRecurring: item.isService === true && item.period != null,
           billingPeriod: item.period != null ? 'monthly' : undefined,
@@ -96,6 +96,7 @@ export const Cart = () => {
         cartId,
         billingAddressId: billingId,
         shippingAddressId: shippingId,
+        shippingFee,
         billingAddresses,
         deliveryFeeCents: Math.round(deliveryFee * 100),
       },
@@ -221,7 +222,16 @@ export const Cart = () => {
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between gap-3">
                     <span>{item.name} x{item.quantity}</span>
-                    <span>{formatCurrency(item.unitPrice * item.quantity)}</span>
+                    <span className="flex flex-col items-end">
+                      {item.discountedUnitPrice !== undefined && (
+                        <span className="line-through text-white/40 text-xs">
+                          {formatCurrency(item.unitPrice * item.quantity)}
+                        </span>
+                      )}
+                      <span className={item.discountedUnitPrice !== undefined ? 'text-red-400' : ''}>
+                        {formatCurrency((item.discountedUnitPrice ?? item.unitPrice) * item.quantity)}
+                      </span>
+                    </span>
                   </div>
                 ))}
               </div>
@@ -232,7 +242,7 @@ export const Cart = () => {
               </div>
               <div className="w-full text-white text-sm flex justify-between">
                 <span>{t("shipping")}</span>
-                <span>{formatCurrency(deliveryFee)}</span>
+                <span>{formatCurrency(shippingFee)}</span>
               </div>
               <div className="w-full text-white flex justify-between font-semibold">
                 <span>{t("total")}</span>
@@ -242,7 +252,7 @@ export const Cart = () => {
           ) : (
             <>
               <p className="text-white">{t("total")}</p>
-              <p className="text-white">{formatCurrency(finalTotalWithoutDelivery)}</p>
+              <p className="text-white">{formatCurrency(immediateTotal)}</p>
             </>
           )}
           {currentStep === "cart" ? (

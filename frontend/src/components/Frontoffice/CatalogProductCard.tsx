@@ -103,7 +103,7 @@ export const CatalogProductCard = ({
                         <div className="text-xl font-extrabold">
                             {product.discountedPrice ? (
                                 <div className="flex items-center gap-2">
-                                    <span className="font-semibold text-[#7b61ff]">
+                                    <span className="font-semibold text-red-500">
                                         {formatCurrency(product.discountedPrice)}
                                     </span>
                                     <span className="text-sm text-gray-400 line-through">
@@ -131,6 +131,7 @@ export const CatalogProductCard = ({
                                         productId={product.id}
                                         productName={product.name}
                                         unitPrice={product.price}
+                                        discountedUnitPrice={product.discountedPrice ?? undefined}
                                     />
                                 </>
                             ) : (
@@ -141,6 +142,7 @@ export const CatalogProductCard = ({
                                             quantity={1}
                                             name={product.name}
                                             unitPrice={product.price}
+                                            discountedUnitPrice={product.discountedPrice ?? undefined}
                                             isService={false}
                                             stock={product.stock}
                                     />

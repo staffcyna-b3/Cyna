@@ -10,12 +10,14 @@ export default function PeriodModal({
     productId,
     productName,
     unitPrice,
+    discountedUnitPrice,
 }: {
     open: boolean;
     onClose: () => void;
     productId: string;
     productName?: string;
     unitPrice?: number;
+    discountedUnitPrice?: number;
 }) {
     const { t } = useTranslation();
     const { addToCart } = useCart();
@@ -24,7 +26,7 @@ export default function PeriodModal({
 
     const handleSelect = async (p: Period) => {
         try {
-            await addToCart(productId, { period: p, name: productName, unitPrice, isService: true });
+            await addToCart(productId, { period: p, name: productName, unitPrice, discountedUnitPrice, isService: true });
             onClose();
         } catch {
             // ignore

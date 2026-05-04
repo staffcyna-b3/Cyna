@@ -14,5 +14,6 @@ export interface IProductRepository {
     upsertMainImage(productId: string, image: Buffer, altText?: string | null): Promise<void>;
     reorderDisplayPriority(items: ReorderDisplayPriorityItemDto[]): Promise<Product[]>;
     generateUniqueSlug(name: string, excludeId?: string): Promise<string>;
+    findProductsByIds(productIds: string[]): Promise<Product[]>;
 }
 

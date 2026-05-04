@@ -16,6 +16,7 @@ export type PromotionEditorSheetProps = {
     productSelectionLabel: string;
     productTypeServiceLabel: string;
     productTypePhysicalLabel: string;
+    productTypeCartLabel: string;
     noProductsLabel: string;
     loadingLabel: string;
     code: string;
@@ -28,6 +29,7 @@ export type PromotionEditorSheetProps = {
     loadingProducts: boolean;
     saving: boolean;
     deleting: boolean;
+    saveError: string | null;
     onOpenChange: (open: boolean) => void;
     onCodeChange: (value: string) => void;
     onDiscountTypeChange: (value: PromotionType) => void;

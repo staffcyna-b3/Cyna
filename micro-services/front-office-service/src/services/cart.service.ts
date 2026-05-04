@@ -1,6 +1,7 @@
 import { HttpError } from '../common/httpError';
 import { ICartRepository } from '../interfaces/CartRepository';
 import { ICartService } from '../interfaces/CartService';
+import { IShippingService } from '../interfaces/IShippingService';
 import { CartResponse } from '../dto/response/CartResponse';
 import { CartItemResponse } from '../dto/response/CartItemResponse';
 import { ProductStatus } from '../enum/ProductStatus';
@@ -13,7 +14,8 @@ import { IProductRepository } from '../interfaces/ProductRepository';
 export class CartService implements ICartService {
   constructor(
     private readonly cartRepository: ICartRepository,
-    private readonly productRepository: IProductRepository
+    private readonly productRepository: IProductRepository,
+    private readonly shippingService: IShippingService,
   ) { }
 
   async getCart(userId: string): Promise<CartResponse> {
@@ -21,11 +23,21 @@ export class CartService implements ICartService {
     const cart = await this.cartRepository.findByUserIdWithItems(userId);
 
     if (!cart) {
-      return { id: null, items: [], totalAmount: 0 };
+      return { id: null, items: [], totalAmount: 0, shippingFee: 0 };
     }
 
     //forcer typescript a comprendre que le cart contient les items, et que chaque item contient un product
     const cartWithItems = cart as Cart & { items: (CartItem & { product: Product & { images: ProductImage[] } })[] };
+
+    const productIds = cartWithItems.items.map((item) => item.product_id);
+    const promoResults = await Promise.all(
+      productIds.map((id) => this.productRepository.findByIdWithActivePromo(id)),
+    );
+    const promoByProductId = new Map(
+      promoResults
+        .filter((p): p is NonNullable<typeof p> => p !== null)
+        .map((p) => [p.id, p.promotions?.[0] ?? null]),
+    );
 
     const items: CartItemResponse[] = cartWithItems.items.map((item) => {
       const mainImage = item.product.images?.find(img => img.is_main) ?? item.product.images?.[0];
@@ -33,12 +45,15 @@ export class CartService implements ICartService {
         ? `data:image/jpeg;base64,${(mainImage.image as Buffer).toString('base64')}`
         : undefined;
 
-      // Utiliser le prix snapshot stocké dans cart_items
       const unitPrice = Number(item.unit_price);
-      // Pour les services avec période : subtotal = unitPrice * quantity * period
       const subtotal = item.period
         ? unitPrice * item.quantity * item.period
         : unitPrice * item.quantity;
+
+      const activePromo = promoByProductId.get(item.product_id);
+      const discountedUnitPrice = activePromo
+        ? Number((unitPrice * (1 - Number(activePromo.discount_value) / 100)).toFixed(2))
+        : undefined;
 
       const base: CartItemResponse = {
         id: item.id,
@@ -46,6 +61,7 @@ export class CartService implements ICartService {
         name: item.product_name,
         quantity: item.quantity,
         unitPrice,
+        ...(discountedUnitPrice !== undefined && { discountedUnitPrice }),
         subtotal,
         isService: item.product.is_service,
         period: item.period ?? undefined,
@@ -60,11 +76,13 @@ export class CartService implements ICartService {
     });
 
     const totalAmount = items.reduce((sum, item) => sum + item.subtotal, 0);
+    const shippingFee = this.shippingService.calculateFee(items);
 
     return {
       id: cart.id,
       items,
-      totalAmount: Number(totalAmount.toFixed(2))
+      totalAmount: Number(totalAmount.toFixed(2)),
+      shippingFee,
     };
   }
 
