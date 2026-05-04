@@ -4,6 +4,7 @@ import { CategoryBasic } from "../category/CategoryBasic";
 
 export interface CatalogResponse {
   id: string;
+  slug: string;
   category: CategoryBasic;
   name: string;
   description?: string | null;

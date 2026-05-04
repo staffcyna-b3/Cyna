@@ -38,7 +38,6 @@ function discountTypeLabel(t: TFunction, type: string) {
 
 export function buildPromotionColumns(
     t: TFunction,
-    onOpenPromotionEditor?: (promotionId: string) => void,
 ): Array<ColumnDef<BackOfficePromotion>> {
     return [
         {
@@ -71,14 +70,7 @@ export function buildPromotionColumns(
                 />
             ),
             cell: ({ row }) => (
-                <Button
-                    type="button"
-                    variant="link"
-                    className="h-auto p-0 font-medium text-gray-800"
-                    onClick={() => onOpenPromotionEditor?.(row.original.id)}
-                >
-                    {row.original.code}
-                </Button>
+                <span className="font-medium text-gray-800">{row.original.code}</span>
             ),
         },
         {

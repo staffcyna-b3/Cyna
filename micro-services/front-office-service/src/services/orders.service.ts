@@ -149,6 +149,7 @@ export class OrderService implements IOrderService {
                     id: string;
                     unit_price: number;
                     quantity: number;
+                    license_key?: string | null;
                     product?: { name?: string; is_service?: boolean; duration?: number | null };
                 }>;
                 billing_period?: never;
@@ -160,6 +161,7 @@ export class OrderService implements IOrderService {
                 unit_price: Number(item.unit_price),
                 quantity: item.quantity,
                 is_recurring: item.product?.is_service ?? false,
+                license_key: item.license_key ?? null,
             }));
 
             return {
@@ -193,6 +195,7 @@ export class OrderService implements IOrderService {
                 id: string;
                 unit_price: number;
                 quantity: number;
+                license_key?: string | null;
                 product?: { name?: string; is_service?: boolean; duration?: number | null };
             }>;
             billingAddress?: object;
@@ -214,6 +217,7 @@ export class OrderService implements IOrderService {
                 product_name: item.product?.name ?? '',
                 unit_price: Number(item.unit_price),
                 quantity: item.quantity,
+                license_key: item.license_key ?? null,
             })),
             billing_address_snapshot: order.billing_address_snapshot as GetOrderResponse['billing_address_snapshot'],
             billingAddress: raw.billingAddress as GetOrderResponse['billingAddress'],
@@ -250,6 +254,14 @@ export class OrderService implements IOrderService {
         const updated = await this.orderRepository.updateStatusByPaymentIntentId(paymentIntentId, status);
         if (!updated) {
             throw new HttpError(404, "Order not found for payment intent");
+        }
+        if (status === OrderStatus.PAID) {
+            await this.orderRepository.generateLicenseKeysForOrderItems(paymentIntentId).catch((err: unknown) => {
+                Logger.warn("Failed to generate license keys for order items", {
+                    paymentIntentId,
+                    message: err instanceof Error ? err.message : String(err),
+                });
+            });
         }
         Logger.info("Order status updated by payment intent", { paymentIntentId, status });
     }

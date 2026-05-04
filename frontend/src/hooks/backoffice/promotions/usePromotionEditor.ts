@@ -227,10 +227,15 @@ export function usePromotionEditor({
         }
     }
 
+    const filteredAvailableProducts = useMemo(() => {
+        const wantService = form.discountType === 'service';
+        return availableProducts.filter((product) => product.is_service === wantService);
+    }, [availableProducts, form.discountType]);
+
     const selectedProducts = useMemo(() => {
         const selectedIds = new Set(form.productIds);
-        return mapLinkedProducts(availableProducts.filter((product) => selectedIds.has(product.id)));
-    }, [availableProducts, form.productIds]);
+        return mapLinkedProducts(filteredAvailableProducts.filter((product) => selectedIds.has(product.id)));
+    }, [filteredAvailableProducts, form.productIds]);
 
     return {
         mode,

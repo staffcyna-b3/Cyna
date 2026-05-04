@@ -6,6 +6,7 @@ export interface OrderItemSummary {
   unit_price: number;
   quantity: number;
   is_recurring: boolean;
+  license_key: string | null;
 }
 
 export interface GetOrdersResponse {

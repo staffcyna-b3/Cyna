@@ -18,6 +18,7 @@ export function mapProductToDto(product: Product): ProductResponseDto {
 
     return {
         id: product.id,
+        slug: product.slug ?? product.id,
         category: {
             id: category?.id ?? product.category_id,
             name: category?.name ?? '',

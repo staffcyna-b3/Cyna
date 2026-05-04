@@ -1,5 +1,6 @@
 import { Op, Transaction } from 'sequelize';
 import { sequelize } from '../config/database';
+import { slugify } from '../utils/slugify';
 import Product, { ProductCreationAttributes } from '../models/Product';
 import Category from '../models/Category';
 import ProductImage from '../models/ProductImage';
@@ -122,6 +123,36 @@ export class ProductRepository implements IProductRepository {
             alt_text: altText ?? null,
             is_main: true,
         });
+    }
+
+    async generateUniqueSlug(name: string, excludeId?: string): Promise<string> {
+        const base = slugify(name);
+        const candidate = base;
+        const exists = await Product.findOne({
+            where: excludeId
+                ? { slug: candidate, id: { [Op.ne]: excludeId } }
+                : { slug: candidate },
+            attributes: ['id'],
+        });
+        if (!exists) return candidate;
+
+        const similar = await Product.findAll({
+            where: excludeId
+                ? { slug: { [Op.like]: `${base}-%` }, id: { [Op.ne]: excludeId } }
+                : { slug: { [Op.like]: `${base}-%` } },
+            attributes: ['slug'],
+        });
+        const usedSuffixes = new Set(
+            similar
+                .map((p) => {
+                    const suffix = (p.slug ?? '').slice(base.length + 1);
+                    return parseInt(suffix, 10);
+                })
+                .filter((n) => !Number.isNaN(n))
+        );
+        let counter = 2;
+        while (usedSuffixes.has(counter)) counter++;
+        return `${base}-${counter}`;
     }
 
     async reorderDisplayPriority(items: ReorderDisplayPriorityItemDto[]) {

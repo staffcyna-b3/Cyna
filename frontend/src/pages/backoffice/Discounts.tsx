@@ -1,6 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {
@@ -62,7 +73,7 @@ export default function Discounts() {
         setSheetOpen(true);
     }
 
-    const columns = useMemo(() => buildPromotionColumns(t, openEdit), [t, openEdit]);
+    const columns = useMemo(() => buildPromotionColumns(t), [t]);
 
     const editor = usePromotionEditor({
         promotion: selectedPromotion,
@@ -76,8 +87,19 @@ export default function Discounts() {
             await refresh();
             setSheetOpen(false);
             setSelectedPromotionId(null);
+            toast.success(t('backoffice.promotionDeleted'));
         },
     });
+
+    async function handleDelete() {
+        try {
+            await editor.remove();
+        } catch {
+            toast.error(t('errorOccurred'));
+        } finally {
+            setConfirmDelete(false);
+        }
+    }
 
     useEffect(() => {
         if (searchParams.get('create') !== '1') {
@@ -250,8 +272,23 @@ export default function Discounts() {
                 onActiveChange={editor.setActive}
                 onToggleProduct={editor.toggleProduct}
                 onSave={editor.save}
-                onDelete={editor.remove}
+                onDelete={() => setConfirmDelete(true)}
             />
+
+            <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t('cart.remove')}</AlertDialogTitle>
+                        <AlertDialogDescription>{t('admin.confirmRefundDescription')}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={editor.deleting}>{t('cancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => void handleDelete()} disabled={editor.deleting}>
+                            {editor.deleting ? t('loading') : t('admin.confirm')}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 }

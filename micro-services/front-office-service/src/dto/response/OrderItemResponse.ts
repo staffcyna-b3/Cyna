@@ -4,4 +4,5 @@ export interface OrderItemResponse {
   product_name: string;
   quantity: number;
   unit_price: number;
+  license_key: string | null;
 }

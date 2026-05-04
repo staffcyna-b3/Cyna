@@ -2,6 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { TFunction } from 'i18next';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ProductStatus } from '@/types/enums/product/ProductStatus';
 import type { BackOfficeProduct } from '@/types/interfaces/backoffice/product';
 
@@ -39,9 +40,27 @@ function SortableHeader({
 
 export function buildProductColumns(
     t: TFunction,
-    onOpenProductEditor?: (productId: string) => void,
 ): Array<ColumnDef<BackOfficeProduct>> {
     return [
+        {
+            id: 'select',
+            header: ({ table }) => (
+                <Checkbox
+                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
         {
             id: 'reference',
             accessorFn: (row) => getReference(row.id),
@@ -60,14 +79,7 @@ export function buildProductColumns(
                 />
             ),
             cell: ({ row }) => (
-                <Button
-                    type="button"
-                    variant="link"
-                    className="h-auto p-0 text-gray-700"
-                    onClick={() => onOpenProductEditor?.(row.original.id)}
-                >
-                    {row.original.name}
-                </Button>
+                <span className="font-medium text-gray-700">{row.original.name}</span>
             ),
         },
         {

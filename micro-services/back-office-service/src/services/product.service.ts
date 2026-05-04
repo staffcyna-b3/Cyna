@@ -34,8 +34,11 @@ export class ProductService implements IProductService {
         await this.validateCategoryCompatibility(input.category_id, input.is_service);
         this.validateProductData(input, input.is_service);
 
+        const slug = await this.productRepository.generateUniqueSlug(input.name);
+
         const payload = {
             ...input,
+            slug,
             description: input.description ?? null,
             priority: input.priority ?? 0,
             stock: input.is_service ? 0 : (input.stock ?? 0),
@@ -51,12 +54,13 @@ export class ProductService implements IProductService {
 
         const nextIsService = product.is_service;
         const nextCategoryId = input.category_id ?? product.category_id;
+        const nextName = input.name ?? product.name;
 
         await this.validateCategoryCompatibility(nextCategoryId, nextIsService);
         this.validateProductData(
             {
                 category_id: nextCategoryId,
-                name: input.name ?? product.name,
+                name: nextName,
                 description: input.description ?? product.description,
                 price: input.price ?? Number(product.price),
                 stock: input.stock ?? product.stock,
@@ -68,8 +72,13 @@ export class ProductService implements IProductService {
             nextIsService,
         );
 
+        const slug = input.name
+            ? await this.productRepository.generateUniqueSlug(nextName, id)
+            : undefined;
+
         await this.productRepository.update(product, {
             ...input,
+            ...(slug ? { slug } : {}),
             duration: nextIsService ? (input.duration ?? product.duration) : null,
             stock: nextIsService ? 0 : (input.stock ?? product.stock),
         });
