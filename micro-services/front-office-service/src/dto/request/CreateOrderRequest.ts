@@ -5,4 +5,5 @@ export interface CreateOrderRequest {
   billingAddressId: string;
   shippingAddressId: string;
   stripePaymentIntentId?: string;
+  promoCode?: string;
 }
