@@ -50,6 +50,10 @@ export const Cart = () => {
   }, [accessToken])
 
   const totalItems = useMemo(() => items.reduce((sum, item) => sum + item.quantity, 0), [items])
+  const deliveryFee = useMemo(() => {
+    const hasPhysicalProduct = items.some((item) => item.isService === false)
+    return hasPhysicalProduct ? 5.99 : 0
+  }, [items])
   // immediateTotal = ce qui est débité immédiatement (1 période pour les abonnements, pas le total du contrat)
   const immediateTotal = useMemo(
     () => items.reduce((sum, item) => sum + (item.discountedUnitPrice ?? item.unitPrice) * item.quantity, 0),

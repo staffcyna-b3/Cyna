@@ -43,6 +43,7 @@ export default function Discounts() {
     const [selectedPromotionId, setSelectedPromotionId] = useState<string | null>(null);
     const [selectedRows, setSelectedRows] = useState<typeof items>([]);
     const [bulkDeleting, setBulkDeleting] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     const { items, loading, error, refresh } = useBackOfficePromotions();
     const discountsErrorMessage = getBackOfficeErrorMessage(t, error);
