@@ -64,6 +64,7 @@ start_service "gateway         " "gateway"                              "$YELLOW
 start_service "back-office     " "micro-services/back-office-service"   "$RED"
 start_service "front-office    " "micro-services/front-office-service"  "$BLUE"
 start_service "product-service " "micro-services/product-service"       "$MAGENTA"
+start_service "payments-service " "micro-services/payments-service"     "$GREEN"
 start_frontend
 
 echo -e "${GREEN}Tous les services sont en cours de démarrage.${NC}"

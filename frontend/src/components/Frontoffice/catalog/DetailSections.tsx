@@ -22,9 +22,23 @@ function AddToCartPanel({
                 <div className="text-xs mb-2 uppercase tracking-wide text-[#9aa0c7]">
                     {t('total')}
                 </div>
-                <div className="text-4xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
-                    {formatCurrency(product.price)}
-                </div>
+                {product.discountedPrice ? (
+                    <div className="flex flex-col gap-0.5">
+                        <span className="text-4xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                            {formatCurrency(product.discountedPrice)}
+                        </span>
+                        <span className="text-sm text-gray-400 line-through">
+                            {formatCurrency(product.price)}
+                        </span>
+                        <span className="text-xs text-green-400 font-medium">
+                            -{product.discountValue}%
+                        </span>
+                    </div>
+                ) : (
+                    <div className="text-4xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                        {formatCurrency(product.price)}
+                    </div>
+                )}
             </div>
 
             <AddToCartButton
@@ -59,11 +73,25 @@ export function ServiceDetailSection({
                 <div className="text-xs text-[#9aa0c7] uppercase tracking-widest font-semibold">
                     {t('pricing')}
                 </div>
-                <div className="flex items-baseline gap-3">
-                    <span className="text-5xl lg:text-6xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
-                        {formatCurrency(product.price)}
-                    </span>
-                </div>
+                {product.discountedPrice ? (
+                    <div className="flex flex-col gap-0.5">
+                        <span className="text-5xl lg:text-6xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                            {formatCurrency(product.discountedPrice)}
+                        </span>
+                        <span className="text-sm text-gray-400 line-through">
+                            {formatCurrency(product.price)}
+                        </span>
+                        <span className="text-xs text-green-400 font-medium">
+                            -{product.discountValue}%
+                        </span>
+                    </div>
+                ) : (
+                    <div className="flex items-baseline gap-3">
+                        <span className="text-5xl lg:text-6xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                            {formatCurrency(product.price)}
+                        </span>
+                    </div>
+                )}
             </div>
 
             {product.duration && (
@@ -112,11 +140,25 @@ export function PhysicalProductDetailSection({
                     <div className="text-xs text-[#9aa0c7] uppercase tracking-widest font-semibold">
                         {t('pricing')}
                     </div>
-                    <div className="flex items-baseline gap-3">
-                        <span className="text-5xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
-                            {formatCurrency(product.price)}
-                        </span>
-                    </div>
+                    {product.discountedPrice ? (
+                        <div className="flex flex-col gap-0.5">
+                            <span className="text-5xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                                {formatCurrency(product.discountedPrice)}
+                            </span>
+                            <span className="text-sm text-gray-400 line-through">
+                                {formatCurrency(product.price)}
+                            </span>
+                            <span className="text-xs text-green-400 font-medium">
+                                -{product.discountValue}%
+                            </span>
+                        </div>
+                    ) : (
+                        <div className="flex items-baseline gap-3">
+                            <span className="text-5xl font-black text-transparent bg-linear-to-r from-white to-[#7b61ff] bg-clip-text">
+                                {formatCurrency(product.price)}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {product.stock > 0 && product.stock < 10 && (

@@ -17,8 +17,12 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
     const token = authHeader.split(" ")[1];
 
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!)  
-        req.user = decoded as any
+        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as any
+        req.user = decoded
+        // Inject user context headers for downstream micro-services (e.g. payments-service)
+        req.headers['x-user-id'] = decoded.userId;
+        req.headers['x-user-email'] = decoded.email;
+        req.headers['x-user-role'] = decoded.role;
         next()
 
     } catch (error) {

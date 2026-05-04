@@ -9,6 +9,23 @@ const getRetryAfterSeconds = (resetTime: Date | undefined, fallbackSeconds: numb
   return Math.max(0, Math.ceil((resetTime.getTime() - Date.now()) / 1000));
 };
 
+export const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.ip || 'unknown',
+  handler: (req, res) => {
+    Logger.warn(
+      `[RATE_LIMIT] Global limiter atteint pour IP ${req.ip} à ${new Date().toISOString()}`
+    );
+    res.status(429).json({
+      error: 'TOO_MANY_REQUESTS',
+      message: 'Trop de requêtes. Réessayez dans quelques minutes.',
+    });
+  },
+});
+
 /**
  * Middleware de rate limiting pour la route POST /auth/login
  * 
@@ -115,35 +132,21 @@ export const registerLimiter = rateLimit({
   },
 });
 
-/**
- * Middleware de rate limiting pour les demandes de reset password
- * 
- * Configuration:
- * - 5 tentatives maximum par IP
- * - Fenêtre de temps: 1 heure
- */
-/**
- * Middleware de rate limiting pour la route POST /payments/create-intent
- *
- * Configuration:
- * - 10 tentatives maximum par IP
- * - Fenêtre de temps: 1 heure
- */
-export const createPaymentIntentLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 heure
-  max: 10,
+export const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => req.method !== 'POST',
   keyGenerator: (req) => req.ip || 'unknown',
   handler: (req, res) => {
     Logger.warn(
-      `[RATE_LIMIT] Payment intent limiter atteint pour IP ${req.ip} à ${new Date().toISOString()}`
+      `[RATE_LIMIT] Contact limiter atteint pour IP ${req.ip} à ${new Date().toISOString()}`
     );
     res.status(429).json({
-      error: 'TOO_MANY_PAYMENT_ATTEMPTS',
-      message: 'Trop de tentatives de paiement. Réessayez dans 1 heure.',
-      retryAfter: getRetryAfterSeconds(req.rateLimit?.resetTime, 3600),
+      success: false,
+      error: 'TOO_MANY_REQUESTS',
+      message: 'Trop de messages envoyés, réessayez dans 15 minutes.',
     });
   },
 });

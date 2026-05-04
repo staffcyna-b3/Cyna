@@ -52,6 +52,20 @@ export class OrderRepository implements IOrderRepository {
         return OrderItem.bulkCreate(items);
     }
 
+    async findAllByUserId(userId: string): Promise<Order[]> {
+        return Order.findAll({
+            where: { user_id: userId },
+            include: [
+                {
+                    model: OrderItem,
+                    as: 'items',
+                    include: [{ model: Product, as: 'product' }],
+                },
+            ],
+            order: [['created_at', 'DESC']],
+        });
+    }
+
     async findByIdWithItems(id: string): Promise<Order | null> {
         return Order.findByPk(id, {
             include: [
@@ -81,5 +95,22 @@ export class OrderRepository implements IOrderRepository {
         order.status = status;
         await order.save();
         return order;
+    }
+
+    async updateStatusByPaymentIntentId(paymentIntentId: string, status: OrderStatus): Promise<boolean> {
+        const [affectedCount] = await Order.update(
+            { status },
+            { where: { stripe_payment_intent_id: paymentIntentId } }
+        );
+        return affectedCount > 0;
+    }
+
+    async findItemsByPaymentIntentId(paymentIntentId: string): Promise<{ product_id: string; quantity: number }[]> {
+        const order = await Order.findOne({
+            where: { stripe_payment_intent_id: paymentIntentId },
+            include: [{ model: OrderItem, as: 'items', attributes: ['product_id', 'quantity'] }],
+        });
+        const items = (order as any)?.items ?? [];
+        return items.map((i: any) => ({ product_id: i.product_id, quantity: i.quantity }));
     }
 }

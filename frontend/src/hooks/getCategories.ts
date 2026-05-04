@@ -3,6 +3,19 @@ import { CatalogService } from '../services/CatalogService';
 import i18n from '@/i18n';
 import { Category } from '@/types/interfaces/category/Category';
 
+function sortCategories(items: Category[]): Category[] {
+    return [...items].sort((a, b) => {
+        const aPriority = a.priority ?? 0;
+        const bPriority = b.priority ?? 0;
+
+        if (aPriority !== bPriority) {
+            return bPriority - aPriority;
+        }
+
+        return a.name.localeCompare(b.name);
+    });
+}
+
 export const GetCategories = () => {
     const service = CatalogService.getInstance();
 
@@ -16,8 +29,9 @@ export const GetCategories = () => {
             setError(null);
             try {
                 const res = await service.listCategories();
-                setData(res);
-                return res;
+                const sorted = sortCategories(res);
+                setData(sorted);
+                return sorted;
             } catch (err: unknown) {
                 let message: string;
                 if (

@@ -10,6 +10,10 @@ export const MICROSERVICES = {
   PRODUCT: {
     url: process.env.MS_P_URL || 'http://localhost:3003',
     routes: ['/products']
+  },
+  PAYMENTS: {
+    url: process.env.PAYMENTS_SERVICE_URL || 'http://localhost:3004',
+    routes: ['/payments', '/webhooks']
   }
 };
 

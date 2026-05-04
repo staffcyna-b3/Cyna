@@ -53,6 +53,7 @@ export class GatewayController {
       'X-Request-ID': req.id || '',
       'User-Agent': req.headers['user-agent'] || '',
       'x-user-id': req.user?.userId || (req.headers['x-guest-id'] as string) || '',
+      'x-user-role': req.user?.role || '',
     };
   }
 }

@@ -1,41 +1,67 @@
 import { Request, Response } from 'express';
-import { HttpError } from '../common/HttpError';
+import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { IAddressService } from '../interfaces/AddressService';
-import { AddressUpsertData } from '../interfaces/AddressUpsertData';
 import { isValidUuid } from '../common/validation';
 
 export class AddressesController {
   constructor(private readonly addressService: IAddressService) {}
 
-  async getAddresses(req: Request, res: Response) {
+  async getAll(req: Request, res: Response) {
     try {
       const userId = this.getUserId(req, res);
       if (!userId) return;
-
-      const result = await this.addressService.getAddresses(userId);
-      return res.status(200).json(result);
+      const addresses = await this.addressService.getAll(userId);
+      return res.status(200).json(addresses);
     } catch (error: unknown) {
       return this.handleError(res, error, 'Error fetching addresses');
     }
   }
 
-  async upsertAddresses(req: Request, res: Response) {
+  async create(req: Request, res: Response) {
     try {
       const userId = this.getUserId(req, res);
       if (!userId) return;
-
-      const billing = req.body.billing as AddressUpsertData;
-      const shipping = req.body.shipping as AddressUpsertData;
-
-      if (!billing || !shipping) {
-        return res.status(422).json({ message: 'billing and shipping are required' });
-      }
-
-      const result = await this.addressService.upsertAddresses(userId, billing, shipping);
-      return res.status(200).json(result);
+      const address = await this.addressService.create(userId, req.body);
+      return res.status(201).json(address);
     } catch (error: unknown) {
-      return this.handleError(res, error, 'Error upserting addresses');
+      return this.handleError(res, error, 'Error creating address');
+    }
+  }
+
+  async update(req: Request, res: Response) {
+    try {
+      const userId = this.getUserId(req, res);
+      if (!userId) return;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const address = await this.addressService.update(userId, id, req.body);
+      return res.status(200).json(address);
+    } catch (error: unknown) {
+      return this.handleError(res, error, 'Error updating address');
+    }
+  }
+
+  async setDefault(req: Request, res: Response) {
+    try {
+      const userId = this.getUserId(req, res);
+      if (!userId) return;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const address = await this.addressService.setDefault(userId, id);
+      return res.status(200).json(address);
+    } catch (error: unknown) {
+      return this.handleError(res, error, 'Error setting default address');
+    }
+  }
+
+  async delete(req: Request, res: Response) {
+    try {
+      const userId = this.getUserId(req, res);
+      if (!userId) return;
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      await this.addressService.delete(userId, id);
+      return res.status(204).send();
+    } catch (error: unknown) {
+      return this.handleError(res, error, 'Error deleting address');
     }
   }
 

@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowRight, ChevronDown, LogOut, Search, ShoppingCart, User } from 'lucide-react';
+import { ArrowRight, ChevronDown, ClipboardList, CreditCard, LogOut, Mail, Search, ShoppingCart, User } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
@@ -183,15 +183,41 @@ export default function Navbar() {
                             <div className="absolute right-0 top-full pt-3 hidden group-hover:block z-50">
                                 <div className="w-56 rounded-2xl border border-[#e0e4f8] bg-white shadow-[0_24px_60px_rgba(32,41,102,0.18)] overflow-hidden">
                                     {isAuthenticated ? (
-                                        <div className="px-4 py-3 flex justify-center">
-                                            <button
-                                                onClick={handleLogout}
-                                                className="flex items-center gap-2 text-sm text-[#3d49f5]"
-                                            >
-                                                <LogOut className="h-4 w-4" strokeWidth={2} />
-                                                {t('logout')}
-                                            </button>
-                                        </div>
+                                        <>
+                                            <div className="px-4 py-3 flex justify-center">
+                                                <Link to="/account" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <User className="h-4 w-4" strokeWidth={2} />
+                                                    {t('account.myAccount')}
+                                                </Link>
+                                            </div>
+                                            <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
+                                                <Link to="/my-orders" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <ClipboardList className="h-4 w-4" strokeWidth={2} />
+                                                    {t('orders.myOrders')}
+                                                </Link>
+                                            </div>
+                                            <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
+                                                <Link to="/mon-compte/abonnements" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <CreditCard className="h-4 w-4" strokeWidth={2} />
+                                                    {t('subscriptions.pageTitle')}
+                                                </Link>
+                                            </div>
+                                            <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
+                                                <Link to="/contact" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <Mail className="h-4 w-4" strokeWidth={2} />
+                                                    {t('contact.support')}
+                                                </Link>
+                                            </div>
+                                            <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
+                                                <button
+                                                    onClick={handleLogout}
+                                                    className="flex items-center gap-2 text-sm text-[#3d49f5]"
+                                                >
+                                                    <LogOut className="h-4 w-4" strokeWidth={2} />
+                                                    {t('logout')}
+                                                </button>
+                                            </div>
+                                        </>
                                     ) : (
                                         <>
                                             <div className="px-4 py-3 flex justify-center">
@@ -203,6 +229,12 @@ export default function Navbar() {
                                             <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
                                                 <Link to="/register" className="flex items-center gap-2 text-sm text-[#3d49f5]">
                                                     {t('register')}
+                                                </Link>
+                                            </div>
+                                            <div className="border-t border-[#e0e4f8] px-4 py-3 flex justify-center">
+                                                <Link to="/contact" className="flex items-center gap-2 text-sm text-[#3d49f5]">
+                                                    <Mail className="h-4 w-4" strokeWidth={2} />
+                                                    {t('contact.support')}
                                                 </Link>
                                             </div>
                                         </>

@@ -11,11 +11,12 @@ interface AddressAttributes {
   city: string;
   postcode: string;
   country: string;
+  is_default: boolean;
   created_at: Date;
   updated_at: Date;
 }
 
-export interface AddressCreationAttributes extends Optional<AddressAttributes, 'id' | 'created_at' | 'updated_at' | 'address_line2'> {}
+export interface AddressCreationAttributes extends Optional<AddressAttributes, 'id' | 'created_at' | 'updated_at' | 'address_line2' | 'is_default'> {}
 
 class Address extends Model<AddressAttributes, AddressCreationAttributes> implements AddressAttributes {
   declare id: string;
@@ -26,6 +27,7 @@ class Address extends Model<AddressAttributes, AddressCreationAttributes> implem
   declare city: string;
   declare postcode: string;
   declare country: string;
+  declare is_default: boolean;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
 }
@@ -64,6 +66,11 @@ Address.init(
     country: {
       type: DataTypes.STRING(100),
       allowNull: false,
+    },
+    is_default: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false,
     },
     created_at: {
       type: DataTypes.DATE,

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { HttpError } from '../common/HttpError';
+import { HttpError } from '../common/httpError';
 import { Logger } from '../common/logger';
 import { ICartService } from '../interfaces/CartService';
 

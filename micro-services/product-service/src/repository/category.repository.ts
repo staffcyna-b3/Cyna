@@ -10,6 +10,11 @@ export default class CategoryRepository extends AbstractRepository<Category> {
     }
 
     async listCategories(): Promise<ListPromise<Category>> {
-        return await this.list();
+        return await this.list({
+            order: [
+                ['priority', 'DESC'],
+                ['name', 'ASC'],
+            ],
+        });
     }
 }

@@ -34,4 +34,7 @@ export interface IAuthService {
   verifyRememberToken(token: string): Promise<AuthenticatedUserResult>;
   generateTokensForUser(userId: string): Promise<{ accessToken: string; refreshToken: string; user: { id: string; email: string } }>;
   refresh(refreshToken: string): Promise<{ accessToken: string }>;
+  getProfile(userId: string): Promise<{ id: string; email: string; full_name: string }>;
+  updateProfile(userId: string, data: { full_name?: string; email?: string }): Promise<{ id: string; email: string; full_name: string }>;
+  changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void>;
 }

@@ -27,6 +27,8 @@ export const createAuthRoutes = (authController: AuthController): Router => {
   //Refresh
   router.post('/refresh', (req, res) => authController.refresh(req, res))
   router.get('/me', authMiddleware, (req, res) => authController.me(req, res))
+  router.patch('/me', authMiddleware, (req, res) => authController.updateMe(req, res))
+  router.patch('/password', authMiddleware, (req, res) => authController.changePassword(req, res))
 
   return router;
 };

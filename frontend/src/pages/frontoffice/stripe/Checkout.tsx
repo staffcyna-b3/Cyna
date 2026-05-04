@@ -6,7 +6,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
 import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
-import { CartItem } from '@/types/interfaces/cart/CartItem';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
 
 const formatEuro = (amountCents: number) =>
@@ -24,14 +23,20 @@ export const Checkout: React.FC = () => {
   const cartId = locationState.cartId ?? null;
   const billingAddressId = locationState.billingAddressId ?? null;
   const shippingAddressId = locationState.shippingAddressId ?? null;
+  const deliveryFeeCents = locationState.deliveryFeeCents ?? 0;
 
-  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isRecurring), [cartItems]);
-  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isRecurring), [cartItems]);
+  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isService), [cartItems]);
+  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isService), [cartItems]);
   const hasSubscription = subscriptionItems.length > 0;
 
-  const totalCents = useMemo(
+  const subtotalCents = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
     [cartItems],
+  );
+
+  const totalCents = useMemo(
+    () => subtotalCents + deliveryFeeCents,
+    [subtotalCents, deliveryFeeCents],
   );
 
   const recurringCents = useMemo(
@@ -40,8 +45,8 @@ export const Checkout: React.FC = () => {
   );
 
   const oneTimeCents = useMemo(
-    () => oneTimeItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
-    [oneTimeItems],
+    () => oneTimeItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0) + deliveryFeeCents,
+    [oneTimeItems, deliveryFeeCents],
   );
 
   const hasCreatedIntent = useRef(false);
@@ -72,11 +77,12 @@ export const Checkout: React.FC = () => {
             credentials: 'include',
             body: JSON.stringify({
               subscriptionItems: subscriptionItems.map((i) => ({
-                productId: i.id,
+                productId: i.productId,
                 priceAmountCents: i.unitPriceCents,
                 currency: 'eur',
                 description: i.name,
-                billingPeriod: i.billingPeriod ?? 'monthly',
+                billingPeriod: 'monthly',
+                durationMonths: i.durationMonths ?? 1,
                 quantity: i.quantity,
               })),
               oneTimeAmountCents: oneTimeCents,
@@ -216,7 +222,7 @@ export const Checkout: React.FC = () => {
 
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                  {item.isRecurring && (
+                  {item.isService && (
                     <p className="mt-0.5 text-xs text-gray-500">
                       {t('Billed')} {item.billingPeriod === 'yearly' ? t('yearly') : t('monthly')}
                     </p>
@@ -235,6 +241,16 @@ export const Checkout: React.FC = () => {
               <div className="my-6 border-t border-gray-200" />
               <div className="space-y-1">
                 <div className="flex justify-between">
+                  <span className="text-sm text-gray-600">{t('subtotal')}</span>
+                  <span className="text-sm text-gray-600">{formatEuro(subtotalCents)}</span>
+                </div>
+                {deliveryFeeCents > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-gray-600">{t('shipping')}</span>
+                    <span className="text-sm text-gray-600">{formatEuro(deliveryFeeCents)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between pt-1 border-t border-gray-100">
                   <span className="text-sm font-bold text-gray-900">{t('Total')}</span>
                   <span className="text-sm font-bold text-gray-900">{formatEuro(totalCents)}</span>
                 </div>

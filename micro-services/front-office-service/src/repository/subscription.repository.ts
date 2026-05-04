@@ -1,4 +1,5 @@
 import Subscription from '../models/Subscription';
+import Product from '../models/Product';
 import { SubscriptionStatus } from '../enum/SubscriptionStatus';
 import { ISubscriptionRepository } from '../interfaces/ISubscriptionRepository';
 import { CreateSubscriptionBody } from '../interfaces/CreateSubscriptionBody';
@@ -31,5 +32,19 @@ export class SubscriptionRepository implements ISubscriptionRepository {
     );
 
     return updatedCount;
+  }
+
+  async findByUserId(userId: string): Promise<Subscription[]> {
+    return Subscription.findAll({
+      where: { user_id: userId },
+      include: [{ model: Product, as: 'product', attributes: ['id', 'name'] }],
+      order: [['created_at', 'DESC']],
+    });
+  }
+
+  async findByStripeId(stripeId: string): Promise<Subscription | null> {
+    return Subscription.findOne({
+      where: { stripe_subscription_id: stripeId },
+    });
   }
 }
