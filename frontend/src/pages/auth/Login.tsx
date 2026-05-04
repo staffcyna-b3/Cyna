@@ -98,27 +98,39 @@ export const Login: React.FC = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                {t("email")}
+                            </label>
                             <Input
-                                label={t("email")}
+                                id="email"
                                 name="email"
                                 type="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="user@example.com"
-                                error={errors.email}
+                                aria-invalid={!!errors.email}
                             />
+                            {errors.email && (
+                                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                            )}
                         </div>
 
                         <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                                {t("password")}
+                            </label>
                             <Input
-                                label={t("password")}
+                                id="password"
                                 name="password"
                                 type="password"
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                error={errors.password}
+                                aria-invalid={!!errors.password}
                             />
+                            {errors.password && (
+                                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                            )}
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -143,6 +155,9 @@ export const Login: React.FC = () => {
 
                     <a href="/request-reset" className="text-center text-gray-600 text-sm mt-6">
                         {t("forgottenPassword")}{' '}
+                    </a>
+                    <a href="/register" className="text-center text-gray-600 text-sm mt-6">
+                        {t("noAccount", "Pas encore de compte ? S'inscrire")}
                     </a>
                 </div>
             </div>

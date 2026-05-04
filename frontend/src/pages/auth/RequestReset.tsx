@@ -57,7 +57,7 @@ export const RequestReset: React.FC = () => {
     <div className="min-h-screen w-full flex flex-col lg:flex-row">
       {/* Section gauche: Logo */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-b from-blue-950 to-blue-900 items-center justify-center p-4">
-        <Typography variant="h1" className="text-6xl font-bold text-white">
+        <Typography variant="h1" className="text-9xl font-bold text-white">
           {t('CYNA')}
         </Typography>
       </div>
@@ -65,7 +65,7 @@ export const RequestReset: React.FC = () => {
       {/* Section droite: Formulaire */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="lg:hidden mb-8">
-          <Typography variant="h1" className="text-4xl font-bold text-gray-900">
+          <Typography variant="h1" className="text-9xl font-bold text-gray-900">
             {t('CYNA')}
           </Typography>
         </div>
@@ -91,18 +91,24 @@ export const RequestReset: React.FC = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Email */}
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={email}
-              onChange={handleChange}
-              placeholder="user@example.com"
-              label={t('email')}
-              error={errors.email}
-              disabled={isLoading}
-            />
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                {t('email')}
+              </label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={email}
+                onChange={handleChange}
+                placeholder="user@example.com"
+                aria-invalid={!!errors.email}
+                disabled={isLoading}
+              />
+              {errors.email && (
+                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+              )}
+            </div>
 
             {/* Submit Button */}
             <Button
