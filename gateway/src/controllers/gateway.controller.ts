@@ -14,7 +14,7 @@ export class GatewayController {
       const originalPath = req.originalUrl || (req.baseUrl + req.path);
       Logger.info(`[GATEWAY] Proxying ${req.method} ${originalPath} to ${microservice}`);
 
-      const headers = this.prepareHeaders(req);
+      const headers = this.prepareHeaders(req, microservice);
 
       const cleanPath = originalPath.replace(/^\/api/, '');
 
@@ -45,8 +45,8 @@ export class GatewayController {
     }
   }
 
-  private prepareHeaders(req: Request): Record<string, string> {
-    return {
+  private prepareHeaders(req: Request, microservice: MicroServiceEnum): Record<string, string> {
+    const headers: Record<string, string> = {
       'Content-Type': 'application/json',
       'Authorization': req.headers.authorization || '',
       'X-Forwarded-For': req.ip || '',
@@ -55,5 +55,9 @@ export class GatewayController {
       'x-user-id': req.user?.userId || (req.headers['x-guest-id'] as string) || '',
       'x-user-role': req.user?.role || '',
     };
+    if (microservice === MicroServiceEnum.FRONTOFFICE) {
+      headers['x-internal-secret'] = process.env.INTERNAL_SECRET ?? '';
+    }
+    return headers;
   }
 }
