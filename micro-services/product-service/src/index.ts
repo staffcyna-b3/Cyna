@@ -13,7 +13,7 @@ const allowedOrigins = [
   process.env.GATEWAY_INTERNAL_URL || 'http://localhost:3000',
 ];
 
-app.use(cors())
+app.use(cors({ origin: allowedOrigins }))
 app.use(express.json())
 
 initDb()
