@@ -21,7 +21,7 @@ class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> implem
 Payment.init(
   {
     id: {
-      type: DataTypes.CHAR(36),
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },

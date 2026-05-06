@@ -55,8 +55,9 @@ export class GatewayController {
       'x-user-id': req.user?.userId || (req.headers['x-guest-id'] as string) || '',
       'x-user-role': req.user?.role || '',
     };
-    if (microservice === MicroServiceEnum.FRONTOFFICE) {
-      headers['x-internal-secret'] = process.env.INTERNAL_SECRET ?? '';
+    const secret = MICROSERVICES[microservice].internalSecret;
+    if (secret) {
+      headers['x-internal-secret'] = secret;
     }
     return headers;
   }

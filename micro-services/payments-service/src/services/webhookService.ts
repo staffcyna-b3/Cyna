@@ -7,7 +7,7 @@ import { IMailService } from '../interfaces/IMailService';
 import { IStripeClient } from '../interfaces/IStripeClient';
 import { IHttpClient } from '../interfaces/IHttpClient';
 import { OrderStatus } from '../enum/OrderStatus.enum';
-import { HTTP_JSON_CONFIG } from '../constants/httpConfig';
+import { HTTP_JSON_CONFIG, HTTP_INTERNAL_FO_CONFIG } from '../constants/httpConfig';
 
 export class WebhookService {
   // In-memory deduplication for invoice/subscription events.
@@ -221,7 +221,7 @@ export class WebhookService {
     if (status === 'succeeded') {
       try {
         const itemsUrl = `${MICROSERVICES.FRONTOFFICE.url}/orders/by-payment-intent/${intent.id}/items`;
-        items = await this.httpClient.get<{ product_id: string; quantity: number }[]>(itemsUrl);
+        items = await this.httpClient.get<{ product_id: string; quantity: number }[]>(itemsUrl, HTTP_INTERNAL_FO_CONFIG);
       } catch (error) {
         Logger.error('[PAYMENT] Failed to fetch order items from front-office', {
           paymentIntentId: intent.id,
@@ -256,7 +256,7 @@ export class WebhookService {
   private async updateFrontOfficeOrderStatus(paymentIntentId: string, status: string): Promise<void> {
     const url = `${MICROSERVICES.FRONTOFFICE.url}/orders/by-payment-intent/${paymentIntentId}/status`;
     try {
-      await this.httpClient.patch(url, { status }, HTTP_JSON_CONFIG);
+      await this.httpClient.patch(url, { status }, HTTP_INTERNAL_FO_CONFIG);
     } catch (error) {
       Logger.error('[PAYMENT] Failed to update front-office order status', {
         paymentIntentId,
@@ -277,7 +277,7 @@ export class WebhookService {
       await this.httpClient.patch(
         url,
         { stripeSubscriptionId, status },
-        HTTP_JSON_CONFIG
+        HTTP_INTERNAL_FO_CONFIG
       );
     } catch (error) {
       Logger.error('[PAYMENT] Failed to notify front-office of subscription status update', {
