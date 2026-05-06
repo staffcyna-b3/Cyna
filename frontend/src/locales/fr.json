@@ -696,10 +696,18 @@
   },
   "footer": {
     "copyright": "© 2026 Cyna. Tous droits réservés.",
+    "description": "Entreprise proposant des solutions de cybersécurité pour vous protéger 24/7.",
     "cgu": "Conditions Générales d'Utilisation",
     "cgv": "Conditions Générales de Vente",
     "privacy": "Politique de confidentialité",
     "mentions": "Mentions légales",
-    "cookies": "Politique de cookies"
+    "cookies": "Politique de cookies",
+    "solutions": {
+      "title": "Solutions",
+      "ot": "Cybersécurité OT"
+    },
+    "legal": {
+      "title": "Légal"
+    }
   }
 }

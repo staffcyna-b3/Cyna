@@ -694,10 +694,18 @@
   },
   "footer": {
     "copyright": "© 2026 Cyna. All rights reserved.",
+    "description": "Company offering cybersecurity solutions to protect you 24/7.",
     "cgu": "Terms of Use",
     "cgv": "Terms of Sale",
     "privacy": "Privacy Policy",
     "mentions": "Legal Notices",
-    "cookies": "Cookie Policy"
+    "cookies": "Cookie Policy",
+    "solutions": {
+      "title": "Solutions",
+      "ot": "OT Cybersecurity"
+    },
+    "legal": {
+      "title": "Legal"
+    }
   }
 }
