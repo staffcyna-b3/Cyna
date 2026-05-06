@@ -1,3 +1,4 @@
+import CatalogFooter from '@/components/Frontoffice/catalog/footer/CatalogFooter'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
@@ -18,7 +19,7 @@ export default function LegalLayout({ title, children }: { title: string; childr
         <button
           onClick={() => navigate(-1)}
           className="absolute top-6 left-6 text-white/40 hover:text-white/80 transition-colors duration-150"
-          aria-label="Retour"
+          aria-label={t('back')}
         >
           <ArrowLeft size={20} />
         </button>
@@ -36,6 +37,8 @@ export default function LegalLayout({ title, children }: { title: string; childr
       <div className="mx-auto max-w-4xl px-6 py-14 space-y-12 text-white/75 text-[15px] leading-relaxed">
         {children}
       </div>
+
+      <CatalogFooter />
     </div>
   )
 }
