@@ -5,7 +5,8 @@ export const MICROSERVICES = {
   },
   FRONTOFFICE: {
     url: process.env.MS_FO_URL || 'http://localhost:3002',
-    routes: ['/front-office']
+    routes: ['/front-office'],
+    internalSecret: process.env.INTERNAL_SECRET,
   },
   PRODUCT: {
     url: process.env.MS_P_URL || 'http://localhost:3003',
