@@ -104,6 +104,7 @@
   "checkoutCancelMessage": "Your payment was cancelled. You can retry anytime.",
   "checkoutCancelTitle": "Payment cancelled",
   "checkoutCreateIntentError": "Unable to initialize payment.",
+  "checkoutShippingFees": "Shipping fees",
   "checkoutCreatingIntent": "Preparing payment...",
   "checkoutPay": "checkoutPay",
   "checkoutPaymentError": "Payment failed.",

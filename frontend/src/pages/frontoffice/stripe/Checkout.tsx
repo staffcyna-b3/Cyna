@@ -31,6 +31,7 @@ export const Checkout: React.FC = () => {
   const [promoInput, setPromoInput] = useState('');
   const [promoCode, setPromoCode] = useState<string | undefined>(undefined);
   const [discountCents, setDiscountCents] = useState(0);
+  const [discountPercent, setDiscountPercent] = useState(0);
   const [promoError, setPromoError] = useState<string | null>(null);
   const [promoLoading, setPromoLoading] = useState(false);
 
@@ -40,8 +41,10 @@ export const Checkout: React.FC = () => {
     setPromoLoading(true);
     try {
       const result = await CartService.getInstance().applyPromo(promoInput.trim());
+      const cents = Math.round(result.discountAmount * 100);
       setPromoCode(result.promoCode);
-      setDiscountCents(Math.round(result.discountAmount * 100));
+      setDiscountCents(cents);
+      setDiscountPercent(subtotalCents > 0 ? Math.round((cents / subtotalCents) * 100) : 0);
       resetIntent();
     } catch (err) {
       setPromoError(err instanceof Error ? err.message : t('promoError'));
@@ -55,6 +58,7 @@ export const Checkout: React.FC = () => {
   const handleRemovePromo = () => {
     setPromoCode(undefined);
     setDiscountCents(0);
+    setDiscountPercent(0);
     setPromoInput('');
     setPromoError(null);
     resetIntent();
@@ -331,14 +335,14 @@ export const Checkout: React.FC = () => {
                 </div>
                 {shippingFeeCents > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-xs text-gray-500">{t('shipping')}</span>
+                    <span className="text-xs text-gray-500">{t('checkoutShippingFees')}</span>
                     <span className="text-xs text-gray-500">{formatEuro(shippingFeeCents)}</span>
                   </div>
                 )}
                 {discountCents > 0 && (
                   <div className="flex justify-between text-green-600">
-                    <span className="text-xs">{t('discount') || 'Réduction'} ({promoCode})</span>
-                    <span className="text-xs">-{formatEuro(discountCents)}</span>
+                    <span className="text-xs">{t('discount')} ({promoCode})</span>
+                    <span className="text-xs">-{discountPercent}%</span>
                   </div>
                 )}
                 {recurringCents > 0 && (

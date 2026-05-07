@@ -104,6 +104,7 @@
   "checkoutCancelMessage": "Votre paiement a été annulé. Vous pouvez réessayer quand vous voulez.",
   "checkoutCancelTitle": "Paiement annulé",
   "checkoutCreateIntentError": "Impossible d'initialiser le paiement.",
+  "checkoutShippingFees": "Frais de livraison",
   "checkoutCreatingIntent": "Préparation du paiement...",
   "checkoutPay": "Payer",
   "checkoutPaymentError": "Le paiement a échoué.",

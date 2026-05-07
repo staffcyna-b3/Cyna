@@ -27,7 +27,7 @@ export const Verify2FA: React.FC = () => {
       if(user.role === 'admin' || user.role === 'commercial') {
         navigate('/dashboard');
       } else {
-        navigate('/');
+        navigate(from ?? '/', { replace: true });
       }
       return;
     }
