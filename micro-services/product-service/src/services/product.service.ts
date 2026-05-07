@@ -70,6 +70,32 @@ export default class ProductService {
         }
     }
 
+    async getProductBySlug(slug: string): Promise<ProductResponseDto> {
+        if (!slug || typeof slug !== 'string') {
+            throw new ValidationError('Slug produit invalide', {
+                context: { providedSlug: slug },
+            });
+        }
+
+        try {
+            const product = await this.productRepository.getProductBySlug(slug);
+            if (!product) {
+                throw new NotFoundError(`Produit avec le slug '${slug}' non trouve`, { context: { slug } });
+            }
+
+            return product;
+        } catch (error) {
+            if (error instanceof ValidationError || error instanceof NotFoundError) {
+                throw error;
+            }
+            Logger.error('Erreur lors de la recuperation du produit par slug', {
+                slug,
+                originalError: error instanceof Error ? error.message : String(error),
+            });
+            throw error;
+        }
+    }
+
     async countProducts(filters?: ProductListFilterDto): Promise<number> {
         const where = this.buildWhereClause(filters);
         try {
@@ -105,6 +131,12 @@ export default class ProductService {
             });
             throw error;
         }
+    }
+
+    async handleTransaction(items: { productId: string; quantity: number }[], status: string): Promise<void> {
+        if (status !== 'succeeded' || items.length === 0) return;
+        await this.productRepository.decrementStockForPhysicalProducts(items);
+        Logger.info('Stock decremented after successful payment', { itemCount: items.length });
     }
 
     async getProductSuggestions(search: string): Promise<ProductSuggestionDto[]> {

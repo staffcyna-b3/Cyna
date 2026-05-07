@@ -39,7 +39,7 @@ export class OrderController {
         return res.status(401).json({ message: 'Unauthorized' });
       }
 
-      const { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId } = req.body as Partial<CreateOrderRequest>;
+      const { cartId, billingAddressId, shippingAddressId, stripePaymentIntentId, promoCode } = req.body as Partial<CreateOrderRequest>;
       if (!cartId || !billingAddressId || !shippingAddressId) {
         return res.status(422).json({ message: 'Missing required fields' });
       }
@@ -52,6 +52,7 @@ export class OrderController {
         billingAddressId,
         shippingAddressId,
         stripePaymentIntentId,
+        promoCode,
       };
 
       const order = await this.orderService.createOrder(createOrderRequest);
@@ -89,6 +90,25 @@ export class OrderController {
     } catch (error: unknown) {
       return this.handleError(res, error, 'Error fetching order');
     }
+  }
+
+  async getItemsByPaymentIntent(req: Request, res: Response): Promise<void> {
+    const paymentIntentId = req.params.paymentIntentId as string;
+    const items = await this.orderService.getOrderItemsByPaymentIntentId(paymentIntentId);
+    res.status(200).json(items);
+  }
+
+  async updateStatusByPaymentIntent(req: Request, res: Response): Promise<void> {
+    const paymentIntentId = req.params.paymentIntentId as string;
+    const { status } = req.body;
+
+    if (!status || !Object.values(OrderStatus).includes(status as OrderStatus)) {
+      res.status(422).json({ message: 'Invalid or missing status value' });
+      return;
+    }
+
+    await this.orderService.updateOrderStatusByPaymentIntentId(paymentIntentId, status as OrderStatus);
+    res.status(200).json({ message: 'Order status updated' });
   }
 
   async updateStatus(req: Request, res: Response): Promise<void> {

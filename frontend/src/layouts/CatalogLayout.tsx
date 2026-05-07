@@ -29,11 +29,13 @@ const CatalogLayout = ({
     return (
         <CatalogProvider>
             <div className='catalog-layout min-h-screen bg-fixed bg-[radial-gradient(circle_at_center,#1a0066_0%,#0f003d_30%,#060018_60%,#020008_80%,#000000_100%)]'>
-                <CatalogNavigation
-                    categories={typedCategories}
-                    activeCategory={activeCategory}
-                    onCategoryClick={setActiveCategory}
-                />
+                {location.pathname !== '/' && (
+                    <CatalogNavigation
+                        categories={typedCategories}
+                        activeCategory={activeCategory}
+                        onCategoryClick={setActiveCategory}
+                    />
+                )}
                 {children ?? <Outlet />}
                 <CatalogFooter />
             </div>

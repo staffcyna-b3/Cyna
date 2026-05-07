@@ -48,7 +48,16 @@ export class ProductController {
 
             Logger.info("Recuperation d'un produit", { id });
 
-            const product = await this.productService.getProductById(id);
+            const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+            const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+            if (!UUID_RE.test(id) && !SLUG_RE.test(id)) {
+                return res.status(400).json(new ErrorResponse('Invalid product identifier'));
+            }
+
+            const product = UUID_RE.test(id)
+                ? await this.productService.getProductById(id)
+                : await this.productService.getProductBySlug(id);
 
             return res.status(200).json(new SuccessResponse('Produit recupere avec succes', product));
         } catch (error: any) {
@@ -85,6 +94,21 @@ export class ProductController {
             return res.status(200).json(new SuccessResponse('Produits similaires recuperes avec succes', products));
         } catch (error: any) {
             Logger.error('Erreur getSimilarProducts', error);
+            return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
+        }
+    }
+
+    async handleTransaction(req: Request, res: Response): Promise<Response> {
+        try {
+            const { status, items } = req.body as {
+                status: string;
+                items?: { product_id: string; quantity: number }[];
+            };
+            const normalized = (items ?? []).map((i) => ({ productId: i.product_id, quantity: i.quantity }));
+            await this.productService.handleTransaction(normalized, status);
+            return res.status(200).json(new SuccessResponse('Transaction handled', null));
+        } catch (error: any) {
+            Logger.error('Erreur handleTransaction', error);
             return res.status(500).json(new ErrorResponse(error.message || 'Erreur serveur'));
         }
     }

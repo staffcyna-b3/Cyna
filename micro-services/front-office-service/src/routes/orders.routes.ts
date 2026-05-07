@@ -6,6 +6,10 @@ import { CartRepository } from '../repository/cart.repository';
 import { AddressRepository } from '../repository/address.repository';
 import { OrderService } from '../services/orders.service';
 import { CheckoutService } from '../services/checkout.service';
+import { AddressService } from '../services/address.service';
+import { ShippingService } from '../services/shipping.service';
+import { PromoService } from '../services/promo.service';
+import { PromoRepository } from '../repository/promo.repository';
 import { internalAuthMiddleware } from '../middleware/internalAuth.middleware';
 
 /*
@@ -26,8 +30,10 @@ const router = Router();
 const orderRepository = new OrderRepository();
 const cartRepository = new CartRepository();
 const addressRepository = new AddressRepository();
+const shippingService = new ShippingService();
+const promoService = new PromoService(new PromoRepository());
 
-const orderService = new OrderService(orderRepository);
+const orderService = new OrderService(orderRepository, shippingService, promoService);
 const checkoutService = new CheckoutService(cartRepository, addressRepository);
 
 const orderController = new OrderController(orderService);
@@ -40,5 +46,9 @@ router.post('/orders', (req, res) => orderController.create(req, res));
 router.get('/orders/:id', (req, res) => orderController.getById(req, res));
 // Internal route — called by gateway Stripe webhook handler only, not exposed to frontend
 router.patch('/orders/:id/status', internalAuthMiddleware, (req, res) => orderController.updateStatus(req, res));
+// Internal route — called directly by payments-service webhook (no gateway)
+router.patch('/orders/by-payment-intent/:paymentIntentId/status', internalAuthMiddleware, (req, res) => orderController.updateStatusByPaymentIntent(req, res));
+// Internal route — called by product-service via payments-service to resolve order items
+router.get('/orders/by-payment-intent/:paymentIntentId/items', internalAuthMiddleware, (req, res) => orderController.getItemsByPaymentIntent(req, res));
 
 export default router;

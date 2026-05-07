@@ -39,6 +39,9 @@ export default function OrderCard({ order, onOrderClick }: Props) {
         <Badge variant={statusVariant} className="mt-1">
           {t(`orders.status.${order.status}`, { defaultValue: order.status })}
         </Badge>
+        {order.promo_code && (
+          <p className="text-xs text-green-600 mt-1">Code : {order.promo_code}</p>
+        )}
       </div>
     </div>
   );

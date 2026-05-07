@@ -2,6 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { TFunction } from 'i18next';
 import { ArrowUpDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import type { BackOfficePromotion } from '@/types/interfaces/backoffice/promotion';
 import { formatDate } from '@/utils/formatDate';
 
@@ -29,11 +30,36 @@ function SortableHeader({
     );
 }
 
+function discountTypeLabel(t: TFunction, type: string) {
+    if (type === 'service') return t('service');
+    if (type === 'cart') return t('cart.title');
+    return t('product');
+}
+
 export function buildPromotionColumns(
     t: TFunction,
-    onOpenPromotionEditor?: (promotionId: string) => void,
 ): Array<ColumnDef<BackOfficePromotion>> {
     return [
+        {
+            id: 'select',
+            header: ({ table }) => (
+                <Checkbox
+                    checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                    onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                    aria-label="Select all"
+                />
+            ),
+            cell: ({ row }) => (
+                <Checkbox
+                    checked={row.getIsSelected()}
+                    onCheckedChange={(value) => row.toggleSelected(!!value)}
+                    onClick={(e) => e.stopPropagation()}
+                    aria-label="Select row"
+                />
+            ),
+            enableSorting: false,
+            enableHiding: false,
+        },
         {
             accessorKey: 'code',
             header: ({ column }) => (
@@ -44,20 +70,13 @@ export function buildPromotionColumns(
                 />
             ),
             cell: ({ row }) => (
-                <Button
-                    type="button"
-                    variant="link"
-                    className="h-auto p-0 font-medium text-gray-800"
-                    onClick={() => onOpenPromotionEditor?.(row.original.id)}
-                >
-                    {row.original.code}
-                </Button>
+                <span className="font-medium text-gray-800">{row.original.code}</span>
             ),
         },
         {
             accessorKey: 'discount_type',
             header: t('backoffice.discountType'),
-            cell: ({ row }) => t(row.original.discount_type === 'service' ? 'service' : 'product'),
+            cell: ({ row }) => discountTypeLabel(t, row.original.discount_type),
         },
         {
             accessorKey: 'discount_value',

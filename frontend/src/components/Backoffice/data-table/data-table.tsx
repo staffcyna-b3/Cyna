@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { DataTablePagination } from "@/components/Backoffice/data-table/data-table-pagination"
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group"
 import { LucideSearch } from "lucide-react"
@@ -26,12 +26,15 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   onRowClick?: (row: TData) => void
+  onSelectionChange?: (rows: TData[]) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onRowClick,
+  onSelectionChange,
+  filterColumn = "full_name",
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -40,6 +43,7 @@ export function DataTable<TData, TValue>({
     
     // eslint-disable-next-line react-hooks/incompatible-library
     const table = useReactTable({
+        enableRowSelection: true,
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
@@ -57,20 +61,28 @@ export function DataTable<TData, TValue>({
         },
     })
 
+  useEffect(() => {
+    if (!onSelectionChange) return;
+    const selected = table.getFilteredSelectedRowModel().rows.map((row) => row.original);
+    onSelectionChange(selected);
+  }, [rowSelection]);
+
   return (
     <>
-        <div className="flex items-center py-4">
-            <InputGroup>
-                <InputGroupInput 
-                    placeholder="Search users..." 
-                    value={(table.getColumn("full_name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("full_name")?.setFilterValue(event.target.value)
-                    }
-                />
-                <InputGroupAddon><LucideSearch /></InputGroupAddon>
-            </InputGroup>
-        </div>
+        {table.getColumn(filterColumn) && (
+            <div className="flex items-center py-4">
+                <InputGroup>
+                    <InputGroupInput
+                        placeholder="Rechercher..."
+                        value={(table.getColumn(filterColumn)?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                            table.getColumn(filterColumn)?.setFilterValue(event.target.value)
+                        }
+                    />
+                    <InputGroupAddon><LucideSearch /></InputGroupAddon>
+                </InputGroup>
+            </div>
+        )}
         {table.getFilteredSelectedRowModel().rows.length > 0 && (
             <div className="text-right text-sm text-muted-foreground">
                 {table.getFilteredSelectedRowModel().rows.length} of{" "}

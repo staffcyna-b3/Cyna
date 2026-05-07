@@ -3,3 +3,8 @@
 .junie/
 .agents/
 skills-lock.json
+
+# Préparation démo — jamais pusher
+PREP_DEMO/
+CLAUDE.md
+skills-lock.json

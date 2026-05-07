@@ -31,7 +31,45 @@
     "refundReasonCustomer": "Customer request",
     "refundReasonDuplicate": "Duplicate",
     "refundReasonFraudulent": "Fraudulent",
-    "refundId": "Refund ID"
+    "refundId": "Refund ID",
+    "client": "Client",
+    "subscription": "Subscription",
+    "actions": "Actions",
+    "approve": "Approve",
+    "reject": "Reject",
+    "confirmApproveRefund": "Approve this refund?",
+    "confirmRejectRefund": "Reject this request?",
+    "refundRequestApproved": "Request approved and refund created",
+    "refundRequestRejected": "Request rejected"
+  },
+  "refundRequests": "Refund Requests",
+  "subscriptions": {
+    "pageTitle": "My subscriptions",
+    "noSubscriptions": "You have no active subscriptions.",
+    "unknownProduct": "Service",
+    "renewsOn": "Renews on {{date}}",
+    "scheduledCancellation": "Cancellation scheduled for {{date}}",
+    "cancelButton": "Cancel subscription",
+    "refundButton": "Request a refund",
+    "cancelTitle": "Cancel subscription",
+    "cancelDescription": "Your access will remain active until {{date}}. No automatic refund.",
+    "confirmCancel": "Confirm cancellation",
+    "cancelSuccess": "Subscription scheduled for cancellation at period end",
+    "reactivateButton": "Renew",
+    "reactivateTitle": "Reactivate subscription",
+    "reactivateDescription": "Your subscription will continue normally. The next payment will occur on the scheduled date {{date}}.",
+    "confirmReactivate": "Confirm",
+    "reactivateSuccess": "Your subscription has been reactivated",
+    "refundRequestTitle": "Request a refund",
+    "refundRequestInfo": "Your request will be processed by our team within 48 hours.",
+    "refundReasonPlaceholder": "Describe the reason for your request...",
+    "sendRequest": "Send request",
+    "refundRequestSuccess": "Your refund request has been submitted",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "cancelled": "Cancelled"
+    }
   },
   "orders": "Orders",
   "refunds": "Refunds",
@@ -66,6 +104,7 @@
   "checkoutCancelMessage": "Your payment was cancelled. You can retry anytime.",
   "checkoutCancelTitle": "Payment cancelled",
   "checkoutCreateIntentError": "Unable to initialize payment.",
+  "checkoutShippingFees": "Shipping fees",
   "checkoutCreatingIntent": "Preparing payment...",
   "checkoutPay": "checkoutPay",
   "checkoutPaymentError": "Payment failed.",
@@ -89,6 +128,7 @@
   "dashboard": "Dashboard",
   "days": "days",
   "defaultSort": "Default",
+  "discount": "Discount",
   "discoverSolutions": "Discover our {{abbr}} solutions",
   "email": "Email",
   "EmailConfirmed": "Email confirmed",
@@ -162,6 +202,8 @@
   "per month": "per month",
   "perMonth": "Per month",
   "postcode": "postcode",
+  "promoError": "Invalid or non-applicable promo code",
+  "promoPlaceholder": "Promo code",
   "previous": "Previous",
   "price": "Price",
   "priceAsc": "Price ascending",
@@ -177,6 +219,7 @@
   "RegistrationError": "Registration error",
   "RegistrationInProgress": "Registration in progress",
   "RegistrationSuccessful": "Registration successful! Check your email to confirm your account.",
+  "remove": "Remove",
   "rememberMe": "Remember me",
   "requestNewLink": "Request new link",
   "requestNewLinkDescription": "Enter your email address and we will send you a link to reset your password.",
@@ -289,6 +332,8 @@
   "backoffice.promotionConfiguration": "Promotion configuration",
   "backoffice.productsSelection": "Selected products",
   "backoffice.noDiscounts": "No discount found",
+  "backoffice.productDeleted": "Product deleted",
+  "backoffice.promotionDeleted": "Promotion deleted",
   "backoffice.errors.generic": "Unable to load data for now.",
   "backoffice.reorderServiceCategories": "Reorder the service categories shown under Our solutions on the home page.",
   "backoffice.saveOrder": "Save order",
@@ -296,7 +341,23 @@
   "backoffice.moveDown": "Move down",
   "backoffice.ordersComingSoon": "Orders module is ready: front structure is in place, data can be connected to endpoints.",
   "backoffice.transactionsComingSoon": "Transactions module is ready: front structure is in place, data can be connected to endpoints.",
-
+  "contact.pageTitle": "Contact us",
+  "contact.email": "Your email address",
+  "contact.subject": "Subject",
+  "contact.message": "Message",
+  "contact.submit": "Send",
+  "contact.successTitle": "Message sent!",
+  "contact.successMessage": "We will get back to you as soon as possible.",
+  "contact.reply": "Send reply",
+  "contact.markProcessed": "Mark as processed",
+  "contact.statusNew": "New",
+  "contact.statusProcessed": "Processed",
+  "contact.support": "Support",
+  "contact.replyLabel": "Your reply",
+  "contact.replyPlaceholder": "Write your reply...",
+  "contact.replySent": "Reply sent",
+  "contact.previousReply": "Sent reply",
+  "contact.repliedAt": "Replied on",
   "legal": {
     "tag": "Legal",
     "lastUpdate": "Last updated: {{date}}",
@@ -305,7 +366,6 @@
     "companyName": "Cyna SAS",
     "contactEmail": "contact@cyna.fr",
     "privacyEmail": "privacy@cyna.fr",
-
     "cgu": {
       "title": "Terms of Use",
       "s1": {
@@ -375,7 +435,6 @@
         "p1": "These ToU are governed by French law. In the event of a dispute regarding their interpretation or execution, the parties agree to seek an amicable solution before any legal action. Failing amicable agreement, any dispute shall be submitted to the competent courts of Paris."
       }
     },
-
     "cgv": {
       "title": "General Terms and Conditions of Sale",
       "s1": {
@@ -452,7 +511,6 @@
       },
       "footerNote": "For any questions regarding an order, contact us at"
     },
-
     "privacy": {
       "title": "Privacy Policy",
       "s1": {
@@ -493,12 +551,30 @@
       "s4": {
         "title": "4. Purposes and legal bases for processing",
         "rows": [
-          { "purpose": "User account management", "basis": "Contract performance" },
-          { "purpose": "Order and payment processing via Stripe", "basis": "Contract performance" },
-          { "purpose": "Sending transactional emails (confirmation, password reset, 2FA)", "basis": "Contract performance" },
-          { "purpose": "Platform security and fraud prevention", "basis": "Legitimate interest" },
-          { "purpose": "Technical logs (debugging, monitoring)", "basis": "Legitimate interest" },
-          { "purpose": "Compliance with legal and accounting obligations", "basis": "Legal obligation" }
+          {
+            "purpose": "User account management",
+            "basis": "Contract performance"
+          },
+          {
+            "purpose": "Order and payment processing via Stripe",
+            "basis": "Contract performance"
+          },
+          {
+            "purpose": "Sending transactional emails (confirmation, password reset, 2FA)",
+            "basis": "Contract performance"
+          },
+          {
+            "purpose": "Platform security and fraud prevention",
+            "basis": "Legitimate interest"
+          },
+          {
+            "purpose": "Technical logs (debugging, monitoring)",
+            "basis": "Legitimate interest"
+          },
+          {
+            "purpose": "Compliance with legal and accounting obligations",
+            "basis": "Legal obligation"
+          }
         ],
         "colPurpose": "Purpose",
         "colBasis": "Legal basis"
@@ -554,30 +630,68 @@
       },
       "footerNote": "For any questions about your personal data, contact our DPO at"
     },
-
     "mentions": {
       "title": "Legal Notice",
       "s1": {
         "title": "1. Publisher",
         "fields": [
-          { "label": "Company name", "value": "Cyna SAS" },
-          { "label": "Legal form", "value": "Société par Actions Simplifiée (SAS)" },
-          { "label": "Share capital", "value": "€10,000" },
-          { "label": "SIRET", "value": "123 456 789 00010" },
-          { "label": "RCS", "value": "Paris B 123 456 789" },
-          { "label": "VAT number", "value": "FR 12 123456789" },
-          { "label": "Registered office", "value": "10 Rue de la Paix, 75001 Paris, France" },
-          { "label": "Phone", "value": "+33 1 23 45 67 89" },
-          { "label": "Email", "value": "contact@cyna.fr" },
-          { "label": "Publication Director", "value": "Jean Dupont" }
+          {
+            "label": "Company name",
+            "value": "Cyna SAS"
+          },
+          {
+            "label": "Legal form",
+            "value": "Société par Actions Simplifiée (SAS)"
+          },
+          {
+            "label": "Share capital",
+            "value": "€10,000"
+          },
+          {
+            "label": "SIRET",
+            "value": "123 456 789 00010"
+          },
+          {
+            "label": "RCS",
+            "value": "Paris B 123 456 789"
+          },
+          {
+            "label": "VAT number",
+            "value": "FR 12 123456789"
+          },
+          {
+            "label": "Registered office",
+            "value": "10 Rue de la Paix, 75001 Paris, France"
+          },
+          {
+            "label": "Phone",
+            "value": "+33 1 23 45 67 89"
+          },
+          {
+            "label": "Email",
+            "value": "contact@cyna.fr"
+          },
+          {
+            "label": "Publication Director",
+            "value": "Jean Dupont"
+          }
         ]
       },
       "s2": {
         "title": "2. Hosting",
         "fields": [
-          { "label": "Hosting provider", "value": "OVHcloud SAS" },
-          { "label": "Address", "value": "2 Rue Kellermann, 59100 Roubaix, France" },
-          { "label": "Website", "value": "www.ovhcloud.com" }
+          {
+            "label": "Hosting provider",
+            "value": "OVHcloud SAS"
+          },
+          {
+            "label": "Address",
+            "value": "2 Rue Kellermann, 59100 Roubaix, France"
+          },
+          {
+            "label": "Website",
+            "value": "www.ovhcloud.com"
+          }
         ]
       },
       "s3": {
@@ -619,7 +733,6 @@
       },
       "footerNote": "This legal notice was drafted in accordance with the provisions of the French Digital Economy Confidence Act (LCEN) of June 21, 2004."
     },
-
     "cookies": {
       "title": "Cookie Policy",
       "s1": {
@@ -661,8 +774,16 @@
         "colPurpose": "Purpose",
         "colPolicy": "Policy",
         "rows": [
-          { "name": "Stripe Inc.", "purpose": "Secure payment processing and fraud prevention", "policy": "stripe.com/privacy" },
-          { "name": "Google LLC (Gmail)", "purpose": "Transactional email delivery", "policy": "policies.google.com/privacy" }
+          {
+            "name": "Stripe Inc.",
+            "purpose": "Secure payment processing and fraud prevention",
+            "policy": "stripe.com/privacy"
+          },
+          {
+            "name": "Google LLC (Gmail)",
+            "purpose": "Transactional email delivery",
+            "policy": "policies.google.com/privacy"
+          }
         ]
       },
       "s4": {

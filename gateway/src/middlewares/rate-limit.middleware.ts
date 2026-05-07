@@ -132,6 +132,44 @@ export const registerLimiter = rateLimit({
   },
 });
 
+export const refreshLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method !== 'POST',
+  keyGenerator: (req) => req.ip || 'unknown',
+  handler: (req, res) => {
+    Logger.warn(
+      `[RATE_LIMIT] Refresh limiter atteint pour IP ${req.ip} à ${new Date().toISOString()}`
+    );
+    res.status(429).json({
+      error: 'TOO_MANY_REQUESTS',
+      message: 'Trop de tentatives de refresh. Réessayez dans quelques minutes.',
+      retryAfter: 900,
+    });
+  },
+});
+
+export const contactLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method !== 'POST',
+  keyGenerator: (req) => req.ip || 'unknown',
+  handler: (req, res) => {
+    Logger.warn(
+      `[RATE_LIMIT] Contact limiter atteint pour IP ${req.ip} à ${new Date().toISOString()}`
+    );
+    res.status(429).json({
+      success: false,
+      error: 'TOO_MANY_REQUESTS',
+      message: 'Trop de messages envoyés, réessayez dans 15 minutes.',
+    });
+  },
+});
+
 export const passwordResetLimiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 1 heure
   max: 5, // 5 tentatives

@@ -36,7 +36,7 @@ export default function SimilarProductsCarousel({
                 {t('nProductsAvailable', { count: safeData.length })}
             </p>
 
-            <Carousel opts={{ align: 'start', dragFree: true }} className="w-full px-10">
+            <Carousel opts={{ align: 'start', dragFree: true }} className="w-full px-4 sm:px-10">
                 <CarouselContent>
                     {safeData.map((product) => (
                         <CarouselItem key={product.id} className="basis-auto">

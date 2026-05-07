@@ -62,14 +62,26 @@ export default function OrderDetailModal({ open, loading, order, onClose }: Prop
                   </span>
                 </div>
               ))}
-              <div className="flex justify-between font-bold mt-2 border-t pt-2">
-                <span>{t('total')}</span>
-                <span>
-                  {order.total_amount.toLocaleString('fr-FR', {
-                    style: 'currency',
-                    currency: 'EUR',
-                  })}
-                </span>
+              <div className="mt-2 border-t pt-2 space-y-1">
+                {(order.shipping_fee ?? 0) > 0 && (
+                  <div className="flex justify-between text-sm text-gray-500">
+                    <span>{t('shipping')}</span>
+                    <span>{Number(order.shipping_fee).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
+                  </div>
+                )}
+                {(order.discount_amount ?? 0) > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>
+                      {t('discount') || 'Réduction'}
+                      {order.promo_code ? ` (${order.promo_code})` : ''}
+                    </span>
+                    <span>-{Number(order.discount_amount).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
+                  </div>
+                )}
+                <div className="flex justify-between font-bold border-t pt-1">
+                  <span>{t('total')}</span>
+                  <span>{order.total_amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
+                </div>
               </div>
             </div>
 

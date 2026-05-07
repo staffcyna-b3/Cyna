@@ -57,7 +57,7 @@ export default function AccountPage() {
     <div className="py-12 px-8 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-8">{t('account.pageTitle')}</h1>
       <Tabs defaultValue="profile">
-        <TabsList className="mb-6 w-full">
+        <TabsList className="mb-6 w-full overflow-x-auto justify-start [&::-webkit-scrollbar]:hidden [scrollbar-width:none]">
           <TabsTrigger value="profile" className="flex-1">{t('account.tabProfile')}</TabsTrigger>
           <TabsTrigger value="password" className="flex-1">{t('account.tabPassword')}</TabsTrigger>
           <TabsTrigger value="addresses" className="flex-1">{t('account.tabAddresses')}</TabsTrigger>

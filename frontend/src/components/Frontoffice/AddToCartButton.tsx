@@ -12,6 +12,7 @@ export default function AddToCartButton({
     period,
     name,
     unitPrice,
+    discountedUnitPrice,
     isService,
     stock,
     onClick,
@@ -24,6 +25,7 @@ export default function AddToCartButton({
     period?: Period;
     name?: string;
     unitPrice?: number;
+    discountedUnitPrice?: number;
     isService?: boolean;
     stock?: number;
     onClick?: () => void;
@@ -36,14 +38,14 @@ export default function AddToCartButton({
             e.stopPropagation();
             if (!skipAddToCart) {
                 try {
-                    await addToCart(productId, { quantity, period, name, unitPrice, isService, stock });
+                    await addToCart(productId, { quantity, period, name, unitPrice, discountedUnitPrice, isService, stock });
                 } catch {
                     // ignore
                 }
             }
             if (onClick) onClick();
         },
-        [productId, quantity, period, name, unitPrice, isService, stock, onClick, skipAddToCart, addToCart]
+        [productId, quantity, period, name, unitPrice, discountedUnitPrice, isService, stock, onClick, skipAddToCart, addToCart]
     );
 
     return (

@@ -2,11 +2,11 @@ import { ErrorMetadata } from '../../types/ErrorMetadata';
 import { Logger } from '../logger';
 
 export class AppError extends Error {
-    public statusCode: number;
-    public code: string;
-    public context: Record<string, any>;
-    public originalError?: Error;
-    public timestamp: Date;
+    public readonly statusCode: number;
+    public readonly code: string;
+    public readonly context: Record<string, any>;
+    public readonly originalError?: Error;
+    public readonly timestamp: Date;
 
     constructor(message: string, metadata: ErrorMetadata = {}) {
         super(message);

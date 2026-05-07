@@ -8,6 +8,7 @@ import Dashboard from "@/pages/backoffice/Dashboard"
 import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
 import { Verify2FA } from "@/pages/auth/Verify2FA"
+import { UnauthorizedPage } from "@/pages/auth/UnauthorizedPage"
 import { UserRole } from "@/types/enums/UserRole.enum"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Users from "@/pages/backoffice/Users"
@@ -28,6 +29,9 @@ import { Cart } from "@/pages/frontoffice/Cart"
 import AccountPage from "@/pages/frontoffice/AccountPage"
 import OrdersPage from "@/pages/frontoffice/OrdersPage"
 import { ProtectedRoute } from "@/components/protectedRoute"
+import Contact from "@/pages/frontoffice/Contact"
+import MySubscriptions from "@/pages/frontoffice/MySubscriptions"
+import Support from "@/pages/backoffice/Support"
 import CGU from "@/pages/frontoffice/legal/CGU"
 import CGV from "@/pages/frontoffice/legal/CGV"
 import PrivacyPolicy from "@/pages/frontoffice/legal/PrivacyPolicy"
@@ -46,6 +50,7 @@ export default function CustomRoutes() {
       <Route path="/request-reset" element={<RequestReset />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-2fa" element={<Verify2FA />} />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
       {/* Backoffice routes */}
       <Route element={<BackOfficeLayout />}>
@@ -81,39 +86,47 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
-        
-          <Route 
-            path="/orders" 
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Orders />
-              </ProtectedRoute>
-            } 
-          />  
-          <Route 
-            path="/transactions" 
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Transactions />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/refunds" 
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Refunds />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/discounts" 
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Discounts />
-              </ProtectedRoute>
-            } 
-          />
+
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Transactions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/refunds"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Refunds />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/discounts"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Discounts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Support />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       {/* Frontoffice routes */}
@@ -121,9 +134,10 @@ export default function CustomRoutes() {
         <Route element={<CatalogLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/catalog" element={<CatalogList />} />
-          <Route path="/catalog/:id" element={<CatalogDetail />} />
+          <Route path="/catalog/:slug" element={<CatalogDetail />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
+        <Route path="/contact" element={<Contact />} />
         <Route
           path="/account"
           element={
@@ -133,7 +147,7 @@ export default function CustomRoutes() {
           }
         />
         <Route
-          path="/orders"
+          path="/my-orders"
           element={
             <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
               <OrdersPage />
@@ -145,9 +159,38 @@ export default function CustomRoutes() {
         <Route path="/legal/confidentialite" element={<PrivacyPolicy />} />
         <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
         <Route path="/legal/cookies" element={<CookiePolicy />} />
-        <Route path="/checkout/success" element={<CheckoutSuccess />} />
-        <Route path="/checkout/cancel" element={<CheckoutCancel />} />
-        <Route path="/checkout/confirmation" element={<CheckoutConfirmation />} />
+        <Route
+          path="/mon-compte/abonnements"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <MySubscriptions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout/success"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <CheckoutSuccess />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout/cancel"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <CheckoutCancel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout/confirmation"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <CheckoutConfirmation />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/checkout/payment"
           element={

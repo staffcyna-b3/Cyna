@@ -31,7 +31,45 @@
     "refundReasonCustomer": "Demande client",
     "refundReasonDuplicate": "Doublon",
     "refundReasonFraudulent": "Fraude",
-    "refundId": "ID Remboursement"
+    "refundId": "ID Remboursement",
+    "client": "Client",
+    "subscription": "Abonnement",
+    "actions": "Actions",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "confirmApproveRefund": "Approuver ce remboursement ?",
+    "confirmRejectRefund": "Rejeter cette demande ?",
+    "refundRequestApproved": "Demande approuvée et remboursement créé",
+    "refundRequestRejected": "Demande rejetée"
+  },
+  "refundRequests": "Demandes de remboursement",
+  "subscriptions": {
+    "pageTitle": "Mes abonnements",
+    "noSubscriptions": "Vous n'avez aucun abonnement actif.",
+    "unknownProduct": "Service",
+    "renewsOn": "Renouvellement le {{date}}",
+    "scheduledCancellation": "Résiliation prévue le {{date}}",
+    "cancelButton": "Annuler l'abonnement",
+    "refundButton": "Demander un remboursement",
+    "cancelTitle": "Annuler l'abonnement",
+    "cancelDescription": "Votre accès restera actif jusqu'au {{date}}. Aucun remboursement automatique.",
+    "confirmCancel": "Confirmer l'annulation",
+    "cancelSuccess": "Abonnement programmé pour annulation en fin de période",
+    "reactivateButton": "Renouveler",
+    "reactivateTitle": "Reprendre l'abonnement",
+    "reactivateDescription": "Votre abonnement reprendra normalement. Le prochain prélèvement aura lieu à la date prévue le {{date}}.",
+    "confirmReactivate": "Confirmer",
+    "reactivateSuccess": "Votre abonnement a été réactivé",
+    "refundRequestTitle": "Demander un remboursement",
+    "refundRequestInfo": "Votre demande sera traitée par notre équipe sous 48h.",
+    "refundReasonPlaceholder": "Décrivez le motif de votre demande...",
+    "sendRequest": "Envoyer la demande",
+    "refundRequestSuccess": "Votre demande de remboursement a été soumise",
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif",
+      "cancelled": "Résilié"
+    }
   },
   "orders": "Commandes",
   "refunds": "Remboursements",
@@ -66,6 +104,7 @@
   "checkoutCancelMessage": "Votre paiement a été annulé. Vous pouvez réessayer quand vous voulez.",
   "checkoutCancelTitle": "Paiement annulé",
   "checkoutCreateIntentError": "Impossible d'initialiser le paiement.",
+  "checkoutShippingFees": "Frais de livraison",
   "checkoutCreatingIntent": "Préparation du paiement...",
   "checkoutPay": "Payer",
   "checkoutPaymentError": "Le paiement a échoué.",
@@ -89,6 +128,7 @@
   "dashboard": "Tableau de bord",
   "days": "jours",
   "defaultSort": "Par défaut",
+  "discount": "Réduction",
   "discoverSolutions": "Découvrez nos solutions {{abbr}}",
   "email": "Email",
   "EmailConfirmed": "Email confirmé",
@@ -164,6 +204,8 @@
   "per month": "",
   "perMonth": "Par mois",
   "postcode": "Code postal",
+  "promoError": "Code promo invalide ou non applicable",
+  "promoPlaceholder": "Code promo",
   "previous": "Précédent",
   "price": "Prix",
   "priceAsc": "Prix croissant",
@@ -179,6 +221,7 @@
   "RegistrationError": "Erreur lors de l'enregistrement",
   "RegistrationInProgress": "Enregistrement en cours...",
   "RegistrationSuccessful": "Enregistrement réussi ! Vérifiez votre email pour confirmer votre compte.",
+  "remove": "Retirer",
   "rememberMe": "Se souvenir de moi",
   "requestNewLink": "Demander un nouveau lien",
   "requestNewLinkDescription": "Entrez votre adresse email et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
@@ -291,6 +334,8 @@
   "backoffice.promotionConfiguration": "Configuration de la promotion",
   "backoffice.productsSelection": "Produits concernes",
   "backoffice.noDiscounts": "Aucune reduction trouvee",
+  "backoffice.productDeleted": "Produit supprimé",
+  "backoffice.promotionDeleted": "Promotion supprimée",
   "backoffice.errors.generic": "Impossible de charger les donnees pour le moment.",
   "backoffice.reorderServiceCategories": "Reordonnez les categories de service affichees sous Nos solutions sur la page d'accueil.",
   "backoffice.saveOrder": "Sauvegarder l'ordre",
@@ -298,7 +343,23 @@
   "backoffice.moveDown": "Descendre",
   "backoffice.ordersComingSoon": "Module commandes pret: structure front en place, data a connecter selon endpoints.",
   "backoffice.transactionsComingSoon": "Module transactions pret: structure front en place, data a connecter selon endpoints.",
-
+  "contact.pageTitle": "Nous contacter",
+  "contact.email": "Votre adresse e-mail",
+  "contact.subject": "Sujet",
+  "contact.message": "Message",
+  "contact.submit": "Envoyer",
+  "contact.successTitle": "Message envoyé !",
+  "contact.successMessage": "Nous vous répondrons dans les plus brefs délais.",
+  "contact.reply": "Envoyer la réponse",
+  "contact.markProcessed": "Marquer comme traité",
+  "contact.statusNew": "Nouveau",
+  "contact.statusProcessed": "Traité",
+  "contact.support": "Support",
+  "contact.replyLabel": "Votre réponse",
+  "contact.replyPlaceholder": "Écrivez votre réponse...",
+  "contact.replySent": "Réponse envoyée",
+  "contact.previousReply": "Réponse envoyée",
+  "contact.repliedAt": "Répondu le",
   "legal": {
     "tag": "Légal",
     "lastUpdate": "Dernière mise à jour : {{date}}",
@@ -307,7 +368,6 @@
     "companyName": "Cyna SAS",
     "contactEmail": "contact@cyna.fr",
     "privacyEmail": "privacy@cyna.fr",
-
     "cgu": {
       "title": "Conditions Générales d'Utilisation",
       "s1": {
@@ -377,7 +437,6 @@
         "p1": "Les présentes CGU sont soumises au droit français. En cas de litige relatif à leur interprétation ou à leur exécution, les parties s'engagent à rechercher une solution amiable avant tout recours judiciaire. À défaut d'accord amiable, tout litige sera soumis aux tribunaux compétents du ressort de Paris."
       }
     },
-
     "cgv": {
       "title": "Conditions Générales de Vente",
       "s1": {
@@ -454,7 +513,6 @@
       },
       "footerNote": "Pour toute question relative à une commande, contactez-nous à"
     },
-
     "privacy": {
       "title": "Politique de Confidentialité",
       "s1": {
@@ -495,12 +553,30 @@
       "s4": {
         "title": "4. Finalités et bases légales du traitement",
         "rows": [
-          { "purpose": "Gestion du compte utilisateur", "basis": "Exécution du contrat" },
-          { "purpose": "Traitement des commandes et paiements via Stripe", "basis": "Exécution du contrat" },
-          { "purpose": "Envoi des emails transactionnels (confirmation, réinitialisation, 2FA)", "basis": "Exécution du contrat" },
-          { "purpose": "Sécurité de la plateforme et prévention des fraudes", "basis": "Intérêt légitime" },
-          { "purpose": "Journaux techniques (débogage, surveillance)", "basis": "Intérêt légitime" },
-          { "purpose": "Respect des obligations légales et comptables", "basis": "Obligation légale" }
+          {
+            "purpose": "Gestion du compte utilisateur",
+            "basis": "Exécution du contrat"
+          },
+          {
+            "purpose": "Traitement des commandes et paiements via Stripe",
+            "basis": "Exécution du contrat"
+          },
+          {
+            "purpose": "Envoi des emails transactionnels (confirmation, réinitialisation, 2FA)",
+            "basis": "Exécution du contrat"
+          },
+          {
+            "purpose": "Sécurité de la plateforme et prévention des fraudes",
+            "basis": "Intérêt légitime"
+          },
+          {
+            "purpose": "Journaux techniques (débogage, surveillance)",
+            "basis": "Intérêt légitime"
+          },
+          {
+            "purpose": "Respect des obligations légales et comptables",
+            "basis": "Obligation légale"
+          }
         ],
         "colPurpose": "Finalité",
         "colBasis": "Base légale"
@@ -556,30 +632,68 @@
       },
       "footerNote": "Pour toute question relative à vos données personnelles, contactez notre DPO à"
     },
-
     "mentions": {
       "title": "Mentions Légales",
       "s1": {
         "title": "1. Éditeur du site",
         "fields": [
-          { "label": "Raison sociale", "value": "Cyna SAS" },
-          { "label": "Forme juridique", "value": "Société par Actions Simplifiée (SAS)" },
-          { "label": "Capital social", "value": "10 000 €" },
-          { "label": "SIRET", "value": "123 456 789 00010" },
-          { "label": "RCS", "value": "Paris B 123 456 789" },
-          { "label": "N° TVA intracommunautaire", "value": "FR 12 123456789" },
-          { "label": "Siège social", "value": "10 Rue de la Paix, 75001 Paris, France" },
-          { "label": "Téléphone", "value": "+33 1 23 45 67 89" },
-          { "label": "Email", "value": "contact@cyna.fr" },
-          { "label": "Directeur de la publication", "value": "Jean Dupont" }
+          {
+            "label": "Raison sociale",
+            "value": "Cyna SAS"
+          },
+          {
+            "label": "Forme juridique",
+            "value": "Société par Actions Simplifiée (SAS)"
+          },
+          {
+            "label": "Capital social",
+            "value": "10 000 €"
+          },
+          {
+            "label": "SIRET",
+            "value": "123 456 789 00010"
+          },
+          {
+            "label": "RCS",
+            "value": "Paris B 123 456 789"
+          },
+          {
+            "label": "N° TVA intracommunautaire",
+            "value": "FR 12 123456789"
+          },
+          {
+            "label": "Siège social",
+            "value": "10 Rue de la Paix, 75001 Paris, France"
+          },
+          {
+            "label": "Téléphone",
+            "value": "+33 1 23 45 67 89"
+          },
+          {
+            "label": "Email",
+            "value": "contact@cyna.fr"
+          },
+          {
+            "label": "Directeur de la publication",
+            "value": "Jean Dupont"
+          }
         ]
       },
       "s2": {
         "title": "2. Hébergement",
         "fields": [
-          { "label": "Hébergeur", "value": "OVHcloud SAS" },
-          { "label": "Adresse", "value": "2 Rue Kellermann, 59100 Roubaix, France" },
-          { "label": "Site web", "value": "www.ovhcloud.com" }
+          {
+            "label": "Hébergeur",
+            "value": "OVHcloud SAS"
+          },
+          {
+            "label": "Adresse",
+            "value": "2 Rue Kellermann, 59100 Roubaix, France"
+          },
+          {
+            "label": "Site web",
+            "value": "www.ovhcloud.com"
+          }
         ]
       },
       "s3": {
@@ -621,7 +735,6 @@
       },
       "footerNote": "Ces mentions légales ont été rédigées conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'Économie Numérique (LCEN)."
     },
-
     "cookies": {
       "title": "Politique de Cookies",
       "s1": {
@@ -663,8 +776,16 @@
         "colPurpose": "Finalité",
         "colPolicy": "Politique",
         "rows": [
-          { "name": "Stripe Inc.", "purpose": "Traitement sécurisé des paiements et prévention de la fraude", "policy": "stripe.com/privacy" },
-          { "name": "Google LLC (Gmail)", "purpose": "Envoi d'emails transactionnels", "policy": "policies.google.com/privacy" }
+          {
+            "name": "Stripe Inc.",
+            "purpose": "Traitement sécurisé des paiements et prévention de la fraude",
+            "policy": "stripe.com/privacy"
+          },
+          {
+            "name": "Google LLC (Gmail)",
+            "purpose": "Envoi d'emails transactionnels",
+            "policy": "policies.google.com/privacy"
+          }
         ]
       },
       "s4": {

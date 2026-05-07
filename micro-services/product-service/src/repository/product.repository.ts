@@ -1,4 +1,4 @@
-import { WhereOptions, Op } from 'sequelize';
+import { WhereOptions, Op, literal } from 'sequelize';
 import Product from '../models/Product';
 import Promotion from '../models/Promotion';
 import { AbstractRepository } from './abstract.repository';
@@ -72,6 +72,15 @@ export default class ProductRepository extends AbstractRepository<Product> {
         }
     }
 
+    async getProductBySlug(slug: string): Promise<ProductResponseDto | null> {
+        const product = await this.model.findOne({
+            where: { slug },
+            include: this.defaultIncludes,
+        });
+        if (!product) return null;
+        return mapProductToDto(product);
+    }
+
     async countProducts(where?: WhereOptions<Product>): Promise<number> {
         return await this.count(where);
     }
@@ -101,10 +110,21 @@ export default class ProductRepository extends AbstractRepository<Product> {
         }
     }
 
+    async decrementStockForPhysicalProducts(items: { productId: string; quantity: number }[]): Promise<void> {
+        for (const { productId, quantity } of items) {
+            const safeQty = Math.max(0, Math.floor(quantity));
+            if (safeQty === 0) continue;
+            await this.model.update(
+                { stock: literal(`GREATEST(0, stock - ${safeQty})`) },
+                { where: { id: productId, is_service: false } }
+            );
+        }
+    }
+
     async getProductSuggestions(search: string): Promise<ProductSuggestionDto[]> {
         const likeOperator = sequelize.getDialect() === 'postgres' ? Op.iLike : Op.like;
         const products = await this.model.findAll({
-            attributes: ['id', 'name'],
+            attributes: ['id', 'name', 'slug'],
             where: {
                 name: {
                     [likeOperator]: `%${search}%`,
@@ -117,6 +137,7 @@ export default class ProductRepository extends AbstractRepository<Product> {
         return products.map((product) => ({
             id: product.id,
             name: product.name,
+            slug: product.slug ?? product.id,
         }));
     }
 }
