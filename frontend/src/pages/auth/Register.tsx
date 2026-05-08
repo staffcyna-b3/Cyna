@@ -103,38 +103,53 @@ export const Register: React.FC = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
+                            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                                {t("fullName")}
+                            </label>
                             <Input
-                                label={t("fullName")}
+                                id="fullName"
                                 name="fullName"
                                 type="text"
                                 value={formData.fullName}
                                 onChange={handleChange}
                                 placeholder="John Doe"
-                                error={errors.fullName}
+                                aria-invalid={!!errors.fullName}
                             />
+                            {errors.fullName && (
+                                <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>
+                            )}
                         </div>
 
                         <div>
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                {t("email")}
+                            </label>
                             <Input
-                                label={t("email")}
+                                id="email"
                                 name="email"
                                 type="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="user@example.com"
-                                error={errors.email}
+                                aria-invalid={!!errors.email}
                             />
+                            {errors.email && (
+                                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                            )}
                         </div>
 
                         <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                                {t("password")}
+                            </label>
                             <Input
-                                label={t("password")}
+                                id="password"
                                 name="password"
                                 type="password"
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                error={errors.password}
+                                aria-invalid={!!errors.password}
                             />
                             <Typography variant="body" className="text-xs text-gray-500 mt-2">
                                 {t('PasswordRequirements')}
@@ -142,15 +157,21 @@ export const Register: React.FC = () => {
                         </div>
 
                         <div>
+                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
+                                {t("confirmPassword")}
+                            </label>
                             <Input
-                                label={t("confirmPassword")}
+                                id="confirmPassword"
                                 name="confirmPassword"
                                 type="password"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                error={errors.confirmPassword}
+                                aria-invalid={!!errors.confirmPassword}
                             />
+                            {errors.confirmPassword && (
+                                <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
+                            )}
                         </div>
                         <Button 
                             type="submit" 

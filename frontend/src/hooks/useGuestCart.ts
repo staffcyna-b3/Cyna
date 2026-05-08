@@ -78,6 +78,7 @@ export function useGuestCart() {
                 isService,
                 period: periodMonths,
                 stock,
+                unitPriceCents: Math.round((discountedUnitPrice ?? unitPrice) * 100),
             };
             persist([...current, newItem]);
         }

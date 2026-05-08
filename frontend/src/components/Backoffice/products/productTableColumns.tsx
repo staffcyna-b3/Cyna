@@ -1,6 +1,7 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import type { TFunction } from 'i18next';
 import { ArrowUpDown } from 'lucide-react';
+import { LOW_STOCK_THRESHOLD } from '@/lib/stockConstants';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ProductStatus } from '@/types/enums/product/ProductStatus';
@@ -93,7 +94,12 @@ export function buildProductColumns(
             ),
             cell: ({ row }) => {
                 if (!row.original.is_service) {
-                    return row.original.stock;
+                    const stock = row.original.stock;
+                    return (
+                        <span className={stock <= LOW_STOCK_THRESHOLD ? 'font-semibold text-red-600' : undefined}>
+                            {stock}
+                        </span>
+                    );
                 }
 
                 return row.original.status === ProductStatus.UNAVAILABLE ? t('maintenance') : '-';
