@@ -17,6 +17,8 @@ import promotionRoutes from './routes/promotion.routes'
 import categoryRoutes from './routes/category.routes'
 import { requireAdminHeader } from './middlewares/requireAdminHeader';
 import supportRouter from './routes/support.routes';
+import { requireRoles } from './middlewares/requireRoles';
+import { UserRoleType } from './enum/UserRoleType';
 
 dotenv.config();
 
@@ -49,7 +51,7 @@ app.use('/transactions', requireAdminHeader, transactionsRouter);
 app.use('/refunds', requireAdminHeader, refundsRouter);
 app.use('/subscriptions', requireAdminHeader, subscriptionsAdminRouter);
 app.use('/refund-requests', requireAdminHeader, refundRequestsRouter);
-app.use('/sales', requireAdminHeader, salesRouter);
+app.use('/sales', requireRoles([UserRoleType.ADMIN, UserRoleType.COMMERCIAL]), salesRouter);
 app.use('/support', requireAdminHeader, supportRouter);
 
 app.use(errorHandler);
