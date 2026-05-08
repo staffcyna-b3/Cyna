@@ -41,7 +41,7 @@ export default function OrderDetailModal({ open, loading, order, onClose }: Prop
             {/* Service */}
             <div>
               <p className="font-semibold text-[#181d42] mb-1">{t('orders.service')}</p>
-              <p>{order.items.map((i) => i.product_name ?? t('orders.unknownProduct')).join(', ')}</p>
+              <p>{order.items.map((i) => (t(`products.${i.product_name}.name`) || i.product_name)).join(', ')}</p>
               {order.billing_period && (
                 <p className="text-gray-500">{t(`orders.${order.billing_period}`)}</p>
               )}
@@ -53,7 +53,7 @@ export default function OrderDetailModal({ open, loading, order, onClose }: Prop
               <p className="font-semibold text-[#181d42] mb-1">{t('orders.amount')}</p>
               {order.items.map((item) => (
                 <div key={item.id} className="flex justify-between text-gray-700">
-                  <span>{item.product_name ?? t('orders.unknownProduct')} × {item.quantity}</span>
+                  <span>{t(`products.${item.product_name}.name`) || item.product_name} × {item.quantity}</span>
                   <span>
                     {(item.unit_price * item.quantity).toLocaleString('fr-FR', {
                       style: 'currency',

@@ -160,7 +160,7 @@ export default function Navbar() {
                                                             className="h-12 w-12 rounded-lg object-cover shrink-0 bg-gray-100"
                                                         />
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
+                                                            <p className="text-sm font-semibold text-gray-900 truncate">{t(`products.${item.name}.name`)}</p>
                                                             <p className="text-xs text-gray-500 flex items-baseline gap-1">
                                                                 {item.quantity} ×{' '}
                                                                 {item.discountedUnitPrice !== undefined && (
@@ -174,7 +174,7 @@ export default function Navbar() {
                                                         </div>
                                                         <p className="text-sm font-bold text-[#3d49f5] shrink-0">
                                                             {formatCurrency((item.discountedUnitPrice ?? item.unitPrice) * item.quantity)}
-                                                            {item.isService && item.period ? <span className="text-xs font-normal text-gray-400"> {t('perMonthSuffix')}</span> : null}
+                                                            {item.isService && item.period ? <span className="text-xs font-normal text-gray-400"> / mois</span> : null}
                                                         </p>
                                                     </li>
                                                 ))}
@@ -193,7 +193,7 @@ export default function Navbar() {
                         </div>
 
                         <div className="relative group" ref={userContainerRef}>
-                            <Button variant="ghost" size="icon" className="flex items-center justify-center gap-1.5" aria-label={t('account.label')} onClick={() => setIsUserOpen(prev => !prev)}>
+                            <Button variant="ghost" size="icon" className="flex items-center justify-center gap-1.5" aria-label={t('account')} onClick={() => setIsUserOpen(prev => !prev)}>
                                 <User strokeWidth={3} className="h-5 w-5 shrink-0" />
                                 {isAuthenticated && (
                                     <span className="hidden sm:block text-xs font-semibold max-w-20 truncate">
@@ -305,7 +305,7 @@ export default function Navbar() {
                                             onClick={() => goToProduct(suggestion.slug)}
                                             className="flex w-full items-center justify-between px-5 py-4 text-left text-[#181d42] transition hover:bg-[#f3f5ff]"
                                         >
-                                            <span className="font-medium">{suggestion.name}</span>
+                                            <span className="font-medium">{t(`products.${suggestion.name}.name`)}</span>
                                             <ArrowRight />
                                         </Button>
                                     ))

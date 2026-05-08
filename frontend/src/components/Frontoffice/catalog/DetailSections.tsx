@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
 import AddToCartButton from '@/components/Frontoffice/AddToCartButton';
 import ProductTypeBadge from '@/components/ProductTypeBadge';
 import ServiceDetailLayout from '@/components/Frontoffice/layout/ServiceDetailLayout';
@@ -9,6 +9,14 @@ import {
 } from '@/types/interfaces/catalog/DetailSectionProps';
 import ProductImageGallery from './ProductImageGallery';
 import { getServiceAbbreviation } from '@/helpers/frontoffice/catalog/detailHelpers';
+import { Period } from '@/types/Period';
+import { PeriodEnum } from '@/types/enums/Period';
+
+const PERIOD_OPTIONS: { value: Period; labelKey: string }[] = [
+    { value: PeriodEnum.ThreeMonths, labelKey: 'threeMonths' },
+    { value: PeriodEnum.SixMonths,   labelKey: 'sixMonths'   },
+    { value: PeriodEnum.OneYear,     labelKey: 'oneYear'     },
+];
 
 function AddToCartPanel({
     product,
@@ -16,6 +24,9 @@ function AddToCartPanel({
     unavailableLabel,
     t,
 }: AddToCartPanelProps): JSX.Element {
+    const translatedName = t(`products.${product.name}.name`);
+    const [selectedPeriod, setSelectedPeriod] = useState<Period>(PeriodEnum.ThreeMonths);
+
     return (
         <div className="flex flex-col gap-3 pt-4">
             <div className="rounded-xl p-5 border border-white/10 bg-linear-to-br from-white/5 to-transparent hover:border-white/20 transition-colors">
@@ -41,16 +52,54 @@ function AddToCartPanel({
                 )}
             </div>
 
-            <AddToCartButton
-                disabled={!isAvailable}
-                productId={product.id}
-                name={t(`products.${product.name}.name`)}
-                unitPrice={product.price}
-                discountedUnitPrice={product.discountedPrice ?? undefined}
-                isService={product.isService}
-                stock={product.isService ? undefined : product.stock}
-                text={isAvailable ? t('addToCart') : unavailableLabel}
-            />
+            {product.isService && (
+                <div className="flex flex-col gap-2">
+                    <span className="text-xs uppercase tracking-wide text-[#9aa0c7]">
+                        {t('selectPeriod')}
+                    </span>
+                    <div className="flex gap-2">
+                        {PERIOD_OPTIONS.map(({ value, labelKey }) => (
+                            <button
+                                key={value}
+                                type="button"
+                                onClick={() => setSelectedPeriod(value)}
+                                className={
+                                    'flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ' +
+                                    (selectedPeriod === value
+                                        ? 'bg-[#372CCA] text-white'
+                                        : 'bg-white/5 text-[#b7bdd9] hover:bg-white/10')
+                                }
+                            >
+                                {t(labelKey)}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {product.isService ? (
+                <AddToCartButton
+                    disabled={!isAvailable}
+                    productId={product.id}
+                    name={translatedName}
+                    unitPrice={product.price}
+                    discountedUnitPrice={product.discountedPrice ?? undefined}
+                    isService={true}
+                    period={selectedPeriod}
+                    text={isAvailable ? t('addToCart') : unavailableLabel}
+                />
+            ) : (
+                <AddToCartButton
+                    disabled={!isAvailable}
+                    productId={product.id}
+                    name={translatedName}
+                    unitPrice={product.price}
+                    discountedUnitPrice={product.discountedPrice ?? undefined}
+                    isService={false}
+                    stock={product.stock}
+                    text={isAvailable ? t('addToCart') : unavailableLabel}
+                />
+            )}
         </div>
     );
 }
