@@ -16,7 +16,6 @@ export function NavUser({
         email: string
     }
 }) {
-    console.log('user', user)
     return (
         <SidebarMenu>
             <SidebarMenuItem>

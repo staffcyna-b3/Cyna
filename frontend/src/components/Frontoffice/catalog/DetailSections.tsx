@@ -44,7 +44,7 @@ function AddToCartPanel({
             <AddToCartButton
                 disabled={!isAvailable}
                 productId={product.id}
-                name={product.name}
+                name={t(`products.${product.name}.name`)}
                 unitPrice={product.price}
                 discountedUnitPrice={product.discountedPrice ?? undefined}
                 isService={product.isService}
@@ -61,12 +61,13 @@ export function ServiceDetailSection({
     isAvailable,
     unavailableLabel,
 }: DetailSectionProps): JSX.Element {
-    const abbreviation = getServiceAbbreviation(product.name);
+    const translatedName = t(`products.${product.name}.name`);
+    const abbreviation = getServiceAbbreviation(translatedName);
 
     return (
         <ServiceDetailLayout
-            title={product.name}
-            description={product.description || ''}
+            title={translatedName}
+            description={t(`products.${product.name}.description`)}
             abbreviation={abbreviation}
             badge={<ProductTypeBadge isService={true} />}
         >
@@ -129,11 +130,11 @@ export function PhysicalProductDetailSection({
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-black leading-tight">
                         <span className="text-transparent bg-linear-to-r from-white via-[#e0e7ff] to-[#c7d2fe] bg-clip-text">
-                            {product.name}
+                            {t(`products.${product.name}.name`)}
                         </span>
                     </h1>
                     <p className="text-base text-[#b7bdd9] leading-relaxed line-clamp-4">
-                        {product.description}
+                        {t(`products.${product.name}.description`)}
                     </p>
                 </div>
 
@@ -181,7 +182,7 @@ export function PhysicalProductDetailSection({
 
             <div className="col-span-12 lg:col-span-6 flex items-center justify-center py-8 lg:py-0">
                 <ProductImageGallery
-                    productName={product.name}
+                    productName={t(`products.${product.name}.name`)}
                     images={product.images}
                     t={t}
                 />

@@ -140,7 +140,8 @@
   "address": "Address",
   "addToCart": "Add to cart",
   "allProducts": "All products",
-  "alreadyHaveAccount": "You remember your password?",
+  "alreadyHaveAccount": "Already have an account? ",
+  "noAccount": "Don't have an account? ",
   "apply": "Apply",
   "attemptsRemaining": "Attempts remaining:",
   "averageBasket": "Average Basket",
@@ -205,7 +206,7 @@
   "filters": "Filters",
   "firstName": "First name",
   "for a total period of": "for a total period of",
-  "forgottenPassword": "Password forgotten?",
+  "forgottenPassword": "Password forgotten",
   "fullName": "Full Name",
   "fullNameRequired": "Full name required",
   "fullNameTooLong": "Full name too long",
@@ -275,7 +276,6 @@
   "product": "Product",
   "product.available": "Product available",
   "product.unavailable": "Product unavailable",
-  "products": "Products",
   "Recurring": "Recurring",
   "RedirectingToLogin": "Redirecting to login page",
   "register": "Register",
@@ -344,7 +344,17 @@
   "welcome": "Welcome to Cyna.",
   "wrongCodeFormat": "Invalid code format, it should be 6 digits",
   "yearly": "yearly",
-  "categories": "Categories",
+  "categories": {
+    "label": "Categories",
+    "soc": "Security Operations Center – real-time threat monitoring and management.",
+    "edr": "Endpoint Detection & Response – detect and respond to threats on endpoints.",
+    "xdr": "Extended Detection & Response – unified threat coverage across your full infrastructure.",
+    "siem": "Security Information & Event Management – centralised security event and log management.",
+    "security_appliances": "Hardware appliances for network security and data protection.",
+    "software_licenses": "Licences for security and management tools.",
+    "training_and_certifications": "Cybersecurity training courses and professional certifications.",
+    "consulting_and_audit": "Security consulting services and compliance audits."
+  },
   "discounts": "Discounts",
   "backoffice.reference": "Reference",
   "backoffice.stockQuantity": "Stock quantity",
@@ -393,5 +403,108 @@
   "contact.replyPlaceholder": "Write your reply...",
   "contact.replySent": "Reply sent",
   "contact.previousReply": "Sent reply",
-  "contact.repliedAt": "Replied on"
+  "contact.repliedAt": "Replied on",
+  "products": {
+    "label": "Products",
+    "cyna_soc_starter": {
+      "name": "Cyna SOC Starter",
+      "description": "Entry-level SOC solution for SMEs with 24/7 monitoring and real-time alerts."
+    },
+    "cyna_soc_professional": {
+      "name": "Cyna SOC Professional",
+      "description": "Complete SOC solution with advanced threat analysis and detailed reports."
+    },
+    "cyna_soc_enterprise": {
+      "name": "Cyna SOC Enterprise",
+      "description": "Enterprise SOC solution with custom integration and premium support."
+    },
+    "cyna_edr_essentials": {
+      "name": "Cyna EDR Essentials",
+      "description": "Endpoint protection with threat detection and automated response."
+    },
+    "cyna_edr_advanced": {
+      "name": "Cyna EDR Advanced",
+      "description": "Advanced EDR with behavioural analysis and incident investigation."
+    },
+    "cyna_edr_premium": {
+      "name": "Cyna EDR Premium",
+      "description": "Premium EDR with threat hunting and 24/7 incident response."
+    },
+    "cyna_xdr_unified": {
+      "name": "Cyna XDR Unified",
+      "description": "Extended detection and response covering all attack vectors."
+    },
+    "cyna_xdr_complete": {
+      "name": "Cyna XDR Complete",
+      "description": "Complete XDR with response orchestration and automation."
+    },
+    "cyna_xdr_elite": {
+      "name": "Cyna XDR Elite",
+      "description": "Elite XDR with advanced AI and threat prediction."
+    },
+    "cyna_siem_standard": {
+      "name": "Cyna SIEM Standard",
+      "description": "Centralised security event management for mixed environments."
+    },
+    "cyna_siem_advanced": {
+      "name": "Cyna SIEM Advanced",
+      "description": "Advanced SIEM with event correlation and regulatory compliance."
+    },
+    "cyna_siem_enterprise": {
+      "name": "Cyna SIEM Enterprise",
+      "description": "Enterprise SIEM with unlimited scalability and dedicated support."
+    },
+    "cyna_firewall_pro": {
+      "name": "Cyna Firewall Pro",
+      "description": "High-performance firewall appliance for network protection."
+    },
+    "cyna_ips_enterprise": {
+      "name": "Cyna IPS Enterprise",
+      "description": "Intrusion prevention system for critical environments."
+    },
+    "cyna_dlp_gateway": {
+      "name": "Cyna DLP Gateway",
+      "description": "Data loss prevention gateway."
+    },
+    "cyna_waf_shield": {
+      "name": "Cyna WAF Shield",
+      "description": "Web Application Firewall for web application protection."
+    },
+    "licence_cyna_antivirus_pro": {
+      "name": "Licence Cyna Antivirus Pro",
+      "description": "Antivirus licence for 10 workstations."
+    },
+    "licence_cyna_vpn_enterprise": {
+      "name": "Licence Cyna VPN Enterprise",
+      "description": "VPN licence for 50 users."
+    },
+    "licence_cyna_pam_suite": {
+      "name": "Licence Cyna PAM Suite",
+      "description": "Privileged access management suite."
+    },
+    "formation_securite_reseau_avancee": {
+      "name": "Advanced Network Security Training",
+      "description": "5-day advanced network security training course."
+    },
+    "certification_cyna_soc_analyst": {
+      "name": "Cyna SOC Analyst Certification",
+      "description": "Professional SOC analyst certification."
+    },
+    "formation_incident_response": {
+      "name": "Incident Response Training",
+      "description": "Hands-on training in security incident response."
+    },
+    "audit_securite_complet": {
+      "name": "Complete Security Audit",
+      "description": "Full audit of your security infrastructure (3 days)."
+    },
+    "conformite_rgpd_consulting": {
+      "name": "GDPR Compliance Consulting",
+      "description": "GDPR compliance consulting service."
+    },
+    "pentesting_5_days": {
+      "name": "Pentesting - 5 Days",
+      "description": "Comprehensive penetration test of your infrastructure."
+    }
+  }
 }

@@ -28,6 +28,7 @@ import { Typography } from "../../ui/typography"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/hooks/useAuth"
 import { useNavigate } from "react-router-dom"
+import { UserRole } from "@/types/enums/UserRole.enum"
 
 const navItems = [
   { title: 'dashboard', url: "/dashboard", icon: LayoutDashboard },
@@ -97,6 +98,11 @@ function SidebarFooterContent() {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { t } = useTranslation();
+    const { user } = useAuth();
+
+    const visibleNavItems = user?.role === UserRole.COMMERCIAL
+        ? navItems.filter(item => item.url === "/dashboard")
+        : navItems;
 
     return (
         <Sidebar collapsible="icon" {...props}>
@@ -107,7 +113,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 </SidebarMenuButton>
             </SidebarHeader>
             <SidebarContent>
-                <NavMain items={navItems} />
+                <NavMain items={visibleNavItems} />
             </SidebarContent>
             <SidebarFooter>
                 <SidebarFooterContent />

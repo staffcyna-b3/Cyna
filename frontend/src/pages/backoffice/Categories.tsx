@@ -17,7 +17,7 @@ export default function Categories() {
     return (
         <>
             <BackOfficePageHeader
-                title={t('categories')}
+                title={t('categories.label')}
                 rightSlot={
                     <Button
                         type="button"
@@ -56,7 +56,9 @@ export default function Categories() {
                                             {index + 1}. {category.name}
                                         </p>
                                         {category.description ? (
-                                            <p className="text-sm text-gray-600 line-clamp-2">{category.description}</p>
+                                            // Category descriptions are i18n keys (snake_case).
+                                            // Add new keys to fr.json and en.json when creating categories in the back-office.
+                                            <p className="text-sm text-gray-600 line-clamp-2">{t(`categories.${category.description}`)}</p>
                                         ) : null}
                                     </div>
 
