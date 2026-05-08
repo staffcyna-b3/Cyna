@@ -32,9 +32,9 @@ import { UserRole } from "@/types/enums/UserRole.enum"
 
 const navItems = [
   { title: 'dashboard', url: "/dashboard", icon: LayoutDashboard },
-  { title: 'products', url: "/products", icon: Boxes },
+  { title: 'products.label', url: "/products", icon: Boxes },
   { title: 'users', url: "/users", icon: Users },
-  { title: 'orders', url: "/orders", icon: ShoppingCart },
+  { title: 'orders.label', url: "/orders", icon: ShoppingCart },
   { title: 'transactions', url: "/transactions", icon: ArrowLeftRight },
   { title: 'refunds', url: "/refunds", icon: RotateCcw },
   { title: 'discounts', url: "/discounts", icon: Percent },
