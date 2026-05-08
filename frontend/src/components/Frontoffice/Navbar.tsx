@@ -109,7 +109,7 @@ export default function Navbar() {
                         to="/"
                         className="font-space-grotesk shrink-0 text-[2rem] font-black uppercase leading-none tracking-tight text-[#372CCA] sm:text-[2.7rem] lg:text-[3.2rem]"
                     >
-                        CYNA.
+                        {t('CYNA')}
                     </Link>
 
                     <div className="flex items-center gap-3 text-[#3d49f5] sm:gap-5 lg:min-w-[220px] lg:justify-end">
@@ -169,12 +169,12 @@ export default function Navbar() {
                                                                 <span className={item.discountedUnitPrice !== undefined ? 'text-red-500 font-semibold' : ''}>
                                                                     {formatCurrency(item.discountedUnitPrice ?? item.unitPrice)}
                                                                 </span>
-                                                                {item.isService && item.period ? <> / mois</> : null}
+                                                                {item.isService && item.period ? <> {t('perMonthSuffix')}</> : null}
                                                             </p>
                                                         </div>
                                                         <p className="text-sm font-bold text-[#3d49f5] shrink-0">
                                                             {formatCurrency((item.discountedUnitPrice ?? item.unitPrice) * item.quantity)}
-                                                            {item.isService && item.period ? <span className="text-xs font-normal text-gray-400"> / mois</span> : null}
+                                                            {item.isService && item.period ? <span className="text-xs font-normal text-gray-400"> {t('perMonthSuffix')}</span> : null}
                                                         </p>
                                                     </li>
                                                 ))}
@@ -193,7 +193,7 @@ export default function Navbar() {
                         </div>
 
                         <div className="relative group" ref={userContainerRef}>
-                            <Button variant="ghost" size="icon" className="flex items-center justify-center gap-1.5" aria-label={t('account')} onClick={() => setIsUserOpen(prev => !prev)}>
+                            <Button variant="ghost" size="icon" className="flex items-center justify-center gap-1.5" aria-label={t('account.label')} onClick={() => setIsUserOpen(prev => !prev)}>
                                 <User strokeWidth={3} className="h-5 w-5 shrink-0" />
                                 {isAuthenticated && (
                                     <span className="hidden sm:block text-xs font-semibold max-w-20 truncate">

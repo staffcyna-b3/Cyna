@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ValidationErrors, validateLogin } from '../../utils/validation';
@@ -8,13 +8,24 @@ import { useTranslation } from "react-i18next"
 import { Typography } from '@/components/ui/typography';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
+import { UserRole } from '../../types/enums/UserRole.enum';
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/';
-    const { login } = useAuth();
+    const { login, user, isAuthenticated, isLoading } = useAuth();
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if (!isLoading && isAuthenticated && user) {
+            if (user.role === UserRole.ADMIN || user.role === UserRole.COMMERCIAL) {
+                navigate('/dashboard', { replace: true });
+            } else {
+                navigate('/', { replace: true });
+            }
+        }
+    }, [isAuthenticated, isLoading, user, navigate]);
 
     const [formData, setFormData] = useState<LoginFormData>({
         email: '',
@@ -23,7 +34,7 @@ export const Login: React.FC = () => {
 
     const [rememberMe, setRememberMe] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -52,7 +63,7 @@ export const Login: React.FC = () => {
             return;
         }
 
-        setIsLoading(true);
+        setIsSubmitting(true);
 
         try {
             await login(formData.email, formData.password, rememberMe);
@@ -68,7 +79,7 @@ export const Login: React.FC = () => {
             const message = error instanceof Error ? error.message : t('ErrorLoggingIn');
             setErrors({ submit: message });
         } finally {
-            setIsLoading(false);
+            setIsSubmitting(false);
         }
     };
 
@@ -144,12 +155,12 @@ export const Login: React.FC = () => {
                             </label>
                         </div>
 
-                        <Button 
-                            type="submit" 
-                            disabled={isLoading}
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
                             variant="cyna"
                         >
-                            {isLoading ? t('loggingIn') : t('login')}
+                            {isSubmitting ? t('loggingIn') : t('login')}
                         </Button>
                     </form>
 
