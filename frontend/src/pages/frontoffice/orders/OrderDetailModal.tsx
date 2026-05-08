@@ -62,9 +62,9 @@ export default function OrderDetailModal({ open, loading, order, onClose }: Prop
                   </span>
                 </div>
               ))}
-              <div className="mt-2 border-t pt-2 space-y-1">
+              <div className="mt-2   space-y-1">
                 {(order.shipping_fee ?? 0) > 0 && (
-                  <div className="flex justify-between text-sm text-gray-500">
+                  <div className=" border-t pt-2 flex justify-between text-sm text-gray-500">
                     <span>{t('shipping')}</span>
                     <span>{Number(order.shipping_fee).toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</span>
                   </div>
