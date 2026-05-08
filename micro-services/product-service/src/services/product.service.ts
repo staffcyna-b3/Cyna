@@ -21,7 +21,7 @@ export default class ProductService {
         this.validatePagination(page, limit);
 
         const where = this.buildWhereClause(options?.filters);
-        const order = options?.filters?.sortBy ? [[options.filters.sortBy, options.filters.sortOrder || SortOrder.ASC]] : undefined;
+        const order = options?.filters?.sortBy ? [[options.filters.sortBy, (options.filters.sortOrder || SortOrder.ASC).toUpperCase()]] : undefined;
 
         try {
             return await this.productRepository.listProducts({
