@@ -35,7 +35,7 @@ export function DataTable<TData, TValue>({
   data,
   onRowClick,
   onSelectionChange,
-  filterColumn = "full_name",
+  filterColumn,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -70,7 +70,7 @@ export function DataTable<TData, TValue>({
 
   return (
     <>
-        {table.getColumn(filterColumn) && (
+        {filterColumn && table.getColumn(filterColumn) && (
             <div className="flex items-center py-4">
                 <InputGroup>
                     <InputGroupInput
