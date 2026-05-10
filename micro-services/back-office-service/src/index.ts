@@ -15,7 +15,6 @@ import { errorHandler } from './middlewares/errorHandler';
 import productRoutes from './routes/product.routes'
 import promotionRoutes from './routes/promotion.routes'
 import categoryRoutes from './routes/category.routes'
-import { requireAdminHeader } from './middlewares/requireAdminHeader';
 import supportRouter from './routes/support.routes';
 import { requireRoles } from './middlewares/requireRoles';
 import { UserRoleType } from './enum/UserRoleType';
@@ -41,18 +40,17 @@ app.use(cors({
 }))
 app.use(express.json({ limit: '10mb' }))
 
-app.use('/', productRoutes)
-app.use('/', promotionRoutes)
-app.use('/', categoryRoutes)
-
-app.use('/users', usersRouter);
-app.use('/orders', ordersRouter);
-app.use('/transactions', requireAdminHeader, transactionsRouter);
-app.use('/refunds', requireAdminHeader, refundsRouter);
-app.use('/subscriptions', requireAdminHeader, subscriptionsAdminRouter);
-app.use('/refund-requests', requireAdminHeader, refundRequestsRouter);
+app.use('/products', requireRoles([UserRoleType.ADMIN]),productRoutes)
+app.use('/promotions', requireRoles([UserRoleType.ADMIN]), promotionRoutes)
+app.use('/categories', requireRoles([UserRoleType.ADMIN]), categoryRoutes)
+app.use('/users', requireRoles([UserRoleType.ADMIN]), usersRouter);
+app.use('/orders', requireRoles([UserRoleType.ADMIN]), ordersRouter);
+app.use('/transactions', requireRoles([UserRoleType.ADMIN]), transactionsRouter);
+app.use('/refunds', requireRoles([UserRoleType.ADMIN]), refundsRouter);
+app.use('/subscriptions', requireRoles([UserRoleType.ADMIN]), subscriptionsAdminRouter);
+app.use('/refund-requests', requireRoles([UserRoleType.ADMIN]), refundRequestsRouter);
 app.use('/sales', requireRoles([UserRoleType.ADMIN, UserRoleType.COMMERCIAL]), salesRouter);
-app.use('/support', requireAdminHeader, supportRouter);
+app.use('/support', requireRoles([UserRoleType.ADMIN]), supportRouter);
 
 app.use(errorHandler);
 
