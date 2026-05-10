@@ -95,7 +95,7 @@ export default function Orders() {
     return (
         <>
             <header className="px-4 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                <Typography variant="h1">{t("orders")}</Typography>
+                <Typography variant="h1">{t("orders.label")}</Typography>
                 {topRightActions}
             </header>
             <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
@@ -109,7 +109,7 @@ export default function Orders() {
                             onRowClick={handleRowClick}
                         />
                         <div className="flex items-center justify-between gap-2 mt-2">
-                            <span className="text-sm text-muted-foreground">{total} {t("orders")}</span>
+                            <span className="text-sm text-muted-foreground">{total} {t("orders.label")}</span>
                             <div className="flex gap-2">
                                 <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t("previous")}</Button>
                                 <Button variant="outline" size="sm" disabled={page * limit >= total} onClick={() => setPage((p) => p + 1)}>{t("next")}</Button>

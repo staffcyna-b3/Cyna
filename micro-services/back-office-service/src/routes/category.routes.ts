@@ -12,9 +12,9 @@ const categoryRepository = new CategoryRepository();
 const categoryService: ICategoryService = new CategoryService(categoryRepository);
 const categoryController = new CategoryController(categoryService);
 
-router.get('/categories', validatorSchema({ query: categoryFiltersQuerySchema }), (req, res) => categoryController.list(req, res));
-router.get('/categories/select-options', validatorSchema({ query: categoryFiltersQuerySchema }), (req, res) => categoryController.listForSelect(req, res));
-router.get('/categories/:id', validatorSchema({ params: categoryIdParamSchema }), (req, res) => categoryController.getById(req, res));
-router.patch('/categories/display-priority', validatorSchema({ body: reorderCategoryDisplayPrioritySchema }), (req, res) => categoryController.reorderDisplayPriority(req, res));
+router.get('/', validatorSchema({ query: categoryFiltersQuerySchema }), (req, res) => categoryController.list(req, res));
+router.get('/select-options', validatorSchema({ query: categoryFiltersQuerySchema }), (req, res) => categoryController.listForSelect(req, res));
+router.get('/:id', validatorSchema({ params: categoryIdParamSchema }), (req, res) => categoryController.getById(req, res));
+router.patch('/display-priority', validatorSchema({ body: reorderCategoryDisplayPrioritySchema }), (req, res) => categoryController.reorderDisplayPriority(req, res));
 
 export default router;

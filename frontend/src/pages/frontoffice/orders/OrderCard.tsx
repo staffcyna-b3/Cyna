@@ -11,7 +11,7 @@ interface Props {
 export default function OrderCard({ order, onOrderClick }: Props) {
   const { t } = useTranslation();
 
-  const productNames = order.items.map((i) => i.product_name ?? t('orders.unknownProduct')).join(', ');
+  const productNames = order.items.map((i) => (t(`products.${i.product_name}.name`) || i.product_name)).join(', ');
   const formattedDate = new Date(order.created_at).toLocaleDateString();
   const formattedAmount = order.total_amount.toLocaleString('fr-FR', {
     style: 'currency',

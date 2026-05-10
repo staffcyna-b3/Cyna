@@ -119,11 +119,9 @@ export default function Dashboard() {
     )
       .then(setDashboardData)
       .catch(() => toast.error(t("errorOccurred")));
-      console.log("Test", allSales);
   }, [accessToken, allSales, period, customFrom, customTo, categoryFilter]);
 
   const { kpis, salesSeries, categoryData, categories } = dashboardData;
-  console.log("Dashboard data:", salesSeries);
   const salesBarOptions: ApexOptions = {
     ...baseBarOptions,
     xaxis: {
@@ -173,7 +171,7 @@ export default function Dashboard() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL_CATEGORIES_VALUE}>{t("allCategories") || "Toutes les catégories"}</SelectItem>
+                <SelectItem value={ALL_CATEGORIES_VALUE}>{t("allCategories")}</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {cat}

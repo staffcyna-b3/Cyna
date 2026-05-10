@@ -61,7 +61,7 @@ const CatalogNavigation = ({
                     },
                     {
                         id: 'products',
-                        header: t('products'),
+                        header: t('products.label'),
                         items: products,
                         isActive: isProductActive,
                         keyName: CatalogSection.PRODUCTS,
