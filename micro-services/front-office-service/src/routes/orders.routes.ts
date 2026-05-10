@@ -41,14 +41,14 @@ const checkoutController = new CheckoutController(checkoutService);
 
 router.get('/checkout/context', (req, res) => checkoutController.getCheckoutContext(req, res));
 
-router.get('/orders', (req, res) => orderController.getAll(req, res));
-router.post('/orders', (req, res) => orderController.create(req, res));
-router.get('/orders/:id', (req, res) => orderController.getById(req, res));
+router.get('/', (req, res) => orderController.getAll(req, res));
+router.post('/', (req, res) => orderController.create(req, res));
+router.get('/:id', (req, res) => orderController.getById(req, res));
 // Internal route — called by gateway Stripe webhook handler only, not exposed to frontend
-router.patch('/orders/:id/status', internalAuthMiddleware, (req, res) => orderController.updateStatus(req, res));
+router.patch('/:id/status', internalAuthMiddleware, (req, res) => orderController.updateStatus(req, res));
 // Internal route — called directly by payments-service webhook (no gateway)
-router.patch('/orders/by-payment-intent/:paymentIntentId/status', internalAuthMiddleware, (req, res) => orderController.updateStatusByPaymentIntent(req, res));
+router.patch('/by-payment-intent/:paymentIntentId/status', internalAuthMiddleware, (req, res) => orderController.updateStatusByPaymentIntent(req, res));
 // Internal route — called by product-service via payments-service to resolve order items
-router.get('/orders/by-payment-intent/:paymentIntentId/items', internalAuthMiddleware, (req, res) => orderController.getItemsByPaymentIntent(req, res));
+router.get('/by-payment-intent/:paymentIntentId/items', internalAuthMiddleware, (req, res) => orderController.getItemsByPaymentIntent(req, res));
 
 export default router;
