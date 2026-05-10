@@ -388,8 +388,11 @@
   "backoffice.saveOrder": "Sauvegarder l'ordre",
   "backoffice.moveUp": "Monter",
   "backoffice.moveDown": "Descendre",
-  "backoffice.ordersComingSoon": "Module commandes prêt : structure front en place, données à connecter selon endpoints.",
-  "backoffice.transactionsComingSoon": "Module transactions prêt : structure front en place, données à connecter selon endpoints.",
+  "backoffice.ordersComingSoon": "Module commandes pret: structure front en place, data a connecter selon endpoints.",
+  "backoffice.transactionsComingSoon": "Module transactions pret: structure front en place, data a connecter selon endpoints.",
+  "backoffice.lowStockAlertTitle": "Alerte stock bas",
+  "backoffice.lowStockAlertDescription": "Les produits suivants sont sous le seuil de {{threshold}} unités :",
+  "backoffice.lowStockUnit": "en stock",
   "contact.pageTitle": "Nous contacter",
   "contact.email": "Votre adresse e-mail",
   "contact.subject": "Sujet",
@@ -407,6 +410,478 @@
   "contact.replySent": "Réponse envoyée",
   "contact.previousReply": "Réponse envoyée",
   "contact.repliedAt": "Répondu le",
+  "legal": {
+    "tag": "Légal",
+    "lastUpdate": "Dernière mise à jour : {{date}}",
+    "updateDate": "28 avril 2026",
+    "contactFooter": "Pour toute question, contactez-nous à",
+    "companyName": "Cyna SAS",
+    "contactEmail": "contact@cyna.fr",
+    "privacyEmail": "privacy@cyna.fr",
+    "cgu": {
+      "title": "Conditions Générales d'Utilisation",
+      "s1": {
+        "title": "1. Objet",
+        "p1": "Les présentes Conditions Générales d'Utilisation (ci-après « CGU ») ont pour objet de définir les modalités et conditions dans lesquelles la société Cyna SAS met à disposition de ses utilisateurs la plateforme accessible à l'adresse cyna.fr (ci-après « la Plateforme »), ainsi que les droits et obligations des parties dans ce cadre.",
+        "p2": "L'accès et l'utilisation de la Plateforme impliquent l'acceptation pleine et entière des présentes CGU. Toute personne qui accède à la Plateforme s'engage à respecter sans réserve les présentes conditions."
+      },
+      "s2": {
+        "title": "2. Présentation de la société",
+        "p1": "La Plateforme est éditée par la société Cyna SAS, société par actions simplifiée au capital de 10 000 €, immatriculée au Registre du Commerce et des Sociétés de Paris sous le numéro 123 456 789 00010 (RCS Paris B 123 456 789), dont le siège social est situé 10 Rue de la Paix, 75001 Paris, France.",
+        "p2": "Directeur de la publication : Jean Dupont — Contact : contact@cyna.fr"
+      },
+      "s3": {
+        "title": "3. Accès à la Plateforme",
+        "p1": "La Plateforme est accessible à tout utilisateur disposant d'un accès à Internet. Tous les coûts afférents à l'accès (matériel, logiciels, connexion Internet) sont exclusivement à la charge de l'utilisateur.",
+        "p2": "Cyna SAS se réserve le droit, sans préavis ni indemnité, de fermer temporairement ou définitivement la Plateforme ou l'accès à un ou plusieurs services, notamment pour effectuer des opérations de maintenance, de mise à jour ou d'amélioration.",
+        "p3": "Pour accéder à certains services, l'utilisateur doit créer un compte. Il est seul responsable de la confidentialité de ses identifiants et de toute activité réalisée depuis son compte."
+      },
+      "s4": {
+        "title": "4. Création de compte",
+        "p1": "Lors de la création de son compte, l'utilisateur s'engage à fournir des informations exactes, complètes et à jour. Il s'engage également à mettre à jour ces informations en cas de changement.",
+        "p2": "Cyna SAS se réserve le droit de suspendre ou supprimer tout compte dont les informations seraient inexactes, incomplètes, trompeuses ou en violation des présentes CGU.",
+        "p3": "L'utilisateur s'engage à ne pas créer plusieurs comptes, à ne pas usurper l'identité d'un tiers et à ne pas utiliser des données personnelles appartenant à une autre personne."
+      },
+      "s5": {
+        "title": "5. Utilisation de la Plateforme",
+        "intro": "L'utilisateur s'engage à utiliser la Plateforme de manière licite et dans le respect des présentes CGU. Il est notamment interdit :",
+        "items": [
+          "D'utiliser la Plateforme à des fins illicites, frauduleuses ou contraires aux présentes CGU",
+          "De porter atteinte aux droits de propriété intellectuelle de Cyna SAS ou de tiers",
+          "De transmettre des contenus illicites, diffamatoires, injurieux, obscènes ou violents",
+          "D'introduire des virus, chevaux de Troie ou tout autre programme malveillant",
+          "De tenter d'obtenir un accès non autorisé aux systèmes informatiques de Cyna SAS",
+          "De scraper, aspirer ou collecter automatiquement des données de la Plateforme",
+          "D'utiliser la Plateforme pour envoyer des messages non sollicités (spam)"
+        ]
+      },
+      "s6": {
+        "title": "6. Propriété intellectuelle",
+        "p1": "L'ensemble des éléments de la Plateforme (textes, images, graphismes, logos, icônes, sons, logiciels, etc.) sont la propriété exclusive de Cyna SAS ou de ses partenaires et sont protégés par les législations françaises et internationales relatives à la propriété intellectuelle.",
+        "p2": "Toute reproduction, représentation, modification, publication, adaptation de tout ou partie des éléments de la Plateforme, quel que soit le moyen ou le procédé utilisé, est interdite sans l'autorisation écrite préalable de Cyna SAS."
+      },
+      "s7": {
+        "title": "7. Responsabilité",
+        "p1": "Cyna SAS s'engage à faire ses meilleurs efforts pour assurer la disponibilité et le bon fonctionnement de la Plateforme, mais ne peut garantir une disponibilité ininterrompue ni l'absence d'erreurs.",
+        "p2": "Cyna SAS ne pourra être tenue responsable des dommages directs ou indirects résultant de l'utilisation ou de l'impossibilité d'utiliser la Plateforme, d'une interruption de service, d'une intrusion frauduleuse ou d'une altération des données.",
+        "p3": "L'utilisateur est seul responsable de l'utilisation qu'il fait de la Plateforme et des services, ainsi que des contenus qu'il y publie ou transmet."
+      },
+      "s8": {
+        "title": "8. Liens hypertextes",
+        "p1": "La Plateforme peut contenir des liens vers des sites tiers. Ces liens sont fournis à titre informatif et Cyna SAS ne saurait être tenue responsable du contenu de ces sites ni de leur politique de confidentialité."
+      },
+      "s9": {
+        "title": "9. Protection des données personnelles",
+        "p1": "Cyna SAS traite les données personnelles des utilisateurs conformément à sa Politique de Confidentialité, disponible sur la Plateforme, et en conformité avec le Règlement Général sur la Protection des Données (RGPD) et la loi Informatique et Libertés."
+      },
+      "s10": {
+        "title": "10. Modification des CGU",
+        "p1": "Cyna SAS se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront informés de toute modification substantielle par email ou par une notification sur la Plateforme. L'utilisation continue de la Plateforme après notification vaut acceptation des nouvelles CGU."
+      },
+      "s11": {
+        "title": "11. Résiliation",
+        "p1": "L'utilisateur peut fermer son compte à tout moment depuis les paramètres de son espace personnel ou en contactant le support. Cyna SAS se réserve le droit de résilier ou suspendre l'accès d'un utilisateur en cas de violation des présentes CGU, sans préavis ni indemnité."
+      },
+      "s12": {
+        "title": "12. Droit applicable et juridiction compétente",
+        "p1": "Les présentes CGU sont soumises au droit français. En cas de litige relatif à leur interprétation ou à leur exécution, les parties s'engagent à rechercher une solution amiable avant tout recours judiciaire. À défaut d'accord amiable, tout litige sera soumis aux tribunaux compétents du ressort de Paris."
+      }
+    },
+    "cgv": {
+      "title": "Conditions Générales de Vente",
+      "s1": {
+        "title": "1. Champ d'application",
+        "p1": "Les présentes Conditions Générales de Vente (ci-après « CGV ») s'appliquent à toutes les ventes de produits et services réalisées par la société Cyna SAS via la plateforme cyna.fr à destination de tout acheteur, consommateur ou professionnel.",
+        "p2": "Toute commande implique l'acceptation sans réserve des présentes CGV. Cyna SAS se réserve le droit de modifier ces conditions à tout moment ; les CGV applicables sont celles en vigueur à la date de la commande."
+      },
+      "s2": {
+        "title": "2. Produits et services",
+        "p1": "Cyna SAS propose à la vente des solutions de cybersécurité (logiciels, abonnements, services managés, formations) décrites sur la Plateforme. Les caractéristiques essentielles de chaque offre sont présentées sur la page produit correspondante.",
+        "p2": "Cyna SAS se réserve le droit de modifier à tout moment le catalogue de produits et services. Les offres sont valables tant qu'elles sont visibles sur la Plateforme."
+      },
+      "s3": {
+        "title": "3. Prix",
+        "p1": "Les prix sont indiqués en euros (€) toutes taxes comprises (TTC). Cyna SAS se réserve le droit de modifier ses prix à tout moment, les prix facturés étant ceux en vigueur au moment de la validation de la commande.",
+        "p2": "Les codes promotionnels sont à usage unique sauf mention contraire et ne sont pas cumulables entre eux."
+      },
+      "s4": {
+        "title": "4. Commande",
+        "intro": "Pour passer commande, l'acheteur doit disposer d'un compte actif. La commande est validée après :",
+        "items": [
+          "Sélection des produits/services souhaités",
+          "Vérification du récapitulatif de commande",
+          "Saisie des informations de facturation",
+          "Choix du mode de paiement",
+          "Acceptation des présentes CGV",
+          "Confirmation du paiement"
+        ],
+        "p1": "Un email de confirmation est envoyé à l'adresse renseignée lors de la commande. Cyna SAS se réserve le droit de refuser ou annuler une commande en cas de litige concernant le paiement d'une commande antérieure ou de suspicion de fraude."
+      },
+      "s5": {
+        "title": "5. Paiement",
+        "p1": "Le paiement est exigible immédiatement à la commande. Les paiements sont sécurisés et traités par notre prestataire de paiement Stripe. Les modes de paiement acceptés sont les cartes bancaires (Visa, Mastercard, American Express) et tout autre moyen indiqué sur la Plateforme.",
+        "p2": "Cyna SAS ne conserve aucune donnée bancaire. En cas d'échec du paiement, la commande est automatiquement annulée."
+      },
+      "s6": {
+        "title": "6. Livraison et accès aux services",
+        "p1": "Pour les produits numériques et les abonnements, l'accès est fourni immédiatement après confirmation du paiement via la Plateforme ou par email. Pour les services nécessitant une intervention humaine, un délai de mise en œuvre est précisé dans la description de l'offre.",
+        "p2": "En cas de force majeure rendant la fourniture du service impossible, Cyna SAS en informera l'acheteur dans les meilleurs délais et proposera une solution alternative ou un remboursement."
+      },
+      "s7": {
+        "title": "7. Droit de rétractation",
+        "p1": "Conformément à l'article L221-18 du Code de la consommation, le consommateur dispose d'un délai de 14 jours à compter de la conclusion du contrat pour exercer son droit de rétractation, sans avoir à justifier de motifs ni à payer de pénalités.",
+        "p2": "Exception : conformément à l'article L221-28, le droit de rétractation ne peut être exercé pour les contenus numériques dont l'exécution a commencé avec l'accord préalable exprès du consommateur et sa renonciation à son droit de rétractation. Cette renonciation est recueillie lors de la commande.",
+        "p3": "Pour exercer ce droit, l'acheteur doit notifier sa décision par email à contact@cyna.fr avant l'expiration du délai."
+      },
+      "s8": {
+        "title": "8. Garanties",
+        "p1": "Conformément aux dispositions légales, Cyna SAS est tenue aux garanties légales de conformité (articles L217-4 et suivants du Code de la consommation) et de vices cachés (articles 1641 et suivants du Code civil).",
+        "p2": "Pour les produits et services numériques, Cyna SAS garantit leur conformité aux spécifications décrites sur la Plateforme pendant la durée de l'abonnement ou selon les termes convenus."
+      },
+      "s9": {
+        "title": "9. Responsabilité",
+        "p1": "Cyna SAS s'engage à déployer tous les moyens nécessaires à la bonne exécution des services. Sa responsabilité ne pourra être engagée qu'en cas de faute prouvée et sera limitée au montant de la commande concernée.",
+        "p2": "Cyna SAS ne pourra être tenue responsable des dommages indirects, pertes d'exploitation ou pertes de données subis par l'acheteur."
+      },
+      "s10": {
+        "title": "10. Abonnements et résiliation",
+        "p1": "Les abonnements se renouvellent automatiquement à leur terme, sauf résiliation par l'acheteur au moins 48 heures avant la date de renouvellement depuis l'espace personnel ou par email à contact@cyna.fr.",
+        "p2": "En cas de résiliation, l'accès au service reste disponible jusqu'à la fin de la période en cours. Aucun remboursement au prorata ne sera effectué sauf dispositions contraires."
+      },
+      "s11": {
+        "title": "11. Force majeure",
+        "p1": "Cyna SAS ne pourra être tenue responsable de l'inexécution ou du retard dans l'exécution de ses obligations en cas de force majeure au sens de l'article 1218 du Code civil."
+      },
+      "s12": {
+        "title": "12. Médiation et règlement des litiges",
+        "p1": "En cas de litige, l'acheteur peut contacter en priorité le service client à contact@cyna.fr. À défaut de résolution amiable dans un délai de 60 jours, le consommateur peut recourir gratuitement à un médiateur de la consommation conformément aux articles L611-1 et suivants du Code de la consommation.",
+        "p2": "La plateforme européenne de règlement en ligne des litiges est accessible à : https://ec.europa.eu/consumers/odr"
+      },
+      "s13": {
+        "title": "13. Droit applicable",
+        "p1": "Les présentes CGV sont soumises au droit français. Tout litige relatif à leur interprétation ou exécution relève de la compétence exclusive des tribunaux français."
+      },
+      "footerNote": "Pour toute question relative à une commande, contactez-nous à"
+    },
+    "privacy": {
+      "title": "Politique de Confidentialité",
+      "s1": {
+        "title": "1. Introduction",
+        "p1": "La société Cyna SAS attache une importance primordiale à la protection de vos données personnelles. La présente Politique de Confidentialité décrit comment nous collectons, utilisons, stockons et protégeons vos données dans le cadre de l'utilisation de notre plateforme cyna.fr.",
+        "p2": "Nous traitons vos données en conformité avec le Règlement Général sur la Protection des Données (RGPD — Règlement UE 2016/679) et la loi n° 78-17 du 6 janvier 1978 relative à l'informatique, aux fichiers et aux libertés, modifiée."
+      },
+      "s2": {
+        "title": "2. Responsable du traitement",
+        "p1": "Le responsable du traitement est la société Cyna SAS, dont le siège social est situé 10 Rue de la Paix, 75001 Paris, France, immatriculée sous le numéro 123 456 789 00010 (RCS Paris B 123 456 789).",
+        "p2": "Pour toute question relative à vos données personnelles, vous pouvez nous contacter :",
+        "dpo": "DPO (Délégué à la Protection des Données) : privacy@cyna.fr — Cyna SAS, 10 Rue de la Paix, 75001 Paris"
+      },
+      "s3": {
+        "title": "3. Données collectées",
+        "intro": "Nous collectons les catégories de données suivantes :",
+        "id": {
+          "title": "Données d'identification",
+          "content": "Nom complet, adresse email, mot de passe (haché via bcrypt, non lisible), statut de vérification email."
+        },
+        "address": {
+          "title": "Données d'adresse",
+          "content": "Adresses de facturation et de livraison (ligne d'adresse, ville, code postal, pays). Ces adresses sont également conservées en snapshot dans l'historique de chaque commande pour garantir la traçabilité."
+        },
+        "order": {
+          "title": "Données de commandes et paiements",
+          "content": "Historique des commandes (articles, quantités, montants, statut), identifiant de transaction Stripe, montant, devise, type de paiement (ponctuel ou abonnement), identifiant client Stripe (stripe_customer_id) associé à votre compte pour les paiements récurrents."
+        },
+        "auth": {
+          "title": "Données d'authentification",
+          "content": "Tokens de session (refresh token, token « se souvenir de moi ») stockés de manière hachée en base de données. Tokens temporaires pour la confirmation d'email et la réinitialisation de mot de passe (hachés, à usage unique). Codes de double authentification (2FA) à 6 chiffres, valables 5 minutes, supprimés après vérification."
+        },
+        "logs": {
+          "title": "Journaux techniques",
+          "content": "Méthode HTTP, chemin d'accès, code de réponse, durée de traitement et horodatage des requêtes. Ces journaux sont conservés dans des fichiers sécurisés sur le serveur et utilisés uniquement à des fins de débogage et de sécurité."
+        }
+      },
+      "s4": {
+        "title": "4. Finalités et bases légales du traitement",
+        "rows": [
+          {
+            "purpose": "Gestion du compte utilisateur",
+            "basis": "Exécution du contrat"
+          },
+          {
+            "purpose": "Traitement des commandes et paiements via Stripe",
+            "basis": "Exécution du contrat"
+          },
+          {
+            "purpose": "Envoi des emails transactionnels (confirmation, réinitialisation, 2FA)",
+            "basis": "Exécution du contrat"
+          },
+          {
+            "purpose": "Sécurité de la plateforme et prévention des fraudes",
+            "basis": "Intérêt légitime"
+          },
+          {
+            "purpose": "Journaux techniques (débogage, surveillance)",
+            "basis": "Intérêt légitime"
+          },
+          {
+            "purpose": "Respect des obligations légales et comptables",
+            "basis": "Obligation légale"
+          }
+        ],
+        "colPurpose": "Finalité",
+        "colBasis": "Base légale"
+      },
+      "s5": {
+        "title": "5. Durées de conservation",
+        "intro": "Nous conservons vos données pour la durée strictement nécessaire aux finalités pour lesquelles elles ont été collectées :",
+        "items": [
+          "Données de compte : durée de la relation contractuelle + 3 ans après résiliation",
+          "Données de commandes et factures : 10 ans (obligations comptables légales)",
+          "Journaux techniques : 12 mois glissants",
+          "Tokens d'authentification (refresh, remember-me) : durée de validité configurée (session ou jusqu'à déconnexion)",
+          "Tokens temporaires (email, reset, 2FA) : supprimés après utilisation ou expiration (5 minutes pour les codes 2FA)"
+        ]
+      },
+      "s6": {
+        "title": "6. Destinataires des données",
+        "intro": "Vos données peuvent être transmises aux catégories de destinataires suivantes :",
+        "items": [
+          "Stripe Inc. (États-Unis) — prestataire de paiement : traitement des transactions, gestion des abonnements et stockage de votre identifiant client Stripe. Transfert encadré par les clauses contractuelles types de la Commission européenne.",
+          "Google LLC via Gmail SMTP — prestataire d'envoi d'emails transactionnels (confirmation d'email, réinitialisation de mot de passe, codes 2FA).",
+          "OVHcloud (hébergeur) — hébergement de l'infrastructure technique de la Plateforme.",
+          "Les autorités compétentes en cas d'obligation légale."
+        ],
+        "p1": "Nous ne vendons pas vos données personnelles à des tiers à des fins commerciales."
+      },
+      "s7": {
+        "title": "7. Vos droits",
+        "intro": "Conformément au RGPD, vous disposez des droits suivants concernant vos données personnelles :",
+        "items": [
+          "Droit d'accès : obtenir une copie des données que nous traitons vous concernant",
+          "Droit de rectification : corriger des données inexactes ou incomplètes",
+          "Droit à l'effacement : obtenir la suppression de vos données (« droit à l'oubli »)",
+          "Droit à la limitation : suspendre le traitement de vos données dans certains cas",
+          "Droit à la portabilité : recevoir vos données dans un format structuré et lisible par machine",
+          "Droit d'opposition : s'opposer au traitement fondé sur l'intérêt légitime",
+          "Droit de retirer le consentement : à tout moment, sans affecter la licéité du traitement antérieur"
+        ],
+        "p1": "Pour exercer ces droits, contactez-nous à privacy@cyna.fr. Nous répondrons dans un délai maximum d'un mois. Vous pouvez également introduire une réclamation auprès de la CNIL : www.cnil.fr."
+      },
+      "s8": {
+        "title": "8. Sécurité des données",
+        "p1": "Cyna SAS met en œuvre toutes les mesures techniques et organisationnelles appropriées pour garantir la sécurité et la confidentialité de vos données, notamment : chiffrement des communications (TLS/SSL), hachage des mots de passe et tokens sensibles (bcrypt), double authentification (2FA), limitation du taux de requêtes (rate limiting), journalisation des accès et contrôles d'accès stricts entre microservices.",
+        "p2": "En cas de violation de données susceptible d'engendrer un risque élevé pour vos droits et libertés, nous vous en informerons dans les meilleurs délais conformément à l'article 34 du RGPD."
+      },
+      "s9": {
+        "title": "9. Cookies",
+        "p1": "Notre Plateforme utilise des cookies techniques nécessaires à son fonctionnement (gestion de session, sécurité). Pour plus d'informations, consultez notre Politique de Cookies."
+      },
+      "s10": {
+        "title": "10. Modifications",
+        "p1": "Nous nous réservons le droit de modifier la présente politique à tout moment. En cas de modification substantielle, nous vous en informerons par email ou via une notification sur la Plateforme."
+      },
+      "footerNote": "Pour toute question relative à vos données personnelles, contactez notre DPO à"
+    },
+    "mentions": {
+      "title": "Mentions Légales",
+      "s1": {
+        "title": "1. Éditeur du site",
+        "fields": [
+          {
+            "label": "Raison sociale",
+            "value": "Cyna SAS"
+          },
+          {
+            "label": "Forme juridique",
+            "value": "Société par Actions Simplifiée (SAS)"
+          },
+          {
+            "label": "Capital social",
+            "value": "10 000 €"
+          },
+          {
+            "label": "SIRET",
+            "value": "123 456 789 00010"
+          },
+          {
+            "label": "RCS",
+            "value": "Paris B 123 456 789"
+          },
+          {
+            "label": "N° TVA intracommunautaire",
+            "value": "FR 12 123456789"
+          },
+          {
+            "label": "Siège social",
+            "value": "10 Rue de la Paix, 75001 Paris, France"
+          },
+          {
+            "label": "Téléphone",
+            "value": "+33 1 23 45 67 89"
+          },
+          {
+            "label": "Email",
+            "value": "contact@cyna.fr"
+          },
+          {
+            "label": "Directeur de la publication",
+            "value": "Jean Dupont"
+          }
+        ]
+      },
+      "s2": {
+        "title": "2. Hébergement",
+        "fields": [
+          {
+            "label": "Hébergeur",
+            "value": "OVHcloud SAS"
+          },
+          {
+            "label": "Adresse",
+            "value": "2 Rue Kellermann, 59100 Roubaix, France"
+          },
+          {
+            "label": "Site web",
+            "value": "www.ovhcloud.com"
+          }
+        ]
+      },
+      "s3": {
+        "title": "3. Propriété intellectuelle",
+        "p1": "L'ensemble du contenu de ce site (textes, images, logos, graphismes, sons, logiciels, bases de données, etc.) est la propriété exclusive de Cyna SAS ou de ses partenaires et est protégé par les lois françaises et internationales relatives au droit d'auteur et à la propriété intellectuelle.",
+        "p2": "Toute reproduction, représentation, modification, publication, transmission ou dénaturation, totale ou partielle, du site ou de son contenu, par quelque procédé que ce soit, sans l'autorisation expresse et préalable de Cyna SAS, est interdite et constitue une contrefaçon sanctionnée par les articles L335-2 et suivants du Code de la propriété intellectuelle.",
+        "p3": "Le nom et le logo Cyna sont des marques déposées. Leur utilisation sans autorisation préalable écrite de Cyna SAS est strictement interdite."
+      },
+      "s4": {
+        "title": "4. Protection des données personnelles",
+        "p1": "Conformément à la loi Informatique et Libertés et au RGPD, les informations à caractère personnel collectées via ce site font l'objet d'un traitement informatique par Cyna SAS en qualité de responsable de traitement.",
+        "p2": "Pour plus d'informations sur la gestion de vos données personnelles et l'exercice de vos droits, consultez notre Politique de Confidentialité.",
+        "p3": "Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition que vous pouvez exercer en contactant : privacy@cyna.fr",
+        "p4": "En cas de réclamation non résolue, vous pouvez saisir la CNIL : www.cnil.fr"
+      },
+      "s5": {
+        "title": "5. Cookies",
+        "p1": "Ce site utilise des cookies nécessaires à son bon fonctionnement. Pour en savoir plus et gérer vos préférences, consultez notre Politique de Cookies."
+      },
+      "s6": {
+        "title": "6. Liens hypertextes",
+        "p1": "Le site peut contenir des liens vers des sites tiers. Cyna SAS n'exerce aucun contrôle sur ces sites et décline toute responsabilité quant à leur contenu. La création de tout lien hypertexte pointant vers cyna.fr est soumise à l'accord préalable et écrit de Cyna SAS."
+      },
+      "s7": {
+        "title": "7. Limitation de responsabilité",
+        "p1": "Cyna SAS s'efforce d'assurer l'exactitude et la mise à jour des informations diffusées sur ce site. Toutefois, Cyna SAS ne peut garantir l'exactitude, la complétude ou l'actualité des informations et décline toute responsabilité pour toute imprécision, inexactitude ou omission.",
+        "p2": "Cyna SAS ne saurait être tenue responsable des dommages directs ou indirects résultant de l'utilisation de ce site ou de l'impossibilité d'y accéder, ni de l'utilisation d'autres sites vers lesquels il renvoie."
+      },
+      "s8": {
+        "title": "8. Droit applicable",
+        "p1": "Le présent site et ses mentions légales sont soumis au droit français. Tout litige relatif à l'utilisation de ce site relève de la compétence exclusive des tribunaux français."
+      },
+      "s9": {
+        "title": "9. Contact",
+        "general": "Email général :",
+        "privacy": "Données personnelles :",
+        "address": "Adresse :",
+        "addressValue": "10 Rue de la Paix, 75001 Paris, France"
+      },
+      "footerNote": "Ces mentions légales ont été rédigées conformément aux dispositions de la loi n° 2004-575 du 21 juin 2004 pour la Confiance dans l'Économie Numérique (LCEN)."
+    },
+    "cookies": {
+      "title": "Politique de Cookies",
+      "s1": {
+        "title": "1. Qu'est-ce qu'un cookie ?",
+        "p1": "Un cookie est un petit fichier texte déposé sur votre terminal (ordinateur, tablette, smartphone) lors de votre visite sur un site web. Il est lu par le serveur lors de visites ultérieures et permet d'améliorer votre expérience de navigation en mémorisant certaines informations.",
+        "p2": "Les cookies ne peuvent pas lancer de programmes ni transmettre des virus. Ils sont associés uniquement au navigateur que vous utilisez et ne permettent pas de vous identifier personnellement sans données complémentaires."
+      },
+      "s2": {
+        "title": "2. Cookies utilisés sur cyna.fr",
+        "necessary": {
+          "title": "Cookies strictement nécessaires",
+          "badge": "Toujours actifs",
+          "p1": "Ces cookies sont indispensables au fonctionnement de la Plateforme et ne peuvent pas être désactivés. Ils comprennent notamment :",
+          "items": [
+            "Gestion de la session utilisateur (authentification JWT)",
+            "Panier d'achat",
+            "Préférences de langue",
+            "Protection CSRF (sécurité des formulaires)",
+            "Mémorisation du consentement cookies"
+          ],
+          "duration": "Durée de conservation : durée de la session ou jusqu'à 12 mois."
+        },
+        "functional": {
+          "title": "Cookies de fonctionnalité",
+          "badge": "Consentement requis",
+          "p1": "Ces cookies permettent de mémoriser vos préférences afin de personnaliser votre expérience utilisateur.",
+          "items": [
+            "Préférences d'affichage",
+            "Produits récemment consultés",
+            "Filtres de catalogue mémorisés"
+          ],
+          "duration": "Durée de conservation : 6 mois maximum."
+        }
+      },
+      "s3": {
+        "title": "3. Cookies tiers",
+        "p1": "Certains services tiers intégrés à notre Plateforme peuvent déposer des cookies sur votre terminal. Ces cookies sont soumis aux politiques de confidentialité des sociétés qui les émettent.",
+        "colName": "Prestataire",
+        "colPurpose": "Finalité",
+        "colPolicy": "Politique",
+        "rows": [
+          {
+            "name": "Stripe Inc.",
+            "purpose": "Traitement sécurisé des paiements et prévention de la fraude",
+            "policy": "stripe.com/privacy"
+          },
+          {
+            "name": "Google LLC (Gmail)",
+            "purpose": "Envoi d'emails transactionnels",
+            "policy": "policies.google.com/privacy"
+          }
+        ]
+      },
+      "s4": {
+        "title": "4. Gérer vos préférences",
+        "p1": "Lors de votre première visite sur notre site, un bandeau de gestion des cookies vous permet d'accepter ou de refuser les cookies non essentiels. Vous pouvez modifier vos préférences à tout moment.",
+        "p2": "Vous pouvez également paramétrer votre navigateur pour refuser tout ou partie des cookies. Les instructions varient selon le navigateur :",
+        "browsers": [
+          "Google Chrome : Paramètres → Confidentialité et sécurité → Cookies",
+          "Mozilla Firefox : Paramètres → Vie privée et sécurité → Cookies",
+          "Safari : Préférences → Confidentialité → Cookies",
+          "Microsoft Edge : Paramètres → Confidentialité → Cookies"
+        ],
+        "p3": "Attention : la désactivation des cookies nécessaires au fonctionnement du site peut altérer votre expérience et empêcher l'accès à certaines fonctionnalités."
+      },
+      "s5": {
+        "title": "5. Durée du consentement",
+        "p1": "Votre consentement (ou refus) est mémorisé pendant 6 mois. À l'issue de cette période, votre accord vous sera de nouveau demandé."
+      },
+      "s6": {
+        "title": "6. Base légale",
+        "p1": "Conformément aux recommandations de la CNIL et aux exigences de l'article 82 de la loi Informatique et Libertés, les cookies non essentiels ne sont déposés qu'après recueil de votre consentement exprès, libre, éclairé et univoque."
+      },
+      "s7": {
+        "title": "7. Contact",
+        "p1": "Pour toute question relative à notre utilisation des cookies ou pour exercer vos droits, contactez-nous à"
+      },
+      "footerNote": "Cette politique de cookies est conforme aux lignes directrices de la CNIL sur les cookies et traceurs (délibération n° 2020-092 du 17 septembre 2020)."
+    }
+  },
+  "footer": {
+    "copyright": "© 2026 Cyna. Tous droits réservés.",
+    "description": "Entreprise proposant des solutions de cybersécurité pour vous protéger 24/7.",
+    "cgu": "Conditions Générales d'Utilisation",
+    "cgv": "Conditions Générales de Vente",
+    "privacy": "Politique de confidentialité",
+    "mentions": "Mentions légales",
+    "cookies": "Politique de cookies",
+    "solutions": {
+      "title": "Solutions",
+      "ot": "Cybersécurité OT"
+    },
+    "legal": {
+      "title": "Légal"
+    }
+  }
+}
   "products": {
     "label": "Produits",
     "cyna_soc_starter": {

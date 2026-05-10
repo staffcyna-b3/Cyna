@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ProductTypeBadgeProps } from '@/types/interfaces/catalog/CatalogLayoutProps.interface';
+import { ProductTypeBadgeProps } from '@/types/enums/product/ProductTypeBadgeProps';
 
 export const ProductTypeBadge = ({ isService, className }: ProductTypeBadgeProps) => {
     const { t } = useTranslation();

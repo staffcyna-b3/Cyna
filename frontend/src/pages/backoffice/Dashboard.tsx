@@ -60,7 +60,7 @@ function KpiCard({ label, value, trend, icon }: KpiCardProps) {
         {icon}
         <span>{label}</span>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <span className="text-2xl font-bold text-gray-900">{value}</span>
         <span className={`flex items-center gap-1 text-sm font-medium ${isPositive ? "text-green-500" : "text-red-500"}`}>
           {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
@@ -129,6 +129,12 @@ export default function Dashboard() {
       categories: salesSeries.map((d) => d.date),
       labels: { style: { colors: "#9CA3AF" } },
     },
+    yaxis: {
+      labels: {
+        style: { colors: "#9CA3AF" },
+        formatter: (val) => `${Math.round(val)} €`,
+      },
+    },
   };
 
   const avgBasketBarOptions: ApexOptions = {
@@ -181,21 +187,24 @@ export default function Dashboard() {
             </Select>
           )}
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-2 bg-primary rounded-full p-1">
+        <div className="overflow-x-auto sm:overflow-x-visible w-full sm:w-auto">
+          <div className="flex items-center gap-2 bg-primary rounded-full p-1 w-fit">
             <Button
+              size="sm"
               variant={period === "7days" ? "selected" : "notSelected"}
               onClick={() => setPeriod("7days")}
             >
               {t("last7Days")}
             </Button>
             <Button
+              size="sm"
               variant={period === "5weeks" ? "selected" : "notSelected"}
               onClick={() => setPeriod("5weeks")}
             >
               {t("last5Weeks")}
             </Button>
             <Button
+              size="sm"
               variant={period === "custom" ? "selected" : "notSelected"}
               onClick={() => setPeriod("custom")}
             >

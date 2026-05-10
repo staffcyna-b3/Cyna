@@ -27,6 +27,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
   onRowClick?: (row: TData) => void
   onSelectionChange?: (rows: TData[]) => void
+  filterColumn?: string
 }
 
 export function DataTable<TData, TValue>({

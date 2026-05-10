@@ -7,6 +7,7 @@ import type { OrderItem } from "@/types/interfaces/Order/OrderItem"
 import type { OrderSummary } from "@/types/interfaces/Order/OrderSummary"
 import type { BillingAddressSnapshot } from "@/types/interfaces/Order/BillingAddressSnapshot"
 import type { OrderDetail } from "@/types/interfaces/Order/OrderDetail"
+import type { OrderStatus } from "@/types/enums/OrderStatus"
 
 export type { OrderItem, OrderSummary, BillingAddressSnapshot, OrderDetail }
 
