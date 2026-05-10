@@ -89,7 +89,7 @@ export function OrderEditorSheet({
             <div className="space-y-2 rounded-md border p-3">
               {items.map((item, index) => (
                 <div key={index} className="flex justify-between text-sm">
-                  <span>{item.product_name} × {item.quantity}</span>
+                  <span>{t(`products.${item.product_name}.name`)} × {item.quantity}</span>
                   <span>{(item.unit_price * item.quantity).toLocaleString('fr-FR', {
                     style: 'currency', currency: 'EUR',
                   })}</span>

@@ -1,6 +1,9 @@
 {
   "acceptCGV": "I accept ",
   "admin": {
+    "products": "Products",
+    "type": "Type",
+    "oneTime": "One-time",
     "refund": "Refund",
     "confirmRefund": "Confirm refund?",
     "refundSuccess": "Refund processed successfully",
@@ -49,6 +52,8 @@
   },
   "refundRequests": "Refund Requests",
   "subscriptions": {
+    "label": "Subscriptions",
+    "licenses": "Licenses",
     "pageTitle": "My subscriptions",
     "noSubscriptions": "You have no active subscriptions.",
     "unknownProduct": "Service",
@@ -878,8 +883,7 @@
     "legal": {
       "title": "Legal"
     }
-  }
-}
+  },
   "products": {
     "label": "Products",
     "cyna_soc_starter": {

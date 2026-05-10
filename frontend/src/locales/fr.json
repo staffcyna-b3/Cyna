@@ -1,6 +1,9 @@
 {
   "acceptCGV": "J'accepte ",
   "admin": {
+    "products": "Produits",
+    "type": "Type",
+    "oneTime": "One-time",
     "refund": "Rembourser",
     "confirmRefund": "Confirmer le remboursement ?",
     "refundSuccess": "Remboursement effectué avec succès",
@@ -49,6 +52,8 @@
   },
   "refundRequests": "Demandes de remboursement",
   "subscriptions": {
+    "label": "Abonnements",
+    "licenses": "Licences",
     "pageTitle": "Mes abonnements",
     "noSubscriptions": "Vous n'avez aucun abonnement actif.",
     "unknownProduct": "Service",
@@ -880,109 +885,109 @@
     "legal": {
       "title": "Légal"
     }
-  }
-}
-  "products": {
-    "label": "Produits",
-    "cyna_soc_starter": {
-      "name": "Cyna SOC Starter",
-      "description": "Solution SOC d'entrée de gamme pour les PME avec surveillance 24/7 et alertes en temps réel."
-    },
-    "cyna_soc_professional": {
-      "name": "Cyna SOC Professional",
-      "description": "Solution SOC complète avec analyse avancée des menaces et rapports détaillés."
-    },
-    "cyna_soc_enterprise": {
-      "name": "Cyna SOC Enterprise",
-      "description": "Solution SOC d'entreprise avec intégration personnalisée et support premium."
-    },
-    "cyna_edr_essentials": {
-      "name": "Cyna EDR Essentials",
-      "description": "Protection des terminaux avec détection des menaces et réponse automatisée."
-    },
-    "cyna_edr_advanced": {
-      "name": "Cyna EDR Advanced",
-      "description": "EDR avancé avec analyse comportementale et investigation des incidents."
-    },
-    "cyna_edr_premium": {
-      "name": "Cyna EDR Premium",
-      "description": "EDR premium avec threat hunting et réponse aux incidents 24/7."
-    },
-    "cyna_xdr_unified": {
-      "name": "Cyna XDR Unified",
-      "description": "Détection et réponse étendues couvrant tous les vecteurs d'attaque."
-    },
-    "cyna_xdr_complete": {
-      "name": "Cyna XDR Complete",
-      "description": "XDR complet avec orchestration et automatisation des réponses."
-    },
-    "cyna_xdr_elite": {
-      "name": "Cyna XDR Elite",
-      "description": "XDR élite avec IA avancée et prédiction des menaces."
-    },
-    "cyna_siem_standard": {
-      "name": "Cyna SIEM Standard",
-      "description": "Gestion centralisée des événements de sécurité pour les environnements mixtes."
-    },
-    "cyna_siem_advanced": {
-      "name": "Cyna SIEM Advanced",
-      "description": "SIEM avancé avec corrélation d'événements et conformité réglementaire."
-    },
-    "cyna_siem_enterprise": {
-      "name": "Cyna SIEM Enterprise",
-      "description": "SIEM d'entreprise avec scalabilité illimitée et support dédié."
-    },
-    "cyna_firewall_pro": {
-      "name": "Cyna Firewall Pro",
-      "description": "Appliance firewall haute performance pour la protection réseau."
-    },
-    "cyna_ips_enterprise": {
-      "name": "Cyna IPS Enterprise",
-      "description": "Système de prévention d'intrusions pour les environnements critiques."
-    },
-    "cyna_dlp_gateway": {
-      "name": "Cyna DLP Gateway",
-      "description": "Passerelle de prévention des fuites de données."
-    },
-    "cyna_waf_shield": {
-      "name": "Cyna WAF Shield",
-      "description": "Web Application Firewall pour la protection des applications web."
-    },
-    "licence_cyna_antivirus_pro": {
-      "name": "Licence Cyna Antivirus Pro",
-      "description": "Licence antivirus pour 10 postes de travail."
-    },
-    "licence_cyna_vpn_enterprise": {
-      "name": "Licence Cyna VPN Enterprise",
-      "description": "Licence VPN pour 50 utilisateurs."
-    },
-    "licence_cyna_pam_suite": {
-      "name": "Licence Cyna PAM Suite",
-      "description": "Suite de gestion des accès privilégiés."
-    },
-    "formation_securite_reseau_avancee": {
-      "name": "Formation Sécurité Réseau Avancée",
-      "description": "Formation de 5 jours sur la sécurité réseau avancée."
-    },
-    "certification_cyna_soc_analyst": {
-      "name": "Certification Cyna SOC Analyst",
-      "description": "Certification professionnelle d'analyste SOC."
-    },
-    "formation_incident_response": {
-      "name": "Formation Incident Response",
-      "description": "Formation pratique sur la réponse aux incidents de sécurité."
-    },
-    "audit_securite_complet": {
-      "name": "Audit de sécurité complet",
-      "description": "Audit complet de votre infrastructure de sécurité (3 jours)."
-    },
-    "conformite_rgpd_consulting": {
-      "name": "Conformité RGPD - Consulting",
-      "description": "Service de consulting pour la mise en conformité RGPD."
-    },
-    "pentesting_5_days": {
-      "name": "Pentesting - 5 jours",
-      "description": "Test de pénétration complet de votre infrastructure."
+  },
+    "products": {
+      "label": "Produits",
+      "cyna_soc_starter": {
+        "name": "Cyna SOC Starter",
+        "description": "Solution SOC d'entrée de gamme pour les PME avec surveillance 24/7 et alertes en temps réel."
+      },
+      "cyna_soc_professional": {
+        "name": "Cyna SOC Professional",
+        "description": "Solution SOC complète avec analyse avancée des menaces et rapports détaillés."
+      },
+      "cyna_soc_enterprise": {
+        "name": "Cyna SOC Enterprise",
+        "description": "Solution SOC d'entreprise avec intégration personnalisée et support premium."
+      },
+      "cyna_edr_essentials": {
+        "name": "Cyna EDR Essentials",
+        "description": "Protection des terminaux avec détection des menaces et réponse automatisée."
+      },
+      "cyna_edr_advanced": {
+        "name": "Cyna EDR Advanced",
+        "description": "EDR avancé avec analyse comportementale et investigation des incidents."
+      },
+      "cyna_edr_premium": {
+        "name": "Cyna EDR Premium",
+        "description": "EDR premium avec threat hunting et réponse aux incidents 24/7."
+      },
+      "cyna_xdr_unified": {
+        "name": "Cyna XDR Unified",
+        "description": "Détection et réponse étendues couvrant tous les vecteurs d'attaque."
+      },
+      "cyna_xdr_complete": {
+        "name": "Cyna XDR Complete",
+        "description": "XDR complet avec orchestration et automatisation des réponses."
+      },
+      "cyna_xdr_elite": {
+        "name": "Cyna XDR Elite",
+        "description": "XDR élite avec IA avancée et prédiction des menaces."
+      },
+      "cyna_siem_standard": {
+        "name": "Cyna SIEM Standard",
+        "description": "Gestion centralisée des événements de sécurité pour les environnements mixtes."
+      },
+      "cyna_siem_advanced": {
+        "name": "Cyna SIEM Advanced",
+        "description": "SIEM avancé avec corrélation d'événements et conformité réglementaire."
+      },
+      "cyna_siem_enterprise": {
+        "name": "Cyna SIEM Enterprise",
+        "description": "SIEM d'entreprise avec scalabilité illimitée et support dédié."
+      },
+      "cyna_firewall_pro": {
+        "name": "Cyna Firewall Pro",
+        "description": "Appliance firewall haute performance pour la protection réseau."
+      },
+      "cyna_ips_enterprise": {
+        "name": "Cyna IPS Enterprise",
+        "description": "Système de prévention d'intrusions pour les environnements critiques."
+      },
+      "cyna_dlp_gateway": {
+        "name": "Cyna DLP Gateway",
+        "description": "Passerelle de prévention des fuites de données."
+      },
+      "cyna_waf_shield": {
+        "name": "Cyna WAF Shield",
+        "description": "Web Application Firewall pour la protection des applications web."
+      },
+      "licence_cyna_antivirus_pro": {
+        "name": "Licence Cyna Antivirus Pro",
+        "description": "Licence antivirus pour 10 postes de travail."
+      },
+      "licence_cyna_vpn_enterprise": {
+        "name": "Licence Cyna VPN Enterprise",
+        "description": "Licence VPN pour 50 utilisateurs."
+      },
+      "licence_cyna_pam_suite": {
+        "name": "Licence Cyna PAM Suite",
+        "description": "Suite de gestion des accès privilégiés."
+      },
+      "formation_securite_reseau_avancee": {
+        "name": "Formation Sécurité Réseau Avancée",
+        "description": "Formation de 5 jours sur la sécurité réseau avancée."
+      },
+      "certification_cyna_soc_analyst": {
+        "name": "Certification Cyna SOC Analyst",
+        "description": "Certification professionnelle d'analyste SOC."
+      },
+      "formation_incident_response": {
+        "name": "Formation Incident Response",
+        "description": "Formation pratique sur la réponse aux incidents de sécurité."
+      },
+      "audit_securite_complet": {
+        "name": "Audit de sécurité complet",
+        "description": "Audit complet de votre infrastructure de sécurité (3 jours)."
+      },
+      "conformite_rgpd_consulting": {
+        "name": "Conformité RGPD - Consulting",
+        "description": "Service de consulting pour la mise en conformité RGPD."
+      },
+      "pentesting_5_days": {
+        "name": "Pentesting - 5 jours",
+        "description": "Test de pénétration complet de votre infrastructure."
+      }
     }
   }
-}
+

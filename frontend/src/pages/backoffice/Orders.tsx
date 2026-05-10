@@ -77,13 +77,13 @@ export default function Orders() {
             enableHiding: false,
         },
         { accessorKey: "id", header: "ID" },
-        { accessorKey: "created_at", header: "Created At" },
-        { accessorKey: "total_amount", header: "Total Amount" },
+        { accessorKey: "created_at", header: t("admin.createdAt") },
+        { accessorKey: "total_amount", header: t("totalAmount") },
         {
             accessorKey: "status",
             header: ({ column }) => (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Status
+                    {t("admin.status")}
                     <LucideArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
@@ -94,7 +94,7 @@ export default function Orders() {
 
     return (
         <>
-            <BackOfficePageHeader title={t("orders")} rightSlot={topRightActions} />
+            <BackOfficePageHeader title={t("orders.label")} rightSlot={topRightActions} />
             <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
                 {loading ? (
                     <p className="p-4 text-muted-foreground">{t("loading")}</p>

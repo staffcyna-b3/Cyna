@@ -49,7 +49,7 @@ export default function BackOfficeLayout() {
               .filter(p => !p.is_service && p.stock <= LOW_STOCK_THRESHOLD)
               .map(p => (
                 <li key={p.id} className="flex justify-between">
-                  <span>{p.name}</span>
+                  <span>{t(`products.${p.name}.name`)}</span>
                   <span className="font-semibold text-red-600">{p.stock} {t('backoffice.lowStockUnit')}</span>
                 </li>
               ))}
