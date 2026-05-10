@@ -9,7 +9,11 @@ export default function CatalogFooter() {
 
     return (
         <footer className='text-white'>
-            <div className='bg-black px-6 py-6'>
+            <div
+                className="relative h-20 w-full bg-white"
+            ></div>
+
+            <div className='px-6 py-10'>
                 <div className='max-w-7xl mx-auto'>
                     <p className='text-xl font-bold'>{t('Cyna')}</p>
                     <p className='text-sm mt-2' style={{ color: 'rgba(255,255,255,0.5)' }}>
@@ -18,7 +22,7 @@ export default function CatalogFooter() {
                 </div>
             </div>
 
-            <div className='bg-[#111111] px-6 pt-8 pb-10'>
+            <div className='px-6 pt-8 pb-10'>
                 <div className='max-w-7xl mx-auto'>
                     <div className='flex justify-between items-start'>
                         <div className='flex gap-4 pt-1'>
