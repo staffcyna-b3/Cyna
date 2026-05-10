@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Typography } from "@/components/ui/typography";
+import { BackOfficePageHeader } from "@/components/Backoffice/shared/BackOfficePageHeader";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -201,7 +201,7 @@ export default function Refunds() {
     ];
 
     const topRightActions = (
-        <div className="flex items-center gap-2 bg-primary rounded-full p-1">
+        <div className="flex items-center gap-2 bg-primary rounded-full p-1 w-fit">
             <Button
                 variant={view === "requests" ? "selected" : "notSelected"}
                 onClick={() => setView("requests")}
@@ -219,10 +219,7 @@ export default function Refunds() {
 
     return (
         <>
-            <header className="px-4 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                <Typography variant="h1">{t("refunds")}</Typography>
-                {topRightActions}
-            </header>
+            <BackOfficePageHeader title={t("refunds")} rightSlot={topRightActions} />
 
             <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
                 {view === "requests" ? (

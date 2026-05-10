@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Typography } from "@/components/ui/typography";
+import { BackOfficePageHeader } from "@/components/Backoffice/shared/BackOfficePageHeader";
 import type { OrderAdminDTO } from "@/types/interfaces/admin/OrderAdminDTO.interface";
 import { ColumnDef } from "@tanstack/react-table";
 import { t } from "i18next";
@@ -50,7 +50,7 @@ export default function Orders() {
     }
 
     const topRightActions = (
-        <div className="flex items-center gap-2 bg-primary rounded-full p-1">
+        <div className="flex items-center gap-2 bg-primary rounded-full p-1 w-fit">
             <Button variant={selected === "active" ? 'selected' : 'notSelected'} onClick={() => setSelected("active")}>{t("active")}</Button>
             <Button variant={selected === "inactive" ? 'selected' : 'notSelected'} onClick={() => setSelected("inactive")}>{t("inactive")}</Button>
         </div>
@@ -94,10 +94,7 @@ export default function Orders() {
 
     return (
         <>
-            <header className="px-4 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                <Typography variant="h1">{t("orders")}</Typography>
-                {topRightActions}
-            </header>
+            <BackOfficePageHeader title={t("orders")} rightSlot={topRightActions} />
             <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
                 {loading ? (
                     <p className="p-4 text-muted-foreground">{t("loading")}</p>
