@@ -133,7 +133,8 @@ export default function Transactions() {
         },
         {
             accessorKey: "productName",
-            header: t("admin.product"),
+            header: t(`admin.products`),
+            cell: ({ row }) => t(`products.${row.original.productName}.name`) ?? row.original.productName,
         },
         {
             accessorKey: "type",
@@ -187,7 +188,7 @@ export default function Transactions() {
         {
             accessorKey: "product",
             header: t("admin.subscription"),
-            cell: ({ row }) => row.original.product?.name ?? "—",
+            cell: ({ row }) => t(`products.${row.original.product?.name}.name`) ?? "—",
         },
         {
             accessorKey: "user",

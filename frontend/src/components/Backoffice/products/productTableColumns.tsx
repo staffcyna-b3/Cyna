@@ -80,7 +80,7 @@ export function buildProductColumns(
                 />
             ),
             cell: ({ row }) => (
-                <span className="font-medium text-gray-700">{row.original.name}</span>
+                <span className="font-medium text-gray-700">{t(`products.${row.original.name}.name`)}</span>
             ),
         },
         {

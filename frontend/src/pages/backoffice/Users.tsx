@@ -117,13 +117,13 @@ export default function Users() {
             enableHiding: false,
         },
         { accessorKey: "id", header: "ID" },
-        { accessorKey: "full_name", header: "Full Name" },
-        { accessorKey: "email", header: "Email" },
+        { accessorKey: "full_name", header: t("fullName") },
+        { accessorKey: "email", header: t("email") },
         {
             accessorKey: "role",
             header: ({ column }) => (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Role
+                    {t("admin.role")}
                     <LucideArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),

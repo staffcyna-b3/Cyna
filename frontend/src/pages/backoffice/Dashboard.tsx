@@ -193,6 +193,7 @@ export default function Dashboard() {
               size="sm"
               variant={period === "7days" ? "selected" : "notSelected"}
               onClick={() => setPeriod("7days")}
+              className="rounded-full"
             >
               {t("last7Days")}
             </Button>
@@ -200,6 +201,7 @@ export default function Dashboard() {
               size="sm"
               variant={period === "5weeks" ? "selected" : "notSelected"}
               onClick={() => setPeriod("5weeks")}
+              className="rounded-full"
             >
               {t("last5Weeks")}
             </Button>
@@ -207,6 +209,7 @@ export default function Dashboard() {
               size="sm"
               variant={period === "custom" ? "selected" : "notSelected"}
               onClick={() => setPeriod("custom")}
+              className="rounded-full"
             >
               {t("custom")}
             </Button>
