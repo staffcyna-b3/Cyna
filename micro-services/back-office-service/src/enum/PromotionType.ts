@@ -1,4 +1,5 @@
 export enum PromotionType {
     SERVICE = 'service',
-    PRODUCT = 'product'
+    PRODUCT = 'product',
+    CART = 'cart',
 }

@@ -42,7 +42,7 @@ const navItems = [
 
 function SidebarFooterContent() {
     const { state } = useSidebar();
-    const { logout } = useAuth();
+    const { logout, user, isLoading } = useAuth();
     const navigate = useNavigate();
     const isCollapsed = state === "collapsed";
 
@@ -70,20 +70,27 @@ function SidebarFooterContent() {
         );
     }
 
+    const showUserInfo = !isLoading && user;
+
     return (
-        <div className="flex items-center justify-center gap-2 bg-primary rounded-full p-1.5 mx-2 mb-2">
-            <button
-                onClick={() => navigate("/settings")}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-primary-foreground hover:bg-white/10 transition-colors"
-            >
-                <Settings size={18} />
-            </button>
-            <button
-                onClick={handleLogout}
-                className="flex h-8 w-8 items-center justify-center rounded-full text-primary-foreground hover:bg-white/10 transition-colors"
-            >
-                <LogOut size={18} />
-            </button>
+        <div className="flex flex-col gap-1.5 mx-2 mb-2">
+            {showUserInfo && (
+                <NavUser user={user} />
+            )}
+            <div className="flex items-center justify-center gap-2 bg-primary rounded-full p-1.5">
+                <button
+                    onClick={() => navigate("/settings")}
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-primary-foreground hover:bg-white/10 transition-colors"
+                >
+                    <Settings size={18} />
+                </button>
+                <button
+                    onClick={handleLogout}
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-primary-foreground hover:bg-white/10 transition-colors"
+                >
+                    <LogOut size={18} />
+                </button>
+            </div>
         </div>
     );
 }

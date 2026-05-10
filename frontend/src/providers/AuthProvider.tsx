@@ -92,7 +92,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         if (data.requires2FA) {
           sessionStorage.setItem('pending_2fa_session_id', data.sessionId);
-          sessionStorage.setItem('pending_2fa_remember_me', rememberMe.toString());
         } else {
           if (data.accessToken) {
             localStorage.setItem('accessToken', data.accessToken);
@@ -120,7 +119,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     async (sessionId: string, code: string) => {
       setError(null);
       try {
-        const rememberMe = sessionStorage.getItem('pending_2fa_remember_me') === 'true';
         const response = await fetch('/api/auth/verify-2fa', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -128,7 +126,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           body: JSON.stringify({
             session_id: sessionId,
             code,
-            remember_me: rememberMe,
           }),
         });
 
@@ -161,7 +158,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setAccessToken(data?.data?.accessToken ?? null);
 
         sessionStorage.removeItem('pending_2fa_session_id');
-        sessionStorage.removeItem('pending_2fa_remember_me');
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Erreur vérification';
         setError(message);

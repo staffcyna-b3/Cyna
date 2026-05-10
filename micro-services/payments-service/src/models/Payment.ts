@@ -21,13 +21,14 @@ class Payment extends Model<PaymentAttributes, PaymentCreationAttributes> implem
 Payment.init(
   {
     id: {
-      type: DataTypes.CHAR(36),
+      type: DataTypes.UUID,
       defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
     },
     user_id: {
-      type: DataTypes.CHAR(36),
+      type: DataTypes.UUID,
       allowNull: false,
+      references: { model: 'users', key: 'id' },
     },
     total_amount: {
       type: DataTypes.DECIMAL(10, 2),

@@ -18,6 +18,10 @@ export class ProductController {
         try {
             const filters = req.query as unknown as ProductFiltersDto;
 
+            if (filters.is_service !== undefined) {
+                filters.is_service = (filters.is_service as unknown as string) === 'true';
+            }
+
             const products = await this.productService.list(filters);
 
             return res.status(200).json(products);

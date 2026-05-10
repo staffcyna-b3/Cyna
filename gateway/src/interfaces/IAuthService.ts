@@ -30,7 +30,7 @@ export interface IAuthService {
   requestPasswordReset(email: string): Promise<{ message: string }>;
   validateResetToken(token: string): Promise<{ valid: boolean }>;
   resetPassword(token: string, newPassword: string): Promise<{ message: string }>;
-  logout(token: string): Promise<void>;
+  logout(rememberMeToken?: string, refreshToken?: string): Promise<void>;
   verifyRememberToken(token: string): Promise<AuthenticatedUserResult>;
   generateTokensForUser(userId: string): Promise<{ accessToken: string; refreshToken: string; user: { id: string; email: string } }>;
   refresh(refreshToken: string): Promise<{ accessToken: string }>;

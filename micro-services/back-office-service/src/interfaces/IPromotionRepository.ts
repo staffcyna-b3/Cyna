@@ -1,5 +1,4 @@
 import LignePromotion from '../models/LignePromotion';
-import Product from '../models/Product';
 import Promotion, { PromotionCreationAttributes } from '../models/Promotion';
 
 export interface IPromotionRepository {
@@ -14,5 +13,4 @@ export interface IPromotionRepository {
     findExistingProductLinks(promotionId: string, productIds: string[]): Promise<LignePromotion[]>;
     addProductLinks(promotionId: string, productIds: string[]): Promise<void>;
     removeProductLink(promotionId: string, productId: string): Promise<void>;
-    findProductsByIds(productIds: string[]): Promise<Product[]>;
 }

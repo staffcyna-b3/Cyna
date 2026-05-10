@@ -53,7 +53,7 @@ export const ConfirmEmail: React.FC = () => {
       {/* Section droite: Message */}
       <div className="w-full lg:w-1/2 bg-white flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="lg:hidden mb-8">
-          <Typography variant="h1" className="text-4xl font-bold text-gray-900">
+          <Typography variant="h1" className="text-9xl font-bold text-gray-900">
             {t('CYNA')}
           </Typography>
         </div>

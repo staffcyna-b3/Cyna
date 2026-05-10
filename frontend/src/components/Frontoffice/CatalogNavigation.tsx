@@ -10,6 +10,7 @@ const CatalogNavigation = ({
     categories,
     activeCategory,
     onCategoryClick,
+    className,
 }: CatalogNavigationProps): JSX.Element => {
     const navigate = useNavigate();
     const { t } = useTranslation();
@@ -30,9 +31,9 @@ const CatalogNavigation = ({
     return (
         <nav
             aria-label="Product categories"
-            className="fixed bottom-5 left-1/2 z-40 w-auto -translate-x-1/2 transform"
+            className={className ?? "fixed bottom-5 left-1/2 z-40 w-auto -translate-x-1/2 transform"}
         >
-            <div className="relative mx-auto flex w-full max-w-4xl items-center justify-between gap-6 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[rgba(255,255,255,0.03)] px-4 py-3 backdrop-blur-xs">
+            <div className="relative mx-auto flex w-full max-w-4xl items-center justify-between gap-6 rounded-2xl border border-[rgba(255,255,255,0.06)] bg-[#0b0925a6] px-4 py-3 backdrop-blur-xs">
                 {[
                     {
                         id: 'home',
@@ -45,7 +46,7 @@ const CatalogNavigation = ({
                                     setOpenSection(null);
                                     onCategoryClick(null);
                                 }}
-                                className={`${headerClass} text-[#9aa0c7]`}
+                                className={`${headerClass} text-white`}
                             >
                                 {t('home')}
                             </button>
@@ -76,7 +77,7 @@ const CatalogNavigation = ({
                                     onClick={() => {
                                         toggleSection(section.keyName as CatalogSection);
                                     }}
-                                    className={`${headerClass} ${section.isActive || openSection === (section.keyName as CatalogSection) ? 'text-[#7b61ff]' : 'text-[#9aa0c7]'}`}
+                                    className={`${headerClass} ${section.isActive || openSection === (section.keyName as CatalogSection) ? 'text-[#7b61ff]' : 'text-white'}`}
                                 >
                                     {section.header}
                                 </button>

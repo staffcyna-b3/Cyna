@@ -4,6 +4,7 @@ export interface CartItemResponse {
   name: string;
   quantity: number;
   unitPrice: number;
+  discountedUnitPrice?: number;
   subtotal: number;
   isService: boolean;
   period?: number;

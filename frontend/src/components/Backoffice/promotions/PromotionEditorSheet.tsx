@@ -34,6 +34,7 @@ export function PromotionEditorSheet({
     productSelectionLabel,
     productTypeServiceLabel,
     productTypePhysicalLabel,
+    productTypeCartLabel,
     noProductsLabel,
     loadingLabel,
     code,
@@ -46,6 +47,7 @@ export function PromotionEditorSheet({
     loadingProducts,
     saving,
     deleting,
+    saveError,
     onOpenChange,
     onCodeChange,
     onDiscountTypeChange,
@@ -98,6 +100,7 @@ export function PromotionEditorSheet({
                                     <SelectContent>
                                         <SelectItem value="service">{productTypeServiceLabel}</SelectItem>
                                         <SelectItem value="product">{productTypePhysicalLabel}</SelectItem>
+                                        <SelectItem value="cart">{productTypeCartLabel}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
@@ -126,40 +129,48 @@ export function PromotionEditorSheet({
                             </div>
                         </div>
 
-                        <div>
-                            <Label className="mb-2 block text-sm text-gray-500">{productSelectionLabel}</Label>
-                            <div className="rounded-md border border-gray-200">
-                                {loadingProducts ? (
-                                    <p className="px-3 py-4 text-sm text-gray-500">{loadingLabel}</p>
-                                ) : availableProducts.length === 0 ? (
-                                    <p className="px-3 py-4 text-sm text-gray-500">{noProductsLabel}</p>
-                                ) : (
-                                    <div className="max-h-80 overflow-auto divide-y divide-gray-100">
-                                        {availableProducts.map((product) => {
-                                            const checked = selectedProductIds.includes(product.id);
-                                            return (
-                                                <label
-                                                    key={product.id}
-                                                    className="flex items-center justify-between gap-3 px-3 py-2.5 hover:bg-gray-50"
-                                                >
-                                                    <div className="flex items-center gap-2">
-                                                        <Checkbox
-                                                            checked={checked}
-                                                            onCheckedChange={(next) => onToggleProduct(product.id, Boolean(next))}
-                                                            disabled={disabled}
-                                                        />
-                                                        <span className="text-sm text-gray-800">{product.name}</span>
-                                                    </div>
-                                                    <span className="text-xs text-gray-500">{Number(product.price)} EUR</span>
-                                                </label>
-                                            );
-                                        })}
-                                    </div>
-                                )}
+                        {discountType !== 'cart' && (
+                            <div>
+                                <Label className="mb-2 block text-sm text-gray-500">{productSelectionLabel}</Label>
+                                <div className="rounded-md border border-gray-200">
+                                    {loadingProducts ? (
+                                        <p className="px-3 py-4 text-sm text-gray-500">{loadingLabel}</p>
+                                    ) : availableProducts.length === 0 ? (
+                                        <p className="px-3 py-4 text-sm text-gray-500">{noProductsLabel}</p>
+                                    ) : (
+                                        <div className="max-h-80 overflow-auto divide-y divide-gray-100">
+                                            {availableProducts.map((product) => {
+                                                const checked = selectedProductIds.includes(product.id);
+                                                return (
+                                                    <label
+                                                        key={product.id}
+                                                        className="flex items-center justify-between gap-3 px-3 py-2.5 hover:bg-gray-50"
+                                                    >
+                                                        <div className="flex items-center gap-2">
+                                                            <Checkbox
+                                                                checked={checked}
+                                                                onCheckedChange={(next) => onToggleProduct(product.id, Boolean(next))}
+                                                                disabled={disabled}
+                                                            />
+                                                            <span className="text-sm text-gray-800">{product.name}</span>
+                                                        </div>
+                                                        <span className="text-xs text-gray-500">{Number(product.price)} EUR</span>
+                                                    </label>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
+                        )}
                     </div>
                 </div>
+
+                {saveError && (
+                    <div className="px-6 pb-2">
+                        <p className="text-sm text-red-600">{saveError}</p>
+                    </div>
+                )}
 
                 <SheetFooter className="border-t border-gray-200 px-6 py-4 sm:flex-row sm:justify-between">
                     <Button type="button" variant="outline" onClick={() => onOpenChange(false)} disabled={disabled}>

@@ -240,13 +240,17 @@ export class AuthController {
 
   async logout(req: Request, res: Response) {
     try {
-      const token = req.cookies.remember_me_token;
+      const rememberToken = req.cookies.remember_me_token;
+      const refreshToken = req.cookies.refreshToken;
 
-      if (token) {
-        await this.authService.logout(token);
-      }
+      await this.authService.logout(rememberToken, refreshToken);
 
       res.clearCookie('remember_me_token');
+      res.clearCookie('refreshToken', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+      });
       res.status(200).json({ message: 'Déconnecté' });
     } catch (error) {
       Logger.error('Logout error:', error);

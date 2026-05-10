@@ -1,6 +1,17 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import {
@@ -28,6 +39,7 @@ export default function Products() {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const state = useProductsPageState();
+    const [confirmDelete, setConfirmDelete] = useState(false);
 
     const categoryQuery = useMemo(() => ({}), []);
 
@@ -54,7 +66,12 @@ export default function Products() {
         [items, state.selectedProductId],
     );
 
-    const columns = useMemo(() => buildProductColumns(t, state.openProductEditor), [t, state.openProductEditor]);
+    const filteredItems = useMemo(() => {
+        if (state.type === 'all') return items;
+        return items.filter((item) => item.is_service === (state.type === 'service'));
+    }, [items, state.type]);
+
+    const columns = useMemo(() => buildProductColumns(t), [t]);
 
     const editor = useProductEditor({
         product: selectedProduct,
@@ -62,8 +79,19 @@ export default function Products() {
         onDeleted: async () => {
             await refresh();
             state.closeProductEditor();
+            toast.success(t('backoffice.productDeleted'));
         },
     });
+
+    async function handleDelete() {
+        try {
+            await editor.remove();
+        } catch {
+            toast.error(t('errorOccurred'));
+        } finally {
+            setConfirmDelete(false);
+        }
+    }
 
     return (
         <>
@@ -173,7 +201,7 @@ export default function Products() {
                 {loading ? (
                     <div className="rounded-md border p-6 text-sm text-muted-foreground">{t('loading')}</div>
                 ) : (
-                    <DataTable data={items} columns={columns} />
+                    <DataTable data={filteredItems} columns={columns} onRowClick={(product) => state.openProductEditor(product.id)} />
                 )}
                 {!loading && productsErrorMessage ? (
                     <p className="text-sm text-destructive">{productsErrorMessage}</p>
@@ -220,8 +248,23 @@ export default function Products() {
                 onDescriptionChange={editor.setDescription}
                 onImageFileChange={editor.changeImage}
                 onSave={editor.save}
-                onDelete={editor.remove}
+                onDelete={() => setConfirmDelete(true)}
             />
+
+            <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>{t('cart.remove')}</AlertDialogTitle>
+                        <AlertDialogDescription>{t('admin.confirmRefundDescription')}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel disabled={editor.deleting}>{t('cancel')}</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => void handleDelete()} disabled={editor.deleting}>
+                            {editor.deleting ? t('loading') : t('admin.confirm')}
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 }

@@ -4,6 +4,8 @@ import { OrderStatus } from '../../enum/OrderStatus';
 import { HttpError } from '../../common/httpError';
 import { Logger } from '../../common/logger';
 import { IOrderRepository } from '../../interfaces/OrderRepository';
+import { IShippingService } from '../../interfaces/IShippingService';
+import { IPromoService } from '../../interfaces/IPromoService';
 
 const makeRepositoryMock = () => {
   const repository = {
@@ -23,8 +25,16 @@ const makeRepositoryMock = () => {
   };
 };
 
+const makeShippingMock = () =>
+  ({ calculateFee: vi.fn().mockReturnValue(0) }) as unknown as IShippingService;
+
+const makePromoMock = () =>
+  ({ validate: vi.fn(), validateForCart: vi.fn() }) as unknown as IPromoService;
+
 describe('OrderService', () => {
   let repository: ReturnType<typeof makeRepositoryMock>;
+  let shippingService: IShippingService;
+  let promoService: IPromoService;
   let service: OrderService;
 
   const billingAddress = {
@@ -68,7 +78,9 @@ describe('OrderService', () => {
 
   beforeEach(() => {
     repository = makeRepositoryMock();
-    service = new OrderService(repository);
+    shippingService = makeShippingMock();
+    promoService = makePromoMock();
+    service = new OrderService(repository, shippingService, promoService);
     vi.spyOn(Logger, 'info').mockImplementation(() => undefined);
     vi.spyOn(Logger, 'warn').mockImplementation(() => undefined);
     vi.spyOn(Logger, 'error').mockImplementation(() => undefined);

@@ -64,7 +64,7 @@ User.init(
       allowNull: false,
     },
     refresh_token: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     email_verified: {

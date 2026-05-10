@@ -112,14 +112,4 @@ export class PromotionRepository implements IPromotionRepository {
         });
     }
 
-    async findProductsByIds(productIds: string[]) {
-        return Product.findAll({
-            where: {
-                id: {
-                    [Op.in]: productIds,
-                },
-            },
-            attributes: ['id', 'is_service'],
-        });
-    }
 }

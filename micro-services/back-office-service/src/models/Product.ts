@@ -13,11 +13,12 @@ interface ProductAttributes {
   is_service: boolean;
   duration?: number | null;
   priority: number;
+  slug: string;
   created_at: Date;
   updated_at: Date;
 }
 
-export interface ProductCreationAttributes extends Optional<ProductAttributes, 'id' | 'created_at' | 'updated_at' | 'stock' | 'status' | 'is_service' | 'priority' | 'description' | 'duration'> {}
+export interface ProductCreationAttributes extends Optional<ProductAttributes, 'id' | 'created_at' | 'updated_at' | 'stock' | 'status' | 'is_service' | 'priority' | 'description' | 'duration' | 'slug'> {}
 
 class Product extends Model<ProductAttributes, ProductCreationAttributes> implements ProductAttributes {
   declare id: string;
@@ -30,6 +31,7 @@ class Product extends Model<ProductAttributes, ProductCreationAttributes> implem
   declare is_service: boolean;
   declare duration?: number | null;
   declare priority: number;
+  declare slug: string;
   declare readonly created_at: Date;
   declare readonly updated_at: Date;
 }
@@ -76,6 +78,11 @@ Product.init(
     priority: {
       type: DataTypes.INTEGER,
       defaultValue: 0,
+    },
+    slug: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
+      unique: true,
     },
     created_at: {
       type: DataTypes.DATE,

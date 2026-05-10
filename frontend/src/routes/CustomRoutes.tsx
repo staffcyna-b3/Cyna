@@ -8,6 +8,7 @@ import Dashboard from "@/pages/backoffice/Dashboard"
 import { ResetPassword } from "@/pages/auth/ResetPassword"
 import { RequestReset } from "@/pages/auth/RequestReset"
 import { Verify2FA } from "@/pages/auth/Verify2FA"
+import { UnauthorizedPage } from "@/pages/auth/UnauthorizedPage"
 import { UserRole } from "@/types/enums/UserRole.enum"
 import BackOfficeLayout from "@/layouts/BackOfficeLayout"
 import Users from "@/pages/backoffice/Users"
@@ -44,6 +45,7 @@ export default function CustomRoutes() {
       <Route path="/request-reset" element={<RequestReset />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/verify-2fa" element={<Verify2FA />} />
+      <Route path="/unauthorized" element={<UnauthorizedPage />} />
 
       {/* Backoffice routes */}
       <Route element={<BackOfficeLayout />}>
@@ -127,7 +129,7 @@ export default function CustomRoutes() {
         <Route element={<CatalogLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/catalog" element={<CatalogList />} />
-          <Route path="/catalog/:id" element={<CatalogDetail />} />
+          <Route path="/catalog/:slug" element={<CatalogDetail />} />
         </Route>
         <Route path="/cart" element={<Cart />} />
         <Route path="/contact" element={<Contact />} />
@@ -155,9 +157,30 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
-        <Route path="/checkout/success" element={<CheckoutSuccess />} />
-        <Route path="/checkout/cancel" element={<CheckoutCancel />} />
-        <Route path="/checkout/confirmation" element={<CheckoutConfirmation />} />
+        <Route
+          path="/checkout/success"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <CheckoutSuccess />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout/cancel"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <CheckoutCancel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout/confirmation"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL, UserRole.USER]}>
+              <CheckoutConfirmation />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/checkout/payment"
           element={

@@ -6,7 +6,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { StripePaymentForm } from '@/components/forms/StripePaymentForm';
 import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
+import { Button } from '@/components/ui/button';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
+import { CartService } from '@/services/CartService';
 
 const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
@@ -18,15 +20,52 @@ export const Checkout: React.FC = () => {
   const location = useLocation();
 
   const locationState = location.state as LocationState ?? {};
-  const cartItems = locationState.cartItems ?? [];
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const cartItems = useMemo(() => locationState.cartItems ?? [], []);
   const billingAddress = locationState.billingAddress ?? null;
   const cartId = locationState.cartId ?? null;
   const billingAddressId = locationState.billingAddressId ?? null;
   const shippingAddressId = locationState.shippingAddressId ?? null;
-  const deliveryFeeCents = locationState.deliveryFeeCents ?? 0;
+  const shippingFeeCents = locationState.deliveryFeeCents ?? Math.round((locationState.shippingFee ?? 0) * 100);
 
-  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isService), [cartItems]);
-  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isService), [cartItems]);
+  const [promoInput, setPromoInput] = useState('');
+  const [promoCode, setPromoCode] = useState<string | undefined>(undefined);
+  const [discountCents, setDiscountCents] = useState(0);
+  const [discountPercent, setDiscountPercent] = useState(0);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoLoading, setPromoLoading] = useState(false);
+
+  const handleApplyPromo = async () => {
+    if (!promoInput.trim()) return;
+    setPromoError(null);
+    setPromoLoading(true);
+    try {
+      const result = await CartService.getInstance().applyPromo(promoInput.trim());
+      const cents = Math.round(result.discountAmount * 100);
+      setPromoCode(result.promoCode);
+      setDiscountCents(cents);
+      setDiscountPercent(subtotalCents > 0 ? Math.round((cents / subtotalCents) * 100) : 0);
+      resetIntent();
+    } catch (err) {
+      setPromoError(err instanceof Error ? err.message : t('promoError'));
+      setPromoCode(undefined);
+      setDiscountCents(0);
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const handleRemovePromo = () => {
+    setPromoCode(undefined);
+    setDiscountCents(0);
+    setDiscountPercent(0);
+    setPromoInput('');
+    setPromoError(null);
+    resetIntent();
+  };
+
+  const subscriptionItems = useMemo(() => cartItems.filter((i) => i.isService || i.isRecurring), [cartItems]);
+  const oneTimeItems = useMemo(() => cartItems.filter((i) => !i.isService && !i.isRecurring), [cartItems]);
   const hasSubscription = subscriptionItems.length > 0;
 
   const subtotalCents = useMemo(
@@ -35,8 +74,8 @@ export const Checkout: React.FC = () => {
   );
 
   const totalCents = useMemo(
-    () => subtotalCents + deliveryFeeCents,
-    [subtotalCents, deliveryFeeCents],
+    () => subtotalCents + shippingFeeCents,
+    [subtotalCents, shippingFeeCents],
   );
 
   const recurringCents = useMemo(
@@ -45,11 +84,24 @@ export const Checkout: React.FC = () => {
   );
 
   const oneTimeCents = useMemo(
-    () => oneTimeItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0) + deliveryFeeCents,
-    [oneTimeItems, deliveryFeeCents],
+    () => oneTimeItems.reduce((sum, item) => sum + item.unitPriceCents * item.quantity, 0),
+    [oneTimeItems],
+  );
+
+  const effectiveAmountCents = useMemo(
+    () => Math.max(0, totalCents - discountCents),
+    [totalCents, discountCents],
   );
 
   const hasCreatedIntent = useRef(false);
+  const [intentVersion, setIntentVersion] = useState(0);
+
+  const resetIntent = () => {
+    setClientSecret(null);
+    setPaymentIntentId(null);
+    hasCreatedIntent.current = false;
+    setIntentVersion((v) => v + 1);
+  };
 
   const [isLoadingIntent, setIsLoadingIntent] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -57,7 +109,7 @@ export const Checkout: React.FC = () => {
   const [paymentIntentId, setPaymentIntentId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!isConfigured || !user?.id || !accessToken || totalCents <= 0) return;
+    if (!isConfigured || !user?.id || !accessToken || effectiveAmountCents <= 0) return;
     if (hasCreatedIntent.current) return;
     hasCreatedIntent.current = true;
 
@@ -85,7 +137,7 @@ export const Checkout: React.FC = () => {
                 durationMonths: i.durationMonths ?? 1,
                 quantity: i.quantity,
               })),
-              oneTimeAmountCents: oneTimeCents,
+              oneTimeAmountCents: Math.max(0, oneTimeCents + shippingFeeCents - discountCents),
               oneTimeDescription: oneTimeItems.map((i) => i.name).join(', '),
               userEmail: user.email,
             }),
@@ -99,7 +151,7 @@ export const Checkout: React.FC = () => {
             },
             credentials: 'include',
             body: JSON.stringify({
-              amount: totalCents,
+              amount: effectiveAmountCents,
               currency: 'eur',
               description: cartItems.map((i) => i.name).join(', '),
               userId: user.id,
@@ -123,7 +175,8 @@ export const Checkout: React.FC = () => {
     };
 
     createIntent();
-  }, [isConfigured, user?.id, accessToken, totalCents]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConfigured, user?.id, accessToken, effectiveAmountCents, intentVersion]);
 
   // console.log('Checkout state:', { clientSecret, paymentIntentId, stripePromise });
 
@@ -190,12 +243,16 @@ export const Checkout: React.FC = () => {
                 options={{ clientSecret, appearance: { theme: 'stripe' } }}
               >
                 <StripePaymentForm
-                  amountCents={totalCents}
+                  amountCents={effectiveAmountCents}
                   description={cartItems.map((i) => i.name).join(', ')}
                   paymentIntentId={paymentIntentId}
                   cartId={cartId}
                   billingAddressId={billingAddressId}
                   shippingAddressId={shippingAddressId}
+                  promoCode={promoCode}
+                  discountCents={discountCents}
+                  shippingFeeCents={shippingFeeCents}
+                  cartItems={cartItems}
                 />
               </Elements>
             )}
@@ -229,9 +286,16 @@ export const Checkout: React.FC = () => {
                   )}
                 </div>
 
-                <p className="text-sm font-medium text-gray-900 whitespace-nowrap">
-                  {formatEuro(item.unitPriceCents * item.quantity)}
-                </p>
+                <div className="flex flex-col items-end whitespace-nowrap">
+                  {item.originalUnitPriceCents !== undefined && (
+                    <span className="text-xs line-through text-gray-400">
+                      {formatEuro(item.originalUnitPriceCents * item.quantity)}
+                    </span>
+                  )}
+                  <p className={`text-sm font-medium ${item.originalUnitPriceCents !== undefined ? 'text-red-600' : 'text-gray-900'}`}>
+                    {formatEuro(item.unitPriceCents * item.quantity)}
+                  </p>
+                </div>
               </div>
             ))}
           </div>
@@ -239,21 +303,48 @@ export const Checkout: React.FC = () => {
           {cartItems.length > 0 && (
             <>
               <div className="my-6 border-t border-gray-200" />
-              <div className="space-y-1">
-                <div className="flex justify-between">
-                  <span className="text-sm text-gray-600">{t('subtotal')}</span>
-                  <span className="text-sm text-gray-600">{formatEuro(subtotalCents)}</span>
-                </div>
-                {deliveryFeeCents > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-sm text-gray-600">{t('shipping')}</span>
-                    <span className="text-sm text-gray-600">{formatEuro(deliveryFeeCents)}</span>
+
+              {/* Promo code */}
+              <div className="mb-4">
+                {promoCode ? (
+                  <div className="flex items-center justify-between rounded-lg border border-green-300 bg-green-50 px-3 py-2 text-sm text-green-700">
+                    <span>Code <strong>{promoCode}</strong> appliqué</span>
+                    <button onClick={handleRemovePromo} className="ml-3 text-green-600 underline text-xs">{t('remove')}</button>
+                  </div>
+                ) : (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={promoInput}
+                      onChange={(e) => setPromoInput(e.target.value.toUpperCase())}
+                      placeholder={t('promoPlaceholder')}
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#372CCA]"
+                    />
+                    <Button onClick={handleApplyPromo} disabled={promoLoading} variant="outline" size="sm">
+                      {promoLoading ? '...' : t('apply')}
+                    </Button>
                   </div>
                 )}
-                <div className="flex justify-between pt-1 border-t border-gray-100">
-                  <span className="text-sm font-bold text-gray-900">{t('Total')}</span>
-                  <span className="text-sm font-bold text-gray-900">{formatEuro(totalCents)}</span>
+                {promoError && <p className="mt-1 text-xs text-red-500">{promoError}</p>}
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex justify-between">
+                  <span className="text-xs text-gray-500">{t('subtotal')}</span>
+                  <span className="text-xs text-gray-500">{formatEuro(subtotalCents)}</span>
                 </div>
+                {shippingFeeCents > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-xs text-gray-500">{t('checkoutShippingFees')}</span>
+                    <span className="text-xs text-gray-500">{formatEuro(shippingFeeCents)}</span>
+                  </div>
+                )}
+                {discountCents > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span className="text-xs">{t('discount')} ({promoCode})</span>
+                    <span className="text-xs">-{discountPercent}%</span>
+                  </div>
+                )}
                 {recurringCents > 0 && (
                   <div className="flex justify-between">
                     <span className="text-xs text-gray-500">{t('Recurring')}</span>
@@ -262,6 +353,12 @@ export const Checkout: React.FC = () => {
                     </span>
                   </div>
                 )}
+                <div className="flex justify-between pt-1 border-t border-gray-200">
+                  <span className="text-sm font-bold text-gray-900">{t('Total')}</span>
+                  <span className="text-sm font-bold text-gray-900">
+                    {formatEuro(effectiveAmountCents)}
+                  </span>
+                </div>
               </div>
             </>
           )}

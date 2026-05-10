@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next"
 import { formatCurrency } from "@/utils/currencyFormatter"
 import placeholder from "@/assets/pictures/placeholder.svg"
 import byteaToImage from "@/utils/byteaToImage"
+import CatalogNavigation from '@/components/Frontoffice/CatalogNavigation'
 
 const SLIDE_PALETTE = [
     { icon: ShieldCheck, accent: "#372CCA" },
@@ -30,6 +31,8 @@ const SLIDE_PALETTE = [
 export default function HomePage() {
     const [api, setApi] = useState<CarouselApi>()
     const [current, setCurrent] = useState(0)
+    const [isAtTop, setIsAtTop] = useState(true)
+    const [homeActiveCategory, setHomeActiveCategory] = useState<string | null>(null)
     const { data: categories, loading, listCategories } = GetCategories()
     const { t } = useTranslation()
     const service = useMemo(() => CatalogService.getInstance(), [])
@@ -45,6 +48,12 @@ export default function HomePage() {
             setTopProducts(shuffled.slice(0, 3))
         })
     }, [service])
+
+    useEffect(() => {
+        const handleScroll = () => setIsAtTop(window.scrollY === 0)
+        window.addEventListener('scroll', handleScroll, { passive: true })
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
 
     useEffect(() => {
         if (!api) return
@@ -126,7 +135,26 @@ export default function HomePage() {
                 </Carousel>
             </section>
 
-            <div className="h-18 w-full bg-white"></div>
+            <div
+                className="relative h-20 w-full bg-white"
+                style={isAtTop ? { transform: 'translate(0,0)' } : undefined}
+            >
+                {isAtTop && (
+                    <CatalogNavigation
+                        categories={categories ?? []}
+                        activeCategory={homeActiveCategory}
+                        onCategoryClick={setHomeActiveCategory}
+                    />
+                )}
+            </div>
+            {!isAtTop && (
+                <CatalogNavigation
+                    categories={categories ?? []}
+                    activeCategory={homeActiveCategory}
+                    onCategoryClick={setHomeActiveCategory}
+                    className="fixed bottom-5 left-1/2 z-40 w-auto -translate-x-1/2 transform animate-[navSlideIn_0.50s_ease-out]"
+                />
+            )}
 
             <div style={{ background: 'radial-gradient(circle, #1A164B 0%, #0E0B37 37%, #04021D 63%, #000005 100%)' }}>
 
@@ -135,7 +163,7 @@ export default function HomePage() {
                     <div
                         className="pointer-events-none absolute inset-x-0 top-0 h-96"
                     />
-                    <div className="relative mx-auto w-[65%]">
+                    <div className="relative mx-auto w-full max-w-5xl px-4 sm:px-8 lg:px-16">
                         <Typography variant='h2' className="mb-8 text-2xl font-bold text-white">
                             {t('home.services')}
                         </Typography>
@@ -175,7 +203,7 @@ export default function HomePage() {
                 {/* Top products section */}
                 {topProducts.length > 0 && (
                     <section className="px-6 py-16 sm:px-12 lg:px-24">
-                        <div className="mx-auto w-[65%]">
+                        <div className="mx-auto max-w-5xl">
                             <Typography variant="h2" className="mb-8 text-2xl font-bold text-white">
                                 {t('home.topProducts')}
                             </Typography>
