@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -54,6 +55,7 @@ export function UserEditorSheet({
   onSave,
   onDelete,
 }: UserEditorSheetProps) {
+  const { t } = useTranslation();
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -64,12 +66,12 @@ export function UserEditorSheet({
 
         <div className="flex flex-col gap-4 overflow-y-auto p-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="user-fullname">Nom complet</Label>
+            <Label htmlFor="user-fullname">{t('fullName')}</Label>
             <Input id="user-fullname" value={fullName} readOnly disabled className="opacity-60" />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="user-email">Email</Label>
+            <Label htmlFor="user-email">{t('email')}</Label>
             <Input id="user-email" value={email} readOnly disabled className="opacity-60" />
           </div>
 
@@ -80,15 +82,15 @@ export function UserEditorSheet({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="user">User</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="commercial">Commercial</SelectItem>
+                <SelectItem value="user">{t('admin.roleUser')}</SelectItem>
+                <SelectItem value="admin">{t('admin.roleAdmin')}</SelectItem>
+                <SelectItem value="commercial">{t('admin.roleCommercial')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Date de création</Label>
+            <Label>{t('admin.createdAt')}</Label>
             <span className="text-sm text-muted-foreground">
               {new Date(createdAt).toLocaleString('fr-FR')}
             </span>

@@ -96,7 +96,7 @@ export default function Products() {
     return (
         <>
             <BackOfficePageHeader
-                title={t('products')}
+                title={t('products.label')}
                 rightSlot={
                     <BackOfficeStatusToggle
                         value={state.status}

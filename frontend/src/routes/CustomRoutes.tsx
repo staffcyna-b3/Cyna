@@ -65,7 +65,7 @@ export default function CustomRoutes() {
         <Route
           path="/products"
           element={
-            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
               <Products />
             </ProtectedRoute>
           }
@@ -73,7 +73,7 @@ export default function CustomRoutes() {
         <Route
           path="/categories"
           element={
-            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
               <Categories />
             </ProtectedRoute>
           }

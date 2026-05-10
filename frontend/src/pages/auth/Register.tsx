@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next"
 import { Typography } from '@/components/ui/typography';
 import { Link } from '@/components/ui/link';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 
 export const Register: React.FC = () => {
     const navigate = useNavigate();
@@ -102,77 +104,50 @@ export const Register: React.FC = () => {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        <div>
-                            <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
-                                {t("fullName")}
-                            </label>
+                        <Field>
                             <Input
-                                id="fullName"
                                 name="fullName"
                                 type="text"
                                 value={formData.fullName}
                                 onChange={handleChange}
                                 placeholder="John Doe"
-                                aria-invalid={!!errors.fullName}
                             />
-                            {errors.fullName && (
-                                <p className="text-red-500 text-xs mt-1">{errors.fullName}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                {t("email")}
-                            </label>
+                            <FieldError>{errors.fullName}</FieldError>
+                        </Field>
+                        <Field>
                             <Input
-                                id="email"
                                 name="email"
                                 type="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="user@example.com"
-                                aria-invalid={!!errors.email}
                             />
-                            {errors.email && (
-                                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                            )}
-                        </div>
-
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-                                {t("password")}
-                            </label>
+                            <FieldError>{errors.email}</FieldError>
+                        </Field>
+                        <Field>
+                            <FieldLabel>{t('password')}</FieldLabel>
+                            <FieldDescription>{t('PasswordRequirements')}</FieldDescription>
                             <Input
-                                id="password"
                                 name="password"
                                 type="password"
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                aria-invalid={!!errors.password}
                             />
-                            <Typography variant="body" className="text-xs text-gray-500 mt-2">
-                                {t('PasswordRequirements')}
-                            </Typography>
-                        </div>
+                            <FieldError>{errors.password}</FieldError>
+                        </Field>
 
-                        <div>
-                            <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
-                                {t("confirmPassword")}
-                            </label>
+                        <Field>
+                            <FieldLabel>{t('confirmPassword')}</FieldLabel>
                             <Input
-                                id="confirmPassword"
                                 name="confirmPassword"
                                 type="password"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                aria-invalid={!!errors.confirmPassword}
                             />
-                            {errors.confirmPassword && (
-                                <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>
-                            )}
-                        </div>
+                            <FieldError>{errors.confirmPassword}</FieldError>
+                        </Field>
                         <Button 
                             type="submit" 
                             disabled={isLoading}
@@ -182,12 +157,13 @@ export const Register: React.FC = () => {
                         </Button>
                     </form>
 
-                    <p className="text-center text-gray-600 text-sm mt-6">
-                        {t("alreadyHaveAccount")}{' '}
+                    <Typography variant="body" className="text-center text-gray-600 text-sm mt-6">
+                        {t("alreadyHaveAccount")}
                         <Link to="/login">
                             {t("login")}
                         </Link>
-                    </p>
+                    </Typography>
+                    
                 </div>
             </div>
         </div>

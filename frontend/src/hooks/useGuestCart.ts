@@ -98,6 +98,13 @@ export function useGuestCart() {
         ));
     }, [persist]);
 
+    const updatePeriod = useCallback(async (itemId: string, period: number) => {
+        const current = loadGuestCart();
+        persist(current.map(i =>
+            i.id === itemId ? { ...i, period, subtotal: i.unitPrice * i.quantity * period } : i
+        ));
+    }, [persist]);
+
     const removeFromCart = useCallback(async (itemId: string) => {
         persist(loadGuestCart().filter(i => i.id !== itemId));
         toast.success('Produit retiré');
@@ -118,6 +125,7 @@ export function useGuestCart() {
         fetchCart,
         addToCart,
         updateQuantity,
+        updatePeriod,
         removeFromCart,
         clearCart,
     };

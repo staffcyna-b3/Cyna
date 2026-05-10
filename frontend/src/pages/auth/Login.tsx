@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation, NavLink } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { ValidationErrors, validateLogin } from '../../utils/validation';
 import { LoginFormData } from '../../types/interfaces/auth/LoginFormData.interface';
@@ -8,13 +8,27 @@ import { useTranslation } from "react-i18next"
 import { Typography } from '@/components/ui/typography';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
+import { UserRole } from '../../types/enums/UserRole.enum';
+import { Field, FieldError } from '@/components/ui/field';
+import { Label } from '@/components/ui/label';
+import { Link } from '@/components/ui/link';
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const from = (location.state as { from?: { pathname: string } })?.from?.pathname ?? '/';
-    const { login } = useAuth();
+    const { login, user, isAuthenticated, isLoading } = useAuth();
     const { t } = useTranslation();
+
+    useEffect(() => {
+        if (!isLoading && isAuthenticated && user) {
+            if (user.role === UserRole.ADMIN || user.role === UserRole.COMMERCIAL) {
+                navigate('/dashboard', { replace: true });
+            } else {
+                navigate('/', { replace: true });
+            }
+        }
+    }, [isAuthenticated, isLoading, user, navigate]);
 
     const [formData, setFormData] = useState<LoginFormData>({
         email: '',
@@ -23,7 +37,7 @@ export const Login: React.FC = () => {
 
     const [rememberMe, setRememberMe] = useState(false);
     const [errors, setErrors] = useState<ValidationErrors>({});
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -52,7 +66,7 @@ export const Login: React.FC = () => {
             return;
         }
 
-        setIsLoading(true);
+        setIsSubmitting(true);
 
         try {
             await login(formData.email, formData.password, rememberMe);
@@ -68,7 +82,7 @@ export const Login: React.FC = () => {
             const message = error instanceof Error ? error.message : t('ErrorLoggingIn');
             setErrors({ submit: message });
         } finally {
-            setIsLoading(false);
+            setIsSubmitting(false);
         }
     };
 
@@ -97,10 +111,10 @@ export const Login: React.FC = () => {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        <div>
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        <Field>
+                            <Label htmlFor="email" >
                                 {t("email")}
-                            </label>
+                            </Label>
                             <Input
                                 id="email"
                                 name="email"
@@ -110,15 +124,16 @@ export const Login: React.FC = () => {
                                 placeholder="user@example.com"
                                 aria-invalid={!!errors.email}
                             />
-                            {errors.email && (
-                                <p className="text-red-500 text-xs mt-1">{errors.email}</p>
-                            )}
-                        </div>
 
-                        <div>
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                            {errors.email && (
+                                <FieldError>{errors.email}</FieldError>
+                            )}
+                        </Field>
+
+                        <Field>
+                            <Label htmlFor="password">
                                 {t("password")}
-                            </label>
+                            </Label>
                             <Input
                                 id="password"
                                 name="password"
@@ -129,36 +144,37 @@ export const Login: React.FC = () => {
                                 aria-invalid={!!errors.password}
                             />
                             {errors.password && (
-                                <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                                <FieldError>{errors.password}</FieldError>
                             )}
-                        </div>
+                        </Field>
 
-                        <div className="flex items-center gap-2">
+                        <Field orientation={'horizontal'}>
                             <Checkbox
                                 id="rememberMe"
                                 checked={rememberMe}
                                 onCheckedChange={(val) => setRememberMe(val === true)}
                             />
-                            <label htmlFor="rememberMe" className="text-sm text-gray-700 cursor-pointer">
+                            <Label htmlFor="rememberMe" className="text-sm text-gray-700 cursor-pointer">
                                 {t("rememberMe")}
-                            </label>
-                        </div>
+                            </Label>
+                        </Field>
 
-                        <Button 
-                            type="submit" 
-                            disabled={isLoading}
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
                             variant="cyna"
                         >
-                            {isLoading ? t('loggingIn') : t('login')}
+                            {isSubmitting ? t('loggingIn') : t('login')}
                         </Button>
                     </form>
 
-                    <a href="/request-reset" className="text-center text-gray-600 text-sm mt-6">
-                        {t("forgottenPassword")}{' '}
-                    </a>
-                    <a href="/register" className="text-center text-gray-600 text-sm mt-6">
-                        {t("noAccount", "Pas encore de compte ? S'inscrire")}
-                    </a>
+                    <div className='flex flex-col items-center gap-1 mt-2'>
+                        <div className='flex gap-1 items-center mb-2'>
+                            <Typography variant='body' className='text-sm'>{t("noAccount")}</Typography>
+                            <NavLink to='/register' className={'text-sm'}>{t("register")}</NavLink>
+                        </div>
+                        <NavLink to='/request-reset' className={'text-sm'}>{t("forgottenPassword")}</NavLink>
+                    </div>
                 </div>
             </div>
         </div>

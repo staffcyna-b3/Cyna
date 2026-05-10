@@ -177,7 +177,7 @@ export default function Dashboard() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL_CATEGORIES_VALUE}>{t("allCategories") || "Toutes les catégories"}</SelectItem>
+                <SelectItem value={ALL_CATEGORIES_VALUE}>{t("allCategories")}</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {cat}

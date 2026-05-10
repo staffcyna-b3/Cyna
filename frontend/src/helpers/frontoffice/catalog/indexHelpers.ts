@@ -12,7 +12,7 @@ export function getCatalogHeaderContent(
     const firstProduct = data?.rows?.[0];
     const category = firstProduct?.category;
     const name = category?.name?.trim() || t('allProducts');
-    const description = category?.description?.trim() || t('catalogBannerDefaultDescription');
+    const description = t(`categories.${category?.description?.trim() || t('catalogBannerDefaultDescription')}`);
 
     return {
         name,

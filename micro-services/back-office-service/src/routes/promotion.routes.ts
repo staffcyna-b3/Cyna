@@ -21,16 +21,17 @@ const productRepository = new ProductRepository();
 const promotionService: IPromotionService = new PromotionService(promotionRepository, productRepository);
 const promotionController = new PromotionController(promotionService);
 
-router.get('/promotions', (req, res) => promotionController.list(req, res));
-router.get('/promotions/:id', validatorSchema({ params: promotionIdParamSchema }), (req, res) => promotionController.getById(req, res));
+router.get('/', (req, res) => promotionController.list(req, res));
+router.get('/:id', validatorSchema({ params: promotionIdParamSchema }), (req, res) => promotionController.getById(req, res));
 
-router.post('/promotions', validatorSchema({ body: createPromotionSchema }), (req, res) => promotionController.create(req, res));
-router.put('/promotions/:id', validatorSchema({ params: promotionIdParamSchema, body: updatePromotionSchema }), (req, res) => promotionController.update(req, res));
-router.delete('/promotions/:id', validatorSchema({ params: promotionIdParamSchema }), (req, res) => promotionController.remove(req, res));
+router.post('/', validatorSchema({ body: createPromotionSchema }), (req, res) => promotionController.create(req, res));
+router.put('/:id', validatorSchema({ params: promotionIdParamSchema, body: updatePromotionSchema }), (req, res) => promotionController.update(req, res));
+router.delete('/:id', validatorSchema({ params: promotionIdParamSchema }), (req, res) => promotionController.remove(req, res));
 
-router.patch('/promotions/:id/active', validatorSchema({ params: promotionIdParamSchema, body: setActiveSchema }), (req, res) => promotionController.setActive(req, res));
-router.put('/promotions/:id/products', validatorSchema({ params: promotionIdParamSchema, body: promotionProductIdsSchema }), (req, res) => promotionController.replaceProducts(req, res));
-router.post('/promotions/:id/products', validatorSchema({ params: promotionIdParamSchema, body: promotionProductIdsSchema }), (req, res) => promotionController.addProducts(req, res));
-router.delete('/promotions/:id/products/:productId', validatorSchema({ params: { ...promotionIdParamSchema, ...productIdParamSchema } }), (req, res) => promotionController.removeProduct(req, res));
+router.patch('/:id/active', validatorSchema({ params: promotionIdParamSchema, body: setActiveSchema }), (req, res) => promotionController.setActive(req, res));
+router.put('/:id/products', validatorSchema({ params: promotionIdParamSchema, body: promotionProductIdsSchema }), (req, res) => promotionController.replaceProducts(req, res));
+router.post('/:id/products', validatorSchema({ params: promotionIdParamSchema, body: promotionProductIdsSchema }), (req, res) => promotionController.addProducts(req, res));
+router.delete('/:id/products/:productId', validatorSchema({ params: { ...promotionIdParamSchema, ...productIdParamSchema } }), (req, res) => promotionController.removeProduct(req, res));
 
 export default router;
+    

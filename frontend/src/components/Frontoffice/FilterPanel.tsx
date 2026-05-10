@@ -82,11 +82,10 @@ export default function FilterPanel({
                                 <SelectTrigger className="w-full bg-[#12101b] border-[#2a2a3d] text-[#b7bdd9]">
                                     <SelectValue />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="z-90">
                                     <SelectItem value="none">{t('defaultSort')}</SelectItem>
                                     <SelectItem value="price:asc">{t('priceAsc')}</SelectItem>
                                     <SelectItem value="price:desc">{t('priceDesc')}</SelectItem>
-                                    <SelectItem value="priority:desc">{t('priority')}</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
@@ -143,7 +142,7 @@ export default function FilterPanel({
                                                 : 'bg-[#12101b] text-[#9aa0c7] border-[#2a2a3d] hover:border-[#7b61ff]'
                                         }`}
                                     >
-                                        {t('products')}
+                                        {t('products.label')}
                                     </button>
                                     <button
                                         type="button"

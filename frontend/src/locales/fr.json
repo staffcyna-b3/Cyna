@@ -40,7 +40,12 @@
     "confirmApproveRefund": "Approuver ce remboursement ?",
     "confirmRejectRefund": "Rejeter cette demande ?",
     "refundRequestApproved": "Demande approuvée et remboursement créé",
-    "refundRequestRejected": "Demande rejetée"
+    "refundRequestRejected": "Demande rejetée",
+    "userId": "Identifiant utilisateur",
+    "createdAt": "Date de création",
+    "roleUser": "Utilisateur",
+    "roleAdmin": "Administrateur",
+    "roleCommercial": "Commercial"
   },
   "refundRequests": "Demandes de remboursement",
   "subscriptions": {
@@ -71,16 +76,72 @@
       "cancelled": "Résilié"
     }
   },
-  "orders": "Commandes",
+  "orders": {
+    "label": "Commandes",
+    "pageTitle": "Historique des commandes",
+    "myOrders": "Mes commandes",
+    "allYears": "Toutes les années",
+    "allMonths": "Tous les mois",
+    "noOrders": "Aucune commande trouvée.",
+    "downloadInvoice": "Télécharger la facture PDF",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "detailTitle": "Détail de la commande",
+    "billingAddress": "Adresse de facturation",
+    "paymentMethod": "Mode de paiement",
+    "paymentNotAvailable": "Non disponible",
+    "service": "Service",
+    "duration": "Durée",
+    "amount": "Montant",
+    "unknownProduct": "Produit",
+    "status": {
+      "PAID": "Payé",
+      "CONFIRMED": "Confirmé",
+      "PENDING": "En attente",
+      "CANCELLED": "Annulé",
+      "FAILED": "Échoué"
+    }
+  },
+  "account": {
+    "label": "Compte",
+    "myAccount": "Mon compte",
+    "pageTitle": "Mon compte",
+    "profileTitle": "Profil",
+    "tabProfile": "Profil",
+    "tabAddresses": "Adresses",
+    "tabPassword": "Mot de passe",
+    "addressesTitle": "Mes adresses",
+    "noAddresses": "Aucune adresse enregistrée.",
+    "defaultBadge": "Par défaut",
+    "addAddress": "Ajouter une adresse",
+    "billing": "Facturation",
+    "shipping": "Livraison",
+    "addressType": "Type d'adresse",
+    "addressLine2": "Complément d'adresse",
+    "addressLine2Placeholder": "Appartement, suite, etc.",
+    "setDefault": "Définir par défaut",
+    "editAddress": "Modifier",
+    "deleteAddress": "Supprimer",
+    "saveAddress": "Enregistrer",
+    "addressUpdated": "Adresse mise à jour",
+    "addressDeleted": "Adresse supprimée",
+    "addressSaved": "Adresse enregistrée",
+    "changePassword": "Changer le mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "passwordTitle": "Changer le mot de passe",
+    "passwordChanged": "Mot de passe modifié avec succès",
+    "profileUpdated": "Profil mis à jour",
+    "confirmDelete": "Voulez-vous vraiment supprimer cette adresse ?"
+  },
   "refunds": "Remboursements",
   "sessionExpired": "Session expirée, veuillez vous reconnecter",
   "transactions": "Transactions",
-  "account": "Compte",
   "active": "Actif",
   "address": "Adresse",
   "addToCart": "Ajouter au panier",
   "allProducts": "Tous les produits",
-  "alreadyHaveAccount": "Vous vous souvenez de votre mot de passe ?",
+  "alreadyHaveAccount": "Vous avez déjà un compte ? ",
+  "noAccount": "Pas encore de compte ? ",
   "apply": "Appliquer",
   "attemptsRemaining": "Tentatives restantes :",
   "averageBasket": "Panier moyen",
@@ -144,8 +205,8 @@
   "ErrorVerifying2FA": "Erreur de vérification 2FA",
   "filters": "Filtres",
   "firstName": "Prénom",
-  "for a total period of": "",
-  "forgottenPassword": "Mot de passe oublié ?",
+  "for a total period of": "pour une durée totale de",
+  "forgottenPassword": "Mot de passe oublié",
   "fullName": "Nom complet",
   "fullNameRequired": "Nom complet requis",
   "fullNameTooLong": "Nom complet trop long",
@@ -179,16 +240,16 @@
   "noCategory": "Aucune catégorie",
   "noProductFound": "Aucun produit trouvé",
   "noProducts": "Aucun produit trouvé",
-  "nProductsAvailable_one": "",
-  "nProductsAvailable_many": "",
-  "nProductsAvailable_other": "",
+  "nProductsAvailable_one": "{{count}} produit disponible",
+  "nProductsAvailable_many": "{{count}} produits disponibles",
+  "nProductsAvailable_other": "{{count}} produits disponibles",
   "oneYear": "1 an",
-  "onlyNLeft_one": "",
-  "onlyNLeft_many": "",
-  "onlyNLeft_other": "",
+  "onlyNLeft_one": "Plus que {{count}} en stock",
+  "onlyNLeft_many": "Plus que {{count}} en stock",
+  "onlyNLeft_other": "Plus que {{count}} en stock",
   "orderConfirmed": "Commande confirmée",
   "orderedItems": "Articles commandés",
-  "orderNumber": "Numéro de commande:",
+  "orderNumber": "Numéro de commande :",
   "password": "Mot de passe",
   "passwordMissingLowercase": "Mot de passe sans minuscule",
   "passwordMissingNumber": "Mot de passe sans chiffre",
@@ -201,8 +262,9 @@
   "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
   "passwordTooShort": "Mot de passe trop court",
   "Payment": "Paiement",
-  "per month": "",
+  "per month": "par mois",
   "perMonth": "Par mois",
+  "perMonthSuffix": "/ mois",
   "postcode": "Code postal",
   "promoError": "Code promo invalide ou non applicable",
   "promoPlaceholder": "Code promo",
@@ -214,7 +276,8 @@
   "priority": "Priorité",
   "proceed": "Continuer",
   "product": "Produit",
-  "products": "Produits",
+  "product.available": "Produit disponible",
+  "product.unavailable": "Produit indisponible",
   "Recurring": "Récurrent",
   "RedirectingToLogin": "Redirection vers la page de connexion",
   "register": "S'inscrire",
@@ -234,7 +297,7 @@
   "resettingPassword": "Réinitialisation du mot de passe en cours",
   "retry": "Réessayer",
   "salesByCategory": "Ventes par catégorie",
-  "SalesContract": "de vente.",
+  "SalesContract": "Contrat de vente",
   "sameAsBilling": "Même que facturation",
   "search": "Recherche",
   "searching": "Recherche...",
@@ -247,7 +310,7 @@
   "sendResetLink": "Envoyer le lien de réinitialisation",
   "service": "Service",
   "services": "Services",
-  "shipping": "Livraison:",
+  "shipping": "Livraison",
   "shippingAddress": "Adresse de livraison",
   "showAllStock": "Afficher tout le stock",
   "similarProducts": "Produits similaires",
@@ -267,55 +330,39 @@
   "unavailable": "Indisponible",
   "update": "Mettre à jour",
   "useAuthMustBeUsed": "useAuth doit être utilisé dans un AuthProvider",
-  "useCartMustBeUsed": "",
+  "useCartMustBeUsed": "useCart doit être utilisé dans un CartProvider",
   "useCatalogFetchMustBeUsed": "useCatalogFetch doit être utilisé dans CatalogProvider",
   "useLanguageMustBeUsed": "useLanguage doit être utilisé dans un LanguageProvider",
   "users": "Utilisateurs",
-  "usersPageContent": "Contenu de la page Utilisateurs",
+  "usersPageContent": "Utilisateurs",
   "validate": "Valider",
   "verificationCode": "Code de vérification",
   "verificationCodeSent": "Code de vérification envoyé à",
   "VerificationInProgress": "Vérification en cours",
   "verify2FA": "Vérification 2FA",
   "verifying2FA": "Vérification 2FA en cours",
-  "orders": {
-    "pageTitle": "Historique des commandes",
-    "myOrders": "Mes commandes",
-    "allYears": "Toutes les années",
-    "allMonths": "Tous les mois",
-    "noOrders": "Aucune commande trouvée.",
-    "downloadInvoice": "Télécharger la facture PDF",
-    "monthly": "Mensuel",
-    "yearly": "Annuel",
-    "detailTitle": "Détail de la commande",
-    "billingAddress": "Adresse de facturation",
-    "paymentMethod": "Mode de paiement",
-    "paymentNotAvailable": "Non disponible",
-    "service": "Service",
-    "duration": "Durée",
-    "amount": "Montant",
-    "unknownProduct": "Produit",
-    "status": {
-      "PAID": "Payé",
-      "CONFIRMED": "Confirmé",
-      "PENDING": "En attente",
-      "CANCELLED": "Annulé",
-      "FAILED": "Échoué"
-    }
-  },
   "viewMyOrders": "Voir mes commandes",
   "viewProducts": "Voir les produits",
   "welcome": "Bienvenue sur Cyna.",
   "wrongCodeFormat": "Format de code invalide, il doit contenir 6 chiffres",
   "yearly": "Par an",
-  "orders": "Commandes",
-  "transactions": "Transactions",
-  "categories": "Categories",
-  "discounts": "Reductions",
-  "backoffice.reference": "Reference",
-  "backoffice.stockQuantity": "Quantite en stock",
-  "backoffice.createNewPromotion": "Creer une nouvelle promotion",
-  "backoffice.searchByNameOrReference": "Rechercher par nom ou reference",
+  "categories": {
+    "label": "Catégories",
+    "soc": "Solutions de centre opérationnel de sécurité pour la surveillance et la gestion des menaces en temps réel.",
+    "edr": "Solutions de détection et réponse aux menaces sur les terminaux.",
+    "xdr": "Solutions étendues de détection et réponse couvrant l'ensemble de l'infrastructure.",
+    "siem": "Gestion centralisée des événements de sécurité et des informations.",
+    "security_appliances": "Appliances matérielles pour la sécurité réseau et la protection des données.",
+    "software_licenses": "Licences pour les outils de sécurité et de gestion.",
+    "training_and_certifications": "Formations en sécurité informatique et certifications professionnelles.",
+    "consulting_and_audit": "Services de consulting en sécurité et audit de conformité."
+  },
+  "allCategories": "Toutes les catégories",
+  "discounts": "Réductions",
+  "backoffice.reference": "Référence",
+  "backoffice.stockQuantity": "Quantité en stock",
+  "backoffice.createNewPromotion": "Créer une nouvelle promotion",
+  "backoffice.searchByNameOrReference": "Rechercher par nom ou référence",
   "backoffice.save": "Sauvegarder",
   "backoffice.description": "Description",
   "backoffice.image": "Image",
@@ -323,21 +370,21 @@
   "backoffice.noImage": "Aucune image",
   "backoffice.name": "Nom",
   "backoffice.type": "Type",
-  "backoffice.category": "Categorie",
+  "backoffice.category": "Catégorie",
   "backoffice.code": "Code",
   "backoffice.discountType": "Type",
-  "backoffice.discountValue": "Reduction",
-  "backoffice.createdAt": "Cree le",
+  "backoffice.discountValue": "Réduction",
+  "backoffice.createdAt": "Créé le",
   "backoffice.searchPromotionCode": "Rechercher par code promo",
-  "backoffice.createDiscount": "Creer une reduction",
-  "backoffice.editDiscount": "Modifier la reduction",
+  "backoffice.createDiscount": "Créer une réduction",
+  "backoffice.editDiscount": "Modifier la réduction",
   "backoffice.promotionConfiguration": "Configuration de la promotion",
-  "backoffice.productsSelection": "Produits concernes",
-  "backoffice.noDiscounts": "Aucune reduction trouvee",
+  "backoffice.productsSelection": "Produits concernés",
+  "backoffice.noDiscounts": "Aucune réduction trouvée",
   "backoffice.productDeleted": "Produit supprimé",
   "backoffice.promotionDeleted": "Promotion supprimée",
-  "backoffice.errors.generic": "Impossible de charger les donnees pour le moment.",
-  "backoffice.reorderServiceCategories": "Reordonnez les categories de service affichees sous Nos solutions sur la page d'accueil.",
+  "backoffice.errors.generic": "Impossible de charger les données pour le moment.",
+  "backoffice.reorderServiceCategories": "Réordonnez les catégories de service affichées sous Nos solutions sur la page d'accueil.",
   "backoffice.saveOrder": "Sauvegarder l'ordre",
   "backoffice.moveUp": "Monter",
   "backoffice.moveDown": "Descendre",
@@ -832,6 +879,110 @@
     },
     "legal": {
       "title": "Légal"
+    }
+  }
+}
+  "products": {
+    "label": "Produits",
+    "cyna_soc_starter": {
+      "name": "Cyna SOC Starter",
+      "description": "Solution SOC d'entrée de gamme pour les PME avec surveillance 24/7 et alertes en temps réel."
+    },
+    "cyna_soc_professional": {
+      "name": "Cyna SOC Professional",
+      "description": "Solution SOC complète avec analyse avancée des menaces et rapports détaillés."
+    },
+    "cyna_soc_enterprise": {
+      "name": "Cyna SOC Enterprise",
+      "description": "Solution SOC d'entreprise avec intégration personnalisée et support premium."
+    },
+    "cyna_edr_essentials": {
+      "name": "Cyna EDR Essentials",
+      "description": "Protection des terminaux avec détection des menaces et réponse automatisée."
+    },
+    "cyna_edr_advanced": {
+      "name": "Cyna EDR Advanced",
+      "description": "EDR avancé avec analyse comportementale et investigation des incidents."
+    },
+    "cyna_edr_premium": {
+      "name": "Cyna EDR Premium",
+      "description": "EDR premium avec threat hunting et réponse aux incidents 24/7."
+    },
+    "cyna_xdr_unified": {
+      "name": "Cyna XDR Unified",
+      "description": "Détection et réponse étendues couvrant tous les vecteurs d'attaque."
+    },
+    "cyna_xdr_complete": {
+      "name": "Cyna XDR Complete",
+      "description": "XDR complet avec orchestration et automatisation des réponses."
+    },
+    "cyna_xdr_elite": {
+      "name": "Cyna XDR Elite",
+      "description": "XDR élite avec IA avancée et prédiction des menaces."
+    },
+    "cyna_siem_standard": {
+      "name": "Cyna SIEM Standard",
+      "description": "Gestion centralisée des événements de sécurité pour les environnements mixtes."
+    },
+    "cyna_siem_advanced": {
+      "name": "Cyna SIEM Advanced",
+      "description": "SIEM avancé avec corrélation d'événements et conformité réglementaire."
+    },
+    "cyna_siem_enterprise": {
+      "name": "Cyna SIEM Enterprise",
+      "description": "SIEM d'entreprise avec scalabilité illimitée et support dédié."
+    },
+    "cyna_firewall_pro": {
+      "name": "Cyna Firewall Pro",
+      "description": "Appliance firewall haute performance pour la protection réseau."
+    },
+    "cyna_ips_enterprise": {
+      "name": "Cyna IPS Enterprise",
+      "description": "Système de prévention d'intrusions pour les environnements critiques."
+    },
+    "cyna_dlp_gateway": {
+      "name": "Cyna DLP Gateway",
+      "description": "Passerelle de prévention des fuites de données."
+    },
+    "cyna_waf_shield": {
+      "name": "Cyna WAF Shield",
+      "description": "Web Application Firewall pour la protection des applications web."
+    },
+    "licence_cyna_antivirus_pro": {
+      "name": "Licence Cyna Antivirus Pro",
+      "description": "Licence antivirus pour 10 postes de travail."
+    },
+    "licence_cyna_vpn_enterprise": {
+      "name": "Licence Cyna VPN Enterprise",
+      "description": "Licence VPN pour 50 utilisateurs."
+    },
+    "licence_cyna_pam_suite": {
+      "name": "Licence Cyna PAM Suite",
+      "description": "Suite de gestion des accès privilégiés."
+    },
+    "formation_securite_reseau_avancee": {
+      "name": "Formation Sécurité Réseau Avancée",
+      "description": "Formation de 5 jours sur la sécurité réseau avancée."
+    },
+    "certification_cyna_soc_analyst": {
+      "name": "Certification Cyna SOC Analyst",
+      "description": "Certification professionnelle d'analyste SOC."
+    },
+    "formation_incident_response": {
+      "name": "Formation Incident Response",
+      "description": "Formation pratique sur la réponse aux incidents de sécurité."
+    },
+    "audit_securite_complet": {
+      "name": "Audit de sécurité complet",
+      "description": "Audit complet de votre infrastructure de sécurité (3 jours)."
+    },
+    "conformite_rgpd_consulting": {
+      "name": "Conformité RGPD - Consulting",
+      "description": "Service de consulting pour la mise en conformité RGPD."
+    },
+    "pentesting_5_days": {
+      "name": "Pentesting - 5 jours",
+      "description": "Test de pénétration complet de votre infrastructure."
     }
   }
 }

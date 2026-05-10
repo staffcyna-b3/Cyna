@@ -1,13 +1,27 @@
-import { t } from "i18next"
+import { useTranslation } from "react-i18next"
 import { Button } from "../ui/button"
 import { LucideTrash } from "lucide-react"
 import { formatCurrency } from "@/utils/currencyFormatter"
 import { CartItem as CheckoutCartItem } from "@/types/interfaces/cart/CartItem"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+const DURATION_OPTIONS = [
+  { months: 3, labelKey: "threeMonths" },
+  { months: 6, labelKey: "sixMonths" },
+  { months: 12, labelKey: "oneYear" },
+] as const
 
 interface CartItemProps {
   item: CheckoutCartItem
   onQuantityChange: (itemId: string, quantity: number) => void
   onRemove: (itemId: string) => void
+  onPeriodChange?: (itemId: string, period: number) => void
 }
 
 const getPeriodLabel = (months: number): string => {
@@ -15,7 +29,8 @@ const getPeriodLabel = (months: number): string => {
   return `${months} mois`;
 };
 
-export const CartItem = ({ item, onQuantityChange, onRemove }: CartItemProps) => {
+export const CartItem = ({ item, onQuantityChange, onRemove, onPeriodChange }: CartItemProps) => {
+  const { t } = useTranslation()
   const periodLabel = item.period ? getPeriodLabel(item.period) : '';
   const effectivePrice = item.discountedUnitPrice ?? item.unitPrice;
   const hasDiscount = item.discountedUnitPrice !== undefined;
@@ -30,7 +45,22 @@ export const CartItem = ({ item, onQuantityChange, onRemove }: CartItemProps) =>
       <span className={hasDiscount ? 'text-red-600 font-semibold' : ''}>
         {formatCurrency(effectivePrice * item.period)}
       </span>
-      <span className="font-normal text-gray-500 text-sm">{t("for a total period of")} {periodLabel}</span>
+      <span>{t('for a total period of')}</span>
+      <Select
+        value={item.period ? String(item.period) : undefined}
+        onValueChange={(val) => onPeriodChange?.(item.id, Number(val))}
+      >
+        <SelectTrigger className="w-36 h-8 text-sm">
+          <SelectValue placeholder={t("selectPeriod")} />
+        </SelectTrigger>
+        <SelectContent>
+          {DURATION_OPTIONS.map(({ months, labelKey }) => (
+            <SelectItem key={months} value={String(months)}>
+              {t(labelKey)}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </span>
   ) : (
     <span className="flex items-baseline gap-1">
@@ -52,12 +82,12 @@ export const CartItem = ({ item, onQuantityChange, onRemove }: CartItemProps) =>
   return (
     <div className="flex bg-muted/80 p-4 rounded-lg gap-4">
       <div className="flex flex-col gap-2">
-        <p>{item.name}</p>
+        <p>{t(`products.${item.name}.name`)}</p>
         <p>{priceDisplay}</p>
         <div className="flex gap-2 items-center">
-          <div className="flex items-center gap-1 px-1.5 bg-gray-200 rounded-lg w-fit justify-center">
+          <div className="flex items-center gap-1 bg-gray-200 rounded-lg w-fit justify-center">
             <Button variant="ghost" onClick={() => onQuantityChange(item.id, Math.max(1, item.quantity - 1))}>-</Button>
-            <p>{item.quantity}</p>
+            <p className="px-1.5">{item.quantity}</p>
             <Button variant="ghost" onClick={() => onQuantityChange(item.id, item.quantity + 1)}>+</Button>
           </div>
           <Button variant="ghost" onClick={() => onRemove(item.id)}><LucideTrash /></Button>
