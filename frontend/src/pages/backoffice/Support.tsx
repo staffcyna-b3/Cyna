@@ -111,7 +111,7 @@ export default function Support() {
 
   const statusToggle = (
     <div className="flex items-center gap-2 bg-primary rounded-full p-1 w-fit">
-      <Button variant={statusFilter === 'all' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('all')}>Tous</Button>
+      <Button variant={statusFilter === 'all' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('all')}>{t('contact.statusAll')}</Button>
       <Button variant={statusFilter === 'new' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('new')}>{t('contact.statusNew')}</Button>
       <Button variant={statusFilter === 'processed' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('processed')}>{t('contact.statusProcessed')}</Button>
     </div>
