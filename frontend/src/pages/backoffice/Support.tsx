@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/Backoffice/data-table/data-table';
-import { Typography } from '@/components/ui/typography';
+import { BackOfficePageHeader } from '@/components/Backoffice/shared/BackOfficePageHeader';
 import { useAuth } from '@/hooks/useAuth';
 import type { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageDTO.interface';
 import {
@@ -107,9 +107,7 @@ export default function Support() {
 
   return (
     <>
-      <header className="px-4 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-        <Typography variant="h1">{t('contact.support')}</Typography>
-      </header>
+      <BackOfficePageHeader title={t('contact.support')} />
       <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
         {loading ? (
           <p className="p-4 text-muted-foreground">{t('loading')}</p>

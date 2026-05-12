@@ -95,7 +95,9 @@ export default function HomePage() {
 
                                                 {/* Description */}
                                                 <p className="max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
-                                                    {category.description}
+                                                    {/* Category descriptions are i18n keys (snake_case).
+                                                        Add new keys to fr.json and en.json when creating categories in the back-office. */}
+                                                    {t(`categories.${category.description ?? ''}`) || ''}
                                                 </p>
 
                                                 {/* CTA */}
@@ -190,7 +192,9 @@ export default function HomePage() {
                                                 {service.name}
                                             </Typography>
                                             <p className="mt-1.5 line-clamp-2 text-sm text-white/50">
-                                                {service.description}
+                                                {/* Category descriptions are i18n keys (snake_case).
+                                                    Add new keys to fr.json and en.json when creating categories in the back-office. */}
+                                                {t(`categories.${service.description ?? ''}`) || ''}
                                             </p>
                                         </div>
                                     </Link>
@@ -243,8 +247,8 @@ export default function HomePage() {
 
                                             {/* Info */}
                                             <div className="relative p-4">
-                                                <p className="font-bold text-white">{product.name}</p>
-                                                <p className="mt-1 line-clamp-2 text-sm text-white/50">{product.description}</p>
+                                                <p className="font-bold text-white">{t(`products.${product.name}.name`)}</p>
+                                                <p className="mt-1 line-clamp-2 text-sm text-white/50">{t(`products.${product.name}.description`)}</p>
                                                 <p className="mt-3 text-lg font-black text-white">{formatCurrency(product.price)}</p>
                                             </div>
                                         </Link>

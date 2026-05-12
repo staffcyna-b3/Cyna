@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next"
 import { Typography } from '@/components/ui/typography';
 import { Link } from '@/components/ui/link';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 
 export const Register: React.FC = () => {
     const navigate = useNavigate();
@@ -102,56 +104,50 @@ export const Register: React.FC = () => {
                     )}
 
                     <form onSubmit={handleSubmit} className="space-y-5">
-                        <div>
+                        <Field>
                             <Input
-                                label={t("fullName")}
                                 name="fullName"
                                 type="text"
                                 value={formData.fullName}
                                 onChange={handleChange}
                                 placeholder="John Doe"
-                                error={errors.fullName}
                             />
-                        </div>
-
-                        <div>
+                            <FieldError>{errors.fullName}</FieldError>
+                        </Field>
+                        <Field>
                             <Input
-                                label={t("email")}
                                 name="email"
                                 type="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 placeholder="user@example.com"
-                                error={errors.email}
                             />
-                        </div>
-
-                        <div>
+                            <FieldError>{errors.email}</FieldError>
+                        </Field>
+                        <Field>
+                            <FieldLabel>{t('password')}</FieldLabel>
+                            <FieldDescription>{t('PasswordRequirements')}</FieldDescription>
                             <Input
-                                label={t("password")}
                                 name="password"
                                 type="password"
                                 value={formData.password}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                error={errors.password}
                             />
-                            <Typography variant="body" className="text-xs text-gray-500 mt-2">
-                                {t('PasswordRequirements')}
-                            </Typography>
-                        </div>
+                            <FieldError>{errors.password}</FieldError>
+                        </Field>
 
-                        <div>
+                        <Field>
+                            <FieldLabel>{t('confirmPassword')}</FieldLabel>
                             <Input
-                                label={t("confirmPassword")}
                                 name="confirmPassword"
                                 type="password"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
                                 placeholder="••••••••"
-                                error={errors.confirmPassword}
                             />
-                        </div>
+                            <FieldError>{errors.confirmPassword}</FieldError>
+                        </Field>
                         <Button 
                             type="submit" 
                             disabled={isLoading}
@@ -161,12 +157,13 @@ export const Register: React.FC = () => {
                         </Button>
                     </form>
 
-                    <p className="text-center text-gray-600 text-sm mt-6">
-                        {t("alreadyHaveAccount")}{' '}
+                    <Typography variant="body" className="text-center text-gray-600 text-sm mt-6">
+                        {t("alreadyHaveAccount")}
                         <Link to="/login">
                             {t("login")}
                         </Link>
-                    </p>
+                    </Typography>
+                    
                 </div>
             </div>
         </div>

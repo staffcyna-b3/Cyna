@@ -56,7 +56,7 @@ export function useProductEditor({
         async function loadImage() {
             setImageLoading(true);
             try {
-                const image = await fetchBackOfficeProductImage(product.id);
+                const image = await fetchBackOfficeProductImage(product!.id);
                 if (!image.image_base64) {
                     setImagePreview(null);
                     return;

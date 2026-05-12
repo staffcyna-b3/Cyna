@@ -1,4 +1,4 @@
-import { Link, Navigate, useLocation } from "react-router-dom"
+import { Link, Navigate, NavLink, useLocation } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Button } from "@/components/ui/button"
 import type { CheckoutConfirmationState } from "@/types/interfaces/CheckoutConfirmation/CheckoutConfirmationState"
@@ -45,7 +45,7 @@ export const CheckoutConfirmation = () => {
           <h2 className="text-lg font-medium">{t("orderedItems")}</h2>
           {items.map((item) => (
             <div key={item.id} className="flex justify-between text-sm">
-              <span>{item.name} × {item.quantity}</span>
+              <span>{t(`products.${item.name}.name`)} × {item.quantity}</span>
               <span className="flex flex-col items-end gap-0.5">
                 {item.originalUnitPrice !== undefined && (
                   <span className="text-xs text-gray-400 line-through">
@@ -115,9 +115,8 @@ export const CheckoutConfirmation = () => {
       <p className="text-muted-foreground">{t("confirmationEmailSent")}</p>
 
       <div className="flex gap-3">
-        <Button asChild disabled>
-          {/* <Link to="/account/orders">{t("viewMyOrders")}</Link> */}
-          <span>{t("viewMyOrders")}</span>
+        <Button>
+          <NavLink to="/my-orders" className="text-white">{t("viewMyOrders")}</NavLink>
         </Button>
         <Button asChild variant="outline">
           <Link to="/catalog">{t("backToProducts")}</Link>

@@ -178,8 +178,6 @@ export const Checkout: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isConfigured, user?.id, accessToken, effectiveAmountCents, intentVersion]);
 
-  // console.log('Checkout state:', { clientSecret, paymentIntentId, stripePromise });
-
   return (
     <div className="min-h-screen flex flex-col">
       {/* Full-width header */}

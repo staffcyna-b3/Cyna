@@ -23,9 +23,8 @@ app.use(express.json())
 
 app.use('/subscriptions', subscriptionRoutes)
 app.use('/my-subscriptions', userSubscriptionRoutes)
-app.use('/', ordersRoutes)
+app.use('/orders', ordersRoutes)
 
-app.use('/front-office/cart', cartRoutes) // TODO why ?
 app.use('/cart', cartRoutes)
 app.use('/addresses', addressRoutes)
 app.use('/support', supportRoutes)

@@ -32,6 +32,11 @@ import { ProtectedRoute } from "@/components/protectedRoute"
 import Contact from "@/pages/frontoffice/Contact"
 import MySubscriptions from "@/pages/frontoffice/MySubscriptions"
 import Support from "@/pages/backoffice/Support"
+import CGU from "@/pages/frontoffice/legal/CGU"
+import CGV from "@/pages/frontoffice/legal/CGV"
+import PrivacyPolicy from "@/pages/frontoffice/legal/PrivacyPolicy"
+import MentionsLegales from "@/pages/frontoffice/legal/MentionsLegales"
+import CookiePolicy from "@/pages/frontoffice/legal/CookiePolicy"
 
 export default function CustomRoutes() {
   const location = useLocation()
@@ -60,7 +65,7 @@ export default function CustomRoutes() {
         <Route
           path="/products"
           element={
-            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
               <Products />
             </ProtectedRoute>
           }
@@ -68,7 +73,7 @@ export default function CustomRoutes() {
         <Route
           path="/categories"
           element={
-            <ProtectedRoute requiredRoles={[UserRole.ADMIN, UserRole.COMMERCIAL]}>
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
               <Categories />
             </ProtectedRoute>
           }
@@ -81,47 +86,47 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
-        
-          <Route 
-            path="/orders" 
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Orders />
-              </ProtectedRoute>
-            } 
-          />  
-          <Route 
-            path="/transactions" 
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Transactions />
-              </ProtectedRoute>
-            } 
-          />
-          <Route
-            path="/refunds"
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Refunds />
-              </ProtectedRoute>
-            } 
-          />
-          <Route
-            path="/discounts"
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Discounts />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/support"
-            element={
-              <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
-                <Support />
-              </ProtectedRoute>
-            }
-          />
+
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/transactions"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Transactions />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/refunds"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Refunds />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/discounts"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Discounts />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/support"
+          element={
+            <ProtectedRoute requiredRoles={[UserRole.ADMIN]}>
+              <Support />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       {/* Frontoffice routes */}
@@ -149,6 +154,11 @@ export default function CustomRoutes() {
             </ProtectedRoute>
           }
         />
+        <Route path="/legal/cgu" element={<CGU />} />
+        <Route path="/legal/cgv" element={<CGV />} />
+        <Route path="/legal/confidentialite" element={<PrivacyPolicy />} />
+        <Route path="/legal/mentions-legales" element={<MentionsLegales />} />
+        <Route path="/legal/cookies" element={<CookiePolicy />} />
         <Route
           path="/mon-compte/abonnements"
           element={

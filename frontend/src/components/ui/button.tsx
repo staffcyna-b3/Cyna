@@ -17,7 +17,7 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
-          "hover:bg-accent hover:text-primary dark:hover:bg-accent/50",
+          "hover:bg-gray-300 hover:text-primary dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
         cyna: "w-full bg-primary text-primary-foreground hover:bg-[#372CCA] hover:text-white transition-colors cursor-pointer",
         selected: "rounded-full bg-primary-foreground/20 text-primary-foreground border border-primary-foreground",

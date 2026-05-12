@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -43,6 +44,7 @@ export function OrderEditorSheet({
   totalLabel,
   onOpenChange,
 }: OrderEditorSheetProps) {
+  const { t } = useTranslation();
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent>
@@ -53,7 +55,7 @@ export function OrderEditorSheet({
 
         <div className="flex flex-col gap-4 overflow-y-auto p-4">
           <div className="flex flex-col gap-1.5">
-            <Label htmlFor="order-userid">User ID</Label>
+            <Label htmlFor="order-userid">{t('admin.userId')}</Label>
             <Input id="order-userid" value={userId} readOnly disabled className="opacity-60 font-mono text-xs" />
           </div>
 
@@ -63,7 +65,7 @@ export function OrderEditorSheet({
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <Label>Date de création</Label>
+            <Label>{t('admin.createdAt')}</Label>
             <span className="text-sm text-muted-foreground">
               {new Date(createdAt).toLocaleString('fr-FR')}
             </span>
@@ -87,7 +89,7 @@ export function OrderEditorSheet({
             <div className="space-y-2 rounded-md border p-3">
               {items.map((item, index) => (
                 <div key={index} className="flex justify-between text-sm">
-                  <span>{item.product_name} × {item.quantity}</span>
+                  <span>{t(`products.${item.product_name}.name`)} × {item.quantity}</span>
                   <span>{(item.unit_price * item.quantity).toLocaleString('fr-FR', {
                     style: 'currency', currency: 'EUR',
                   })}</span>

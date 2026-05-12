@@ -139,7 +139,7 @@ export default function MySubscriptions() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
                   <p className="font-semibold text-gray-900">
-                    {sub.product?.name ?? t('subscriptions.unknownProduct')}
+                    {t(`products.${sub.product?.name}.name`) ?? t('subscriptions.unknownProduct')}
                   </p>
                   <div className="mt-1 flex items-center gap-2">
                     <StatusBadge status={sub.status} />

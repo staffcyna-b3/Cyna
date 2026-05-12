@@ -18,7 +18,7 @@ router.post('/support', contactLimiter, (req, res) => controller.proxy(req, res,
 router.use('/support', (req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
 
 // Toutes les autres routes front-office nécessitent d'être connecté
-router.use(authMiddleware, requireRole(UserRoleType.USER));
+router.use(authMiddleware, requireRole(UserRoleType.USER, UserRoleType.ADMIN, UserRoleType.COMMERCIAL));
 router.use((req, res) => controller.proxy(req, res, MicroServiceEnum.FRONTOFFICE));
 
 export default router;

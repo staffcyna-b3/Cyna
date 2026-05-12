@@ -109,7 +109,7 @@ export default function Navbar() {
                         to="/"
                         className="font-space-grotesk shrink-0 text-[2rem] font-black uppercase leading-none tracking-tight text-[#372CCA] sm:text-[2.7rem] lg:text-[3.2rem]"
                     >
-                        CYNA.
+                        {t('CYNA')}
                     </Link>
 
                     <div className="flex items-center gap-3 text-[#3d49f5] sm:gap-5 lg:min-w-[220px] lg:justify-end">
@@ -160,7 +160,7 @@ export default function Navbar() {
                                                             className="h-12 w-12 rounded-lg object-cover shrink-0 bg-gray-100"
                                                         />
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
+                                                            <p className="text-sm font-semibold text-gray-900 truncate">{t(`products.${item.name}.name`)}</p>
                                                             <p className="text-xs text-gray-500 flex items-baseline gap-1">
                                                                 {item.quantity} ×{' '}
                                                                 {item.discountedUnitPrice !== undefined && (
@@ -169,7 +169,7 @@ export default function Navbar() {
                                                                 <span className={item.discountedUnitPrice !== undefined ? 'text-red-500 font-semibold' : ''}>
                                                                     {formatCurrency(item.discountedUnitPrice ?? item.unitPrice)}
                                                                 </span>
-                                                                {item.isService && item.period ? <> / mois</> : null}
+                                                                {item.isService && item.period ? <> {t('perMonthSuffix')}</> : null}
                                                             </p>
                                                         </div>
                                                         <p className="text-sm font-bold text-[#3d49f5] shrink-0">
@@ -305,7 +305,7 @@ export default function Navbar() {
                                             onClick={() => goToProduct(suggestion.slug)}
                                             className="flex w-full items-center justify-between px-5 py-4 text-left text-[#181d42] transition hover:bg-[#f3f5ff]"
                                         >
-                                            <span className="font-medium">{suggestion.name}</span>
+                                            <span className="font-medium">{t(`products.${suggestion.name}.name`)}</span>
                                             <ArrowRight />
                                         </Button>
                                     ))
