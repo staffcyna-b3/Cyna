@@ -124,26 +124,31 @@ echo Execution des migrations...
 echo Gateway...
 cd /d "%ROOT_DIR%\gateway"
 call npx sequelize-cli db:migrate
+if %errorlevel% neq 0 ( echo Erreur migration Gateway. & pause & exit /b 1 )
 cd /d "%ROOT_DIR%"
 
 echo Back-office Service...
 cd /d "%ROOT_DIR%\micro-services\back-office-service"
 call npx sequelize-cli db:migrate
+if %errorlevel% neq 0 ( echo Erreur migration Back-office Service. & pause & exit /b 1 )
 cd /d "%ROOT_DIR%"
 
 echo Product Service...
 cd /d "%ROOT_DIR%\micro-services\product-service"
 call npx sequelize-cli db:migrate
+if %errorlevel% neq 0 ( echo Erreur migration Product Service. & pause & exit /b 1 )
 cd /d "%ROOT_DIR%"
 
 echo Front-office Service...
 cd /d "%ROOT_DIR%\micro-services\front-office-service"
 call npx sequelize-cli db:migrate
+if %errorlevel% neq 0 ( echo Erreur migration Front-office Service. & pause & exit /b 1 )
 cd /d "%ROOT_DIR%"
 
 echo Payments Service...
 cd /d "%ROOT_DIR%\micro-services\payments-service"
 call npx sequelize-cli db:migrate
+if %errorlevel% neq 0 ( echo Erreur migration Payments Service. & pause & exit /b 1 )
 cd /d "%ROOT_DIR%"
 
 echo.
@@ -152,12 +157,15 @@ echo Execution des seeders...
 echo Product Service...
 cd /d "%ROOT_DIR%\micro-services\product-service"
 call npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
+if %errorlevel% neq 0 ( echo Erreur seeding Product Service. & pause & exit /b 1 )
 cd /d "%ROOT_DIR%"
 
 echo Front-office Service...
 cd /d "%ROOT_DIR%\micro-services\front-office-service"
 call npx sequelize-cli db:seed:undo --seed 001-seed-checkout.js --seeders-path seeders --models-path src/models --config config/config.js
+if %errorlevel% neq 0 ( echo Warning: seed:undo ignore - peut etre absent, non bloquant )
 call npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
+if %errorlevel% neq 0 ( echo Erreur seeding Front-office Service. & pause & exit /b 1 )
 cd /d "%ROOT_DIR%"
 
 echo.

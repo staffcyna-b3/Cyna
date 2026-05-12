@@ -110,7 +110,7 @@ cd "$ROOT_DIR"
 
 echo "Front-office Service..."
 cd "$ROOT_DIR/micro-services/front-office-service"
-npx sequelize-cli db:seed:undo --seed 001-seed-checkout.js --seeders-path seeders --models-path src/models --config config/config.js || true
+npx sequelize-cli db:seed:undo --seed 001-seed-checkout.js --seeders-path seeders --models-path src/models --config config/config.js || echo "Warning: seed:undo ignore (peut etre absent, non bloquant)"
 npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
 cd "$ROOT_DIR"
 

@@ -37,6 +37,8 @@ mkdir -p "$BACKUP_DIR"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 BACKUP_FILE="$BACKUP_DIR/backup_${DB_NAME}_${TIMESTAMP}.sql"
 
+trap '[ -f "$BACKUP_FILE" ] && rm -f "$BACKUP_FILE" && echo "Backup incomplet supprime: $BACKUP_FILE"' ERR
+
 echo "Sauvegarde de la base '$DB_NAME' vers $BACKUP_FILE..."
 
 if [ "$USE_DOCKER" = "1" ]; then
