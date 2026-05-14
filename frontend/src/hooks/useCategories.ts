@@ -1,23 +1,37 @@
 import { useState, useCallback } from 'react';
 import { CatalogApi } from '../api/CatalogApi';
 import i18n from '@/i18n';
-import { CatalogResponse } from '@/types/interfaces/catalog/CatalogResponse';
+import { Category } from '@/types/interfaces/category/Category';
 
-export const GetSimilarProducts = () => {
+function sortCategories(items: Category[]): Category[] {
+    return [...items].sort((a, b) => {
+        const aPriority = a.priority ?? 0;
+        const bPriority = b.priority ?? 0;
+
+        if (aPriority !== bPriority) {
+            return bPriority - aPriority;
+        }
+
+        return a.name.localeCompare(b.name);
+    });
+}
+
+export const useCategories = () => {
     const service = CatalogApi.getInstance();
 
-    const [data, setData] = useState<CatalogResponse[] | null>(null);
+    const [data, setData] = useState<Category[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const getSimilarProducts = useCallback(
-        async (productId: string) => {
+    const listCategories = useCallback(
+        async () => {
             setLoading(true);
             setError(null);
             try {
-                const res = await service.getSimilarProducts(productId);
-                setData(res);
-                return res;
+                const res = await service.listCategories();
+                const sorted = sortCategories(res);
+                setData(sorted);
+                return sorted;
             } catch (err: unknown) {
                 let message: string;
                 if (
@@ -42,7 +56,7 @@ export const GetSimilarProducts = () => {
         [service]
     );
 
-    return { data, loading, error, getSimilarProducts } as const;
+    return { data, loading, error, listCategories } as const;
 };
 
-export default GetSimilarProducts;
+export default useCategories;

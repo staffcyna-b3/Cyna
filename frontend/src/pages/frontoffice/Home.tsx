@@ -9,7 +9,7 @@ import {
     CarouselPrevious,
     type CarouselApi,
 } from "@/components/ui/carousel"
-import { GetCategories } from "@/hooks/getCategories"
+import { useCategories } from "@/hooks/useCategories"
 import type { Category } from "@/types/interfaces/category/Category"
 import type { CatalogResponse } from "@/types/interfaces/catalog/CatalogResponse"
 import { ProductStatus } from "@/types/enums/product/ProductStatus"
@@ -33,7 +33,7 @@ export default function HomePage() {
     const [current, setCurrent] = useState(0)
     const [isAtTop, setIsAtTop] = useState(true)
     const [homeActiveCategory, setHomeActiveCategory] = useState<string | null>(null)
-    const { data: categories, loading, listCategories } = GetCategories()
+    const { data: categories, loading, listCategories } = useCategories()
     const { t } = useTranslation()
     const service = useMemo(() => CatalogApi.getInstance(), [])
     const [topProducts, setTopProducts] = useState<CatalogResponse[]>([])

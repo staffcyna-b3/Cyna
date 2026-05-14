@@ -6,7 +6,7 @@ import { ProductListResponseDto } from '../dto/response/ProductListResponse.dto'
 import { ProductListFilterDto } from '../dto/requests/ProductListFilter.dto';
 import { ProductListOptionsDto } from '../dto/requests/ProductListOptions.dto';
 import { ProductSuggestionDto } from '../dto/response/ProductSuggestion.dto';
-import { SortOrder } from '../enum/Sortrder.enum';
+import { SortOrder } from '../enum/SortOrder.enum';
 import Product from '../models/Product';
 import { sequelize } from '../config/database';
 import ProductRepository from '../repositories/product.repository';

@@ -1,6 +1,5 @@
 import type { UserAdminDTO } from '@/types/interfaces/admin/UserAdminDTO.interface';
 import type { OrderAdminDTO } from '@/types/interfaces/admin/OrderAdminDTO.interface';
-import type { TransactionAdminDTO } from '@/types/interfaces/admin/TransactionAdminDTO.interface';
 import type { RefundAdminDTO } from '@/types/interfaces/admin/RefundAdminDTO.interface';
 import type { PaginatedResponse } from '@/types/interfaces/admin/PaginatedResponse.interface';
 import type { CreateRefundRequest } from '@/types/interfaces/admin/CreateRefundRequest.interface';
@@ -38,11 +37,6 @@ export class BackOfficeOrderApi extends AbstractApi {
 
   async getAdminOrders(page = 1, limit = 20): Promise<PaginatedResponse<OrderAdminDTO>> {
     const res = await this.get<{ data: PaginatedResponse<OrderAdminDTO> }>(`/back-office/orders?page=${page}&limit=${limit}`);
-    return res.data;
-  }
-
-  async getTransactions(): Promise<TransactionAdminDTO[]> {
-    const res = await this.get<{ data: TransactionAdminDTO[] }>('/back-office/transactions');
     return res.data;
   }
 
