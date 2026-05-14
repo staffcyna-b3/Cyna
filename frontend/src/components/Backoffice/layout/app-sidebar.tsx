@@ -27,7 +27,7 @@ import {
 import { Typography } from "../../ui/typography"
 import { useTranslation } from "react-i18next"
 import { useAuth } from "@/hooks/useAuth"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { UserRole } from "@/types/enums/UserRole.enum"
 
 const navItems = [
@@ -49,7 +49,7 @@ function SidebarFooterContent() {
 
     const handleLogout = async () => {
         await logout();
-        navigate("/login");
+        navigate("/");
     };
 
     if (isCollapsed) {
@@ -109,7 +109,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarHeader>
                 <SidebarMenuButton className="group-data-[state=expanded]:flex-row-reverse group-data-[state=expanded]:justify-between">
                     <SidebarTrigger className="-ml-1" />
-                    <Typography variant="h1" className="text-3xl text-primary">{t("CYNA")}</Typography>
+                    <Link to="/"><Typography variant="h1" className="text-3xl text-primary">{t("CYNA")}</Typography></Link>
                 </SidebarMenuButton>
             </SidebarHeader>
             <SidebarContent>

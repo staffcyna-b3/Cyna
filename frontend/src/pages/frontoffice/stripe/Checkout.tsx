@@ -276,7 +276,7 @@ export const Checkout: React.FC = () => {
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                  <p className="text-sm font-medium text-gray-900">{t(`products.${item.name}.name`)}</p>
                   {item.isService && (
                     <p className="mt-0.5 text-xs text-gray-500">
                       {t('Billed')} {item.billingPeriod === 'yearly' ? t('yearly') : t('monthly')}

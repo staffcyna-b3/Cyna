@@ -1,4 +1,5 @@
 import Subscription from '../models/Subscription';
+import { SubscriptionStatus } from '../enum/SubscriptionStatus';
 import { ISubscriptionRepository } from '../interfaces/ISubscriptionRepository';
 import { IRefundRequestRepository } from '../interfaces/IRefundRequestRepository';
 import { Logger } from '../common/logger';
@@ -19,7 +20,14 @@ export class UserSubscriptionService {
     if (!stripeSubscriptionId || stripeSubscriptionId.trim().length === 0) {
       throw { status: 400, code: 'INVALID_PARAM', message: 'stripeSubscriptionId manquant' };
     }
+    if (!stripeSubscriptionId.startsWith('sub_')) {
+      throw { status: 422, code: 'INVALID_STRIPE_SUBSCRIPTION_ID', message: 'Invalid Stripe subscription ID format' };
+    }
     const subscription = await this.findAndVerifyOwnership(stripeSubscriptionId, userId);
+
+    if (subscription.status === SubscriptionStatus.CANCELLED) {
+      return subscription;
+    }
 
     const res = await fetch(`${PAYMENTS_URL}/subscriptions/${stripeSubscriptionId}/cancel`, {
       method: 'POST',
@@ -28,7 +36,11 @@ export class UserSubscriptionService {
 
     if (!res.ok) {
       const body = await res.json().catch(() => ({})) as Record<string, unknown>;
-      throw { status: res.status, code: 'STRIPE_ERROR', message: body?.message ?? 'Stripe error' };
+      if (body?.error === 'STRIPE_INVALID_REQUEST' || body?.code === 'STRIPE_INVALID_REQUEST') {
+        await subscription.update({ status: SubscriptionStatus.CANCELLED });
+        return subscription.reload();
+      }
+      throw { status: res.status, code: 'STRIPE_ERROR', message: (body?.message ?? body?.error ?? 'Stripe error') as string };
     }
 
     await subscription.update({ cancel_at_period_end: true });
