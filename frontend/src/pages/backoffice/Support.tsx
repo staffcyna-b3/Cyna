@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/Backoffice/data-table/data-table';
 import { BackOfficePageHeader } from '@/components/Backoffice/shared/BackOfficePageHeader';
+import { BackOfficeListToolbar } from '@/components/Backoffice/shared/BackOfficeListToolbar';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import type { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageDTO.interface';
 import {
@@ -27,6 +30,11 @@ export default function Support() {
   const [replyMessage, setReplyMessage] = useState('');
   const [replying, setReplying] = useState(false);
   const [marking, setMarking] = useState(false);
+
+  const [search, setSearch] = useState('');
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [dateFrom, setDateFrom] = useState('');
+  const [dateTo, setDateTo] = useState('');
 
   useEffect(() => {
     if (!accessToken) return;
@@ -95,8 +103,7 @@ export default function Support() {
     {
       accessorKey: 'created_at',
       header: t('admin.date'),
-      cell: ({ row }) =>
-        new Date(row.original.created_at).toLocaleString('fr-FR'),
+      cell: ({ row }) => new Date(row.original.created_at).toLocaleString('fr-FR'),
     },
     { accessorKey: 'email', header: t('contact.email') },
     { accessorKey: 'subject', header: t('contact.subject') },
@@ -107,22 +114,101 @@ export default function Support() {
     },
   ];
 
-  const filteredData = statusFilter === 'all' ? data : data.filter((m) => m.status === statusFilter);
+  const filteredData = useMemo(() => {
+    const searchLower = search.trim().toLowerCase();
+    const from = dateFrom ? new Date(dateFrom).getTime() : null;
+    const to = dateTo ? new Date(dateTo + 'T23:59:59').getTime() : null;
+    return data.filter((msg) => {
+      const statusMatch = statusFilter === 'all' || msg.status === statusFilter;
+      const searchMatch = !searchLower || msg.email.toLowerCase().includes(searchLower);
+      const msgDate = new Date(msg.created_at).getTime();
+      const dateMatch = (!from || msgDate >= from) && (!to || msgDate <= to);
+      return statusMatch && searchMatch && dateMatch;
+    });
+  }, [data, statusFilter, search, dateFrom, dateTo]);
+
+  function resetFilters() {
+    setDateFrom('');
+    setDateTo('');
+    setSearch('');
+  }
 
   const statusToggle = (
-    <div className="flex items-center gap-2 bg-primary rounded-full p-1 w-fit">
-      <Button variant={statusFilter === 'all' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('all')}>{t('contact.statusAll')}</Button>
-      <Button variant={statusFilter === 'new' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('new')}>{t('contact.statusNew')}</Button>
-      <Button variant={statusFilter === 'processed' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('processed')}>{t('contact.statusProcessed')}</Button>
+    <div className="flex items-center gap-2 bg-primary rounded-full p-1 self-start sm:self-auto shadow-sm">
+      <Button
+        type="button"
+        variant={statusFilter === 'all' ? 'selected' : 'notSelected'}
+        onClick={() => setStatusFilter('all')}
+      >
+        {t('contact.statusAll')}
+      </Button>
+      <Button
+        type="button"
+        variant={statusFilter === 'new' ? 'selected' : 'notSelected'}
+        onClick={() => setStatusFilter('new')}
+      >
+        {t('contact.statusNew')}
+      </Button>
+      <Button
+        type="button"
+        variant={statusFilter === 'processed' ? 'selected' : 'notSelected'}
+        onClick={() => setStatusFilter('processed')}
+      >
+        {t('contact.statusProcessed')}
+      </Button>
     </div>
   );
 
   return (
     <>
       <BackOfficePageHeader title={t('contact.support')} rightSlot={statusToggle} />
-      <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
+      <div className="px-6 pb-6 space-y-3">
+        <BackOfficeListToolbar
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={t('backoffice.searchBySenderEmail')}
+          searchAriaLabel={t('search')}
+          filterLabel={t('filters')}
+          onFilterClick={() => setFilterOpen((prev) => !prev)}
+          filterActive={!!dateFrom || !!dateTo}
+          filterPanel={
+            filterOpen ? (
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-3">
+                <div className="grid grid-cols-1 sm:grid-cols-[1fr_1fr_auto] gap-3 items-end">
+                  <div>
+                    <Label className="mb-1.5 block text-sm text-gray-600">
+                      {t('backoffice.dateFrom')}
+                    </Label>
+                    <Input
+                      type="date"
+                      className="h-9"
+                      value={dateFrom}
+                      onChange={(e) => setDateFrom(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label className="mb-1.5 block text-sm text-gray-600">
+                      {t('backoffice.dateTo')}
+                    </Label>
+                    <Input
+                      type="date"
+                      className="h-9"
+                      value={dateTo}
+                      onChange={(e) => setDateTo(e.target.value)}
+                    />
+                  </div>
+                  <Button type="button" variant="outline" className="h-9" onClick={resetFilters}>
+                    {t('resetFilters')}
+                  </Button>
+                </div>
+              </div>
+            ) : null
+          }
+        />
         {loading ? (
-          <p className="p-4 text-muted-foreground">{t('loading')}</p>
+          <div className="rounded-md border p-6 text-sm text-muted-foreground">
+            {t('loading')}
+          </div>
         ) : (
           <DataTable columns={columns} data={filteredData} onRowClick={handleRowClick} />
         )}

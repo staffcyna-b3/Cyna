@@ -35,7 +35,14 @@ export function ContactMessageSheet({
           <SheetDescription>{message.id}</SheetDescription>
         </SheetHeader>
 
-        <div className="flex flex-col gap-4 overflow-y-auto p-4">
+        <div className="flex flex-col gap-4 overflow-y-auto px-4 py-1">
+
+           {message.status === 'new' && (
+            <Button onClick={onMarkAsProcessed} disabled={marking} variant="outline">
+              {t('contact.markProcessed')}
+            </Button>
+          )}
+
           <div className="flex flex-col gap-1.5">
             <Label>{t('contact.email')}</Label>
             <span className="text-sm">{message.email}</span>
@@ -56,23 +63,18 @@ export function ContactMessageSheet({
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <Label>{t('admin.date')}</Label>
-            <span className="text-sm text-muted-foreground">
-              {new Date(message.created_at).toLocaleString('fr-FR')}
-            </span>
+          <div className='flex gap-6 items-center'>
+            <div className="flex flex-col gap-1.5">
+              <Label>{t('admin.date')}</Label>
+              <span className="text-sm text-muted-foreground">
+                {new Date(message.created_at).toLocaleString('fr-FR')}
+              </span>
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <Label>{t('admin.status')}</Label>
+              <ContactStatusBadge status={message.status} />
+            </div>
           </div>
-
-          <div className="flex flex-col gap-1.5">
-            <Label>{t('admin.status')}</Label>
-            <ContactStatusBadge status={message.status} />
-          </div>
-
-          {message.status === 'new' && (
-            <Button onClick={onMarkAsProcessed} disabled={marking} variant="outline">
-              {t('contact.markProcessed')}
-            </Button>
-          )}
 
           {message.admin_reply && (
             <div className="space-y-1 border-t pt-4">
@@ -88,6 +90,7 @@ export function ContactMessageSheet({
             </div>
           )}
 
+        {!message.admin_reply && (
           <div className="space-y-2 border-t pt-4">
             <Label className="text-sm text-gray-500">{t('contact.replyLabel')}</Label>
             <Textarea
@@ -105,6 +108,7 @@ export function ContactMessageSheet({
               {replying ? t('loading') : t('contact.reply')}
             </Button>
           </div>
+        )}
         </div>
       </SheetContent>
     </Sheet>
