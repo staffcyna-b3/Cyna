@@ -405,6 +405,7 @@
   "contact.successMessage": "We will get back to you as soon as possible.",
   "contact.reply": "Send reply",
   "contact.markProcessed": "Mark as processed",
+  "contact.statusAll": "All",
   "contact.statusNew": "New",
   "contact.statusProcessed": "Processed",
   "contact.support": "Support",

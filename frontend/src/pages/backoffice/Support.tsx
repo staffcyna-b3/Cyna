@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { ColumnDef } from '@tanstack/react-table';
 import { DataTable } from '@/components/Backoffice/data-table/data-table';
 import { BackOfficePageHeader } from '@/components/Backoffice/shared/BackOfficePageHeader';
+import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import type { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageDTO.interface';
 import {
@@ -20,6 +21,7 @@ export default function Support() {
   const { accessToken } = useAuth();
   const [data, setData] = useState<ContactMessageDTO[]>([]);
   const [loading, setLoading] = useState(true);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'new' | 'processed'>('all');
   const [selected, setSelected] = useState<ContactMessageDTO | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [replyMessage, setReplyMessage] = useState('');
@@ -105,14 +107,24 @@ export default function Support() {
     },
   ];
 
+  const filteredData = statusFilter === 'all' ? data : data.filter((m) => m.status === statusFilter);
+
+  const statusToggle = (
+    <div className="flex items-center gap-2 bg-primary rounded-full p-1 w-fit">
+      <Button variant={statusFilter === 'all' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('all')}>{t('contact.statusAll')}</Button>
+      <Button variant={statusFilter === 'new' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('new')}>{t('contact.statusNew')}</Button>
+      <Button variant={statusFilter === 'processed' ? 'selected' : 'notSelected'} onClick={() => setStatusFilter('processed')}>{t('contact.statusProcessed')}</Button>
+    </div>
+  );
+
   return (
     <>
-      <BackOfficePageHeader title={t('contact.support')} />
+      <BackOfficePageHeader title={t('contact.support')} rightSlot={statusToggle} />
       <div className="flex flex-1 flex-col gap-2 p-4 pt-0 border m-4 rounded-lg">
         {loading ? (
           <p className="p-4 text-muted-foreground">{t('loading')}</p>
         ) : (
-          <DataTable columns={columns} data={data} onRowClick={handleRowClick} />
+          <DataTable columns={columns} data={filteredData} onRowClick={handleRowClick} />
         )}
       </div>
       <ContactMessageSheet
