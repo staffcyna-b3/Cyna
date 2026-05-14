@@ -48,8 +48,8 @@ function SidebarFooterContent() {
     const isCollapsed = state === "collapsed";
 
     const handleLogout = async () => {
-        await logout();
         navigate("/");
+        await logout();
     };
 
     if (isCollapsed) {

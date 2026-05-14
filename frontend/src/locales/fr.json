@@ -234,6 +234,7 @@
   "login": "Se connecter",
   "logout": "Déconnexion",
   "maintenance": "Maintenance",
+  "manageAddresses": "Gérer mes adresses",
   "max": "max",
   "min": "min",
   "missingCartOrAddress": "Identifiants du panier ou de l'adresse manquants.",
