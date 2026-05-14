@@ -8,8 +8,8 @@ import ReactApexChart from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 import { TrendingUp, TrendingDown, Percent, Euro, ShoppingCart, ShoppingBag } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import { getSales, BackOfficeApiError } from "@/services/BackOfficeOrderService";
-import { computeDashboardData, type TimePeriod, type DashboardData } from "@/services/dashboardService";
+import { BackOfficeOrderApi, BackOfficeApiError } from "@/api/BackOfficeOrderApi";
+import { computeDashboardData, type TimePeriod, type DashboardData } from "@/services/dashboard/dashboard.orchestrator";
 import type { SaleAdminDTO } from "@/types/interfaces/admin/SaleAdminDTO.interface";
 import { toast } from "sonner";
 import {
@@ -95,7 +95,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!accessToken) return;
     setLoading(true);
-    getSales(accessToken)
+    BackOfficeOrderApi.getInstance().getSales()
       .then(setAllSales)
       .catch((err: unknown) => {
         if (err instanceof BackOfficeApiError && err.status === 401) {
@@ -110,7 +110,6 @@ export default function Dashboard() {
   useEffect(() => {
     if (!accessToken) return;
     computeDashboardData(
-      accessToken,
       allSales,
       period,
       customFrom || undefined,

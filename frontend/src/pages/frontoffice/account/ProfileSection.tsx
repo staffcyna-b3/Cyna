@@ -4,10 +4,10 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { updateProfile, UserApiError } from '@/services/userService';
+import { UserApi, UserApiError } from '@/api/UserApi';
 import type { Props } from '@/types/interfaces/account/ProfileSectionProps';
 
-export function ProfileSection({ profile, token, onUpdated }: Props) {
+export function ProfileSection({ profile, onUpdated }: Props) {
   const { t } = useTranslation();
   const [fullName, setFullName] = useState(profile.full_name);
   const [email, setEmail] = useState(profile.email);
@@ -17,7 +17,7 @@ export function ProfileSection({ profile, token, onUpdated }: Props) {
     e.preventDefault();
     setLoading(true);
     try {
-      const updated = await updateProfile(token, { full_name: fullName, email });
+      const updated = await UserApi.getInstance().updateProfile({ full_name: fullName, email });
       onUpdated(updated);
       toast.success(t('account.profileUpdated'));
     } catch (err) {

@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { createAddress, updateAddress } from '@/services/addressService';
+import { AddressApi } from '@/api/AddressApi';
 import type { CreateAddressPayload } from '@/types/interfaces/address/CreateAddressPayload';
 import type { Props } from '@/types/interfaces/account/AddressDialogProps';
 
@@ -30,7 +30,7 @@ const empty: CreateAddressPayload = {
   country: '',
 };
 
-export function AddressDialog({ open, onClose, token, editTarget, onSaved }: Props) {
+export function AddressDialog({ open, onClose, editTarget, onSaved }: Props) {
   const { t } = useTranslation();
   const [form, setForm] = useState<CreateAddressPayload>(empty);
   const [loading, setLoading] = useState(false);
@@ -62,11 +62,12 @@ export function AddressDialog({ open, onClose, token, editTarget, onSaved }: Pro
         address_line2: form.address_line2 || null,
       };
       let saved;
+      const api = AddressApi.getInstance();
       if (editTarget) {
-        saved = await updateAddress(token, editTarget.id, payload);
+        saved = await api.updateAddress(editTarget.id, payload);
         toast.success(t('account.addressUpdated'));
       } else {
-        saved = await createAddress(token, payload);
+        saved = await api.createAddress(payload);
         toast.success(t('account.addressSaved'));
       }
       await onSaved(saved);

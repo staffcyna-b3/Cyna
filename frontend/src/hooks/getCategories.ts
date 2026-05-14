@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { CatalogService } from '../services/CatalogService';
+import { CatalogApi } from '../api/CatalogApi';
 import i18n from '@/i18n';
 import { Category } from '@/types/interfaces/category/Category';
 
@@ -17,7 +17,7 @@ function sortCategories(items: Category[]): Category[] {
 }
 
 export const GetCategories = () => {
-    const service = CatalogService.getInstance();
+    const service = CatalogApi.getInstance();
 
     const [data, setData] = useState<Category[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);

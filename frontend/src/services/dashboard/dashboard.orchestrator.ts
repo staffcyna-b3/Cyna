@@ -1,7 +1,7 @@
 import type { SaleAdminDTO } from '@/types/interfaces/admin/SaleAdminDTO.interface';
 import type { TimePeriod, KpiData, DashboardData } from './dashboard.types';
 import { getDateRange, getPreviousRange, filterByRange } from './dashboard.dateUtils';
-import { fetchStats } from './dashboard.api';
+import { DashboardApi } from '@/api/DashboardApi';
 import {
   EMPTY_KPIS,
   trendPct,
@@ -13,7 +13,6 @@ import {
 export type { TimePeriod, KpiData, DashboardData } from './dashboard.types';
 
 export async function computeDashboardData(
-  token: string,
   allSales: SaleAdminDTO[],
   period: TimePeriod,
   customFrom?: string,
@@ -34,9 +33,10 @@ export async function computeDashboardData(
 
   const { from: prevFrom, to: prevTo } = getPreviousRange(from, to);
 
+  const api = DashboardApi.getInstance();
   const [currentStats, prevStats] = await Promise.all([
-    fetchStats(token, from, to),
-    fetchStats(token, prevFrom, prevTo),
+    api.fetchStats(from, to),
+    api.fetchStats(prevFrom, prevTo),
   ]);
 
   const rangedSales = filterByRange(allSales, from, to);

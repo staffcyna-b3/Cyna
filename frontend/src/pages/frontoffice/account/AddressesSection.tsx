@@ -1,26 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import {
-  deleteAddress,
-  getAddresses,
-  setDefaultAddress,
-  AddressApiError,
-} from '@/services/addressService';
+import { AddressApi, AddressApiError } from '@/api/AddressApi';
 import type { Address } from '@/types/interfaces/address/Address';
 import type { Props } from '@/types/interfaces/account/AddressesSectionProps';
 import { AddressCard } from './AddressCard';
 import { AddressDialog } from './AddressDialog';
 import { useState } from 'react';
 
-export function AddressesSection({ token, addresses, onAddressesChange }: Props) {
+export function AddressesSection({ addresses, onAddressesChange }: Props) {
   const { t } = useTranslation();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Address | null>(null);
 
   const reload = async () => {
     try {
-      const updated = await getAddresses(token);
+      const updated = await AddressApi.getInstance().getAddresses();
       onAddressesChange(updated);
     } catch (err) {
       if (err instanceof AddressApiError && err.status === 401) {
@@ -33,7 +28,7 @@ export function AddressesSection({ token, addresses, onAddressesChange }: Props)
 
   const handleSetDefault = async (address: Address) => {
     try {
-      await setDefaultAddress(token, address.id);
+      await AddressApi.getInstance().setDefaultAddress(address.id);
       onAddressesChange(
         addresses.map((a) =>
           a.type === address.type ? { ...a, is_default: a.id === address.id } : a
@@ -46,7 +41,7 @@ export function AddressesSection({ token, addresses, onAddressesChange }: Props)
 
   const handleDelete = async (id: string) => {
     try {
-      await deleteAddress(token, id);
+      await AddressApi.getInstance().deleteAddress(id);
       toast.success(t('account.addressDeleted'));
       await reload();
     } catch (err) {
@@ -109,7 +104,6 @@ export function AddressesSection({ token, addresses, onAddressesChange }: Props)
       <AddressDialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
-        token={token}
         editTarget={editTarget}
         onSaved={handleSaved}
       />

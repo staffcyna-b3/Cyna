@@ -4,10 +4,8 @@ import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { changePassword, UserApiError } from '@/services/userService';
-import type { Props } from '@/types/interfaces/account/PasswordSectionProps';
-
-export function PasswordSection({ token }: Props) {
+import { UserApi, UserApiError } from '@/api/UserApi';
+export function PasswordSection() {
   const { t } = useTranslation();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -22,7 +20,7 @@ export function PasswordSection({ token }: Props) {
     }
     setLoading(true);
     try {
-      await changePassword(token, { current_password: currentPassword, new_password: newPassword });
+      await UserApi.getInstance().changePassword({ current_password: currentPassword, new_password: newPassword });
       toast.success(t('account.passwordChanged'));
       setCurrentPassword('');
       setNewPassword('');

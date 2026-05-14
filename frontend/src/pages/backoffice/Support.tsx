@@ -10,12 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/hooks/useAuth';
 import type { ContactMessageDTO } from '@/types/interfaces/admin/ContactMessageDTO.interface';
-import {
-  getContactMessages,
-  markContactAsProcessed,
-  replyToContact,
-  BackOfficeApiError,
-} from '@/services/BackOfficeOrderService';
+import { BackOfficeOrderApi, BackOfficeApiError } from '@/api/BackOfficeOrderApi';
 import { ContactMessageSheet } from '@/components/Backoffice/sheets/ContactMessageSheet';
 import { ContactStatusBadge } from '@/components/Backoffice/ContactStatusBadge';
 
@@ -39,7 +34,7 @@ export default function Support() {
   useEffect(() => {
     if (!accessToken) return;
     setLoading(true);
-    getContactMessages(accessToken)
+    BackOfficeOrderApi.getInstance().getContactMessages()
       .then(setData)
       .catch((err: unknown) => {
         if (err instanceof BackOfficeApiError && err.status === 401) {
@@ -65,7 +60,7 @@ export default function Support() {
     if (!accessToken || !selected) return;
     setMarking(true);
     try {
-      const updated = await markContactAsProcessed(accessToken, selected.id);
+      const updated = await BackOfficeOrderApi.getInstance().markContactAsProcessed(selected.id);
       handleMarked(updated);
       toast.success(t('contact.markProcessed'));
     } catch (err: unknown) {
@@ -83,7 +78,7 @@ export default function Support() {
     if (!selected || !accessToken || !replyMessage.trim()) return;
     setReplying(true);
     try {
-      const updated = await replyToContact(accessToken, selected.id, replyMessage);
+      const updated = await BackOfficeOrderApi.getInstance().replyToContact(selected.id, replyMessage);
       handleMarked(updated);
       setReplyMessage('');
       setSheetOpen(false);

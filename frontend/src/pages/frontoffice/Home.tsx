@@ -13,7 +13,7 @@ import { GetCategories } from "@/hooks/getCategories"
 import type { Category } from "@/types/interfaces/category/Category"
 import type { CatalogResponse } from "@/types/interfaces/catalog/CatalogResponse"
 import { ProductStatus } from "@/types/enums/product/ProductStatus"
-import { CatalogService } from "@/services/CatalogService"
+import { CatalogApi } from "@/api/CatalogApi"
 import { Typography } from "@/components/ui/typography"
 import { useTranslation } from "react-i18next"
 import { formatCurrency } from "@/utils/currencyFormatter"
@@ -35,7 +35,7 @@ export default function HomePage() {
     const [homeActiveCategory, setHomeActiveCategory] = useState<string | null>(null)
     const { data: categories, loading, listCategories } = GetCategories()
     const { t } = useTranslation()
-    const service = useMemo(() => CatalogService.getInstance(), [])
+    const service = useMemo(() => CatalogApi.getInstance(), [])
     const [topProducts, setTopProducts] = useState<CatalogResponse[]>([])
 
     useEffect(() => {
@@ -43,7 +43,7 @@ export default function HomePage() {
     }, [listCategories])
 
     useEffect(() => {
-        service.getCatalogList({ limit: 3 }).then(res => {
+        service.getCatalogList({ limit: 3, page: 1 }).then(res => {
             const shuffled = [...res.rows].sort(() => Math.random() - 0.5)
             setTopProducts(shuffled.slice(0, 3))
         })

@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
-import { CatalogService } from '../services/CatalogService';
+import { CatalogApi } from '../api/CatalogApi';
 import i18n from '@/i18n';
 import { CatalogResponse } from '@/types/interfaces/catalog/CatalogResponse';
 
-const service = CatalogService.getInstance();
+const service = CatalogApi.getInstance();
 
 export function useProductDetail() {
     const [data, setData] = useState<CatalogResponse | null>(null);
@@ -14,7 +14,7 @@ export function useProductDetail() {
         setLoading(true);
         setError(null);
         try {
-            const res = await service.getProductById(id);
+            const res = await service.getOne(id);
             setData(res);
             return res;
         } catch (err: unknown) {

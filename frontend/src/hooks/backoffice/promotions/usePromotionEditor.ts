@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { BackOfficeService } from '@/services/BackOfficeCatalogService';
+import { BackOfficeApi } from '@/api/BackOfficeApi';
 import {
     createBackOfficePromotion,
     deleteBackOfficePromotion,
@@ -53,7 +53,7 @@ export function usePromotionEditor({
     onSaved,
     onDeleted,
 }: UsePromotionEditorParams) {
-    const service = useMemo(() => BackOfficeService.getInstance(), []);
+    const service = useMemo(() => BackOfficeApi.getInstance(), []);
     const [form, setForm] = useState<PromotionFormState>(toFormState(promotion));
     const [loadingDetails, setLoadingDetails] = useState(false);
     const [loadingProducts, setLoadingProducts] = useState(false);

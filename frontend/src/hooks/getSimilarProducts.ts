@@ -1,10 +1,10 @@
 import { useState, useCallback } from 'react';
-import { CatalogService } from '../services/CatalogService';
+import { CatalogApi } from '../api/CatalogApi';
 import i18n from '@/i18n';
 import { CatalogResponse } from '@/types/interfaces/catalog/CatalogResponse';
 
 export const GetSimilarProducts = () => {
-    const service = CatalogService.getInstance();
+    const service = CatalogApi.getInstance();
 
     const [data, setData] = useState<CatalogResponse[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);

@@ -1,3 +1,1 @@
-export interface Props {
-  token: string;
-}
+export type Props = Record<never, never>;

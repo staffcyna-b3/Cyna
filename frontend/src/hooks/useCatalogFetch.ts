@@ -1,6 +1,6 @@
 import { useState, useCallback, useContext } from 'react';
 import { CatalogContext } from '../contexts/CatalogContext';
-import { CatalogService } from '../services/CatalogService';
+import { CatalogApi } from '../api/CatalogApi';
 import { CatalogListResponse } from '../types/interfaces/catalog/CatalogListResponse';
 import { CatalogFilters } from '../types/interfaces/catalog/CatalogFilters';
 import i18n from '@/i18n';
@@ -11,7 +11,7 @@ export const useCatalogFetch = () => {
         throw new Error(i18n.t('useCatalogFetchMustBeUsed'));
     }
 
-    const service = CatalogService.getInstance();
+    const service = CatalogApi.getInstance();
 
     const [data, setData] = useState<CatalogListResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -22,12 +22,12 @@ export const useCatalogFetch = () => {
             setLoading(true);
             setError(null);
             try {
-                const payload: Partial<CatalogFilters> = {
+                const payload = {
                     ...ctx.getPayload(),
                     page: ctx.page,
                     limit: ctx.limit,
                     ...overrides,
-                };
+                } as CatalogFilters;
                 const res = await service.getCatalogList(payload);
                 setData(res);
                 return res;

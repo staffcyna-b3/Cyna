@@ -1,4 +1,4 @@
-import { BackOfficeService } from '@/services/BackOfficeCatalogService';
+import { BackOfficeApi } from '@/api/BackOfficeApi';
 import type {
     BackOfficePromotion,
     CreatePromotionPayload,
@@ -10,7 +10,7 @@ import type { BackOfficePromotionsStoreState } from '@/types/interfaces/backoffi
 import { createStore, createStoreHook } from './createStore';
 import { getErrorMessage, setStoreError, setStoreLoading } from './storeUtils';
 
-const service = BackOfficeService.getInstance();
+const service = BackOfficeApi.getInstance();
 const store = createStore<BackOfficePromotionsStoreState>({
     items: [],
     current: null,
