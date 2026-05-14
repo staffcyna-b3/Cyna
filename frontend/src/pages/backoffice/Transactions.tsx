@@ -192,7 +192,12 @@ export default function Transactions() {
             accessorKey: 'productName',
             header: t('admin.products'),
             cell: ({ row }) =>
-                t(`products.${row.original.productName}.name`) ?? row.original.productName,
+                row.original.productName === '—'
+                    ? '—'
+                    : row.original.productName
+                          .split(', ')
+                          .map((name) => t(`products.${name}.name`, { defaultValue: name }))
+                          .join(', '),
         },
         {
             accessorKey: 'type',
@@ -474,7 +479,7 @@ export default function Transactions() {
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t('subscriptions.cancelTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            {cancelTarget?.product?.name} — {cancelTarget?.user?.email}
+                            {t(`products.${cancelTarget?.product?.name}.name`, { defaultValue: cancelTarget?.product?.name })} — {cancelTarget?.user?.email}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
