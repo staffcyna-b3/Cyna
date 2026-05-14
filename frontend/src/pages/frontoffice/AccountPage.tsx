@@ -61,7 +61,6 @@ export default function AccountPage() {
           <TabsTrigger value="profile" className="flex-1">{t('account.tabProfile')}</TabsTrigger>
           <TabsTrigger value="password" className="flex-1">{t('account.tabPassword')}</TabsTrigger>
           <TabsTrigger value="addresses" className="flex-1">{t('account.tabAddresses')}</TabsTrigger>
-          <TabsTrigger value="orders" className="flex-1">{t('account.tabOrders')}</TabsTrigger>
         </TabsList>
         <TabsContent value="profile">
           <ProfileSection
@@ -79,9 +78,6 @@ export default function AccountPage() {
             addresses={addresses}
             onAddressesChange={setAddresses}
           />
-        </TabsContent>
-        <TabsContent value="orders">
-          <OrdersSection token={accessToken} />
         </TabsContent>
       </Tabs>
     </div>

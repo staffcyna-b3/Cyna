@@ -78,6 +78,7 @@ export function useGuestCart() {
                 isService,
                 period: periodMonths,
                 stock,
+                unitPriceCents: Math.round((discountedUnitPrice ?? unitPrice) * 100),
             };
             persist([...current, newItem]);
         }
@@ -94,6 +95,13 @@ export function useGuestCart() {
         }
         persist(current.map(i =>
             i.id === itemId ? { ...i, quantity, subtotal: i.period ? i.unitPrice * quantity * i.period : i.unitPrice * quantity } : i
+        ));
+    }, [persist]);
+
+    const updatePeriod = useCallback(async (itemId: string, period: number) => {
+        const current = loadGuestCart();
+        persist(current.map(i =>
+            i.id === itemId ? { ...i, period, subtotal: i.unitPrice * i.quantity * period } : i
         ));
     }, [persist]);
 
@@ -117,6 +125,7 @@ export function useGuestCart() {
         fetchCart,
         addToCart,
         updateQuantity,
+        updatePeriod,
         removeFromCart,
         clearCart,
     };

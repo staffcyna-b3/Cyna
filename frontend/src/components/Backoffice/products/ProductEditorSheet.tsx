@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import type { ProductEditorSheetProps } from '@/types/interfaces/backoffice/product/ProductEditorSheetProps';
+import { useTranslation } from 'react-i18next';
 
 export function ProductEditorSheet({
     open,
@@ -52,6 +53,7 @@ export function ProductEditorSheet({
     onDelete,
 }: ProductEditorSheetProps) {
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const { t } = useTranslation();
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
@@ -72,7 +74,7 @@ export function ProductEditorSheet({
                     <div className="space-y-4">
                         <div>
                             <Label className="mb-1.5 block text-sm text-gray-500">{nameLabel}</Label>
-                            <Input value={name} onChange={(event) => onNameChange(event.target.value)} />
+                            <Input value={t(`products.${name}.name`)} onChange={(event) => onNameChange(event.target.value)} />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
@@ -110,7 +112,7 @@ export function ProductEditorSheet({
                         <div>
                             <Label className="mb-1.5 block text-sm text-gray-500">{descriptionLabel}</Label>
                             <Textarea
-                                value={description}
+                                value={t(`products.${name}.description`)}
                                 onChange={(event) => onDescriptionChange(event.target.value)}
                                 className="h-28"
                             />

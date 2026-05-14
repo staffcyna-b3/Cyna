@@ -28,7 +28,7 @@ export default function CatalogActiveFilters({
 
             {isService !== undefined && (
                 <div className="rounded-full bg-[#2a2a3d] px-3 py-1.5 text-[#b7bdd9]">
-                    {isService ? t('services') : t('products')}
+                    {isService ? t('services') : t('products.label')}
                 </div>
             )}
 

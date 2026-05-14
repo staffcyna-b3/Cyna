@@ -1,7 +1,7 @@
 import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Typography } from "@/components/ui/typography";
+import { BackOfficePageHeader } from "@/components/Backoffice/shared/BackOfficePageHeader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     AlertDialog,
@@ -133,7 +133,8 @@ export default function Transactions() {
         },
         {
             accessorKey: "productName",
-            header: t("admin.product"),
+            header: t(`admin.products`),
+            cell: ({ row }) => t(`products.${row.original.productName}.name`) ?? row.original.productName,
         },
         {
             accessorKey: "type",
@@ -187,7 +188,7 @@ export default function Transactions() {
         {
             accessorKey: "product",
             header: t("admin.subscription"),
-            cell: ({ row }) => row.original.product?.name ?? "—",
+            cell: ({ row }) => t(`products.${row.original.product?.name}.name`) ?? "—",
         },
         {
             accessorKey: "user",
@@ -237,9 +238,7 @@ export default function Transactions() {
 
     return (
         <>
-            <header className="px-4 flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                <Typography variant="h1">{t("transactions")}</Typography>
-            </header>
+            <BackOfficePageHeader title={t("transactions")} />
 
             <div className="flex flex-1 flex-col gap-2 p-4 pt-0">
                 <Tabs defaultValue="transactions">

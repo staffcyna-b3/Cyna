@@ -1,4 +1,4 @@
-import { JSX } from 'react';
+import { JSX, useState } from 'react';
 import AddToCartButton from '@/components/Frontoffice/AddToCartButton';
 import ProductTypeBadge from '@/components/ProductTypeBadge';
 import ServiceDetailLayout from '@/components/Frontoffice/layout/ServiceDetailLayout';
@@ -9,6 +9,14 @@ import {
 } from '@/types/interfaces/catalog/DetailSectionProps';
 import ProductImageGallery from './ProductImageGallery';
 import { getServiceAbbreviation } from '@/helpers/frontoffice/catalog/detailHelpers';
+import { Period } from '@/types/Period';
+import { PeriodEnum } from '@/types/enums/Period';
+
+const PERIOD_OPTIONS: { value: Period; labelKey: string }[] = [
+    { value: PeriodEnum.ThreeMonths, labelKey: 'threeMonths' },
+    { value: PeriodEnum.SixMonths,   labelKey: 'sixMonths'   },
+    { value: PeriodEnum.OneYear,     labelKey: 'oneYear'     },
+];
 
 function AddToCartPanel({
     product,
@@ -16,6 +24,9 @@ function AddToCartPanel({
     unavailableLabel,
     t,
 }: AddToCartPanelProps): JSX.Element {
+    const translatedName = t(`products.${product.name}.name`);
+    const [selectedPeriod, setSelectedPeriod] = useState<Period>(PeriodEnum.ThreeMonths);
+
     return (
         <div className="flex flex-col gap-3 pt-4">
             <div className="rounded-xl p-5 border border-white/10 bg-linear-to-br from-white/5 to-transparent hover:border-white/20 transition-colors">
@@ -41,16 +52,54 @@ function AddToCartPanel({
                 )}
             </div>
 
-            <AddToCartButton
-                disabled={!isAvailable}
-                productId={product.id}
-                name={product.name}
-                unitPrice={product.price}
-                discountedUnitPrice={product.discountedPrice ?? undefined}
-                isService={product.isService}
-                stock={product.isService ? undefined : product.stock}
-                text={isAvailable ? t('addToCart') : unavailableLabel}
-            />
+            {product.isService && (
+                <div className="flex flex-col gap-2">
+                    <span className="text-xs uppercase tracking-wide text-[#9aa0c7]">
+                        {t('selectPeriod')}
+                    </span>
+                    <div className="flex gap-2">
+                        {PERIOD_OPTIONS.map(({ value, labelKey }) => (
+                            <button
+                                key={value}
+                                type="button"
+                                onClick={() => setSelectedPeriod(value)}
+                                className={
+                                    'flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors ' +
+                                    (selectedPeriod === value
+                                        ? 'bg-[#372CCA] text-white'
+                                        : 'bg-white/5 text-[#b7bdd9] hover:bg-white/10')
+                                }
+                            >
+                                {t(labelKey)}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {product.isService ? (
+                <AddToCartButton
+                    disabled={!isAvailable}
+                    productId={product.id}
+                    name={translatedName}
+                    unitPrice={product.price}
+                    discountedUnitPrice={product.discountedPrice ?? undefined}
+                    isService={true}
+                    period={selectedPeriod}
+                    text={isAvailable ? t('addToCart') : unavailableLabel}
+                />
+            ) : (
+                <AddToCartButton
+                    disabled={!isAvailable}
+                    productId={product.id}
+                    name={translatedName}
+                    unitPrice={product.price}
+                    discountedUnitPrice={product.discountedPrice ?? undefined}
+                    isService={false}
+                    stock={product.stock}
+                    text={isAvailable ? t('addToCart') : unavailableLabel}
+                />
+            )}
         </div>
     );
 }
@@ -61,12 +110,13 @@ export function ServiceDetailSection({
     isAvailable,
     unavailableLabel,
 }: DetailSectionProps): JSX.Element {
-    const abbreviation = getServiceAbbreviation(product.name);
+    const translatedName = t(`products.${product.name}.name`);
+    const abbreviation = getServiceAbbreviation(translatedName);
 
     return (
         <ServiceDetailLayout
-            title={product.name}
-            description={product.description || ''}
+            title={translatedName}
+            description={t(`products.${product.name}.description`)}
             abbreviation={abbreviation}
             badge={<ProductTypeBadge isService={true} />}
         >
@@ -129,11 +179,11 @@ export function PhysicalProductDetailSection({
                     </div>
                     <h1 className="text-4xl lg:text-5xl font-black leading-tight">
                         <span className="text-transparent bg-linear-to-r from-white via-[#e0e7ff] to-[#c7d2fe] bg-clip-text">
-                            {product.name}
+                            {t(`products.${product.name}.name`)}
                         </span>
                     </h1>
                     <p className="text-base text-[#b7bdd9] leading-relaxed line-clamp-4">
-                        {product.description}
+                        {t(`products.${product.name}.description`)}
                     </p>
                 </div>
 
@@ -181,7 +231,7 @@ export function PhysicalProductDetailSection({
 
             <div className="col-span-12 lg:col-span-6 flex items-center justify-center py-8 lg:py-0">
                 <ProductImageGallery
-                    productName={product.name}
+                    productName={t(`products.${product.name}.name`)}
                     images={product.images}
                     t={t}
                 />

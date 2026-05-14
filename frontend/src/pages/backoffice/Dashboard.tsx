@@ -60,7 +60,7 @@ function KpiCard({ label, value, trend, icon }: KpiCardProps) {
         {icon}
         <span>{label}</span>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <span className="text-2xl font-bold text-gray-900">{value}</span>
         <span className={`flex items-center gap-1 text-sm font-medium ${isPositive ? "text-green-500" : "text-red-500"}`}>
           {isPositive ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
@@ -119,17 +119,21 @@ export default function Dashboard() {
     )
       .then(setDashboardData)
       .catch(() => toast.error(t("errorOccurred")));
-      console.log("Test", allSales);
   }, [accessToken, allSales, period, customFrom, customTo, categoryFilter]);
 
   const { kpis, salesSeries, categoryData, categories } = dashboardData;
-  console.log("Dashboard data:", salesSeries);
   const salesBarOptions: ApexOptions = {
     ...baseBarOptions,
     xaxis: {
       ...baseBarOptions.xaxis,
       categories: salesSeries.map((d) => d.date),
       labels: { style: { colors: "#9CA3AF" } },
+    },
+    yaxis: {
+      labels: {
+        style: { colors: "#9CA3AF" },
+        formatter: (val) => `${Math.round(val)} €`,
+      },
     },
   };
 
@@ -173,7 +177,7 @@ export default function Dashboard() {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL_CATEGORIES_VALUE}>{t("allCategories") || "Toutes les catégories"}</SelectItem>
+                <SelectItem value={ALL_CATEGORIES_VALUE}>{t("allCategories")}</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} value={cat}>
                     {cat}
@@ -183,23 +187,29 @@ export default function Dashboard() {
             </Select>
           )}
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-2 bg-primary rounded-full p-1">
+        <div className="overflow-x-auto sm:overflow-x-visible w-full sm:w-auto">
+          <div className="flex items-center gap-2 bg-primary rounded-full p-1 w-fit">
             <Button
+              size="sm"
               variant={period === "7days" ? "selected" : "notSelected"}
               onClick={() => setPeriod("7days")}
+              className="rounded-full"
             >
               {t("last7Days")}
             </Button>
             <Button
+              size="sm"
               variant={period === "5weeks" ? "selected" : "notSelected"}
               onClick={() => setPeriod("5weeks")}
+              className="rounded-full"
             >
               {t("last5Weeks")}
             </Button>
             <Button
+              size="sm"
               variant={period === "custom" ? "selected" : "notSelected"}
               onClick={() => setPeriod("custom")}
+              className="rounded-full"
             >
               {t("custom")}
             </Button>

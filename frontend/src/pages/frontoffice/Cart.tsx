@@ -29,7 +29,7 @@ export const Cart = () => {
     loading: checkoutLoading,
     setCheckoutIds,
   } = useCheckout()
-  const { cartId, items, shippingFee, updateQuantity, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
+  const { cartId, items, shippingFee, updateQuantity, updatePeriod, removeFromCart, isLoading: cartLoading, error: cartError, fetchCart } = useCart();
 
   const [addresses, setAddresses] = useState<Address[]>([])
   const [billingId, setBillingId] = useState('')
@@ -155,6 +155,7 @@ export const Cart = () => {
                 key={item.id}
                 onQuantityChange={(id, qty) => updateQuantity(id, qty)}
                 onRemove={(id) => removeFromCart(id)}
+                onPeriodChange={(id, period) => updatePeriod(id, period)}
               />
             ))}
           </div>

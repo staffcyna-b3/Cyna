@@ -53,6 +53,16 @@ export class CartService {
         return await response.json();
     }
 
+    public async updatePeriod(itemId: string, period: number) {
+        const response = await fetch(`${GATEWAY_URL}/api/front-office/cart/items/${itemId}`, this.getOptions('PATCH', { period }));
+        if (!response.ok) {
+            const err = new Error('Erreur mise à jour durée') as Error & { status: number };
+            err.status = response.status;
+            throw err;
+        }
+        return await response.json();
+    }
+
     public async removeItem(itemId: string) {
         const response = await fetch(`${GATEWAY_URL}/api/front-office/cart/items/${itemId}`, this.getOptions('DELETE'));
         if (!response.ok) {

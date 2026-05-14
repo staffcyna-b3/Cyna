@@ -1,15 +1,11 @@
 #!/bin/bash
 
+# set -e  # Arrête le script si une commande échoue
+
 echo "Démarrage de l'installation complète..."
 
 # ==================== INSTALLATION DES DÉPENDANCES ====================
 echo "Installation des dépendances..."
-
-echo "→ Frontend..."
-cd frontend
-npm install
-cd ..
-
 
 echo "→ Gateway..."
 cd gateway
@@ -31,6 +27,7 @@ cd micro-services/product-service
 npm install
 cd ../..
 
+
 echo "→ Payments Service..."
 cd micro-services/payments-service
 npm install
@@ -44,18 +41,18 @@ cd gateway
 npx sequelize-cli db:migrate
 cd ..
 
-echo "→ Back-office Service migrations..."
-cd micro-services/back-office-service
+# echo "→ Back-office Service migrations..."
+# cd micro-services/back-office-service
+# npx sequelize-cli db:migrate
+# cd ../..
+
+echo "→ Front-office Service migrations..."
+cd micro-services/front-office-service
 npx sequelize-cli db:migrate
 cd ../..
 
 echo "→ Product Service migrations..."
 cd micro-services/product-service
-npx sequelize-cli db:migrate
-cd ../..
-
-echo "→ Front-office Service migrations..."
-cd micro-services/front-office-service
 npx sequelize-cli db:migrate
 cd ../..
 
@@ -69,12 +66,6 @@ echo "Exécution des seeders..."
 
 echo "→ Product Service seeders..."
 cd micro-services/product-service
-npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
-cd ../..
-
-echo "→ Front-office Service seeders..."
-cd micro-services/front-office-service
-npx sequelize-cli db:seed:undo --seed 001-seed-checkout.js --seeders-path seeders --models-path src/models --config config/config.js || true
 npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
 cd ../..
 

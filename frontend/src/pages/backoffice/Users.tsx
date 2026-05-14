@@ -1,6 +1,6 @@
 import { DataTable } from "@/components/Backoffice/data-table/data-table";
 import { Button } from "@/components/ui/button";
-import { Typography } from "@/components/ui/typography";
+import { BackOfficePageHeader } from "@/components/Backoffice/shared/BackOfficePageHeader";
 import { Checkbox } from "@/components/ui/checkbox";
 import type { UserAdminDTO } from "@/types/interfaces/admin/UserAdminDTO.interface";
 import { ColumnDef } from "@tanstack/react-table";
@@ -90,7 +90,7 @@ export default function Users() {
     }
 
     const topRightActions = (
-        <div className="flex items-center gap-2 bg-primary rounded-full p-1">
+        <div className="flex items-center gap-2 bg-primary rounded-full p-1 w-fit">
             <Button variant={selected === "active" ? 'selected' : 'notSelected'} onClick={() => setSelected("active")}>{t("active")}</Button>
             <Button variant={selected === "inactive" ? 'selected' : 'notSelected'} onClick={() => setSelected("inactive")}>{t("inactive")}</Button>
         </div>
@@ -117,13 +117,13 @@ export default function Users() {
             enableHiding: false,
         },
         { accessorKey: "id", header: "ID" },
-        { accessorKey: "full_name", header: "Full Name" },
-        { accessorKey: "email", header: "Email" },
+        { accessorKey: "full_name", header: t("fullName") },
+        { accessorKey: "email", header: t("email") },
         {
             accessorKey: "role",
             header: ({ column }) => (
                 <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-                    Role
+                    {t("admin.role")}
                     <LucideArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             ),
@@ -132,10 +132,7 @@ export default function Users() {
 
     return (
         <>
-            <header className="px-4 flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-                <Typography variant="h1">{t("users")}</Typography>
-                {topRightActions}
-            </header>
+            <BackOfficePageHeader title={t("users")} rightSlot={topRightActions} />
             <div className="flex flex-1 flex-col gap-4 p-4 pt-0 border m-4 rounded-lg">
                 {loading ? (
                     <p className="p-4 text-muted-foreground">{t("loading")}</p>

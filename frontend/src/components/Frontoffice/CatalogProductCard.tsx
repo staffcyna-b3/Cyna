@@ -20,6 +20,8 @@ export const CatalogProductCard = ({
 }) => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const translatedName = t(`products.${product.name}.name`);
+    const translatedDescription = t(`products.${product.name}.description`);
     const mainImage =
         product.images?.find((i) => i.isMain) ?? product.images?.[0];
 
@@ -67,17 +69,17 @@ export const CatalogProductCard = ({
                         alt={
                             (
                                 mainImage as unknown as ExtPicture<ProductPictureResponse>
-                            )?.altText ?? product.name
+                            )?.altText ?? translatedName
                         }
                     />
                 </div>
 
                 <div className="p-4 flex flex-col gap-2 flex-1 overflow-hidden">
                     <h3 className="text-lg font-semibold leading-snug line-clamp-2 min-h-[56px]">
-                        {product.name}
+                        {translatedName}
                     </h3>
                     <p className="text-sm text-[#b7bdd9] line-clamp-2 flex-1 min-h-[40px]">
-                        {product.description}
+                        {translatedDescription}
                     </p>
                     <div className="text-sm text-[#9aa0c7] min-h-[20px]">
                         {unavailable ? (
@@ -129,7 +131,7 @@ export const CatalogProductCard = ({
                                         open={showPeriodModal}
                                         onClose={() => setShowPeriodModal(false)}
                                         productId={product.id}
-                                        productName={product.name}
+                                        productName={translatedName}
                                         unitPrice={product.price}
                                         discountedUnitPrice={product.discountedPrice ?? undefined}
                                     />
@@ -140,7 +142,7 @@ export const CatalogProductCard = ({
                                             disabled={!CanBeAddToCart(product)}
                                             productId={product.id}
                                             quantity={1}
-                                            name={product.name}
+                                            name={translatedName}
                                             unitPrice={product.price}
                                             discountedUnitPrice={product.discountedPrice ?? undefined}
                                             isService={false}

@@ -69,6 +69,20 @@ export function useAuthCart() {
         }
     }, [service, fetchCart, handleExpiredToken]);
 
+    const updatePeriod = useCallback(async (itemId: string, period: number) => {
+        const item = items.find(i => i.id === itemId);
+        if (!item) return;
+        try {
+            await service.removeItem(itemId);
+            await service.addItem(item.productId, item.quantity, period);
+            await fetchCart();
+        } catch (err) {
+            if (is401(err)) { handleExpiredToken(); return; }
+            toast.error('Erreur de mise à jour de la durée');
+            throw err;
+        }
+    }, [items, service, fetchCart, handleExpiredToken]);
+
     const removeFromCart = useCallback(async (itemId: string) => {
         try {
             await service.removeItem(itemId);
@@ -102,6 +116,7 @@ export function useAuthCart() {
         fetchCart,
         addToCart,
         updateQuantity,
+        updatePeriod,
         removeFromCart,
         clearCart,
     };

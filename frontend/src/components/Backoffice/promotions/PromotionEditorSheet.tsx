@@ -18,6 +18,7 @@ import {
 } from '@/components/ui/select';
 import type { PromotionType } from '@/types/interfaces/backoffice/promotion';
 import type { PromotionEditorSheetProps } from '@/types/interfaces/backoffice/promotion/PromotionEditorSheetProps';
+import { useTranslation } from 'react-i18next';
 
 export function PromotionEditorSheet({
     open,
@@ -58,6 +59,7 @@ export function PromotionEditorSheet({
     onDelete,
 }: PromotionEditorSheetProps) {
     const disabled = loadingDetails || saving || deleting;
+    const { t } = useTranslation();
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
@@ -152,7 +154,7 @@ export function PromotionEditorSheet({
                                                                 onCheckedChange={(next) => onToggleProduct(product.id, Boolean(next))}
                                                                 disabled={disabled}
                                                             />
-                                                            <span className="text-sm text-gray-800">{product.name}</span>
+                                                            <span className="text-sm text-gray-800">{t(`products.${product.name}.name`)}</span>
                                                         </div>
                                                         <span className="text-xs text-gray-500">{Number(product.price)} EUR</span>
                                                     </label>
