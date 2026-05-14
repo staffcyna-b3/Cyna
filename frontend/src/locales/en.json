@@ -136,7 +136,8 @@
     "passwordTitle": "Change password",
     "passwordChanged": "Password changed successfully",
     "profileUpdated": "Profile updated",
-    "confirmDelete": "Are you sure you want to delete this address?"
+    "confirmDelete": "Are you sure you want to delete this address?",
+    "noAddressesOfType": "No address of this type saved."
   },
   "refunds": "Refunds",
   "sessionExpired": "Session expired, please log in again",
@@ -308,6 +309,8 @@
   "searchPlaceholder": "Search...",
   "searchProductPlaceholder": "Search for a product...",
   "searchQuery": "\"{{query}}\"",
+  "selectAddress": "Select an address",
+  "selectAddressRequired": "Please select a billing and shipping address",
   "selectCountry": "Select a country",
   "selectPeriod": "Select rental period",
   "sendingLink": "Sending link...",
@@ -323,6 +326,7 @@
   "subtotal": "Subtotal",
   "summary": "Summary",
   "termsAndConditions": "Terms and Conditions",
+  "type": "Type",
   "threeMonths": "3 months",
   "total": "Total",
   "Total": "Total",
