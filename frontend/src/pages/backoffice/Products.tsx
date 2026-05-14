@@ -40,6 +40,7 @@ export default function Products() {
     const navigate = useNavigate();
     const state = useProductsPageState();
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [selectedCount, setSelectedCount] = useState(0);
 
     const categoryQuery = useMemo(() => ({}), []);
 
@@ -191,9 +192,9 @@ export default function Products() {
                             type="button"
                             variant="destructive"
                             className="h-9"
-                            disabled={state.selectedCount === 0}
+                            disabled={selectedCount === 0}
                         >
-                            {t('cart.remove')}
+                            {selectedCount > 0 ? `${t('cart.remove')} (${selectedCount})` : t('cart.remove')}
                         </Button>
                     }
                 />
@@ -201,7 +202,7 @@ export default function Products() {
                 {loading ? (
                     <div className="rounded-md border p-6 text-sm text-muted-foreground">{t('loading')}</div>
                 ) : (
-                    <DataTable data={filteredItems} columns={columns} onRowClick={(product) => state.openProductEditor(product.id)} />
+                    <DataTable data={filteredItems} columns={columns} onRowClick={(product) => state.openProductEditor(product.id)} onSelectionChange={(rows) => setSelectedCount(rows.length)} />
                 )}
                 {!loading && productsErrorMessage ? (
                     <p className="text-sm text-destructive">{productsErrorMessage}</p>
