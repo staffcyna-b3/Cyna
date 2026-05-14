@@ -74,7 +74,7 @@ export default function MySubscriptions() {
     try {
       const updated = await cancelSubscription(accessToken, cancelTarget.stripe_subscription_id);
       setSubscriptions((prev) =>
-        prev.map((s) => (s.id === updated.id ? updated : s))
+        prev.map((s) => (s.id === updated.id ? { ...updated, product: s.product } : s))
       );
       toast.success(t('subscriptions.cancelSuccess'));
       setCancelTarget(null);
@@ -91,7 +91,7 @@ export default function MySubscriptions() {
     try {
       const updated = await reactivateSubscription(accessToken, reactivateTarget.stripe_subscription_id);
       setSubscriptions((prev) =>
-        prev.map((s) => (s.id === updated.id ? updated : s))
+        prev.map((s) => (s.id === updated.id ? { ...updated, product: s.product } : s))
       );
       toast.success(t('subscriptions.reactivateSuccess'));
       setReactivateTarget(null);

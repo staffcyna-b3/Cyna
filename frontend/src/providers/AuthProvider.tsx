@@ -223,6 +223,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
   }, []);
 
+  // Refresh proactif : renouvelle l'access token 1 minute avant son expiry (token dure 15m)
+  useEffect(() => {
+    if (!accessToken) return;
+
+    const intervalId = window.setInterval(async () => {
+      try {
+        const res = await fetch('/api/auth/refresh', {
+          method: 'POST',
+          credentials: 'include',
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.accessToken) {
+            localStorage.setItem('accessToken', data.accessToken);
+            setAccessToken(data.accessToken);
+          }
+        } else {
+          logout();
+        }
+      } catch {
+        logout();
+      }
+    }, 14 * 60 * 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [accessToken, logout]);
+
   const validateResetToken = useCallback(async (token: string) => {
     try {
       const response = await fetch('/api/auth/validate-reset-token', {

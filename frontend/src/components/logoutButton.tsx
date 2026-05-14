@@ -11,8 +11,8 @@ export const LogoutButton: React.FC = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
       navigate('/');
+      await logout();
     } catch (error) {
       console.error('Erreur logout:', error);
     }

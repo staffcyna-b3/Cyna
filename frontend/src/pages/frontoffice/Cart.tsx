@@ -226,7 +226,7 @@ export const Cart = () => {
               <div className="w-full text-white text-sm flex flex-col gap-2">
                 {items.map((item) => (
                   <div key={item.id} className="flex justify-between gap-3">
-                    <span>{item.name} x{item.quantity}</span>
+                    <span>{t(`products.${item.name}.name`)} x{item.quantity}</span>
                     <span className="flex flex-col items-end">
                       {item.discountedUnitPrice !== undefined && (
                         <span className="line-through text-white/40 text-xs">
