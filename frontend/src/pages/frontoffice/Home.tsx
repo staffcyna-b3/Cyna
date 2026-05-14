@@ -85,19 +85,17 @@ export default function HomePage() {
                                                 {/* Tag */}
                                                 <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium text-white/80 backdrop-blur-sm">
                                                     <Icon size={14} />
-                                                    {category.name}
+                                                    {t(`categories.${category.description ?? ''}.name`, { defaultValue: category.name })}
                                                 </span>
 
                                                 {/* Title */}
                                                 <h1 className="font-space-grotesk text-4xl font-black leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
-                                                    {category.name}
+                                                    {t(`categories.${category.description ?? ''}.name`, { defaultValue: category.name })}
                                                 </h1>
 
                                                 {/* Description */}
                                                 <p className="max-w-lg text-base leading-relaxed text-white/70 sm:text-lg">
-                                                    {/* Category descriptions are i18n keys (snake_case).
-                                                        Add new keys to fr.json and en.json when creating categories in the back-office. */}
-                                                    {t(`categories.${category.description ?? ''}`) || ''}
+                                                    {t(`categories.${category.description ?? ''}.description`) || ''}
                                                 </p>
 
                                                 {/* CTA */}
@@ -189,12 +187,10 @@ export default function HomePage() {
                                         </div>
                                         <div className="mt-8">
                                             <Typography variant='h3' className="text-base font-bold text-white">
-                                                {service.name}
+                                                {t(`categories.${service.description ?? ''}.name`, { defaultValue: service.name })}
                                             </Typography>
                                             <p className="mt-1.5 line-clamp-2 text-sm text-white/50">
-                                                {/* Category descriptions are i18n keys (snake_case).
-                                                    Add new keys to fr.json and en.json when creating categories in the back-office. */}
-                                                {t(`categories.${service.description ?? ''}`) || ''}
+                                                {t(`categories.${service.description ?? ''}.description`) || ''}
                                             </p>
                                         </div>
                                     </Link>

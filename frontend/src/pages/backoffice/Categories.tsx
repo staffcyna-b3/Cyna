@@ -58,7 +58,7 @@ export default function Categories() {
                                         {category.description ? (
                                             // Category descriptions are i18n keys (snake_case).
                                             // Add new keys to fr.json and en.json when creating categories in the back-office.
-                                            <p className="text-sm text-gray-600 line-clamp-2">{t(`categories.${category.description}`)}</p>
+                                            <p className="text-sm text-gray-600 line-clamp-2">{t(`categories.${category.description}.description`)}</p>
                                         ) : null}
                                     </div>
 

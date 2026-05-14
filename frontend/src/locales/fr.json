@@ -358,14 +358,38 @@
   "yearly": "Par an",
   "categories": {
     "label": "Catégories",
-    "soc": "Solutions de centre opérationnel de sécurité pour la surveillance et la gestion des menaces en temps réel.",
-    "edr": "Solutions de détection et réponse aux menaces sur les terminaux.",
-    "xdr": "Solutions étendues de détection et réponse couvrant l'ensemble de l'infrastructure.",
-    "siem": "Gestion centralisée des événements de sécurité et des informations.",
-    "security_appliances": "Appliances matérielles pour la sécurité réseau et la protection des données.",
-    "software_licenses": "Licences pour les outils de sécurité et de gestion.",
-    "training_and_certifications": "Formations en sécurité informatique et certifications professionnelles.",
-    "consulting_and_audit": "Services de consulting en sécurité et audit de conformité."
+    "soc": {
+      "name": "SOC",
+      "description": "Solutions de centre opérationnel de sécurité pour la surveillance et la gestion des menaces en temps réel."
+    },
+    "edr": {
+      "name": "EDR",
+      "description": "Solutions de détection et réponse aux menaces sur les terminaux."
+    },
+    "xdr": {
+      "name": "XDR",
+      "description": "Solutions étendues de détection et réponse couvrant l'ensemble de l'infrastructure."
+    },
+    "siem": {
+      "name": "SIEM",
+      "description": "Gestion centralisée des événements de sécurité et des informations."
+    },
+    "security_appliances": {
+      "name": "Appliances de sécurité",
+      "description": "Appliances matérielles pour la sécurité réseau et la protection des données."
+    },
+    "software_licenses": {
+      "name": "Licences logicielles",
+      "description": "Licences pour les outils de sécurité et de gestion."
+    },
+    "training_and_certifications": {
+      "name": "Formations & Certifications",
+      "description": "Formations en sécurité informatique et certifications professionnelles."
+    },
+    "consulting_and_audit": {
+      "name": "Consulting & Audit",
+      "description": "Services de consulting en sécurité et audit de conformité."
+    }
   },
   "allCategories": "Toutes les catégories",
   "discounts": "Réductions",
