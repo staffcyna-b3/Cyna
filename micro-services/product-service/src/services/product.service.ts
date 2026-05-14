@@ -9,7 +9,7 @@ import { ProductSuggestionDto } from '../dto/response/ProductSuggestion.dto';
 import { SortOrder } from '../enum/Sortrder.enum';
 import Product from '../models/Product';
 import { sequelize } from '../config/database';
-import ProductRepository from '../repository/product.repository';
+import ProductRepository from '../repositories/product.repository';
 
 export default class ProductService {
     constructor(private readonly productRepository: ProductRepository) {}

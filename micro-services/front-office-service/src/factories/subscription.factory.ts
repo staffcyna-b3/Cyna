@@ -1,9 +1,9 @@
-import { SubscriptionRepository } from '../repository/subscription.repository';
+import { SubscriptionRepository } from '../repositories/subscription.repository';
 import { SubscriptionService } from '../services/subscription.service';
 import { SubscriptionController } from '../controllers/subscription.controller';
 import { UserSubscriptionService } from '../services/userSubscription.service';
 import { UserSubscriptionController } from '../controllers/userSubscription.controller';
-import { RefundRequestRepository } from '../repository/refundRequest.repository';
+import { RefundRequestRepository } from '../repositories/refundRequest.repository';
 
 export function createSubscriptionController(): SubscriptionController {
   const subscriptionRepository = new SubscriptionRepository();

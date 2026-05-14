@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { PromotionController } from '../controllers/promotion.controller';
 import { PromotionService } from '../services/promotion.service';
-import { PromotionRepository } from '../repository/promotion.repository';
-import { ProductRepository } from '../repository/product.repository';
+import { PromotionRepository } from '../repositories/promotion.repository';
+import { ProductRepository } from '../repositories/product.repository';
 import { IPromotionService } from '../interfaces/IPromotionService';
 import { validatorSchema } from '../middlewares/validations';
 import {

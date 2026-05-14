@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { RefundRequestAdminController } from '../controllers/RefundRequestAdminController';
 import { RefundRequestAdminService } from '../services/RefundRequestAdminService';
-import { RefundRequestRepository } from '../repository/refundRequest.repository';
+import { RefundRequestRepository } from '../repositories/refundRequest.repository';
 import { HttpClient } from '../infrastructure/HttpClient';
 
 const router = Router();

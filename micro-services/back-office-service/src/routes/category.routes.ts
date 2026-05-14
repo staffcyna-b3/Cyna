@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { CategoryController } from '../controllers/category.controller';
 import { CategoryService } from '../services/category.service';
-import { CategoryRepository } from '../repository/category.repository';
+import { CategoryRepository } from '../repositories/category.repository';
 import { ICategoryService } from '../interfaces/ICategoryService';
 import { validatorSchema } from '../middlewares/validations';
 import { categoryFiltersQuerySchema, categoryIdParamSchema, reorderCategoryDisplayPrioritySchema } from '../schemas/category.schemas';

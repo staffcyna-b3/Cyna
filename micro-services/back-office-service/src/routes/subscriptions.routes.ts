@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { SubscriptionAdminController } from '../controllers/SubscriptionAdminController';
 import { SubscriptionAdminService } from '../services/SubscriptionAdminService';
-import { SubscriptionRepository } from '../repository/subscription.repository';
+import { SubscriptionRepository } from '../repositories/subscription.repository';
 import { HttpClient } from '../infrastructure/HttpClient';
 
 const router = Router();
