@@ -8,7 +8,7 @@ type BackOfficeListToolbarProps = {
     searchValue: string;
     searchPlaceholder: string;
     searchAriaLabel: string;
-    filterLabel: string;
+    filterLabel?: string;
     onSearchChange: (value: string) => void;
     onFilterClick?: () => void;
     filterActive?: boolean;
@@ -44,18 +44,20 @@ export function BackOfficeListToolbar({
                             className="h-10 border-gray-200 bg-gray-50 pl-8"
                         />
                     </div>
-                    <Button
-                        type="button"
-                        variant="outline"
-                        className={cn(
-                            'h-10 border-gray-200 text-gray-600',
-                            filterActive && 'border-indigo-300 bg-indigo-50 text-indigo-700',
-                        )}
-                        onClick={onFilterClick}
-                    >
-                        <SlidersHorizontal className="size-4" />
-                        {filterLabel}
-                    </Button>
+                    {filterLabel && (
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className={cn(
+                                'h-10 border-gray-200 text-gray-600',
+                                filterActive && 'border-indigo-300 bg-indigo-50 text-indigo-700',
+                            )}
+                            onClick={onFilterClick}
+                        >
+                            <SlidersHorizontal className="size-4" />
+                            {filterLabel}
+                        </Button>
+                    )}
                 </div>
                 {filterPanel}
             </div>

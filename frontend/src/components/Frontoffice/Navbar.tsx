@@ -32,8 +32,8 @@ export default function Navbar() {
     const [isUserOpen, setIsUserOpen] = useState(false);
 
     const handleLogout = async () => {
+        navigate("/");
         await logout();
-        navigate("/login");
     };
 
     useEffect(() => {

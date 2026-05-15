@@ -1,3 +1,4 @@
+import i18n from '@/i18n';
 import jsPDF from 'jspdf';
 import type { OrderDetail } from '@/types/interfaces/Order/OrderDetail';
 
@@ -37,12 +38,10 @@ export function downloadInvoicePDF(order: OrderDetail): void {
   doc.setFontSize(10);
 
   order.items.forEach((item) => {
-    doc.text(`${item.product_name ?? 'Produit'} × ${item.quantity}`, 14, y);
+    const productLabel = i18n.t(`products.${item.product_name}.name`, { defaultValue: item.product_name ?? 'Produit' });
+    doc.text(`${productLabel} x ${item.quantity}`, 14, y);
     doc.text(
-      (item.unit_price * item.quantity).toLocaleString('fr-FR', {
-        style: 'currency',
-        currency: 'EUR',
-      }),
+      `${(item.unit_price * item.quantity).toFixed(2)} EUR`,
       pageWidth - 14,
       y,
       { align: 'right' }
@@ -59,7 +58,7 @@ export function downloadInvoicePDF(order: OrderDetail): void {
   doc.setFontSize(11);
   doc.text('Total', 14, y);
   doc.text(
-    order.total_amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' }),
+    `${order.total_amount.toFixed(2)} EUR`,
     pageWidth - 14,
     y,
     { align: 'right' }

@@ -10,6 +10,8 @@ import { AddressService } from '../services/address.service';
 import { ShippingService } from '../services/shipping.service';
 import { PromoService } from '../services/promo.service';
 import { PromoRepository } from '../repository/promo.repository';
+import { CartService } from '../services/cart.service';
+import { ProductRepository } from '../repository/ProductRepository';
 import { internalAuthMiddleware } from '../middleware/internalAuth.middleware';
 
 /*
@@ -31,7 +33,7 @@ const orderRepository = new OrderRepository();
 const cartRepository = new CartRepository();
 const addressRepository = new AddressRepository();
 const shippingService = new ShippingService();
-const promoService = new PromoService(new PromoRepository());
+const promoService = new PromoService(new PromoRepository(), new CartService(cartRepository, new ProductRepository(), shippingService));
 
 const orderService = new OrderService(orderRepository, shippingService, promoService);
 const checkoutService = new CheckoutService(cartRepository, addressRepository);

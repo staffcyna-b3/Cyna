@@ -192,24 +192,24 @@ export default function Discounts() {
                         ) : null
                     }
                     leftSlot={
-                        <div className="flex items-center gap-2">
-                            <Button type="button" className="h-9" onClick={openCreate}>
-                                {t('backoffice.createDiscount')}
-                            </Button>
-                            {selectedRows.length > 0 && (
-                                <Button
-                                    type="button"
-                                    variant="destructive"
-                                    className="h-9"
-                                    disabled={bulkDeleting}
-                                    onClick={deleteSelected}
-                                >
-                                    {bulkDeleting
-                                        ? t('loading')
-                                        : `${t('cart.remove')} (${selectedRows.length})`}
-                                </Button>
-                            )}
-                        </div>
+                        <Button type="button" className="h-9" onClick={openCreate}>
+                            {t('backoffice.createDiscount')}
+                        </Button>
+                    }
+                    rightSlot={
+                        <Button
+                            type="button"
+                            variant="destructive"
+                            className="h-9"
+                            disabled={selectedRows.length === 0 || bulkDeleting}
+                            onClick={deleteSelected}
+                        >
+                            {bulkDeleting
+                                ? t('loading')
+                                : selectedRows.length > 0
+                                    ? `${t('cart.remove')} (${selectedRows.length})`
+                                    : t('cart.remove')}
+                        </Button>
                     }
                 />
 
