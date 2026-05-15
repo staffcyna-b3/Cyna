@@ -2,71 +2,52 @@
 
 # set -e  # Arrête le script si une commande échoue
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$SCRIPT_DIR/.."
+
 echo "Démarrage de l'installation complète..."
 
 # ==================== INSTALLATION DES DÉPENDANCES ====================
 echo "Installation des dépendances..."
 
 echo "→ Gateway..."
-cd gateway
-npm install
-cd ..
+cd "$ROOT_DIR/gateway" && npm install
 
 echo "→ Back-office Service..."
-cd micro-services/back-office-service
-npm install
-cd ../..
+cd "$ROOT_DIR/micro-services/back-office-service" && npm install
 
 echo "→ Front-office Service..."
-cd micro-services/front-office-service
-npm install
-cd ../..
+cd "$ROOT_DIR/micro-services/front-office-service" && npm install
 
 echo "→ Product Service..."
-cd micro-services/product-service
-npm install
-cd ../..
-
+cd "$ROOT_DIR/micro-services/product-service" && npm install
 
 echo "→ Payments Service..."
-cd micro-services/payments-service
-npm install
-cd ../..
+cd "$ROOT_DIR/micro-services/payments-service" && npm install
 
 # ==================== MIGRATIONS ====================
 echo "Exécution des migrations..."
 
 echo "→ Gateway migrations..."
-cd gateway
-npx sequelize-cli db:migrate
-cd ..
+cd "$ROOT_DIR/gateway" && npx sequelize-cli db:migrate
 
 # echo "→ Back-office Service migrations..."
-# cd micro-services/back-office-service
-# npx sequelize-cli db:migrate
-# cd ../..
+# cd "$ROOT_DIR/micro-services/back-office-service" && npx sequelize-cli db:migrate
 
 echo "→ Front-office Service migrations..."
-cd micro-services/front-office-service
-npx sequelize-cli db:migrate
-cd ../..
+cd "$ROOT_DIR/micro-services/front-office-service" && npx sequelize-cli db:migrate
 
 echo "→ Product Service migrations..."
-cd micro-services/product-service
-npx sequelize-cli db:migrate
-cd ../..
+cd "$ROOT_DIR/micro-services/product-service" && npx sequelize-cli db:migrate
 
 echo "→ Payments Service migrations..."
-cd micro-services/payments-service
-npx sequelize-cli db:migrate
-cd ../..
+cd "$ROOT_DIR/micro-services/payments-service" && npx sequelize-cli db:migrate
 
 # ==================== SEEDERS ====================
 echo "Exécution des seeders..."
 
 echo "→ Product Service seeders..."
-cd micro-services/product-service
+cd "$ROOT_DIR/micro-services/product-service"
 npx sequelize-cli db:seed:all --seeders-path seeders --models-path src/models --config config/config.js
-cd ../..
 
 echo "Installation complète terminée !"
