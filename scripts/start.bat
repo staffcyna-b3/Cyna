@@ -1,7 +1,7 @@
 @echo off
 setlocal
 
-set ROOT=%~dp0
+set ROOT=%~dp0..\
 set MODE=%1
 if "%MODE%"=="" set MODE=dev
 
