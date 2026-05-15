@@ -4,8 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useAuth } from '@/hooks/useAuth';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { getProfile, UserApiError } from '@/services/userService';
-import { getAddresses, AddressApiError } from '@/services/addressService';
+import { UserApi, UserApiError } from '@/api/UserApi';
+import { AddressApi, AddressApiError } from '@/api/AddressApi';
 import type { UserProfile } from '@/types/interfaces/user/UserProfile';
 import type { Address } from '@/types/interfaces/address/Address';
 import { ProfileSection } from './account/ProfileSection';
@@ -23,8 +23,8 @@ export default function AccountPage() {
   useEffect(() => {
     if (!accessToken) return;
     Promise.all([
-      getProfile(accessToken),
-      getAddresses(accessToken),
+      UserApi.getInstance().getProfile(),
+      AddressApi.getInstance().getAddresses(),
     ])
       .then(([p, a]) => {
         setProfile(p);
@@ -65,16 +65,14 @@ export default function AccountPage() {
         <TabsContent value="profile">
           <ProfileSection
             profile={profile}
-            token={accessToken}
             onUpdated={setProfile}
           />
         </TabsContent>
         <TabsContent value="password">
-          <PasswordSection token={accessToken} />
+          <PasswordSection />
         </TabsContent>
         <TabsContent value="addresses">
           <AddressesSection
-            token={accessToken}
             addresses={addresses}
             onAddressesChange={setAddresses}
           />

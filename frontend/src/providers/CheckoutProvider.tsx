@@ -4,7 +4,7 @@ import {
   emptyAddress,
 } from "@/contexts/CheckoutContext"
 import { useAuth } from "@/hooks/useAuth"
-import { getAddresses } from "@/services/addressService"
+import { AddressApi } from "@/api/AddressApi"
 import type { AddressFormData } from "@/types/interfaces/Checkout/AddressFormData"
 import type { CheckoutContextValue, CheckoutIds } from "@/types/interfaces/Checkout/CheckoutContextValue"
 import type { ConfirmedOrder } from "@/types/interfaces/CheckoutConfirmation/ConfirmedOrder"
@@ -27,7 +27,7 @@ export function CheckoutProvider({ children }: { children: ReactNode }) {
     if (!accessToken || !user) return
     setIsLoadingContext(true)
     try {
-      const list = await getAddresses(accessToken)
+      const list = await AddressApi.getInstance().getAddresses()
       const nameParts = (user.full_name ?? "").trim().split(/\s+/)
       const firstName = nameParts[0] ?? ""
       const lastName = nameParts.slice(1).join(" ")

@@ -3,16 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import type { OrderSummary } from '@/types/interfaces/Order/OrderSummary';
 import type { OrderDetail } from '@/types/interfaces/Order/OrderDetail';
-import { getOrders, getOrderById, OrderApiError } from '@/services/orderService';
+import { OrderApi, OrderApiError } from '@/api/OrderApi';
 import OrdersFilters from '../orders/OrdersFilters';
 import OrdersByYear from '../orders/OrdersByYear';
 import OrderDetailModal from '../orders/OrderDetailModal';
 
-interface OrdersSectionProps {
-  token: string;
-}
-
-export function OrdersSection({ token }: OrdersSectionProps) {
+export function OrdersSection() {
   const { t } = useTranslation();
 
   const [orders, setOrders] = useState<OrderSummary[]>([]);
@@ -24,7 +20,7 @@ export function OrdersSection({ token }: OrdersSectionProps) {
   const [detailLoading, setDetailLoading] = useState(false);
 
   useEffect(() => {
-    getOrders(token)
+    OrderApi.getInstance().getOrders()
       .then(setOrders)
       .catch((err: unknown) => {
         if (err instanceof OrderApiError && err.status === 401) {
@@ -34,14 +30,14 @@ export function OrdersSection({ token }: OrdersSectionProps) {
         }
       })
       .finally(() => setLoading(false));
-  }, [token, t]);
+  }, [t]);
 
   async function handleOrderClick(orderId: string) {
     setDetailLoading(true);
     setDetailOpen(true);
     setSelectedOrder(null);
     try {
-      const detail = await getOrderById(token, orderId);
+      const detail = await OrderApi.getInstance().getOrderById(orderId);
       setSelectedOrder(detail);
     } catch (err: unknown) {
       if (err instanceof OrderApiError && err.status === 401) {

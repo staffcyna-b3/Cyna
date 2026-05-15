@@ -1,4 +1,4 @@
-import CategoryRepository from '../repository/category.repository';
+import CategoryRepository from '../repositories/category.repository';
 import Category from '../models/Category';
 import { Logger } from '../common/logger';
 

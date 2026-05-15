@@ -8,7 +8,7 @@ import { useStripeConfig } from '@/contexts/StripeContext';
 import { Typography } from '@/components/ui/typography';
 import { Button } from '@/components/ui/button';
 import { LocationState } from '@/types/interfaces/LocationState.interface';
-import { CartService } from '@/services/CartService';
+import { CartApi } from '@/api/CartApi';
 
 const formatEuro = (amountCents: number) =>
   new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(amountCents / 100);
@@ -40,7 +40,7 @@ export const Checkout: React.FC = () => {
     setPromoError(null);
     setPromoLoading(true);
     try {
-      const result = await CartService.getInstance().applyPromo(promoInput.trim());
+      const result = await CartApi.getInstance().applyPromo(promoInput.trim());
       const cents = Math.round(result.discountAmount * 100);
       setPromoCode(result.promoCode);
       setDiscountCents(cents);

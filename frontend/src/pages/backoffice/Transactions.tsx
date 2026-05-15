@@ -29,12 +29,7 @@ import type { SubscriptionAdminDTO } from '@/types/interfaces/admin/Subscription
 import type { ColumnDef } from '@tanstack/react-table';
 import { LucideArrowUpDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import {
-    getSales,
-    getSubscriptions,
-    cancelSubscriptionAdmin,
-    BackOfficeApiError,
-} from '@/services/BackOfficeOrderService';
+import { BackOfficeOrderApi, BackOfficeApiError } from '@/api/BackOfficeOrderApi';
 import { formatCurrency } from '@/utils/currencyFormatter';
 
 export default function Transactions() {
@@ -68,7 +63,7 @@ export default function Transactions() {
 
     useEffect(() => {
         if (!accessToken) return;
-        getSales(accessToken)
+        BackOfficeOrderApi.getInstance().getSales()
             .then(setSales)
             .catch((err: unknown) => {
                 if (err instanceof BackOfficeApiError && err.status === 401) {
@@ -82,7 +77,7 @@ export default function Transactions() {
 
     useEffect(() => {
         if (!accessToken) return;
-        getSubscriptions(accessToken)
+        BackOfficeOrderApi.getInstance().getSubscriptions()
             .then(setSubscriptions)
             .catch((err: unknown) => {
                 if (err instanceof BackOfficeApiError && err.status === 401) {
@@ -97,7 +92,7 @@ export default function Transactions() {
     function handleCancelSubscription() {
         if (!accessToken || !cancelTarget) return;
         setSubSubmitting(true);
-        cancelSubscriptionAdmin(accessToken, cancelTarget.id)
+        BackOfficeOrderApi.getInstance().cancelSubscriptionAdmin(cancelTarget.id)
             .then(() => {
                 toast.success(t('subscriptions.cancelSuccess'));
                 setSubscriptions((prev) =>

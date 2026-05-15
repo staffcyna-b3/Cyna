@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react';
 import { toast } from 'sonner';
-import { CartService } from '../services/CartService';
+import { CartApi } from '../api/CartApi';
 import { CartItem } from '../types/interfaces/cart/CartItem';
 import { AddToCartOptions } from '../types/interfaces/cart/AddToCartOptions';
 import { PERIOD_TO_MONTHS } from '../lib/cartStorage';
 
 export function useAuthCart() {
-    const service = CartService.getInstance();
+    const service = CartApi.getInstance();
 
     const [items, setItems] = useState<CartItem[]>([]);
     const [totalAmount, setTotalAmount] = useState<number>(0);

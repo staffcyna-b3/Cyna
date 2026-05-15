@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ProxyService } from '../services/proxy.service';
-import { ErrorHandlerService } from '../services/errorHandlet.service';
+import { ErrorHandlerService } from '../services/errorHandler.service';
 import { Logger } from '../common/logger';
 import { MicroServiceEnum } from '../enum/microService.enum';
 import { MICROSERVICES } from '../config/microService.config';

@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import { submitContact } from '@/services/contactService';
+import { ContactApi } from '@/api/ContactApi';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function Contact() {
@@ -21,7 +21,7 @@ export default function Contact() {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await submitContact({ email, subject, message });
+      await ContactApi.getInstance().submitContact({ email, subject, message });
       setSubmitted(true);
     } catch {
       toast.error(t('errorOccurred'));

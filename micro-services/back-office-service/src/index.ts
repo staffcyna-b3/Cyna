@@ -5,7 +5,6 @@ import { initDb } from './models/index';
 import { Logger } from './common/logger';
 import usersRouter from './routes/users.routes';
 import ordersRouter from './routes/orders.routes';
-import transactionsRouter from './routes/transactions.routes';
 import refundsRouter from './routes/refunds.routes';
 import subscriptionsAdminRouter from './routes/subscriptions.routes';
 import refundRequestsRouter from './routes/refundRequests.routes';
@@ -45,7 +44,6 @@ app.use('/promotions', requireRoles([UserRoleType.ADMIN]), promotionRoutes)
 app.use('/categories', requireRoles([UserRoleType.ADMIN]), categoryRoutes)
 app.use('/users', requireRoles([UserRoleType.ADMIN]), usersRouter);
 app.use('/orders', requireRoles([UserRoleType.ADMIN]), ordersRouter);
-app.use('/transactions', requireRoles([UserRoleType.ADMIN]), transactionsRouter);
 app.use('/refunds', requireRoles([UserRoleType.ADMIN]), refundsRouter);
 app.use('/subscriptions', requireRoles([UserRoleType.ADMIN]), subscriptionsAdminRouter);
 app.use('/refund-requests', requireRoles([UserRoleType.ADMIN]), refundRequestsRouter);

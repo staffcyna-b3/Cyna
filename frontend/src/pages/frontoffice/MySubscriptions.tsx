@@ -8,14 +8,7 @@ import { Button } from '@/components/ui/button';
 import { CancelSubscriptionModal } from '@/components/Frontoffice/CancelSubscriptionModal';
 import { ReactivateSubscriptionModal } from '@/components/Frontoffice/ReactivateSubscriptionModal';
 import { RefundRequestModal } from '@/components/Frontoffice/RefundRequestModal';
-import {
-  getMySubscriptions,
-  getMyRefundRequests,
-  cancelSubscription,
-  reactivateSubscription,
-  createRefundRequest,
-  SubscriptionApiError,
-} from '@/services/subscriptionService';
+import { SubscriptionApi, SubscriptionApiError } from '@/api/SubscriptionApi';
 import { formatDate } from '@/utils/formatDate';
 import type { SubscriptionDTO } from '@/types/interfaces/subscription/SubscriptionDTO.interface';
 
@@ -53,7 +46,8 @@ export default function MySubscriptions() {
 
   useEffect(() => {
     if (!accessToken) return;
-    Promise.all([getMySubscriptions(accessToken), getMyRefundRequests(accessToken)])
+    const api = SubscriptionApi.getInstance();
+    Promise.all([api.getMySubscriptions(), api.getMyRefundRequests()])
       .then(([subs, requests]) => {
         setSubscriptions(subs);
         setActiveRefundIds(new Set(requests.map((r) => r.stripe_subscription_id)));
@@ -72,7 +66,7 @@ export default function MySubscriptions() {
     if (!accessToken || !cancelTarget) return;
     setSubmitting(true);
     try {
-      const updated = await cancelSubscription(accessToken, cancelTarget.stripe_subscription_id);
+      const updated = await SubscriptionApi.getInstance().cancelSubscription(cancelTarget.stripe_subscription_id);
       setSubscriptions((prev) =>
         prev.map((s) => (s.id === updated.id ? { ...updated, product: s.product } : s))
       );
@@ -89,7 +83,7 @@ export default function MySubscriptions() {
     if (!accessToken || !reactivateTarget) return;
     setSubmitting(true);
     try {
-      const updated = await reactivateSubscription(accessToken, reactivateTarget.stripe_subscription_id);
+      const updated = await SubscriptionApi.getInstance().reactivateSubscription(reactivateTarget.stripe_subscription_id);
       setSubscriptions((prev) =>
         prev.map((s) => (s.id === updated.id ? { ...updated, product: s.product } : s))
       );
@@ -106,7 +100,7 @@ export default function MySubscriptions() {
     if (!accessToken || !refundTarget) return;
     setSubmitting(true);
     try {
-      await createRefundRequest(accessToken, refundTarget.stripe_subscription_id, reason);
+      await SubscriptionApi.getInstance().createRefundRequest(refundTarget.stripe_subscription_id, reason);
       setActiveRefundIds((prev) => new Set(prev).add(refundTarget.stripe_subscription_id));
       toast.success(t('subscriptions.refundRequestSuccess'));
       setRefundTarget(null);
