@@ -17,7 +17,8 @@ import { useCheckout } from "@/hooks/useCheckout"
 import { useAuth } from "@/hooks/useAuth"
 import useCart from "@/hooks/useCart"
 import { formatCurrency } from "@/utils/currencyFormatter"
-import { getAddresses, type Address } from "@/services/addressService"
+import { AddressApi } from "@/api/AddressApi"
+import type { Address } from "@/types/interfaces/address/Address"
 import { useSearchParams } from "react-router-dom"
 
 export const Cart = () => {
@@ -40,7 +41,7 @@ export const Cart = () => {
 
   useEffect(() => {
     if (!accessToken) return
-    getAddresses(accessToken).then((list) => {
+    AddressApi.getInstance().getAddresses().then((list) => {
       setAddresses(list)
       const defB = list.find((a) => a.type === 'billing' && a.is_default)
       const defS = list.find((a) => a.type === 'shipping' && a.is_default)

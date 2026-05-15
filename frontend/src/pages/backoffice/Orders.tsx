@@ -18,7 +18,7 @@ import type { OrderAdminDTO } from '@/types/interfaces/admin/OrderAdminDTO.inter
 import type { ColumnDef } from '@tanstack/react-table';
 import { LucideArrowUpDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { getAdminOrders, BackOfficeApiError } from '@/services/BackOfficeOrderService';
+import { BackOfficeOrderApi, BackOfficeApiError } from '@/api/BackOfficeOrderApi';
 import { OrderEditorSheet } from '../../components/Backoffice/sheets/OrderEditorSheet';
 
 type OrderGroup = 'inProgress' | 'finalized';
@@ -52,7 +52,7 @@ export default function Orders() {
     useEffect(() => {
         if (!accessToken) return;
         setLoading(true);
-        getAdminOrders(accessToken, page, limit)
+        BackOfficeOrderApi.getInstance().getAdminOrders(page, limit)
             .then((res) => {
                 setData(res.data);
                 setTotal(res.total);

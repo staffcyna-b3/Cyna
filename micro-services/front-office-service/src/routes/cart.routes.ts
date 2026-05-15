@@ -5,9 +5,9 @@ import { PromoController } from '../controllers/promo.controller';
 import { CartService } from '../services/cart.service';
 import { ShippingService } from '../services/shipping.service';
 import { PromoService } from '../services/promo.service';
-import { CartRepository } from '../repository/cart.repository';
-import { ProductRepository } from '../repository/ProductRepository';
-import { PromoRepository } from '../repository/promo.repository';
+import { CartRepository } from '../repositories/cart.repository';
+import { ProductRepository } from '../repositories/ProductRepository';
+import { PromoRepository } from '../repositories/promo.repository';
 
 const promoRateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,

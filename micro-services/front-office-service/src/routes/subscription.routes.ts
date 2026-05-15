@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { createSubscriptionController } from '../factories/subscription.factory';
-import { internalAuthMiddleware } from '../middleware/internalAuth.middleware';
+import { internalAuthMiddleware } from '../middlewares/internalAuth.middleware';
 
 const router = Router();
 const controller = createSubscriptionController();

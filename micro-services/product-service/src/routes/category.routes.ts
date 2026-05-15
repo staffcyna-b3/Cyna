@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { CategoryController } from '../controllers/category.controller';
 import CategoryService from '../services/category.service';
-import CategoryRepository from '../repository/category.repository';
+import CategoryRepository from '../repositories/category.repository';
 import { Logger } from '../common/logger';
 
 const router = Router();

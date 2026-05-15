@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { SalesController } from '../controllers/SalesController';
 import { SalesService } from '../services/SalesService';
-import { SalesRepository } from '../repository/sales.repository';
+import { SalesRepository } from '../repositories/sales.repository';
 
 const router = Router();
 const controller = new SalesController(new SalesService(new SalesRepository()));

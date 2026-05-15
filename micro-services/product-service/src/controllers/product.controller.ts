@@ -3,7 +3,7 @@ import ProductService from '../services/product.service';
 import { Logger } from '../common/logger';
 import { ErrorResponse } from '../types/ErrorResponse';
 import { SuccessResponse } from '../types/SuccessResponse';
-import { SortOrder } from '../enum/Sortrder.enum';
+import { SortOrder } from '../enum/SortOrder.enum';
 import { SortBy } from '../enum/SortBy.enum';
 
 export class ProductController {

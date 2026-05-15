@@ -9,7 +9,7 @@ import type { UserAdminDTO } from '@/types/interfaces/admin/UserAdminDTO.interfa
 import type { ColumnDef } from '@tanstack/react-table';
 import { LucideArrowUpDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { getUsers, updateUserRole, deleteUser, BackOfficeApiError } from '@/services/BackOfficeOrderService';
+import { BackOfficeOrderApi, BackOfficeApiError } from '@/api/BackOfficeOrderApi';
 import { UserEditorSheet } from '../../components/Backoffice/sheets/UserEditorSheet';
 
 type UserGroup = 'client' | 'professional';
@@ -36,7 +36,7 @@ export default function Users() {
     useEffect(() => {
         if (!accessToken) return;
         setLoading(true);
-        getUsers(accessToken, page, limit)
+        BackOfficeOrderApi.getInstance().getUsers(page, limit)
             .then((res) => {
                 setData(res.data);
                 setTotal(res.total);
@@ -77,7 +77,7 @@ export default function Users() {
         if (!selectedUser || !accessToken) return;
         setSaving(true);
         try {
-            const updated = await updateUserRole(accessToken, selectedUser.id, editRole);
+            const updated = await BackOfficeOrderApi.getInstance().updateUserRole(selectedUser.id, editRole);
             setData((prev) => prev.map((u) => (u.id === updated.id ? updated : u)));
             setSheetOpen(false);
             toast.success(t('admin.userUpdated'));
@@ -96,7 +96,7 @@ export default function Users() {
         if (!selectedUser || !accessToken) return;
         setDeleting(true);
         try {
-            await deleteUser(accessToken, selectedUser.id);
+            await BackOfficeOrderApi.getInstance().deleteUser(selectedUser.id);
             setData((prev) => prev.filter((u) => u.id !== selectedUser.id));
             setSheetOpen(false);
             toast.success(t('admin.userDeleted'));

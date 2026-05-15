@@ -1,5 +1,5 @@
 import { SaleAdminDTO } from '../dto/SaleAdminDTO';
-import { ISalesRepository} from '../repository/ISalesRepository';
+import { ISalesRepository} from '../repositories/ISalesRepository';
 import { SaleRow } from '../interfaces/SaleRow.interface';
 import { ISalesService } from './ISalesService';
 import { HttpError } from '../common/httpError';

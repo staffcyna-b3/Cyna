@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { AddressesController } from '../controllers/addresses.controller';
 import { AddressService } from '../services/address.service';
-import { AddressRepository } from '../repository/address.repository';
+import { AddressRepository } from '../repositories/address.repository';
 
 const router = Router();
 

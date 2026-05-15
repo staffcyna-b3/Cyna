@@ -22,12 +22,7 @@ import type { RefundRequestAdminDTO } from '@/types/interfaces/admin/RefundReque
 import type { ColumnDef } from '@tanstack/react-table';
 import { LucideArrowUpDown } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import {
-    getRefunds,
-    getRefundRequests,
-    updateRefundRequestStatus,
-    BackOfficeApiError,
-} from '@/services/BackOfficeOrderService';
+import { BackOfficeOrderApi, BackOfficeApiError } from '@/api/BackOfficeOrderApi';
 import { RefundSheet } from '../../components/Backoffice/sheets/RefundSheet';
 
 type View = 'requests' | 'processed';
@@ -64,7 +59,7 @@ export default function Refunds() {
     useEffect(() => {
         if (!accessToken) return;
         setRefundsLoading(true);
-        getRefunds(accessToken)
+        BackOfficeOrderApi.getInstance().getRefunds()
             .then(setRefunds)
             .catch((err: unknown) => {
                 if (err instanceof BackOfficeApiError && err.status === 401) {
@@ -79,7 +74,7 @@ export default function Refunds() {
     useEffect(() => {
         if (!accessToken) return;
         setRequestsLoading(true);
-        getRefundRequests(accessToken)
+        BackOfficeOrderApi.getInstance().getRefundRequests()
             .then(setRequests)
             .catch((err: unknown) => {
                 if (err instanceof BackOfficeApiError && err.status === 401) {
@@ -129,7 +124,7 @@ export default function Refunds() {
     function handleConfirm() {
         if (!accessToken || !confirmTarget) return;
         setSubmitting(true);
-        updateRefundRequestStatus(accessToken, confirmTarget.id, confirmTarget.action)
+        BackOfficeOrderApi.getInstance().updateRefundRequestStatus(confirmTarget.id, confirmTarget.action)
             .then((updated) => {
                 setRequests((prev) => prev.filter((r) => r.id !== updated.id));
                 toast.success(

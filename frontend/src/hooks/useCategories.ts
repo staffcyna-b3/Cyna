@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { CatalogService } from '../services/CatalogService';
+import { CatalogApi } from '../api/CatalogApi';
 import i18n from '@/i18n';
 import { Category } from '@/types/interfaces/category/Category';
 
@@ -16,8 +16,8 @@ function sortCategories(items: Category[]): Category[] {
     });
 }
 
-export const GetCategories = () => {
-    const service = CatalogService.getInstance();
+export const useCategories = () => {
+    const service = CatalogApi.getInstance();
 
     const [data, setData] = useState<Category[] | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -59,4 +59,4 @@ export const GetCategories = () => {
     return { data, loading, error, listCategories } as const;
 };
 
-export default GetCategories;
+export default useCategories;

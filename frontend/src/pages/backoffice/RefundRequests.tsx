@@ -19,11 +19,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  getRefundRequests,
-  updateRefundRequestStatus,
-  BackOfficeApiError,
-} from '@/services/BackOfficeOrderService';
+import { BackOfficeOrderApi, BackOfficeApiError } from '@/api/BackOfficeOrderApi';
 import { toast } from 'sonner';
 
 type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected';
@@ -40,7 +36,7 @@ export default function RefundRequests() {
   useEffect(() => {
     if (!accessToken) return;
     setLoading(true);
-    getRefundRequests(accessToken)
+    BackOfficeOrderApi.getInstance().getRefundRequests()
       .then(setData)
       .catch((err: unknown) => {
         if (err instanceof BackOfficeApiError && err.status === 401) {
@@ -59,7 +55,7 @@ export default function RefundRequests() {
   function handleConfirm() {
     if (!accessToken || !confirmTarget) return;
     setSubmitting(true);
-    updateRefundRequestStatus(accessToken, confirmTarget.id, confirmTarget.action)
+    BackOfficeOrderApi.getInstance().updateRefundRequestStatus(confirmTarget.id, confirmTarget.action)
       .then((updated) => {
         setData((prev) => prev.filter((r) => r.id !== updated.id));
         toast.success(

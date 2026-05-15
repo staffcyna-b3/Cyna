@@ -3,7 +3,7 @@ import { CartContext } from '../contexts/CartContext';
 import { useGuestCart } from '../hooks/useGuestCart';
 import { useAuthCart } from '../hooks/useAuthCart';
 import { loadGuestCart, saveGuestCart } from '../lib/cartStorage';
-import { CartService } from '../services/CartService';
+import { CartApi } from '../api/CartApi';
 
 const hasValidToken = () => !!localStorage.getItem('accessToken');
 
@@ -33,7 +33,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             if (wasGuest) {
                 const guestItems = loadGuestCart();
                 if (guestItems.length > 0) {
-                    const service = CartService.getInstance();
+                    const service = CartApi.getInstance();
                     void Promise.allSettled(
                         guestItems.map(item =>
                             service.addItem(item.productId, item.quantity, item.period)

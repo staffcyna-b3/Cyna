@@ -1,4 +1,4 @@
-import { BackOfficeService } from '@/services/BackOfficeCatalogService';
+import { BackOfficeApi } from '@/api/BackOfficeApi';
 import type {
     BackOfficeProductImage,
     BackOfficeProduct,
@@ -16,7 +16,7 @@ import type { BackOfficeProductsStoreState } from '@/types/interfaces/backoffice
 import { createStore, createStoreHook } from './createStore';
 import { getErrorMessage, setStoreError, setStoreLoading } from './storeUtils';
 
-const service = BackOfficeService.getInstance();
+const service = BackOfficeApi.getInstance();
 const store = createStore<BackOfficeProductsStoreState>({
     items: [],
     current: null,

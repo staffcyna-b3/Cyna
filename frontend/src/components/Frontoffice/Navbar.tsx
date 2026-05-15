@@ -4,7 +4,7 @@ import { ArrowRight, ChevronDown, ClipboardList, CreditCard, LogOut, Mail, Searc
 import { useLanguage } from '@/hooks/useLanguage';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
-import { CatalogService } from '@/services/CatalogService';
+import { CatalogApi } from '@/api/CatalogApi';
 import { ProductSuggestion } from '@/types/interfaces/catalog/ProductSuggestion';
 import { useTranslation } from 'react-i18next';
 import { formatCurrency } from '@/utils/currencyFormatter';
@@ -18,7 +18,7 @@ export default function Navbar() {
     const { logout, isAuthenticated, user } = useAuth();
     const { items } = useCart();
     const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
-    const service = useMemo(() => CatalogService.getInstance(), []);
+    const service = useMemo(() => CatalogApi.getInstance(), []);
     const searchContainerRef = useRef<HTMLDivElement | null>(null);
     const cartContainerRef = useRef<HTMLDivElement | null>(null);
     const userContainerRef = useRef<HTMLDivElement | null>(null);

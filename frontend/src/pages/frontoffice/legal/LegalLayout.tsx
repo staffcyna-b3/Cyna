@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import CatalogFooter from '@/components/Frontoffice/catalog/footer/CatalogFooter'
 import CatalogNavigation from '@/components/Frontoffice/CatalogNavigation'
-import GetCategories from '@/hooks/getCategories'
+import useCategories from '@/hooks/useCategories'
 import { Category } from '@/types/interfaces/category/Category'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
@@ -10,7 +10,7 @@ import { ArrowLeft } from 'lucide-react'
 export default function LegalLayout({ title, children }: { title: string; children: React.ReactNode }) {
   const { t } = useTranslation()
   const navigate = useNavigate()
-  const { data: categories, listCategories } = GetCategories()
+  const { data: categories, listCategories } = useCategories()
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
 
   useEffect(() => {

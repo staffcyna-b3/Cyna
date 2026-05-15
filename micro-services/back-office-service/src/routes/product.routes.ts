@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { ProductController } from '../controllers/product.controller';
 import { ProductService } from '../services/product.service';
-import { ProductRepository } from '../repository/product.repository';
+import { ProductRepository } from '../repositories/product.repository';
 import { IProductService } from '../interfaces/IProductService';
 import { validatorSchema } from '../middlewares/validations';
 import {

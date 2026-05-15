@@ -1,6 +1,6 @@
 import { useEffect, useState, JSX } from 'react';
 import { useLocation, Outlet } from 'react-router-dom';
-import GetCategories from '../hooks/getCategories';
+import useCategories from '../hooks/useCategories';
 import { CatalogLayoutProps } from '../types/interfaces/catalog/CatalogLayoutProps.interface';
 import { Category } from '../types/interfaces/category/Category';
 import CatalogNavigation from '@/components/Frontoffice/CatalogNavigation';
@@ -10,7 +10,7 @@ import CatalogFooter from '@/components/Frontoffice/catalog/footer/CatalogFooter
 const CatalogLayout = ({
     children,
 }: CatalogLayoutProps): JSX.Element => {
-    const { data: categories, listCategories } = GetCategories();
+    const { data: categories, listCategories } = useCategories();
     const [activeCategory, setActiveCategory] = useState<string | null>(null);
     const location = useLocation();
 

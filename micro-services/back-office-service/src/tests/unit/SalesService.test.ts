@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { SalesService } from '../../services/SalesService';
-import { ISalesRepository } from '../../repository/ISalesRepository';
+import { ISalesRepository } from '../../repositories/ISalesRepository';
 import { SaleRow } from '../../interfaces/SaleRow.interface';
 
 const makeRepositoryMock = () => {
