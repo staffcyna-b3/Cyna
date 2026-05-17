@@ -60,7 +60,7 @@ export const StripePaymentForm: React.FC<StripePaymentFormProps> = ({
         paymentIntentId,
         items: cartItems.map((item) => ({
           id: item.id,
-          name: t(`products.${item.name}.name`),
+          name: item.name,
           quantity: item.quantity,
           unitPrice: item.unitPriceCents / 100,
           ...(item.originalUnitPriceCents !== undefined && {
