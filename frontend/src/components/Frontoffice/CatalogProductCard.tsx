@@ -131,7 +131,7 @@ export const CatalogProductCard = ({
                                         open={showPeriodModal}
                                         onClose={() => setShowPeriodModal(false)}
                                         productId={product.id}
-                                        productName={translatedName}
+                                        productName={product.name}
                                         unitPrice={product.price}
                                         discountedUnitPrice={product.discountedPrice ?? undefined}
                                     />
@@ -142,7 +142,7 @@ export const CatalogProductCard = ({
                                             disabled={!CanBeAddToCart(product)}
                                             productId={product.id}
                                             quantity={1}
-                                            name={translatedName}
+                                            name={product.name}
                                             unitPrice={product.price}
                                             discountedUnitPrice={product.discountedPrice ?? undefined}
                                             isService={false}

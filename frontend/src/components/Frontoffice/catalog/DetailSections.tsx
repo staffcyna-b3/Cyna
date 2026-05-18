@@ -81,7 +81,7 @@ function AddToCartPanel({
                 <AddToCartButton
                     disabled={!isAvailable}
                     productId={product.id}
-                    name={translatedName}
+                    name={product.name}
                     unitPrice={product.price}
                     discountedUnitPrice={product.discountedPrice ?? undefined}
                     isService={true}
@@ -92,7 +92,7 @@ function AddToCartPanel({
                 <AddToCartButton
                     disabled={!isAvailable}
                     productId={product.id}
-                    name={translatedName}
+                    name={product.name}
                     unitPrice={product.price}
                     discountedUnitPrice={product.discountedPrice ?? undefined}
                     isService={false}
