@@ -3,6 +3,7 @@ import {
   ArrowLeftRight,
   Boxes,
   LayoutDashboard,
+  LayoutList,
   LogOut,
   Mail,
   Percent,
@@ -33,6 +34,7 @@ import { UserRole } from "@/types/enums/UserRole.enum"
 const navItems = [
   { title: 'dashboard', url: "/dashboard", icon: LayoutDashboard },
   { title: 'products.label', url: "/products", icon: Boxes },
+  { title: 'categories.label', url: "/categories", icon: LayoutList },
   { title: 'users', url: "/users", icon: Users },
   { title: 'orders.label', url: "/orders", icon: ShoppingCart },
   { title: 'transactions', url: "/transactions", icon: ArrowLeftRight },
